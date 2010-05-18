@@ -1,0 +1,5 @@
+make
+cd build/release-linux-x86_64/baseq3
+zip -ru z-vm.pk3 vm/ icons/
+cp z-vm.pk3 /home/guitarfreak/.openarena/baseoa
+cd ../../../ 

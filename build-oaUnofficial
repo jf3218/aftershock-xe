@@ -1,0 +1,7 @@
+#!/bin/bash
+
+make
+cd ./build/release-linux-x86_64/baseq3
+zip zzz-oaUnofficial.pk3 -r icons/ vm/
+mv zzz-oaUnofficial.pk3 ../../../
+cd ../../../
