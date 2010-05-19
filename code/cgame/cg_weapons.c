@@ -989,6 +989,9 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 
 	memset( &beam, 0, sizeof( beam ) );
 
+	if( ( cg_trueLightning.value < 0.0f ) && (cent->currentState.number == cg.predictedPlayerState.clientNum) )
+		return;
+
 //unlagged - attack prediction #1
 	// if the entity is us, unlagged is on server-side, and we've got it on for the lightning gun
 	if ( (cent->currentState.number == cg.predictedPlayerState.clientNum) && cgs.delagHitscan &&
