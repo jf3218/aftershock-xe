@@ -267,7 +267,9 @@ vmCvar_t	cg_crosshairColorBlue;
 
 vmCvar_t	cg_weaponBarStyle;
 
-vmCvar_t cg_deathNoticeTime;
+vmCvar_t 	cg_deathNoticeTime;
+
+vmCvar_t	s_ambient;
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -307,9 +309,9 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_addMarks, "cg_marks", "1", CVAR_ARCHIVE },
 	{ &cg_lagometer, "cg_lagometer", "1", CVAR_ARCHIVE },
 	{ &cg_railTrailTime, "cg_railTrailTime", "600", CVAR_ARCHIVE  },
-	{ &cg_gun_x, "cg_gunX", "0", CVAR_CHEAT },
-	{ &cg_gun_y, "cg_gunY", "0", CVAR_CHEAT },
-	{ &cg_gun_z, "cg_gunZ", "0", CVAR_CHEAT },
+	{ &cg_gun_x, "cg_gunX", "0", CVAR_ARCHIVE },
+	{ &cg_gun_y, "cg_gunY", "0", CVAR_ARCHIVE },
+	{ &cg_gun_z, "cg_gunZ", "0", CVAR_ARCHIVE },
 	{ &cg_centertime, "cg_centertime", "3", CVAR_CHEAT },
 	{ &cg_runpitch, "cg_runpitch", "0.002", CVAR_ARCHIVE},
 	{ &cg_runroll, "cg_runroll", "0.005", CVAR_ARCHIVE },
@@ -458,6 +460,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_weaponBarStyle, "cg_weaponBarStyle", "0", CVAR_ARCHIVE},
 
 	{&cg_deathNoticeTime, "cg_deathNoticeTime", "3000", CVAR_ARCHIVE},
+	{&s_ambient, "s_ambient", "1", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

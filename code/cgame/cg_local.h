@@ -1338,6 +1338,8 @@ extern vmCvar_t			cg_weaponBarStyle;
 
 extern vmCvar_t 		cg_deathNoticeTime;
 
+extern vmCvar_t			s_ambient;
+
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
 //void CG_AddBoundingBox( centity_t *cent );
