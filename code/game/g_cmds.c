@@ -1058,6 +1058,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
 #define EC		"\x19"
 
 void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) {
+	int 		counter;
 	int			j;
 	gentity_t	*other;
 	int			color;
@@ -1101,6 +1102,70 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	}
 
 	Q_strncpyz( text, chatText, sizeof(text) );
+
+	
+	if( mode == SAY_TEAM ){
+		for( counter = 0 ; counter < MAX_SAY_TEXT ; counter++ ){
+			if( ( text[counter] == '#' ) && ( counter < MAX_SAY_TEXT - 1 ) ){
+				if( text[counter + 1] == 'H' ){
+					text[counter] = '%';
+					text[counter + 1] = 'i';
+					Com_sprintf( text, sizeof(text), text, ent->health );
+				}
+				else if( text[counter + 1] == 'A' ){
+					text[counter] = '%';
+					text[counter + 1] = 'i';
+					Com_sprintf( text, sizeof(text), text, ent->client->ps.stats[STAT_ARMOR] );
+				}
+				else if( text[counter + 1] == 'L' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					Team_GetLocationMsg(ent, location, sizeof(location));
+					Com_sprintf( text, sizeof(text), text, location );
+				}
+				else if( text[counter + 1] == 'M' ){
+					text[counter] = '%';
+					text[counter + 1] = 'i';
+					Com_sprintf( text, sizeof(text), text, ent->client->ps.ammo[ ent->client->ps.weapon ] );
+				}
+				else if( text[counter + 1] == 'W' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					switch( ent->client->ps.weapon ){
+						case WP_GAUNTLET:
+							Com_sprintf( text, sizeof(text), text, "^5Gaunt" );
+							break;
+						case WP_MACHINEGUN:
+							Com_sprintf( text, sizeof(text), text, "^3MG^5" );
+							break;
+						case WP_SHOTGUN:
+							Com_sprintf( text, sizeof(text), text, "^3SG^5" );
+							break;
+						case WP_GRENADE_LAUNCHER:
+							Com_sprintf( text, sizeof(text), text, "^2GL^5" );
+							break;
+						case WP_ROCKET_LAUNCHER:
+							Com_sprintf( text, sizeof(text), text, "^1RL^5" );
+							break;
+						case WP_LIGHTNING:
+							Com_sprintf( text, sizeof(text), text, "^7LG^5" );
+							break;
+						case WP_RAILGUN:
+							Com_sprintf( text, sizeof(text), text, "^2RG^5" );
+							break;
+						case WP_PLASMAGUN:
+							Com_sprintf( text, sizeof(text), text, "^6PG^5" );
+							break;
+						case WP_BFG:
+							Com_sprintf( text, sizeof(text), text, "^5BFG" );
+							break;
+						default:
+							Com_sprintf( text, sizeof(text), text, "" );
+					}
+				}	
+			}
+		}
+	}
 
 	if ( target ) {
 		G_SayTo( ent, target, mode, color, name, text );
