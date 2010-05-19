@@ -314,10 +314,38 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 		} else if (armor || health > 100) {
 			trap_S_StartLocalSound( cgs.media.hitSoundLowArmor, CHAN_LOCAL_SOUND );
 		} else {
-			trap_S_StartLocalSound( cgs.media.hitSound, CHAN_LOCAL_SOUND );
+			trap_S_StartLocalSound( cgs.media.hitSound[2], CHAN_LOCAL_SOUND );
 		}
 #else
-		trap_S_StartLocalSound( cgs.media.hitSound, CHAN_LOCAL_SOUND );
+		if( cg_hitBeep.integer == 1 && cgs.media.hitSound[2])
+			trap_S_StartLocalSound( cgs.media.hitSound[2], CHAN_LOCAL_SOUND );
+
+		if( cg_hitBeep.integer == 2 && cgs.media.hitSound[0]){
+			if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 80 )
+				trap_S_StartLocalSound( cgs.media.hitSound[0], CHAN_LOCAL_SOUND );
+			else if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 60 )
+				trap_S_StartLocalSound( cgs.media.hitSound[1], CHAN_LOCAL_SOUND );
+			else if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 40 )
+				trap_S_StartLocalSound( cgs.media.hitSound[2], CHAN_LOCAL_SOUND );
+			else if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 20 )
+				trap_S_StartLocalSound( cgs.media.hitSound[3], CHAN_LOCAL_SOUND );
+			else
+				trap_S_StartLocalSound( cgs.media.hitSound[4], CHAN_LOCAL_SOUND );
+		}
+
+		if( cg_hitBeep.integer == 3 && cgs.media.hitSound[0]){
+			if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 80 )
+				trap_S_StartLocalSound( cgs.media.hitSound[4], CHAN_LOCAL_SOUND );
+			else if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 60 )
+				trap_S_StartLocalSound( cgs.media.hitSound[3], CHAN_LOCAL_SOUND );
+			else if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 40 )
+				trap_S_StartLocalSound( cgs.media.hitSound[2], CHAN_LOCAL_SOUND );
+			else if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 20 )
+				trap_S_StartLocalSound( cgs.media.hitSound[1], CHAN_LOCAL_SOUND );
+			else
+				trap_S_StartLocalSound( cgs.media.hitSound[0], CHAN_LOCAL_SOUND );
+		}
+		
 #endif
 	} else if ( ps->persistant[PERS_HITS] < ops->persistant[PERS_HITS] ) {
 		trap_S_StartLocalSound( cgs.media.hitTeamSound, CHAN_LOCAL_SOUND );

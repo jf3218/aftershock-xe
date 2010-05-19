@@ -915,7 +915,7 @@ typedef struct {
 	sfxHandle_t twoFragSound;
 	sfxHandle_t oneFragSound;
 
-	sfxHandle_t hitSound;
+	sfxHandle_t hitSound[5];
 	sfxHandle_t hitSoundHighArmor;
 	sfxHandle_t hitSoundLowArmor;
 	sfxHandle_t hitTeamSound;
@@ -1290,7 +1290,7 @@ extern	vmCvar_t		cl_timeNudge;
 
 //extra CVARS elimination
 extern	vmCvar_t		cg_alwaysWeaponBar;
-extern	vmCvar_t		cg_hitsound;
+extern	vmCvar_t		cg_hitBeep;
 extern  vmCvar_t                cg_voip_teamonly;
 extern  vmCvar_t                cg_voteflags;
 extern  vmCvar_t                cg_cyclegrapple;

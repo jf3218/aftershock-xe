@@ -222,7 +222,7 @@ vmCvar_t	cl_timeNudge;
 
 //elimination addition
 vmCvar_t	cg_alwaysWeaponBar;
-vmCvar_t	cg_hitsound;
+vmCvar_t	cg_hitBeep;
 vmCvar_t        cg_voip_teamonly;
 vmCvar_t        cg_voteflags;
 vmCvar_t        cg_cyclegrapple;
@@ -357,7 +357,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_paused, "cl_paused", "0", CVAR_ROM },
 	{ &cg_blood, "com_blood", "1", CVAR_ARCHIVE },
 	{ &cg_alwaysWeaponBar, "cg_alwaysWeaponBar", "0", CVAR_ARCHIVE},	//Elimination
-        { &cg_hitsound, "cg_hitsound", "0", CVAR_ARCHIVE},
+        { &cg_hitBeep, "cg_hitBeep", "2", CVAR_ARCHIVE},
         { &cg_voip_teamonly, "cg_voipTeamOnly", "1", CVAR_ARCHIVE},
         { &cg_voteflags, "cg_voteflags", "*", CVAR_ROM},
         { &cg_cyclegrapple, "cg_cyclegrapple", "1", CVAR_ARCHIVE},
@@ -809,12 +809,12 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.talkSound = trap_S_RegisterSound( "sound/player/talk.wav", qfalse );
 	cgs.media.landSound = trap_S_RegisterSound( "sound/player/land1.wav", qfalse);
 
-        switch(cg_hitsound.integer) {
-            
-            case 0:
-            default:
-            cgs.media.hitSound = trap_S_RegisterSound( "sound/feedback/hit.wav", qfalse );
-        };
+
+	cgs.media.hitSound[0] = trap_S_RegisterSound( "sound/feedback/hitlower.wav", qfalse );
+	cgs.media.hitSound[1] = trap_S_RegisterSound( "sound/feedback/hitlow.wav", qfalse );
+	cgs.media.hitSound[2] = trap_S_RegisterSound( "sound/feedback/hit.wav", qfalse );
+	cgs.media.hitSound[3] = trap_S_RegisterSound( "sound/feedback/hithigh.wav", qfalse );
+	cgs.media.hitSound[4] = trap_S_RegisterSound( "sound/feedback/hithigher.wav", qfalse );
 
 #ifdef MISSIONPACK
 	cgs.media.hitSoundHighArmor = trap_S_RegisterSound( "sound/feedback/hithi.wav", qfalse );
