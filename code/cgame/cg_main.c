@@ -271,6 +271,8 @@ vmCvar_t 	cg_deathNoticeTime;
 
 vmCvar_t	s_ambient;
 
+vmCvar_t	cg_nokick;
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -461,6 +463,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 
 	{&cg_deathNoticeTime, "cg_deathNoticeTime", "3000", CVAR_ARCHIVE},
 	{&s_ambient, "s_ambient", "1", CVAR_ARCHIVE},
+	{&cg_nokick, "cg_nokick", "0", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
