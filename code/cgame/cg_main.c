@@ -275,6 +275,8 @@ vmCvar_t	cg_nokick;
 
 vmCvar_t	cg_hiResCharset;
 
+vmCvar_t	cg_weaponBobbing;
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -467,7 +469,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&s_ambient, "s_ambient", "1", CVAR_ARCHIVE},
 	{&cg_nokick, "cg_nokick", "0", CVAR_ARCHIVE},
 	{&cg_hiResCharset, "cg_hiResCharset", "1", CVAR_ARCHIVE},
-
+	{&cg_weaponBobbing, "cg_weaponBobbing", "1", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

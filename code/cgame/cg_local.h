@@ -1347,6 +1347,8 @@ extern vmCvar_t			cg_nokick;
 
 extern vmCvar_t			cg_hiResCharset;
 
+extern vmCvar_t			cg_weaponBobbing;
+
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
 //void CG_AddBoundingBox( centity_t *cent );
