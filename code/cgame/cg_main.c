@@ -2071,9 +2071,9 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	cgs.media.charsetShader		= trap_R_RegisterShader( "gfx/2d/bigchars" );
 
 	
-	cgs.media.charsetShader32		= trap_R_RegisterShader( "gfx/2d/bigchars32.tga" );
-	cgs.media.charsetShader64		= trap_R_RegisterShader( "gfx/2d/bigchars64.tga" );
-	cgs.media.charsetShader128		= trap_R_RegisterShader( "gfx/2d/bigchars128.tga" );
+	cgs.media.charsetShader32		= trap_R_RegisterShader( "gfx/2d/bigchars32" );
+	cgs.media.charsetShader64		= trap_R_RegisterShader( "gfx/2d/bigchars64" );
+	cgs.media.charsetShader128		= trap_R_RegisterShader( "gfx/2d/bigchars128" );
 
 
 	cgs.media.whiteShader		= trap_R_RegisterShader( "white" );
