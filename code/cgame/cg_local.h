@@ -670,6 +670,9 @@ typedef struct {
 // stored in the clientInfo_t, itemInfo_t, weaponInfo_t, and powerupInfo_t
 typedef struct {
 	qhandle_t	charsetShader;
+	qhandle_t	charsetShader32;
+	qhandle_t	charsetShader64;
+	qhandle_t	charsetShader128;
 	qhandle_t	charsetProp;
 	qhandle_t	charsetPropGlow;
 	qhandle_t	charsetPropB;
@@ -1341,6 +1344,8 @@ extern vmCvar_t 		cg_deathNoticeTime;
 extern vmCvar_t			s_ambient;
 
 extern vmCvar_t			cg_nokick;
+
+extern vmCvar_t			cg_hiResCharset;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

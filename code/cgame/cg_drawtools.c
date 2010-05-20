@@ -143,8 +143,30 @@ void CG_DrawChar( int x, int y, int width, int height, int ch ) {
 	frow = row*0.0625;
 	fcol = col*0.0625;
 	size = 0.0625;
-
-	trap_R_DrawStretchPic( ax, ay, aw, ah,
+	if( cg_hiResCharset.integer ){
+		if ( height*cgs.screenYScale <= 16 )
+			trap_R_DrawStretchPic( ax, ay, aw, ah,
+ 					   fcol, frow, 
+ 					   fcol + size, frow + size, 
+ 					   cgs.media.charsetShader );
+		else if ( height*cgs.screenYScale <= 32 )
+			trap_R_DrawStretchPic( ax, ay, aw, ah,
+					   fcol, frow, 
+					   fcol + size, frow + size, 
+					   cgs.media.charsetShader32 );
+		else if ( height*cgs.screenYScale <= 64 )
+			trap_R_DrawStretchPic( ax, ay, aw, ah,
+					   fcol, frow, 
+					   fcol + size, frow + size, 
+					   cgs.media.charsetShader64 );
+		else 
+			trap_R_DrawStretchPic( ax, ay, aw, ah,
+					   fcol, frow, 
+					   fcol + size, frow + size, 
+					   cgs.media.charsetShader128 );
+	}
+	else
+		trap_R_DrawStretchPic( ax, ay, aw, ah,
 					   fcol, frow, 
 					   fcol + size, frow + size, 
 					   cgs.media.charsetShader );

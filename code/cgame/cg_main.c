@@ -273,6 +273,8 @@ vmCvar_t	s_ambient;
 
 vmCvar_t	cg_nokick;
 
+vmCvar_t	cg_hiResCharset;
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -464,6 +466,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_deathNoticeTime, "cg_deathNoticeTime", "3000", CVAR_ARCHIVE},
 	{&s_ambient, "s_ambient", "1", CVAR_ARCHIVE},
 	{&cg_nokick, "cg_nokick", "0", CVAR_ARCHIVE},
+	{&cg_hiResCharset, "cg_hiResCharset", "1", CVAR_ARCHIVE},
+
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -2063,6 +2067,13 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 
 	// load a few needed things before we do any screen updates
 	cgs.media.charsetShader		= trap_R_RegisterShader( "gfx/2d/bigchars" );
+
+	
+	cgs.media.charsetShader32		= trap_R_RegisterShader( "gfx/2d/bigchars32.tga" );
+	cgs.media.charsetShader64		= trap_R_RegisterShader( "gfx/2d/bigchars64.tga" );
+	cgs.media.charsetShader128		= trap_R_RegisterShader( "gfx/2d/bigchars128.tga" );
+
+
 	cgs.media.whiteShader		= trap_R_RegisterShader( "white" );
 	cgs.media.charsetProp		= trap_R_RegisterShaderNoMip( "menu/art/font1_prop.tga" );
 	cgs.media.charsetPropGlow	= trap_R_RegisterShaderNoMip( "menu/art/font1_prop_glo.tga" );
