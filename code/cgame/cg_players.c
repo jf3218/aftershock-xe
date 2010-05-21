@@ -317,17 +317,26 @@ static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t
 	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
 		switch ( ci->team ) {
 			case TEAM_BLUE: {
-				team = "blue";
+				if( cg_blueteammodel.string )
+					team = "pm";
+				else
+					team = "blue";
 				break;
 			}
 			default: {
-				team = "red";
+				if( cg_redteammodel.string )
+					team = "pm";
+				else
+					team = "red";
 				break;
 			}
 		}
 	}
 	else {
-		team = "default";
+		if( cg_enemymodel.string )
+			team = "pm";
+		else
+			team = "default";
 	}
 	charactersFolder = "";
 	while(1) {
@@ -392,17 +401,26 @@ static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t 
 	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
 		switch ( ci->team ) {
 			case TEAM_BLUE: {
-				team = "blue";
+				if( cg_blueteammodel.string )
+					team = "pm";
+				else
+					team = "blue";
 				break;
 			}
 			default: {
-				team = "red";
+				if( cg_redteammodel.string )
+					team = "pm";
+				else
+					team = "red";
 				break;
 			}
 		}
 	}
 	else {
-		team = "default";
+		if( cg_enemymodel.string )
+			team = "pm";
+		else
+			team = "default";
 	}
 
 	if ( headModelName[0] == '*' ) {
@@ -880,6 +898,10 @@ void CG_NewClientInfo( int clientNum ) {
 	const char	*v;
 	char		*slash;
 
+	int local_team, enemy;
+  	char *model_name, cvar_str[MAX_CVAR_VALUE_STRING];
+  	const char *local_config;
+
 	ci = &cgs.clientinfo[clientNum];
 
 	configstring = CG_ConfigString( clientNum + CS_PLAYERS );
@@ -887,6 +909,13 @@ void CG_NewClientInfo( int clientNum ) {
 		memset( ci, 0, sizeof( *ci ) );
 		return;		// player just left
 	}
+
+	if (cg_forceModel.integer)
+  	{
+    		local_config = CG_ConfigString(cg.clientNum + CS_PLAYERS);
+    		v = Info_ValueForKey(local_config, "t");
+    		local_team = atoi(v);
+  	}
 
 	// build into a temp buffer so the defer checks can use
 	// the old value
@@ -939,21 +968,119 @@ void CG_NewClientInfo( int clientNum ) {
 
 	// model
 	v = Info_ValueForKey( configstring, "model" );
+	
 	if ( cg_forceModel.integer ) {
 		// forcemodel makes everyone use a single model
 		// to prevent load hitches
 		char modelStr[MAX_QPATH];
 		char *skin;
+		
+		if (cgs.gametype >= GT_TEAM)
+      		{
+        		if (local_team != newInfo.team)
+          			enemy = 1;
+        		else
+          			enemy = 0;
+      		}
+      		else
+        		enemy = 1;
 
 		if( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
-			Q_strncpyz( newInfo.modelName, DEFAULT_TEAM_MODEL, sizeof( newInfo.modelName ) );
-			Q_strncpyz( newInfo.skinName, "default", sizeof( newInfo.skinName ) );
+			if( cg_forceteammodels.integer ){
+				if( ci->team == TEAM_BLUE ){
+					if (!(clientNum == cg.clientNum)){
+						trap_Cvar_VariableStringBuffer( "cg_blueteammodel", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					else{
+						trap_Cvar_VariableStringBuffer( "model", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					Q_strncpyz( newInfo.modelName, modelStr, sizeof( newInfo.modelName ) );
+					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.modelName ) );			
+				}
+				else if( ci->team == TEAM_RED ){
+					if (!(clientNum == cg.clientNum)){
+						trap_Cvar_VariableStringBuffer( "cg_redteammodel", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					else{
+						trap_Cvar_VariableStringBuffer( "model", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					Q_strncpyz( newInfo.modelName, modelStr, sizeof( newInfo.modelName ) );
+					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.modelName ) );		
+				}	
+			}
+			else if( cg_teammodel.string && cg_enemymodel.string ){
+				if( enemy ){
+					trap_Cvar_VariableStringBuffer( "cg_enemymodel", modelStr, sizeof( modelStr ) );
+					if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+						skin = "default";
+					} else {
+						*skin++ = 0;
+					}
+					
+					Q_strncpyz( newInfo.modelName, modelStr, sizeof( newInfo.modelName ) );
+					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.modelName ) );			
+				}
+				else if( !enemy ){
+					if (!(clientNum == cg.clientNum)){
+						trap_Cvar_VariableStringBuffer( "cg_teammodel", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					else{
+						trap_Cvar_VariableStringBuffer( "model", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					Q_strncpyz( newInfo.modelName, modelStr, sizeof( newInfo.modelName ) );
+					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.modelName ) );		
+				}	
+			}	
+			else{
+				Q_strncpyz( newInfo.modelName, DEFAULT_TEAM_MODEL, sizeof( newInfo.modelName ) );
+				Q_strncpyz( newInfo.skinName, "default", sizeof( newInfo.skinName ) );
+			}
 		} else {
-			trap_Cvar_VariableStringBuffer( "model", modelStr, sizeof( modelStr ) );
-			if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
-				skin = "default";
-			} else {
-				*skin++ = 0;
+			if (!(clientNum == cg.clientNum)){
+				trap_Cvar_VariableStringBuffer( "cg_enemymodel", modelStr, sizeof( modelStr ) );
+				if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+					skin = "default";
+				} else {
+					*skin++ = 0;
+				}
+			}	
+			else{
+				trap_Cvar_VariableStringBuffer( "model", modelStr, sizeof( modelStr ) );
+				if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+					skin = "default";
+				} else {
+					*skin++ = 0;
+				}
 			}
 
 			Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.skinName ) );
@@ -961,10 +1088,12 @@ void CG_NewClientInfo( int clientNum ) {
 		}
 
 		if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 ) {
-			// keep skin name
-			slash = strchr( v, '/' );
-			if ( slash ) {
-				Q_strncpyz( newInfo.skinName, slash + 1, sizeof( newInfo.skinName ) );
+			if( !( cg_forceteammodels.integer || cg_enemymodel.string ) ){
+				// keep skin name
+				slash = strchr( v, '/' );
+				if ( slash ) {
+					Q_strncpyz( newInfo.skinName, slash + 1, sizeof( newInfo.skinName ) );
+				}
 			}
 		}
 	} else {
@@ -990,25 +1119,113 @@ void CG_NewClientInfo( int clientNum ) {
 		char *skin;
 
 		if( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
-			Q_strncpyz( newInfo.headModelName, DEFAULT_TEAM_MODEL, sizeof( newInfo.headModelName ) );
-			Q_strncpyz( newInfo.headSkinName, "default", sizeof( newInfo.headSkinName ) );
-		} else {
-			trap_Cvar_VariableStringBuffer( "headmodel", modelStr, sizeof( modelStr ) );
-			if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
-				skin = "default";
-			} else {
-				*skin++ = 0;
+			if( cg_forceteammodels.integer ){
+				if( ci->team == TEAM_BLUE ){
+					if (!(clientNum == cg.clientNum)){
+						trap_Cvar_VariableStringBuffer( "cg_blueteammodel", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					else{
+						trap_Cvar_VariableStringBuffer( "model", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.modelName ) );
+					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.modelName ) );			
+				}
+				else if( ci->team == TEAM_RED ){
+					if (!(clientNum == cg.clientNum)){
+						trap_Cvar_VariableStringBuffer( "cg_redteammodel", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					else{
+						trap_Cvar_VariableStringBuffer( "model", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.modelName ) );
+					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.modelName ) );	
+				}	
 			}
-
+			else if( cg_teammodel.string && cg_enemymodel.string ){
+				if( enemy ){
+					trap_Cvar_VariableStringBuffer( "cg_enemymodel", modelStr, sizeof( modelStr ) );
+					if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+						skin = "default";
+					} else {
+						*skin++ = 0;
+					}
+					
+					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.modelName ) );
+					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.modelName ) );			
+				}
+				else if( !enemy ){
+					if (!(clientNum == cg.clientNum)){
+						trap_Cvar_VariableStringBuffer( "cg_teammodel", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					else{
+						trap_Cvar_VariableStringBuffer( "headmodelmodel", modelStr, sizeof( modelStr ) );
+						if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+							skin = "default";
+						} else {
+							*skin++ = 0;
+						}
+					}
+					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.modelName ) );
+					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.modelName ) );		
+				}	
+			}
+			else{
+				Q_strncpyz( newInfo.headModelName, DEFAULT_TEAM_MODEL, sizeof( newInfo.headModelName ) );
+				Q_strncpyz( newInfo.headSkinName, "default", sizeof( newInfo.headSkinName ) );
+			}
+		} else {
+			if (!(clientNum == cg.clientNum)){
+				trap_Cvar_VariableStringBuffer( "cg_enemymodel", modelStr, sizeof( modelStr ) );
+				if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+					skin = "default";
+				} else {
+					*skin++ = 0;
+				}
+			}	
+			else{
+				trap_Cvar_VariableStringBuffer( "headmodel", modelStr, sizeof( modelStr ) );
+				if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+					skin = "default";
+				} else {
+					*skin++ = 0;
+				}
+			}	
 			Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.headSkinName ) );
 			Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.headModelName ) );
 		}
 
 		if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
-			// keep skin name
-			slash = strchr( v, '/' );
-			if ( slash ) {
-				Q_strncpyz( newInfo.headSkinName, slash + 1, sizeof( newInfo.headSkinName ) );
+			if( !( cg_forceteammodels.integer || cg_enemymodel.string ) ){
+				// keep skin name
+				slash = strchr( v, '/' );
+				if ( slash ) {
+					Q_strncpyz( newInfo.headSkinName, slash + 1, sizeof( newInfo.headSkinName ) );
+				}
 			}
 		}
 	} else {
@@ -1030,7 +1247,7 @@ void CG_NewClientInfo( int clientNum ) {
 	if ( !CG_ScanForExistingClientInfo( &newInfo ) ) {
 		qboolean	forceDefer;
 
-		forceDefer = trap_MemoryRemaining() < 4000000;
+		forceDefer = ( trap_MemoryRemaining() < 4000000 );
 
 		// if we are defering loads, just have it pick the first valid
 		if ( forceDefer || (cg_deferPlayers.integer && !cg_buildScript.integer && !cg.loading ) ) {
@@ -2214,6 +2431,157 @@ int CG_LightVerts( vec3_t normal, int numVerts, polyVert_t *verts )
 	return qtrue;
 }
 
+int CG_ParseHex (const char *hex)
+{
+	const char    *str;
+	int    num;
+
+	num = 0;
+	str = hex;
+
+	while (*str)
+	{
+		num <<= 4;
+		if (*str >= '0' && *str <= '9')
+			num += *str-'0';
+		else if (*str >= 'a' && *str <= 'f')
+			num += 10 + *str-'a';
+		else if (*str >= 'A' && *str <= 'F')
+			num += 10 + *str-'A';
+		str++;
+	}
+
+	return num;
+}
+
+int hexToRed( char* hexin ){
+	char	color[4];
+	int out;
+	Com_sprintf (color, sizeof(color), "%c%c", hexin[2], hexin[3]);
+	out = CG_ParseHex(color);
+	if( out < 0 )
+		out = 0;
+	else if( out > 255 )
+		out = 255;
+	return( out );
+}
+
+int hexToGreen( char* hexin ){
+	char	color[4];
+	int out;
+	Com_sprintf (color, sizeof(color), "%c%c", hexin[4], hexin[5]);
+	out = CG_ParseHex(color);
+	if( out < 0 )
+		out = 0;
+	else if( out > 255 )
+		out = 255;
+	return( out );
+}
+
+int hexToBlue( char* hexin ){
+	char	color[4];
+	int out;
+	Com_sprintf (color, sizeof(color), "%c%c", hexin[6], hexin[7]);
+	out = CG_ParseHex(color);
+	if( out < 0 )
+		out = 0;
+	else if( out > 255 )
+		out = 255;
+	return( out );
+}
+
+int hexToAlpha( char* hexin ){
+	char	color[4];
+	int out;
+	Com_sprintf (color, sizeof(color), "%c%c", hexin[8], hexin[9]);
+	out = CG_ParseHex(color);
+	if( out < 0 )
+		out = 0;
+	else if( out > 255 )
+		out = 255;
+	return( out );
+}
+/*
+===============
+CG_setColor
+===============
+*/
+CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
+		  refEntity_t * legs){
+	int enemy;
+  	clientInfo_t *localPlayer;
+
+  	localPlayer = &cgs.clientinfo[cg.clientNum];
+
+	if( localPlayer->team == TEAM_FREE || ( localPlayer->team != ci->team && !cg_forceteammodels.integer ) ){
+		legs->shaderRGBA[0] = hexToRed(cg_enemyLegsColor.string);
+		legs->shaderRGBA[1] = hexToGreen(cg_enemyLegsColor.string);
+		legs->shaderRGBA[2] = hexToBlue(cg_enemyLegsColor.string);
+		legs->shaderRGBA[3] = hexToAlpha(cg_enemyLegsColor.string);
+
+		torso->shaderRGBA[0] = hexToRed(cg_enemyTorsoColor.string);
+		torso->shaderRGBA[1] = hexToGreen(cg_enemyTorsoColor.string);
+		torso->shaderRGBA[2] = hexToBlue(cg_enemyTorsoColor.string);
+		torso->shaderRGBA[3] = hexToAlpha(cg_enemyTorsoColor.string);
+
+		head->shaderRGBA[0] = hexToRed(cg_enemyHeadColor.string);
+		head->shaderRGBA[1] = hexToGreen(cg_enemyHeadColor.string);
+		head->shaderRGBA[2] = hexToBlue(cg_enemyHeadColor.string);
+		head->shaderRGBA[3] = hexToAlpha(cg_enemyHeadColor.string);
+	}
+	else if( ci->team == TEAM_BLUE && cg_forceteammodels.integer ){
+		legs->shaderRGBA[0] = hexToRed(cg_blueLegsColor.string);
+		legs->shaderRGBA[1] = hexToGreen(cg_blueLegsColor.string);
+		legs->shaderRGBA[2] = hexToBlue(cg_blueLegsColor.string);
+		legs->shaderRGBA[3] = hexToAlpha(cg_blueLegsColor.string);
+
+		torso->shaderRGBA[0] = hexToRed(cg_blueTorsoColor.string);
+		torso->shaderRGBA[1] = hexToGreen(cg_blueTorsoColor.string);
+		torso->shaderRGBA[2] = hexToBlue(cg_blueTorsoColor.string);
+		torso->shaderRGBA[3] = hexToAlpha(cg_blueTorsoColor.string);
+
+		head->shaderRGBA[0] = hexToRed(cg_blueHeadColor.string);
+		head->shaderRGBA[1] = hexToGreen(cg_blueHeadColor.string);
+		head->shaderRGBA[2] = hexToBlue(cg_blueHeadColor.string);
+		head->shaderRGBA[3] = hexToAlpha(cg_blueHeadColor.string);
+	}
+	else if( ci->team == TEAM_RED &&  cg_forceteammodels.integer){
+		legs->shaderRGBA[0] = hexToRed(cg_redLegsColor.string);
+		legs->shaderRGBA[1] = hexToGreen(cg_redLegsColor.string);
+		legs->shaderRGBA[2] = hexToBlue(cg_redLegsColor.string);
+		legs->shaderRGBA[3] = hexToAlpha(cg_redLegsColor.string);
+
+		torso->shaderRGBA[0] = hexToRed(cg_redTorsoColor.string);
+		torso->shaderRGBA[1] = hexToGreen(cg_redTorsoColor.string);
+		torso->shaderRGBA[2] = hexToBlue(cg_redTorsoColor.string);
+		torso->shaderRGBA[3] = hexToAlpha(cg_redTorsoColor.string);
+
+		head->shaderRGBA[0] = hexToRed(cg_redHeadColor.string);
+		head->shaderRGBA[1] = hexToGreen(cg_redHeadColor.string);
+		head->shaderRGBA[2] = hexToBlue(cg_redHeadColor.string);
+		head->shaderRGBA[3] = hexToAlpha(cg_redHeadColor.string);
+	}
+	if( localPlayer->team != TEAM_FREE && ( localPlayer->team == ci->team && !cg_forceteammodels.integer ) ){
+		legs->shaderRGBA[0] = hexToRed(cg_teamLegsColor.string);
+		legs->shaderRGBA[1] = hexToGreen(cg_teamLegsColor.string);
+		legs->shaderRGBA[2] = hexToBlue(cg_teamLegsColor.string);
+		legs->shaderRGBA[3] = hexToAlpha(cg_teamLegsColor.string);
+
+		torso->shaderRGBA[0] = hexToRed(cg_teamTorsoColor.string);
+		torso->shaderRGBA[1] = hexToGreen(cg_teamTorsoColor.string);
+		torso->shaderRGBA[2] = hexToBlue(cg_teamTorsoColor.string);
+		torso->shaderRGBA[3] = hexToAlpha(cg_teamTorsoColor.string);
+
+		head->shaderRGBA[0] = hexToRed(cg_teamHeadColor.string);
+		head->shaderRGBA[1] = hexToGreen(cg_teamHeadColor.string);
+		head->shaderRGBA[2] = hexToBlue(cg_teamHeadColor.string);
+		head->shaderRGBA[3] = hexToAlpha(cg_teamHeadColor.string);
+	}
+}
+
+	
+
+
 /*
 ===============
 CG_Player
@@ -2267,6 +2635,8 @@ void CG_Player( centity_t *cent ) {
 	memset( &torso, 0, sizeof(torso) );
 	memset( &head, 0, sizeof(head) );
 
+	CG_setColor( ci, &head, &torso, &legs );
+
 	// get the rotation information
 	CG_PlayerAngles( cent, legs.axis, torso.axis, head.axis );
 	
@@ -2293,6 +2663,7 @@ void CG_Player( centity_t *cent ) {
 	//
 	// add the legs
 	//
+
 	legs.hModel = ci->legsModel;
 	legs.customSkin = ci->legsSkin;
 
@@ -2304,6 +2675,7 @@ void CG_Player( centity_t *cent ) {
 	VectorCopy (legs.origin, legs.oldorigin);	// don't positionally lerp at all
 
 	CG_AddRefEntityWithPowerups( &legs, &cent->currentState, ci->team );
+	
 
 	// if the model failed, allow the default nullmodel to be displayed
 	if (!legs.hModel) {
@@ -2317,6 +2689,7 @@ void CG_Player( centity_t *cent ) {
 	if (!torso.hModel) {
 		return;
 	}
+
 
 	torso.customSkin = ci->torsoSkin;
 
@@ -2538,6 +2911,7 @@ void CG_Player( centity_t *cent ) {
 	if (!head.hModel) {
 		return;
 	}
+	
 	head.customSkin = ci->headSkin;
 
 	VectorCopy( cent->lerpOrigin, head.lightingOrigin );

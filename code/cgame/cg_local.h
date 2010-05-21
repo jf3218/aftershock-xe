@@ -800,6 +800,7 @@ typedef struct {
 	qhandle_t	quadShader;
 	qhandle_t	redQuadShader;
 	qhandle_t	quadWeaponShader;
+
 	qhandle_t	invisShader;
 	qhandle_t	regenShader;
 	qhandle_t	battleSuitShader;
@@ -918,7 +919,11 @@ typedef struct {
 	sfxHandle_t twoFragSound;
 	sfxHandle_t oneFragSound;
 
-	sfxHandle_t hitSound[5];
+	sfxHandle_t hitSound0;
+	sfxHandle_t hitSound1;
+	sfxHandle_t hitSound2;
+	sfxHandle_t hitSound3;
+	sfxHandle_t hitSound4;	
 	sfxHandle_t hitSoundHighArmor;
 	sfxHandle_t hitSoundLowArmor;
 	sfxHandle_t hitTeamSound;
@@ -1348,6 +1353,28 @@ extern vmCvar_t			cg_nokick;
 extern vmCvar_t			cg_hiResCharset;
 
 extern vmCvar_t			cg_weaponBobbing;
+
+extern vmCvar_t			cg_blueteammodel;
+extern vmCvar_t			cg_redteammodel;
+extern vmCvar_t			cg_enemymodel;
+extern vmCvar_t			cg_teammodel;
+extern vmCvar_t			cg_forceteammodels;
+
+extern vmCvar_t			cg_enemyHeadColor;
+extern vmCvar_t			cg_enemyTorsoColor;
+extern vmCvar_t			cg_enemyLegsColor;
+
+extern vmCvar_t			cg_blueHeadColor;
+extern vmCvar_t			cg_blueTorsoColor;
+extern vmCvar_t			cg_blueLegsColor;
+
+extern vmCvar_t			cg_redHeadColor;
+extern vmCvar_t			cg_redTorsoColor;
+extern vmCvar_t			cg_redLegsColor;
+
+extern vmCvar_t			cg_teamHeadColor;
+extern vmCvar_t			cg_teamTorsoColor;
+extern vmCvar_t			cg_teamLegsColor;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

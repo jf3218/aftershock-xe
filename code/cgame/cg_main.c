@@ -30,6 +30,12 @@ displayContextDef_t cgDC;
 #endif
 
 int forceModelModificationCount = -1;
+int blueTeamModelModificationCount = -1;
+int redTeamModelModificationCount = -1;
+int enemyModelModificationCount = -1;
+int teamModelModificationCount = -1;
+int forceTeamModelsModificationCount = -1;
+
 
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
 void CG_Shutdown( void );
@@ -277,6 +283,29 @@ vmCvar_t	cg_hiResCharset;
 
 vmCvar_t	cg_weaponBobbing;
 
+vmCvar_t	cg_blueteammodel;
+vmCvar_t	cg_redteammodel;
+vmCvar_t	cg_enemymodel;
+vmCvar_t	cg_teammodel;
+vmCvar_t	cg_forceteammodels;
+
+vmCvar_t	cg_blueHeadColor;
+vmCvar_t	cg_blueTorsoColor;
+vmCvar_t	cg_blueLegsColor;
+
+vmCvar_t	cg_redHeadColor;
+vmCvar_t	cg_redTorsoColor;
+vmCvar_t	cg_redLegsColor;
+
+vmCvar_t	cg_enemyHeadColor;
+vmCvar_t	cg_enemyTorsoColor;
+vmCvar_t	cg_enemyLegsColor;
+
+vmCvar_t	cg_teamHeadColor;
+vmCvar_t	cg_teamTorsoColor;
+vmCvar_t	cg_teamLegsColor;
+
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -364,7 +393,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_buildScript, "com_buildScript", "0", 0 },	// force loading of all possible data amd error on failures
 	{ &cg_paused, "cl_paused", "0", CVAR_ROM },
 	{ &cg_blood, "com_blood", "1", CVAR_ARCHIVE },
-	{ &cg_alwaysWeaponBar, "cg_alwaysWeaponBar", "0", CVAR_ARCHIVE},	//Elimination
+	{ &cg_alwaysWeaponBar, "cg_alwaysWeaponBar", "1", CVAR_ARCHIVE},	//Elimination
         { &cg_hitBeep, "cg_hitBeep", "2", CVAR_ARCHIVE},
         { &cg_voip_teamonly, "cg_voipTeamOnly", "1", CVAR_ARCHIVE},
         { &cg_voteflags, "cg_voteflags", "*", CVAR_ROM},
@@ -470,6 +499,29 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_nokick, "cg_nokick", "0", CVAR_ARCHIVE},
 	{&cg_hiResCharset, "cg_hiResCharset", "1", CVAR_ARCHIVE},
 	{&cg_weaponBobbing, "cg_weaponBobbing", "1", CVAR_ARCHIVE},
+
+	{&cg_blueteammodel, "cg_blueteammodel", "skelebot/pm", CVAR_ARCHIVE},
+	{&cg_redteammodel, "cg_redteammodel", "major/pm", CVAR_ARCHIVE},
+	{&cg_enemymodel, "cg_enemymodel", "skelebot/pm", CVAR_ARCHIVE},
+	{&cg_teammodel, "cg_teammodel", "sarge/pm", CVAR_ARCHIVE},
+	{&cg_forceteammodels, "cg_forceteammodels", "0", CVAR_ARCHIVE},
+
+	{&cg_enemyHeadColor, "cg_enemyHeadColor", "0x00FF00FF", CVAR_ARCHIVE},
+	{&cg_enemyTorsoColor, "cg_enemyTorsoColor", "0x00FF00FF", CVAR_ARCHIVE},
+	{&cg_enemyLegsColor, "cg_enemyLegsColor", "0x00FF00FF", CVAR_ARCHIVE},
+
+	{&cg_blueHeadColor, "cg_blueHeadColor", "0x0000FFFF", CVAR_ARCHIVE},
+	{&cg_blueTorsoColor, "cg_blueTorsoColor", "0x0000FFFF", CVAR_ARCHIVE},
+	{&cg_blueLegsColor, "cg_blueLegsColor", "0x0000FFFF", CVAR_ARCHIVE},
+
+	{&cg_redHeadColor, "cg_redHeadColor", "0xFF0000FF", CVAR_ARCHIVE},
+	{&cg_redTorsoColor, "cg_redTorsoColor", "0xFF0000FF", CVAR_ARCHIVE},
+	{&cg_redLegsColor, "cg_redLegsColor", "0xFF0000FF", CVAR_ARCHIVE},
+
+	{&cg_teamHeadColor, "cg_teamHeadColor", "0xFFFFFFFF", CVAR_ARCHIVE},
+	{&cg_teamTorsoColor, "cg_teamTorsoColor", "0xFFFFFFFF", CVAR_ARCHIVE},
+	{&cg_teamLegsColor, "cg_teamLegsColor", "0xFFFFFFFF", CVAR_ARCHIVE},
+	
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -494,6 +546,11 @@ void CG_RegisterCvars( void ) {
 	cgs.localServer = atoi( var );
 
 	forceModelModificationCount = cg_forceModel.modificationCount;
+	blueTeamModelModificationCount = cg_blueteammodel.modificationCount;
+	redTeamModelModificationCount = cg_redteammodel.modificationCount;
+	enemyModelModificationCount = cg_enemymodel.modificationCount;
+	teamModelModificationCount = cg_teammodel.modificationCount;
+	forceTeamModelsModificationCount = cg_forceteammodels.modificationCount;
 
 	trap_Cvar_Register(NULL, "model", DEFAULT_MODEL, CVAR_USERINFO | CVAR_ARCHIVE );
 	trap_Cvar_Register(NULL, "headmodel", DEFAULT_MODEL, CVAR_USERINFO | CVAR_ARCHIVE );
@@ -578,8 +635,15 @@ void CG_UpdateCvars( void ) {
 	}
 
 	// if force model changed
-	if ( forceModelModificationCount != cg_forceModel.modificationCount ) {
+	if ( forceModelModificationCount != cg_forceModel.modificationCount || blueTeamModelModificationCount != cg_blueteammodel.modificationCount || redTeamModelModificationCount != cg_redteammodel.modificationCount || enemyModelModificationCount != cg_enemymodel.modificationCount || teamModelModificationCount != cg_teammodel.modificationCount || forceTeamModelsModificationCount != cg_forceteammodels.modificationCount ) {
+
 		forceModelModificationCount = cg_forceModel.modificationCount;
+		blueTeamModelModificationCount = cg_blueteammodel.modificationCount;
+		redTeamModelModificationCount = cg_redteammodel.modificationCount;
+		enemyModelModificationCount = cg_enemymodel.modificationCount;
+		teamModelModificationCount = cg_teammodel.modificationCount;
+		forceTeamModelsModificationCount = cg_forceteammodels.modificationCount;
+
 		CG_ForceModelChange();
 	}
 }
@@ -822,11 +886,11 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.landSound = trap_S_RegisterSound( "sound/player/land1.wav", qfalse);
 
 
-	cgs.media.hitSound[0] = trap_S_RegisterSound( "sound/feedback/hitlower.wav", qfalse );
-	cgs.media.hitSound[1] = trap_S_RegisterSound( "sound/feedback/hitlow.wav", qfalse );
-	cgs.media.hitSound[2] = trap_S_RegisterSound( "sound/feedback/hit.wav", qfalse );
-	cgs.media.hitSound[3] = trap_S_RegisterSound( "sound/feedback/hithigh.wav", qfalse );
-	cgs.media.hitSound[4] = trap_S_RegisterSound( "sound/feedback/hithigher.wav", qfalse );
+	cgs.media.hitSound0 = trap_S_RegisterSound( "sound/feedback/hitlower.wav", qfalse );
+	cgs.media.hitSound1 = trap_S_RegisterSound( "sound/feedback/hitlow.wav", qfalse );
+	cgs.media.hitSound2 = trap_S_RegisterSound( "sound/feedback/hit.wav", qfalse );
+	cgs.media.hitSound3 = trap_S_RegisterSound( "sound/feedback/hithigh.wav", qfalse );
+	cgs.media.hitSound4 = trap_S_RegisterSound( "sound/feedback/hithigher.wav", qfalse );
 
 #ifdef MISSIONPACK
 	cgs.media.hitSoundHighArmor = trap_S_RegisterSound( "sound/feedback/hithi.wav", qfalse );
@@ -1052,9 +1116,9 @@ static void CG_RegisterGraphics( void ) {
 
 	cgs.media.backTileShader = trap_R_RegisterShader( "gfx/2d/backtile" );
 	cgs.media.noammoShader = trap_R_RegisterShader( "icons/noammo" );
-        cgs.media.selectionShaderLeft = trap_R_RegisterShader( "icons/selectionMarkerLeft.tga" );
-	cgs.media.selectionShaderMid = trap_R_RegisterShader( "icons/selectionMarkerMid.tga" );
-	cgs.media.selectionShaderRight = trap_R_RegisterShader( "icons/selectionMarkerRight.tga" );
+        cgs.media.selectionShaderLeft = trap_R_RegisterShader( "icons/selectionMarkerLeft" );
+	cgs.media.selectionShaderMid = trap_R_RegisterShader( "icons/selectionMarkerMid" );
+	cgs.media.selectionShaderRight = trap_R_RegisterShader( "icons/selectionMarkerRight" );
 
 	// powerup shaders
 	cgs.media.quadShader = trap_R_RegisterShader("powerups/quad" );
@@ -1144,15 +1208,15 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.armorModel = trap_R_RegisterModel( "models/powerups/armor/armor_yel.md3" );
 	cgs.media.armorIcon  = trap_R_RegisterShaderNoMip( "icons/iconr_yellow" );
 
-	cgs.media.direct_hit = trap_R_RegisterShaderNoMip("icons/direct_hit.tga");
-	cgs.media.skull = trap_R_RegisterShaderNoMip("icons/skull.tga");
+	cgs.media.direct_hit = trap_R_RegisterShaderNoMip("icons/direct_hit");
+	cgs.media.skull = trap_R_RegisterShaderNoMip("icons/skull");
 
-	cgs.media.armorYellow  = trap_R_RegisterShaderNoMip( "icons/armorYellow.tga" );
-	cgs.media.armorBlue  = trap_R_RegisterShaderNoMip( "icons/armorBlue.tga" );
-	cgs.media.armorRed  = trap_R_RegisterShaderNoMip( "icons/armorRed.tga" );
-	cgs.media.healthYellow = trap_R_RegisterShaderNoMip( "icons/iconh_yellow.tga" );
-	cgs.media.healthBlue = trap_R_RegisterShaderNoMip( "icons/iconh_blue.tga" );
-	cgs.media.healthRed = trap_R_RegisterShaderNoMip( "icons/iconh_red.tga" );
+	cgs.media.armorYellow  = trap_R_RegisterShaderNoMip( "icons/armorYellow" );
+	cgs.media.armorBlue  = trap_R_RegisterShaderNoMip( "icons/armorBlue" );
+	cgs.media.armorRed  = trap_R_RegisterShaderNoMip( "icons/armorRed" );
+	cgs.media.healthYellow = trap_R_RegisterShaderNoMip( "icons/iconh_yellow" );
+	cgs.media.healthBlue = trap_R_RegisterShaderNoMip( "icons/iconh_blue" );
+	cgs.media.healthRed = trap_R_RegisterShaderNoMip( "icons/iconh_red" );
 	cgs.media.machinegunBrassModel = trap_R_RegisterModel( "models/weapons2/shells/m_shell.md3" );
 	cgs.media.shotgunBrassModel = trap_R_RegisterModel( "models/weapons2/shells/s_shell.md3" );
 
