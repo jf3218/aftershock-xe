@@ -238,7 +238,7 @@ static void CG_Item( centity_t *cent ) {
 	}
 
 	// if set to invisible, skip
-	if ( !es->modelindex || ( es->eFlags & EF_NODRAW ) ) {
+	if ( !es->modelindex ||   es->eFlags & EF_NODRAW  ) {
 		return;
 	}
 

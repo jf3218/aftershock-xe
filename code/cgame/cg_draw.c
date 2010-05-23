@@ -324,7 +324,7 @@ void CG_DrawHead( float x, float y, float w, float h, int clientNum, vec3_t head
 
 	ci = &cgs.clientinfo[ clientNum ];
 
-	if ( cg_draw3dIcons.integer ) {
+	/*if ( cg_draw3dIcons.integer ) {
 		cm = ci->headModel;
 		if ( !cm ) {
 			return;
@@ -345,7 +345,7 @@ void CG_DrawHead( float x, float y, float w, float h, int clientNum, vec3_t head
 		VectorAdd( origin, ci->headOffset, origin );
 
 		CG_Draw3DModel( x, y, w, h, ci->headModel, ci->headSkin, origin, headAngles );
-	} else if ( cg_drawIcons.integer ) {
+	} else*/ if ( cg_drawIcons.integer ) {
 		CG_DrawPic( x, y, w, h, ci->modelIcon );
 	}
 

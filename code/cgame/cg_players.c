@@ -2577,6 +2577,22 @@ CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
 		head->shaderRGBA[2] = hexToBlue(cg_teamHeadColor.string);
 		head->shaderRGBA[3] = hexToAlpha(cg_teamHeadColor.string);
 	}
+	if( ci->isDead ){
+		legs->shaderRGBA[0] = 50;
+		legs->shaderRGBA[1] = 50;
+		legs->shaderRGBA[2] = 50;
+		legs->shaderRGBA[3] = 50;
+
+		torso->shaderRGBA[0] = 50;
+		torso->shaderRGBA[1] = 50;
+		torso->shaderRGBA[2] = 50;
+		torso->shaderRGBA[3] = 50;
+
+		head->shaderRGBA[0] = 50;
+		head->shaderRGBA[1] = 50;
+		head->shaderRGBA[2] = 50;
+		head->shaderRGBA[3] = 50;
+	}
 }
 
 	

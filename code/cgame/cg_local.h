@@ -1410,6 +1410,7 @@ void CG_BuildSpectatorString( void );
 void SnapVectorTowards( vec3_t v, vec3_t to );
 
 void CG_FairCvars();
+void CG_oaUnofficialCvars();
 
 //
 // cg_view.c

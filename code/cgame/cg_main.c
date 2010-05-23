@@ -54,6 +54,7 @@ intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, 
 	switch ( command ) {
 	case CG_INIT:
 		CG_Init( arg0, arg1, arg2 );
+		
 		return 0;
 	case CG_SHUTDOWN:
 		CG_Shutdown();
@@ -63,6 +64,7 @@ intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, 
 	case CG_DRAW_ACTIVE_FRAME:
 		CG_DrawActiveFrame( arg0, arg1, arg2 );
                 CG_FairCvars();
+		CG_oaUnofficialCvars();
 		return 0;
 	case CG_CROSSHAIR_PLAYER:
 		return CG_CrosshairPlayer();
@@ -445,7 +447,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 //	{ &cg_drawBBox, "cg_drawBBox", "0", CVAR_CHEAT },
 	{ &cg_cmdTimeNudge, "cg_cmdTimeNudge", "0", CVAR_ARCHIVE | CVAR_USERINFO },
 	// this will be automagically copied from the server
-	{ &sv_fps, "sv_fps", "20", CVAR_SYSTEMINFO },
+	{ &sv_fps, "sv_fps", "40", CVAR_SYSTEMINFO },
 	{ &cg_projectileNudge, "cg_projectileNudge", "0", CVAR_ARCHIVE },
 	{ &cg_optimizePrediction, "cg_optimizePrediction", "1", CVAR_ARCHIVE },
 	{ &cl_timeNudge, "cl_timeNudge", "0", CVAR_ARCHIVE },
@@ -2386,4 +2388,13 @@ void CG_FairCvars() {
 
     do_vid_restart = qtrue;
 }
+
+void CG_oaUnofficialCvars() {
+	char rendererinfos[128];
+	trap_Cvar_VariableStringBuffer("com_maxfps",rendererinfos,sizeof(rendererinfos) );
+	if(atoi( rendererinfos ) > 125 ) 
+            trap_Cvar_Set("com_maxfps","125");
+        trap_Cvar_Set("con_notifytime", "-1");
+}
+	
 
