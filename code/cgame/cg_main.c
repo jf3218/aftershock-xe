@@ -63,7 +63,7 @@ intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, 
 		return CG_ConsoleCommand();
 	case CG_DRAW_ACTIVE_FRAME:
 		CG_DrawActiveFrame( arg0, arg1, arg2 );
-                CG_FairCvars();
+//                CG_FairCvars();
 		CG_oaUnofficialCvars();
 		return 0;
 	case CG_CROSSHAIR_PLAYER:
@@ -307,6 +307,8 @@ vmCvar_t	cg_teamHeadColor;
 vmCvar_t	cg_teamTorsoColor;
 vmCvar_t	cg_teamLegsColor;
 
+vmCvar_t	cg_deadBodyDarken;
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -524,6 +526,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_teamTorsoColor, "cg_teamTorsoColor", "0xFFFFFFFF", CVAR_ARCHIVE},
 	{&cg_teamLegsColor, "cg_teamLegsColor", "0xFFFFFFFF", CVAR_ARCHIVE},
 	
+	{&cg_deadBodyDarken, "cg_deadBodyDarken", "1", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -645,6 +648,7 @@ void CG_UpdateCvars( void ) {
 		enemyModelModificationCount = cg_enemymodel.modificationCount;
 		teamModelModificationCount = cg_teammodel.modificationCount;
 		forceTeamModelsModificationCount = cg_forceteammodels.modificationCount;
+
 
 		CG_ForceModelChange();
 	}
@@ -2294,7 +2298,7 @@ void SnapVectorTowards( vec3_t v, vec3_t to ) {
 	}
 }
 //unlagged - attack prediction #3
-
+/*
 static qboolean do_vid_restart = qfalse;
 
 void CG_FairCvars() {
@@ -2388,12 +2392,25 @@ void CG_FairCvars() {
 
     do_vid_restart = qtrue;
 }
+*/
 
 void CG_oaUnofficialCvars() {
 	char rendererinfos[128];
+
 	trap_Cvar_VariableStringBuffer("com_maxfps",rendererinfos,sizeof(rendererinfos) );
-	if(atoi( rendererinfos ) > 125 ) 
-            trap_Cvar_Set("com_maxfps","125");
+	if(atoi( rendererinfos ) > 125 );
+            	trap_Cvar_Set("com_maxfps","125");
+
+	trap_Cvar_VariableStringBuffer("cg_shadows",rendererinfos,sizeof(rendererinfos) );
+	if(atoi( rendererinfos ) > 1 );
+		trap_Cvar_Set("cg_shadows","1");
+	
+	trap_Cvar_VariableStringBuffer("r_vertexlight",rendererinfos,sizeof(rendererinfos) );
+        if(atoi( rendererinfos ) != 0 ) {
+            	trap_Cvar_Set("r_vertexlight","0");
+		trap_SendConsoleCommand("vid_restart");
+	}
+
         trap_Cvar_Set("con_notifytime", "-1");
 }
 	

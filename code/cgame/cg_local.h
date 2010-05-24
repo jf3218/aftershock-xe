@@ -378,7 +378,7 @@ typedef struct {
 
 	sfxHandle_t		sounds[MAX_CUSTOM_SOUNDS];
 
-	int		isDead;
+	int			isDead;
 } clientInfo_t;
 
 
@@ -1376,6 +1376,8 @@ extern vmCvar_t			cg_teamHeadColor;
 extern vmCvar_t			cg_teamTorsoColor;
 extern vmCvar_t			cg_teamLegsColor;
 
+extern vmCvar_t			cg_deadBodyDarken;
+
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
 //void CG_AddBoundingBox( centity_t *cent );
@@ -1409,7 +1411,7 @@ void CG_BuildSpectatorString( void );
 //unlagged, sagos modfication
 void SnapVectorTowards( vec3_t v, vec3_t to );
 
-void CG_FairCvars();
+//void CG_FairCvars();
 void CG_oaUnofficialCvars();
 
 //

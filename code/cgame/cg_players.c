@@ -2506,14 +2506,31 @@ int hexToAlpha( char* hexin ){
 CG_setColor
 ===============
 */
-CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
-		  refEntity_t * legs){
+void CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
+		  refEntity_t * legs, int state){
 	int enemy;
+	
   	clientInfo_t *localPlayer;
-
   	localPlayer = &cgs.clientinfo[cg.clientNum];
 
-	if( localPlayer->team == TEAM_FREE || ( localPlayer->team != ci->team && !cg_forceteammodels.integer ) ){
+	if( ( state & EF_DEAD )  && cg_deadBodyDarken.integer ){
+		legs->shaderRGBA[0] = 50;
+		legs->shaderRGBA[1] = 50;
+		legs->shaderRGBA[2] = 50;
+		legs->shaderRGBA[3] = 50;
+
+		torso->shaderRGBA[0] = 50;
+		torso->shaderRGBA[1] = 50;
+		torso->shaderRGBA[2] = 50;
+		torso->shaderRGBA[3] = 50;
+
+		head->shaderRGBA[0] = 50;
+		head->shaderRGBA[1] = 50;
+		head->shaderRGBA[2] = 50;
+		head->shaderRGBA[3] = 50;
+		return;
+	}
+	else if( localPlayer->team == TEAM_FREE || ( localPlayer->team != ci->team && !cg_forceteammodels.integer && localPlayer->team != TEAM_SPECTATOR ) ){
 		legs->shaderRGBA[0] = hexToRed(cg_enemyLegsColor.string);
 		legs->shaderRGBA[1] = hexToGreen(cg_enemyLegsColor.string);
 		legs->shaderRGBA[2] = hexToBlue(cg_enemyLegsColor.string);
@@ -2528,8 +2545,9 @@ CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
 		head->shaderRGBA[1] = hexToGreen(cg_enemyHeadColor.string);
 		head->shaderRGBA[2] = hexToBlue(cg_enemyHeadColor.string);
 		head->shaderRGBA[3] = hexToAlpha(cg_enemyHeadColor.string);
+		return;
 	}
-	else if( ci->team == TEAM_BLUE && cg_forceteammodels.integer ){
+	else if( ( ci->team == TEAM_BLUE && cg_forceteammodels.integer ) || ( ci->team == TEAM_BLUE && localPlayer->team == TEAM_SPECTATOR ) ){
 		legs->shaderRGBA[0] = hexToRed(cg_blueLegsColor.string);
 		legs->shaderRGBA[1] = hexToGreen(cg_blueLegsColor.string);
 		legs->shaderRGBA[2] = hexToBlue(cg_blueLegsColor.string);
@@ -2544,8 +2562,9 @@ CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
 		head->shaderRGBA[1] = hexToGreen(cg_blueHeadColor.string);
 		head->shaderRGBA[2] = hexToBlue(cg_blueHeadColor.string);
 		head->shaderRGBA[3] = hexToAlpha(cg_blueHeadColor.string);
+		return;
 	}
-	else if( ci->team == TEAM_RED &&  cg_forceteammodels.integer){
+	else if( ( ci->team == TEAM_RED &&  cg_forceteammodels.integer ) || ( ci->team == TEAM_RED && localPlayer->team == TEAM_SPECTATOR ) ){
 		legs->shaderRGBA[0] = hexToRed(cg_redLegsColor.string);
 		legs->shaderRGBA[1] = hexToGreen(cg_redLegsColor.string);
 		legs->shaderRGBA[2] = hexToBlue(cg_redLegsColor.string);
@@ -2560,6 +2579,7 @@ CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
 		head->shaderRGBA[1] = hexToGreen(cg_redHeadColor.string);
 		head->shaderRGBA[2] = hexToBlue(cg_redHeadColor.string);
 		head->shaderRGBA[3] = hexToAlpha(cg_redHeadColor.string);
+		return;
 	}
 	if( localPlayer->team != TEAM_FREE && ( localPlayer->team == ci->team && !cg_forceteammodels.integer ) ){
 		legs->shaderRGBA[0] = hexToRed(cg_teamLegsColor.string);
@@ -2576,22 +2596,7 @@ CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
 		head->shaderRGBA[1] = hexToGreen(cg_teamHeadColor.string);
 		head->shaderRGBA[2] = hexToBlue(cg_teamHeadColor.string);
 		head->shaderRGBA[3] = hexToAlpha(cg_teamHeadColor.string);
-	}
-	if( ci->isDead ){
-		legs->shaderRGBA[0] = 50;
-		legs->shaderRGBA[1] = 50;
-		legs->shaderRGBA[2] = 50;
-		legs->shaderRGBA[3] = 50;
-
-		torso->shaderRGBA[0] = 50;
-		torso->shaderRGBA[1] = 50;
-		torso->shaderRGBA[2] = 50;
-		torso->shaderRGBA[3] = 50;
-
-		head->shaderRGBA[0] = 50;
-		head->shaderRGBA[1] = 50;
-		head->shaderRGBA[2] = 50;
-		head->shaderRGBA[3] = 50;
+		return;
 	}
 }
 
@@ -2651,7 +2656,7 @@ void CG_Player( centity_t *cent ) {
 	memset( &torso, 0, sizeof(torso) );
 	memset( &head, 0, sizeof(head) );
 
-	CG_setColor( ci, &head, &torso, &legs );
+	CG_setColor( ci, &head, &torso, &legs, cent->currentState.eFlags );
 
 	// get the rotation information
 	CG_PlayerAngles( cent, legs.axis, torso.axis, head.axis );

@@ -2592,7 +2592,7 @@ void G_RunFrame( int levelTime ) {
 	int			i;
 	gentity_t	*ent;
 	int			msec;
-int start, end;
+	int start, end;
 
 	// if we are waiting for the level to restart, do nothing
 	if ( level.restarted ) {
