@@ -2514,20 +2514,20 @@ void CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
   	localPlayer = &cgs.clientinfo[cg.clientNum];
 
 	if( ( state & EF_DEAD )  && cg_deadBodyDarken.integer ){
-		legs->shaderRGBA[0] = 50;
-		legs->shaderRGBA[1] = 50;
-		legs->shaderRGBA[2] = 50;
-		legs->shaderRGBA[3] = 50;
+		legs->shaderRGBA[0] = hexToRed(cg_deadBodyColor.string);
+		legs->shaderRGBA[1] = hexToGreen(cg_deadBodyColor.string);
+		legs->shaderRGBA[2] = hexToBlue(cg_deadBodyColor.string);
+		legs->shaderRGBA[3] = hexToAlpha(cg_deadBodyColor.string);
 
-		torso->shaderRGBA[0] = 50;
-		torso->shaderRGBA[1] = 50;
-		torso->shaderRGBA[2] = 50;
-		torso->shaderRGBA[3] = 50;
+		torso->shaderRGBA[0] = hexToRed(cg_deadBodyColor.string);
+		torso->shaderRGBA[1] = hexToGreen(cg_deadBodyColor.string);
+		torso->shaderRGBA[2] = hexToBlue(cg_deadBodyColor.string);
+		torso->shaderRGBA[3] = hexToAlpha(cg_deadBodyColor.string);
 
-		head->shaderRGBA[0] = 50;
-		head->shaderRGBA[1] = 50;
-		head->shaderRGBA[2] = 50;
-		head->shaderRGBA[3] = 50;
+		head->shaderRGBA[0] = hexToRed(cg_deadBodyColor.string);
+		head->shaderRGBA[1] = hexToGreen(cg_deadBodyColor.string);
+		head->shaderRGBA[2] = hexToBlue(cg_deadBodyColor.string);
+		head->shaderRGBA[3] = hexToAlpha(cg_deadBodyColor.string);
 		return;
 	}
 	else if( localPlayer->team == TEAM_FREE || ( localPlayer->team != ci->team && !cg_forceteammodels.integer && localPlayer->team != TEAM_SPECTATOR ) ){

@@ -1377,6 +1377,11 @@ extern vmCvar_t			cg_teamTorsoColor;
 extern vmCvar_t			cg_teamLegsColor;
 
 extern vmCvar_t			cg_deadBodyDarken;
+extern vmCvar_t			cg_deadBodyColor;
+
+extern vmCvar_t 		cg_plasmaBallAlpha;
+
+extern vmCvar_t 		cg_drawItemPickups;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

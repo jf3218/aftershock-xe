@@ -316,11 +316,11 @@ Used for both the status bar and the scoreboard
 ================
 */
 void CG_DrawHead( float x, float y, float w, float h, int clientNum, vec3_t headAngles ) {
-	clipHandle_t	cm;
+	//clipHandle_t	cm;
 	clientInfo_t	*ci;
-	float			len;
+	/*float			len;
 	vec3_t			origin;
-	vec3_t			mins, maxs;
+	vec3_t			mins, maxs;*/
 
 	ci = &cgs.clientinfo[ clientNum ];
 
@@ -1736,38 +1736,6 @@ static void CG_DrawLowerRight( void ) {
 #endif // MISSIONPACK
 
 /*
-===================
-CG_DrawPickupItem
-===================
-*/
-#ifndef MISSIONPACK
-static int CG_DrawPickupItem( int y ) {
-	int		value;
-	float	*fadeColor;
-
-	if ( cg.snap->ps.stats[STAT_HEALTH] <= 0 ) {
-		return y;
-	}
-
-	y -= ICON_SIZE;
-
-	value = cg.itemPickup;
-	if ( value ) {
-		fadeColor = CG_FadeColor( cg.itemPickupTime, 3000 );
-		if ( fadeColor ) {
-			CG_RegisterItemVisuals( value );
-			trap_R_SetColor( fadeColor );
-			CG_DrawPic( 8, y, ICON_SIZE, ICON_SIZE, cg_items[ value ].icon );
-			CG_DrawBigString( ICON_SIZE + 16, y + (ICON_SIZE/2 - BIGCHAR_HEIGHT/2), bg_itemlist[ value ].pickup_name, fadeColor[0] );
-			trap_R_SetColor( NULL );
-		}
-	}
-	
-	return y;
-}
-#endif // MISSIONPACK
-
-/*
 =====================
 CG_DrawLowerLeft
 
@@ -1784,7 +1752,7 @@ static void CG_DrawLowerLeft( void ) {
 	} 
 
 
-	y = CG_DrawPickupItem( y );
+	//y = CG_DrawPickupItem( y );
 }
 #endif // MISSIONPACK
 
@@ -1869,14 +1837,14 @@ static void CG_DrawTeamInfo( void ) {
 CG_DrawChat
 =================
 */
-static void CG_DrawChat(void)
+static void CG_DrawChat( qboolean endOfGame )
 {
   int w, h;
   int i, len;
   vec4_t hcolor;
   int chatHeight;
 
-#define CHATLOC_Y 60
+#define CHATLOC_Y 65
 #define CHATLOC_X 0
 
   if (cg_chatHeight.integer < TEAMCHAT_HEIGHT)
@@ -1912,8 +1880,14 @@ static void CG_DrawChat(void)
 
     for (i = cgs.lastChatPos; i < cgs.chatPos; i++)
     {
-      CG_DrawStringExt(CHATLOC_X,
+	if( !endOfGame )
+      		CG_DrawStringExt(CHATLOC_X,
                        CHATLOC_Y + (i - cgs.lastChatPos ) * TINYCHAR_HEIGHT,
+                       cgs.chatMsgs[i % chatHeight], hcolor, qfalse,
+                       qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0);
+	else
+		CG_DrawStringExt(0,
+                       0 + (i - cgs.lastChatPos ) * TINYCHAR_HEIGHT,
                        cgs.chatMsgs[i % chatHeight], hcolor, qfalse,
                        qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0);
     }
@@ -2662,6 +2636,7 @@ static void CG_DrawCrosshair(void)
 			h *= ( 1 + f );
 		}
 	}
+		
 
 	x = cg_crosshairX.integer;
 	y = cg_crosshairY.integer;
@@ -2857,6 +2832,9 @@ static void CG_DrawSpectator(void) {
 	}
 }
 
+#define VOTEPOS_X 0
+#define VOTEPOS_Y 58
+
 /*
 =================
 CG_DrawVote
@@ -2882,12 +2860,12 @@ static void CG_DrawVote(void) {
 	}
 #ifdef MISSIONPACK
 	s = va("VOTE(%i):%s yes:%i no:%i", sec, cgs.voteString, cgs.voteYes, cgs.voteNo);
-	CG_DrawSmallString( 0, 58, s, 1.0F );
+	CG_DrawSmallString( VOTEPOS_X, VOTEPOS_Y, s, 1.0F );
 	s = "or press ESC then click Vote";
-	CG_DrawSmallString( 0, 58 + SMALLCHAR_HEIGHT + 2, s, 1.0F );
+	CG_DrawSmallString( VOTEPOS_X, VOTEPOS_Y + SMALLCHAR_HEIGHT + 2, s, 1.0F );
 #else
 	s = va("VOTE(%i):%s yes:%i no:%i", sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
-	CG_DrawSmallString( 0, 58, s, 1.0F );
+	CG_DrawSmallString( VOTEPOS_X, VOTEPOS_Y, s, 1.0F );
 #endif
 }
 
@@ -3037,13 +3015,13 @@ static qboolean CG_DrawFollow( void ) {
 	color[3] = 1;
 
 
-	CG_DrawBigString( 320 - 9 * 8, 24, "following", 1.0F );
+	CG_DrawBigString( 320 - 9 * 8, 24, "following", 0.5F );
 
 	name = cgs.clientinfo[ cg.snap->ps.clientNum ].name;
 
-	x = 0.5 * ( 640 - GIANT_WIDTH * CG_DrawStrlen( name ) );
+	x = 0.5 * ( 640 - (GIANT_WIDTH/2) * CG_DrawStrlen( name ) );
 
-	CG_DrawStringExt( x, 40, name, color, qtrue, qtrue, GIANT_WIDTH, GIANT_HEIGHT, 0 );
+	CG_DrawStringExt( x, 40, name, color, qtrue, qtrue, GIANT_WIDTH/2, GIANT_HEIGHT/2, 0 );
 
 	return qtrue;
 }
@@ -3290,6 +3268,57 @@ void CG_DrawTimedMenus( void ) {
 	}
 }
 #endif
+
+#define PICKUPITEM_SIZE ICON_SIZE/4
+#define PICKUPITEM_SPACE 4
+#define PICKUPITEM_Y 420
+
+/*
+===================
+CG_DrawPickupItem
+===================
+*/
+//#ifndef MISSIONPACK
+void CG_DrawPickupItem( void ) {
+	int		value;
+	char		*s;
+	int		min, ten, second, msecs;
+	int x;
+	
+	x = 0;	
+
+	if ( cg.snap->ps.stats[STAT_HEALTH] <= 0 ) {
+		return;
+	}
+
+	value = cg.itemPickup;
+	if ( value ) {
+		if ( (cg.time - cg.itemPickupBlendTime) < 3000 ) {
+			CG_RegisterItemVisuals( value );
+			if( cg_drawItemPickups.integer & 1 ){
+				CG_DrawPic( 0, PICKUPITEM_Y, PICKUPITEM_SIZE, PICKUPITEM_SIZE, cg_items[ value ].icon );
+				x += PICKUPITEM_SIZE;
+			}
+			if( cg_drawItemPickups.integer & 2 ){
+				CG_DrawStringExt( x + PICKUPITEM_SPACE, PICKUPITEM_Y + (PICKUPITEM_SIZE/2 - TINYCHAR_HEIGHT/2), bg_itemlist[ value ].pickup_name, colorWhite, qfalse, qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );
+				x += PICKUPITEM_SPACE + CG_DrawStrlen( bg_itemlist[ value ].pickup_name ) * SMALLCHAR_WIDTH;
+			}
+			if( cg_drawItemPickups.integer & 4 ){
+				msecs = cg.itemPickupBlendTime - cgs.levelStartTime;
+				second = msecs/1000;
+				min = second / 60;
+				second -= min * 60;
+				ten = second / 10;
+				second -= ten * 10;
+				s = va( "%i:%i%i", min, ten, second );
+				CG_DrawStringExt( x+ PICKUPITEM_SPACE, PICKUPITEM_Y + (PICKUPITEM_SIZE/2 - TINYCHAR_HEIGHT/2) , s, colorWhite, qfalse, qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );;
+			}
+		}
+	}
+	
+	return;
+}
+
 /*
 =================
 CG_Draw2D
@@ -3313,6 +3342,7 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 
 	if ( cg.snap->ps.pm_type == PM_INTERMISSION ) {
 		CG_DrawIntermission();
+		CG_DrawChat( qtrue );
 		return;
 	}
 
@@ -3340,7 +3370,7 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 #else
 			CG_DrawStatusBar();
 #endif
-      
+
 			CG_DrawAmmoWarning();
 
 			CG_DrawProxWarning();
@@ -3355,6 +3385,7 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 			#endif
 
                         CG_DrawReward();
+			CG_DrawPickupItem();
 		}
     
 		if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
@@ -3364,7 +3395,7 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 		}
 	}
 	CG_DrawDeathNotice();
-	CG_DrawChat();
+	CG_DrawChat( qfalse );
 
 	CG_DrawVote();
 	CG_DrawTeamVote();

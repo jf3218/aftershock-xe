@@ -458,6 +458,9 @@ static void CG_Missile( centity_t *cent ) {
 		ent.radius = 16;
 		ent.rotation = 0;
 		ent.customShader = cgs.media.plasmaBallShader;
+
+		ent.shaderRGBA[3] = cg_plasmaBallAlpha.integer;
+
 		trap_R_AddRefEntityToScene( &ent );
 		return;
 	}
