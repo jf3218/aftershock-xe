@@ -1120,6 +1120,8 @@ extern  vmCvar_t    g_warningExpire;
 extern  vmCvar_t    g_minNameChangePeriod;
 extern  vmCvar_t    g_maxNameChanges;
 
+extern vmCvar_t	    g_newItemHeight;
+
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

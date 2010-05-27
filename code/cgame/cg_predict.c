@@ -262,7 +262,10 @@ static void CG_TouchItem( centity_t *cent ) {
 	gitem_t		*item;
 	//For instantgib
 	qboolean	canBePicked;
+	
+	const char* info;
 
+	info = CG_ConfigString( CS_SERVERINFO );
 	if(cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_LMS)
 		return; //No weapon pickup in elimination
 
@@ -276,7 +279,7 @@ static void CG_TouchItem( centity_t *cent ) {
 	if ( !cg_predictItems.integer ) {
 		return;
 	}
-	if ( !BG_PlayerTouchesItem( &cg.predictedPlayerState, &cent->currentState, cg.time ) ) {
+	if ( !BG_PlayerTouchesItem( &cg.predictedPlayerState, &cent->currentState, cg.time, atoi( Info_ValueForKey( info, "g_newItemHeight" ) ) ) ) {
 		return;
 	}
 

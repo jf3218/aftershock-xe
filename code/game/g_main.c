@@ -183,6 +183,8 @@ vmCvar_t        g_warningExpire;
 vmCvar_t        g_minNameChangePeriod;
 vmCvar_t        g_maxNameChanges;
 
+vmCvar_t        g_newItemHeight;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -370,8 +372,10 @@ static cvarTable_t		gameCvarTable[] = {
 	    { &g_warningExpire, "g_warningExpire", "3600", CVAR_ARCHIVE, 0, qfalse },
 	    
 	    { &g_minNameChangePeriod, "g_minNameChangePeriod", "5", 0, 0, qfalse},
-        { &g_maxNameChanges, "g_maxNameChanges", "5", 0, 0, qfalse}
-        
+        { &g_maxNameChanges, "g_maxNameChanges", "5", 0, 0, qfalse},
+	
+	{ &g_newItemHeight, "g_newItemHeight", "0", 0, 0, qfalse},
+	
 };
 
 // bk001129 - made static to avoid aliasing

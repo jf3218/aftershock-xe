@@ -2865,7 +2865,7 @@ static void CG_DrawVote(void) {
 	CG_DrawSmallString( VOTEPOS_X, VOTEPOS_Y + SMALLCHAR_HEIGHT + 2, s, 1.0F );
 #else
 	s = va("VOTE(%i):%s yes:%i no:%i", sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
-	CG_DrawSmallString( VOTEPOS_X, VOTEPOS_Y, s, 1.0F );
+	CG_DrawStringExt( 320 - CG_DrawStrlen( s ) * TINYCHAR_WIDTH/2, VOTEPOS_Y, s, colorWhite, qfalse, qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );
 #endif
 }
 
@@ -3297,21 +3297,28 @@ void CG_DrawPickupItem( void ) {
 			CG_RegisterItemVisuals( value );
 			if( cg_drawItemPickups.integer & 1 ){
 				CG_DrawPic( 0, PICKUPITEM_Y, PICKUPITEM_SIZE, PICKUPITEM_SIZE, cg_items[ value ].icon );
+
 				x += PICKUPITEM_SIZE;
 			}
 			if( cg_drawItemPickups.integer & 2 ){
-				CG_DrawStringExt( x + PICKUPITEM_SPACE, PICKUPITEM_Y + (PICKUPITEM_SIZE/2 - TINYCHAR_HEIGHT/2), bg_itemlist[ value ].pickup_name, colorWhite, qfalse, qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );
+				CG_DrawStringExt( x + PICKUPITEM_SPACE, PICKUPITEM_Y + (PICKUPITEM_SIZE/2 - TINYCHAR_HEIGHT/2), 
+					bg_itemlist[ value ].pickup_name, colorWhite, qfalse, qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );
+
 				x += PICKUPITEM_SPACE + CG_DrawStrlen( bg_itemlist[ value ].pickup_name ) * SMALLCHAR_WIDTH;
 			}
 			if( cg_drawItemPickups.integer & 4 ){
+
 				msecs = cg.itemPickupBlendTime - cgs.levelStartTime;
 				second = msecs/1000;
 				min = second / 60;
 				second -= min * 60;
 				ten = second / 10;
 				second -= ten * 10;
+
 				s = va( "%i:%i%i", min, ten, second );
-				CG_DrawStringExt( x+ PICKUPITEM_SPACE, PICKUPITEM_Y + (PICKUPITEM_SIZE/2 - TINYCHAR_HEIGHT/2) , s, colorWhite, qfalse, qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );;
+
+				CG_DrawStringExt( x+ PICKUPITEM_SPACE, PICKUPITEM_Y + (PICKUPITEM_SIZE/2 - TINYCHAR_HEIGHT/2),
+					s, colorWhite, qfalse, qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );;
 			}
 		}
 	}

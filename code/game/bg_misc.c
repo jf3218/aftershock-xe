@@ -1165,21 +1165,32 @@ Items can be picked up without actually touching their physical bounds to make
 grabbing them easier
 ============
 */
-qboolean	BG_PlayerTouchesItem( playerState_t *ps, entityState_t *item, int atTime ) {
+qboolean	BG_PlayerTouchesItem( playerState_t *ps, entityState_t *item, int atTime , int newItemHeight) {
 	vec3_t		origin;
 
 	BG_EvaluateTrajectory( &item->pos, atTime, origin );
 
-	// we are ignoring ducked differences here
-	if ( ps->origin[0] - origin[0] > 44
-		|| ps->origin[0] - origin[0] < -50
-		|| ps->origin[1] - origin[1] > 36
-		|| ps->origin[1] - origin[1] < -36
-		|| ps->origin[2] - origin[2] > 36
-		|| ps->origin[2] - origin[2] < -36 ) {
-		return qfalse;
+	if( !newItemHeight ){
+		// we are ignoring ducked differences here
+		if ( ps->origin[0] - origin[0] > 44
+			|| ps->origin[0] - origin[0] < -50
+			|| ps->origin[1] - origin[1] > 36
+			|| ps->origin[1] - origin[1] < -36
+			|| ps->origin[2] - origin[2] > 36
+			|| ps->origin[2] - origin[2] < -36 ) {
+			return qfalse;
+		}
 	}
-
+	else{
+		if ( ps->origin[0] - origin[0] > 44
+			|| ps->origin[0] - origin[0] < -50
+			|| ps->origin[1] - origin[1] > 36
+			|| ps->origin[1] - origin[1] < -36
+			|| ps->origin[2] - origin[2] > 60
+			|| ps->origin[2] - origin[2] < -36 ) {
+			return qfalse;
+		}
+	}
 	return qtrue;
 }
 
