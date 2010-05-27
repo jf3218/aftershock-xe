@@ -249,10 +249,10 @@ static void CG_ParseRewards( void ) {
 	int reward, rewardCount;
 	reward = atoi( CG_Argv(1) );
 	rewardCount = atoi( CG_Argv(2) );
-	if( reward == 0 ){
+	if( reward == REWARD_AIRROCKET ){
 		pushReward(cgs.media.airrocketSound, cgs.media.medalAirrocket, rewardCount);
 	}
-	else if( reward == 1 ){
+	else if( reward == REWARD_AIRGRENADE ){
 		pushReward(cgs.media.airgrenadeSound, cgs.media.medalAirgrenade, rewardCount);
 	}
 }	

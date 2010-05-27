@@ -262,6 +262,11 @@ typedef enum {
 	PERS_DAMAGE_DONE,			// damage done on enemy players
 } persEnum_t;
 
+typedef enum {
+	REWARD_AIRROCKET,
+	REWARD_AIRGRENADE,
+} rewards_t;
+
 
 // entityState_t->eFlags
 #define	EF_DEAD				0x00000001		// don't draw a foe marker over players with EF_DEAD

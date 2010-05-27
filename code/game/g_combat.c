@@ -1192,12 +1192,20 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			attacker->client->ps.persistant[PERS_HITS]++;
 			attacker->client->ps.persistant[PERS_DAMAGE_DONE] += damage;
 			if( ( targ->client->lastGroundTime != 0 ) && ( level.time - targ->client->lastGroundTime > 750 ) && ( mod == MOD_ROCKET ) ){
-				attacker->client->airrocketCount++;
-				RewardMessage(attacker, 0, attacker->client->airrocketCount);
+				if( sqrt((targ->client->ps.origin[0]-attacker->client->ps.origin[0]) * (targ->client->ps.origin[0]-attacker->client->ps.origin[0]) +
+						(targ->client->ps.origin[1]-attacker->client->ps.origin[1]) * (targ->client->ps.origin[1]-attacker->client->ps.origin[1]) + 
+						(targ->client->ps.origin[2]-attacker->client->ps.origin[2]) * (targ->client->ps.origin[2]-attacker->client->ps.origin[2])) > 300 ){
+					attacker->client->airrocketCount++;
+					RewardMessage(attacker, REWARD_AIRROCKET, attacker->client->airrocketCount );
+				}
 			}
 			else if( ( targ->client->lastGroundTime != 0 ) && ( level.time - targ->client->lastGroundTime > 750 ) && ( mod == MOD_GRENADE ) ){
-				attacker->client->airgrenadeCount++;
-				RewardMessage(attacker, 1, attacker->client->airgrenadeCount);
+				if( sqrt((targ->client->ps.origin[0]-attacker->client->ps.origin[0]) * (targ->client->ps.origin[0]-attacker->client->ps.origin[0]) +
+						(targ->client->ps.origin[1]-attacker->client->ps.origin[1]) * (targ->client->ps.origin[1]-attacker->client->ps.origin[1]) + 
+						(targ->client->ps.origin[2]-attacker->client->ps.origin[2]) * (targ->client->ps.origin[2]-attacker->client->ps.origin[2])) > 200 ){
+					attacker->client->airgrenadeCount++;
+					RewardMessage(attacker, REWARD_AIRGRENADE, attacker->client->airgrenadeCount);
+				}
 			}
 		}
 		attacker->client->ps.persistant[PERS_ATTACKEE_ARMOR] = (targ->health<<8)|(client->ps.stats[STAT_ARMOR]);
