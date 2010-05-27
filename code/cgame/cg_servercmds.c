@@ -353,6 +353,9 @@ void CG_ParseServerinfo( void ) {
 
         //Copy allowed votes directly to the client:
         trap_Cvar_Set("cg_voteflags",Info_ValueForKey( info, "voteflags" ) );
+
+	cgs.newItemHeight = atoi( Info_ValueForKey( info, "g_newItemHeight" ) );
+	trap_Cvar_Set("g_newItemHeight", va("%i", cgs.newItemHeight));
 }
 
 /*

@@ -1158,6 +1158,8 @@ typedef struct {
 //unlagged - client options
 //KK-OAX For storing whether or not the server has multikills enabled. 
     int             altExcellent;
+
+	int	newItemHeight;
 } cgs_t;
 
 //==============================================================================

@@ -3279,7 +3279,7 @@ CG_DrawPickupItem
 ===================
 */
 //#ifndef MISSIONPACK
-void CG_DrawPickupItem( void ) {
+static void CG_DrawPickupItem( void ) {
 	int		value;
 	char		*s;
 	int		min, ten, second, msecs;
