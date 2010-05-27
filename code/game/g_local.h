@@ -396,6 +396,8 @@ struct gclient_s {
         
         int lastSentFlying;                             //The last client that sent the player flying
         int lastSentFlyingTime;                         //So we can time out
+
+	int lastGroundTime;
         
 
 	//unlagged - backward reconciliation #1
@@ -417,6 +419,9 @@ struct gclient_s {
 	// the last frame number we got an update from this client
 	int			lastUpdateFrame;
 //unlagged - smooth clients #1
+
+	int 			airrocketCount;
+	int			airgrenadeCount;
 };
 
 
@@ -1121,6 +1126,19 @@ extern  vmCvar_t    g_minNameChangePeriod;
 extern  vmCvar_t    g_maxNameChanges;
 
 extern vmCvar_t	    g_newItemHeight;
+
+extern vmCvar_t     disable_weapon_grapplinghook;
+extern vmCvar_t     disable_weapon_nailgun;
+extern vmCvar_t     disable_weapon_prox_launcher;
+extern vmCvar_t     disable_weapon_chaingun;
+extern vmCvar_t     disable_item_ammoregen;
+extern vmCvar_t     disable_item_doubler;
+extern vmCvar_t     disable_item_guard;
+extern vmCvar_t     disable_item_scout;
+extern vmCvar_t     disable_ammo_belt;
+extern vmCvar_t     disable_ammo_mines;
+extern vmCvar_t     disable_ammo_nails;
+extern vmCvar_t     disable_holdable_kamikaze;
 
 
 void	trap_Printf( const char *fmt );

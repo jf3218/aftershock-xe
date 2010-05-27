@@ -918,6 +918,9 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.humiliationSound = trap_S_RegisterSound( "sound/feedback/humiliation.wav", qtrue );
 	cgs.media.assistSound = trap_S_RegisterSound( "sound/feedback/assist.wav", qtrue );
 	cgs.media.defendSound = trap_S_RegisterSound( "sound/feedback/defense.wav", qtrue );
+	cgs.media.airrocketSound = trap_S_RegisterSound( "sound/feedback/accuracy.wav", qtrue );
+	cgs.media.airgrenadeSound = trap_S_RegisterSound( "sound/feedback/voc_holyshit.wav", qtrue );
+
 #ifdef MISSIONPACK
 	cgs.media.firstImpressiveSound = trap_S_RegisterSound( "sound/feedback/first_impressive.wav", qtrue );
 	cgs.media.firstExcellentSound = trap_S_RegisterSound( "sound/feedback/first_excellent.wav", qtrue );
@@ -1281,6 +1284,8 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.medalGauntlet = trap_R_RegisterShaderNoMip( "medal_gauntlet" );
 	cgs.media.medalDefend = trap_R_RegisterShaderNoMip( "medal_defend" );
 	cgs.media.medalAssist = trap_R_RegisterShaderNoMip( "medal_assist" );
+	cgs.media.medalAirrocket = trap_R_RegisterShaderNoMip( "medal_airrocket" );
+	cgs.media.medalAirgrenade = trap_R_RegisterShaderNoMip( "medal_airgrenade" );
 	cgs.media.medalCapture = trap_R_RegisterShaderNoMip( "medal_capture" );
 
 
@@ -2245,6 +2250,9 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	addChallenge(GENERAL_TEST);
 
 	trap_S_ClearLoopingSounds( qtrue );
+	if( qtrue ){
+		trap_SendConsoleCommand("record new");
+	}
 }
 
 /*

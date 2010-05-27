@@ -69,7 +69,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 
 		if(g_gametype.integer == GT_LMS) {
 			Com_sprintf (entry, sizeof(entry),
-				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i", level.sortedClients[i],
+				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
 				cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
 				scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy, 
 				cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
@@ -83,7 +83,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 		}
 		else {
 			Com_sprintf (entry, sizeof(entry),
-				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i", level.sortedClients[i],
+				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
 				cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
 				scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy, 
 				cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
@@ -231,6 +231,17 @@ void ChallengeMessage(gentity_t *ent, int challenge) {
         if ( level.warmupTime != 0)
 		return; //We don't send anything doring warmup
 	trap_SendServerCommand( ent-g_entities, va("ch %u", challenge) );
+}
+
+/*
+==================
+RewardMessage
+
+==================
+*/
+
+void RewardMessage(gentity_t *ent, int reward, int rewardCount) {
+	trap_SendServerCommand( ent-g_entities, va("reward %i %i", reward, rewardCount) );
 }
 
 /*

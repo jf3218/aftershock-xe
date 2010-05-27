@@ -259,7 +259,7 @@ typedef enum {
 	PERS_ASSIST_COUNT,				// assist awards
 	PERS_GAUNTLET_FRAG_COUNT,		// kills with the guantlet
 	PERS_CAPTURES,					// captures
-	PERS_DAMAGE_DONE			// damage done on enemy players
+	PERS_DAMAGE_DONE,			// damage done on enemy players
 } persEnum_t;
 
 

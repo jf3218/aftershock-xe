@@ -856,6 +856,8 @@ typedef struct {
 	qhandle_t	medalGauntlet;
 	qhandle_t	medalDefend;
 	qhandle_t	medalAssist;
+	qhandle_t	medalAirrocket;
+	qhandle_t	medalAirgrenade;
 	qhandle_t	medalCapture;
 
 	// sounds
@@ -933,6 +935,9 @@ typedef struct {
 	sfxHandle_t humiliationSound;
 	sfxHandle_t assistSound;
 	sfxHandle_t defendSound;
+	sfxHandle_t airrocketSound;
+	sfxHandle_t airgrenadeSound;
+
 	sfxHandle_t firstImpressiveSound;
 	sfxHandle_t firstExcellentSound;
 	sfxHandle_t firstHumiliationSound;

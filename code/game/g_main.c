@@ -185,6 +185,19 @@ vmCvar_t        g_maxNameChanges;
 
 vmCvar_t        g_newItemHeight;
 
+vmCvar_t     disable_weapon_grapplinghook;
+vmCvar_t     disable_weapon_nailgun;
+vmCvar_t     disable_weapon_prox_launcher;
+vmCvar_t     disable_weapon_chaingun;
+vmCvar_t     disable_item_ammoregen;
+vmCvar_t     disable_item_doubler;
+vmCvar_t     disable_item_guard;
+vmCvar_t     disable_item_scout;
+vmCvar_t     disable_ammo_belt;
+vmCvar_t     disable_ammo_mines;
+vmCvar_t     disable_ammo_nails;
+vmCvar_t     disable_holdable_kamikaze;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -375,6 +388,20 @@ static cvarTable_t		gameCvarTable[] = {
         { &g_maxNameChanges, "g_maxNameChanges", "5", 0, 0, qfalse},
 	
 	{ &g_newItemHeight, "g_newItemHeight", "0", 0, 0, qfalse},
+
+	{ &disable_weapon_grapplinghook, "disable_weapon_grapplinghook", "1", 0, 0, qfalse},
+	{ &disable_weapon_nailgun, "disable_weapon_nailgun", "1", 0, 0, qfalse},
+	{ &disable_weapon_prox_launcher, "disable_weapon_prox_launcher", "1", 0, 0, qfalse},
+	{ &disable_weapon_chaingun, "disable_weapon_chaingun", "1", 0, 0, qfalse},
+	{ &disable_item_ammoregen, "disable_item_ammoregen", "1", 0, 0, qfalse},
+	{ &disable_item_doubler, "disable_item_doubler", "1", 0, 0, qfalse},
+	{ &disable_item_guard, "disable_item_guard", "1", 0, 0, qfalse},
+	{ &disable_item_scout, "disable_item_scout", "1", 0, 0, qfalse},
+	{ &disable_ammo_belt, "disable_ammo_belt", "1", 0, 0, qfalse},
+	{ &disable_ammo_mines, "disable_ammo_mines", "1", 0, 0, qfalse},
+	{ &disable_ammo_nails, "disable_ammo_nails", "1", 0, 0, qfalse},
+	{ &disable_holdable_kamikaze, "disable_holdable_kamikaze", "1", 0, 0, qfalse},
+
 	
 };
 

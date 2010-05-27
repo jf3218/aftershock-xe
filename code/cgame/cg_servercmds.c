@@ -241,6 +241,24 @@ static void CG_ParseChallenge( void ) {
 
 /*
 =================
+CG_ParseRewards
+=================
+*/
+
+static void CG_ParseRewards( void ) {
+	int reward, rewardCount;
+	reward = atoi( CG_Argv(1) );
+	rewardCount = atoi( CG_Argv(2) );
+	if( reward == 0 ){
+		pushReward(cgs.media.airrocketSound, cgs.media.medalAirrocket, rewardCount);
+	}
+	else if( reward == 1 ){
+		pushReward(cgs.media.airgrenadeSound, cgs.media.medalAirgrenade, rewardCount);
+	}
+}	
+
+/*
+=================
 CG_ParseTeam
 =================
 */
@@ -1402,6 +1420,11 @@ static void CG_ServerCommand( void ) {
 	// challenge completed is determened by the server. A client should consider this message valid:
 	if ( !strcmp( cmd, "ch" ) ) {
 		CG_ParseChallenge();
+		return;
+	}
+
+	if ( !strcmp( cmd, "reward" ) ) {
+		CG_ParseRewards();
 		return;
 	}
 
