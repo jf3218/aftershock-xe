@@ -1676,6 +1676,7 @@ void ClientSpawn(gentity_t *ent) {
 	clientPersistant_t	saved;
 	clientSession_t		savedSess;
 	int		persistant[MAX_PERSISTANT];
+	int		rewards[MAX_REWARDS];
 	gentity_t	*spawnPoint;
 	int		flags;
 	int		savedPing;
@@ -1829,6 +1830,11 @@ void ClientSpawn(gentity_t *ent) {
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		persistant[i] = client->ps.persistant[i];
 	}
+
+	for ( i = 0 ; i < MAX_REWARDS ; i++ ) {
+		rewards[i] = client->rewards[i];
+	}
+
 	eventSequence = client->ps.eventSequence;
 
 	Com_Memset (client, 0, sizeof(*client));
@@ -1844,6 +1850,11 @@ void ClientSpawn(gentity_t *ent) {
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		client->ps.persistant[i] = persistant[i];
 	}
+	
+	for ( i = 0 ; i < MAX_REWARDS ; i++ ) {
+		client->rewards[i] = rewards[i];
+	}
+
 	client->ps.eventSequence = eventSequence;
 	// increment the spawncount so the client will detect the respawn
 	client->ps.persistant[PERS_SPAWN_COUNT]++;

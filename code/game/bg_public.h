@@ -262,9 +262,14 @@ typedef enum {
 	PERS_DAMAGE_DONE,			// damage done on enemy players
 } persEnum_t;
 
+#define MAX_REWARDS 16
+
 typedef enum {
 	REWARD_AIRROCKET,
 	REWARD_AIRGRENADE,
+	REWARD_ROCKETTORAIL,
+	REWARD_RACONTROL,
+	REWARD_MHCONTROL,
 } rewards_t;
 
 

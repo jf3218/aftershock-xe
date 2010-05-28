@@ -5,3 +5,5 @@ cd ./build/release-linux-x86_64/baseq3
 zip zzz-oaUnofficial.pk3 -r icons/ vm/ sound/ models/ gfx/ scripts/ textures/ menu/ -x *.svn*
 mv zzz-oaUnofficial.pk3 ../../../
 cd ../../../
+cp zzz-oaUnofficial.pk3 ../oaUnofficial/oaUnofficial/
+

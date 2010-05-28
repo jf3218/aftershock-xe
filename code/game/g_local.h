@@ -420,8 +420,8 @@ struct gclient_s {
 	int			lastUpdateFrame;
 //unlagged - smooth clients #1
 
-	int 			airrocketCount;
-	int			airgrenadeCount;
+	int 			rewards[MAX_REWARDS];
+
 };
 
 
