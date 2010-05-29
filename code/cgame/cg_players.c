@@ -312,33 +312,152 @@ CG_FindClientModelFile
 */
 static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t *ci, const char *teamName, const char *modelName, const char *skinName, const char *base, const char *ext ) {
 	char *team, *charactersFolder;
+	int local_team, enemy;
 	int i;
+	const char *local_config;
+	const char* v;
+
+	if (cg_forceModel.integer){
+    		local_config = CG_ConfigString(cg.clientNum + CS_PLAYERS);
+    		v = Info_ValueForKey(local_config, "t");
+    		local_team = atoi(v);
+  	}
+
+
+	if (cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
+        	if (local_team != ci->team)
+          		enemy = 1;
+        	else
+          		enemy = 0;
+      	}
+      	else
+        	enemy = 1;
+
 
 	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
 		switch ( ci->team ) {
 			case TEAM_BLUE: {
-				if( cg_blueteammodel.string )
-					team = "pm";
+				if( cg_forceteammodels.integer && cg_forceModel.integer ){
+					if( cg_blueteammodel.string && cg_forceModel.integer ){
+						if( ( team = strchr( cg_blueteammodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;
+					}
+					break;
+				}
+				else if( !cg_forceteammodels.integer && cg_forceModel.integer ){
+					if( enemy && cg_enemymodel.string ){
+						if( ( team = strchr( cg_enemymodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;
+					} else if ( !enemy && cg_teammodel.string ){
+						if( ( team = strchr( cg_teammodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;	
+					}
+					else
+						team = "blue";
+				}
 				else
-					team = "blue";
-				break;
+						team = "blue";
 			}
 			default: {
-				if( cg_redteammodel.string )
-					team = "pm";
+				if( cg_forceteammodels.integer && cg_forceModel.integer ){
+					if( cg_redteammodel.string && cg_forceModel.integer ){
+						if( ( team = strchr( cg_redteammodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;
+					}
+					break;
+				}
+				else if( !cg_forceteammodels.integer && cg_forceModel.integer ){
+					if( enemy && cg_enemymodel.string ){
+						if( ( team = strchr( cg_enemymodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;
+					} else if ( !enemy && cg_teammodel.string ){
+						if( ( team = strchr( cg_teammodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;	
+					}
+					else
+						team = "red";
+				}
 				else
-					team = "red";
-				break;
+						team = "red";
 			}
 		}
 	}
 	else {
-		if( cg_enemymodel.string )
-			team = "pm";
+		
+		if( cg_enemymodel.string && cg_forceModel.integer ){
+			if( ( team = strchr( cg_enemymodel.string, '/' ) ) == NULL )
+				team = "default";
+			else
+				team++;
+		}
 		else
 			team = "default";
 	}
+	
 	charactersFolder = "";
+
+	while(1) {
+		for ( i = 0; i < 2; i++ ) {
+			if ( i == 0 && teamName && *teamName ) {
+				//								"models/players/characters/sergei/stroggs/lower_lily_red.skin"
+				Com_sprintf( filename, length, "models/players/%s%s/%s%s_%s_%s.%s", charactersFolder, modelName, teamName, base, skinName, team, ext );
+			}
+			else {
+				//								"models/players/characters/sergei/lower_lily_red.skin"
+				Com_sprintf( filename, length, "models/players/%s%s/%s_%s_%s.%s", charactersFolder, modelName, base, skinName, team, ext );
+			}
+			if ( CG_FileExists( filename ) ) {
+				return qtrue;
+			}
+			if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
+				if ( i == 0 && teamName && *teamName ) {
+					//								"models/players/characters/sergei/stroggs/lower_red.skin"
+					Com_sprintf( filename, length, "models/players/%s%s/%s%s_%s.%s", charactersFolder, modelName, teamName, base, team, ext );
+				}
+				else {
+					//								"models/players/characters/sergei/lower_red.skin"
+					Com_sprintf( filename, length, "models/players/%s%s/%s_%s.%s", charactersFolder, modelName, base, team, ext );
+				}
+			}
+			else {
+				if ( i == 0 && teamName && *teamName ) {
+					//								"models/players/characters/sergei/stroggs/lower_lily.skin"
+					Com_sprintf( filename, length, "models/players/%s%s/%s%s_%s.%s", charactersFolder, modelName, teamName, base, skinName, ext );
+				}
+				else {
+					//								"models/players/characters/sergei/lower_lily.skin"
+					Com_sprintf( filename, length, "models/players/%s%s/%s_%s.%s", charactersFolder, modelName, base, skinName, ext );
+				}
+			}
+			if ( CG_FileExists( filename ) ) {
+				return qtrue;
+			}
+			if ( !teamName || !*teamName ) {
+				break;
+			}
+		}
+		// if tried the heads folder first
+		if ( charactersFolder[0] ) {
+			break;
+		}
+		charactersFolder = "characters/";
+	}
+
+	team = "default";
+	charactersFolder = "";
+
 	while(1) {
 		for ( i = 0; i < 2; i++ ) {
 			if ( i == 0 && teamName && *teamName ) {
@@ -396,29 +515,96 @@ CG_FindClientHeadFile
 */
 static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t *ci, const char *teamName, const char *headModelName, const char *headSkinName, const char *base, const char *ext ) {
 	char *team, *headsFolder;
+	int local_team, enemy;
 	int i;
+	const char *local_config;
+	const char* v;
+
+	if (cg_forceModel.integer){
+    		local_config = CG_ConfigString(cg.clientNum + CS_PLAYERS);
+    		v = Info_ValueForKey(local_config, "t");
+    		local_team = atoi(v);
+  	}
+
+
+	if (cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
+        	if (local_team != ci->team)
+          		enemy = 1;
+        	else
+          		enemy = 0;
+      	}
+      	else
+        	enemy = 1;
+
 
 	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
 		switch ( ci->team ) {
 			case TEAM_BLUE: {
-				if( cg_blueteammodel.string )
-					team = "pm";
+				if( cg_forceteammodels.integer && cg_forceModel.integer ){
+					if( cg_blueteammodel.string && cg_forceModel.integer ){
+						if( ( team = strchr( cg_blueteammodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;
+					}
+					break;
+				}
+				else if( !cg_forceteammodels.integer && cg_forceModel.integer ){
+					if( enemy && cg_enemymodel.string ){
+						if( ( team = strchr( cg_enemymodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;
+					} else if ( !enemy && cg_teammodel.string ){
+						if( ( team = strchr( cg_teammodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;	
+					}
+					else
+						team = "blue";
+				}
 				else
-					team = "blue";
-				break;
+						team = "blue";
 			}
 			default: {
-				if( cg_redteammodel.string )
-					team = "pm";
+				if( cg_forceteammodels.integer && cg_forceModel.integer ){
+					if( cg_redteammodel.string && cg_forceModel.integer ){
+						if( ( team = strchr( cg_redteammodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;
+					}
+					break;
+				}
+				else if( !cg_forceteammodels.integer && cg_forceModel.integer ){
+					if( enemy && cg_enemymodel.string ){
+						if( ( team = strchr( cg_enemymodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;
+					} else if ( !enemy && cg_teammodel.string ){
+						if( ( team = strchr( cg_teammodel.string, '/' ) ) == NULL )
+							team = "default";
+						else
+							team++;	
+					}
+					else
+						team = "red";
+				}
 				else
-					team = "red";
-				break;
+						team = "red";
 			}
 		}
 	}
 	else {
-		if( cg_enemymodel.string )
-			team = "pm";
+		
+		if( cg_enemymodel.string && cg_forceModel.integer ){
+			if( ( team = strchr( cg_enemymodel.string, '/' ) ) == NULL )
+				team = "default";
+			else
+				team++;
+		}
 		else
 			team = "default";
 	}
@@ -430,6 +616,57 @@ static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t 
 	else {
 		headsFolder = "";
 	}
+	while(1) {
+		for ( i = 0; i < 2; i++ ) {
+			if ( i == 0 && teamName && *teamName ) {
+				Com_sprintf( filename, length, "models/players/%s%s/%s/%s%s_%s.%s", headsFolder, headModelName, headSkinName, teamName, base, team, ext );
+			}
+			else {
+				Com_sprintf( filename, length, "models/players/%s%s/%s/%s_%s.%s", headsFolder, headModelName, headSkinName, base, team, ext );
+			}
+			if ( CG_FileExists( filename ) ) {
+				return qtrue;
+			}
+			if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
+				if ( i == 0 &&  teamName && *teamName ) {
+					Com_sprintf( filename, length, "models/players/%s%s/%s%s_%s.%s", headsFolder, headModelName, teamName, base, team, ext );
+				}
+				else {
+					Com_sprintf( filename, length, "models/players/%s%s/%s_%s.%s", headsFolder, headModelName, base, team, ext );
+				}
+			}
+			else {
+				if ( i == 0 && teamName && *teamName ) {
+					Com_sprintf( filename, length, "models/players/%s%s/%s%s_%s.%s", headsFolder, headModelName, teamName, base, headSkinName, ext );
+				}
+				else {
+					Com_sprintf( filename, length, "models/players/%s%s/%s_%s.%s", headsFolder, headModelName, base, headSkinName, ext );
+				}
+			}
+			if ( CG_FileExists( filename ) ) {
+				return qtrue;
+			}
+			if ( !teamName || !*teamName ) {
+				break;
+			}
+		}
+		// if tried the heads folder first
+		if ( headsFolder[0] ) {
+			break;
+		}
+		headsFolder = "heads/";
+	}
+	
+
+	if ( headModelName[0] == '*' ) {
+		headsFolder = "heads/";
+		headModelName++;
+	}
+	else {
+		headsFolder = "";
+	}
+	team = "default";
+
 	while(1) {
 		for ( i = 0; i < 2; i++ ) {
 			if ( i == 0 && teamName && *teamName ) {
@@ -975,7 +1212,7 @@ void CG_NewClientInfo( int clientNum ) {
 		char modelStr[MAX_QPATH];
 		char *skin;
 		
-		if (cgs.gametype >= GT_TEAM)
+		if (cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 )
       		{
         		if (local_team != newInfo.team)
           			enemy = 1;
@@ -1005,7 +1242,7 @@ void CG_NewClientInfo( int clientNum ) {
 						}
 					}
 					Q_strncpyz( newInfo.modelName, modelStr, sizeof( newInfo.modelName ) );
-					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.modelName ) );			
+					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.skinName ) );			
 				}
 				else if( ci->team == TEAM_RED ){
 					if (!(clientNum == cg.clientNum)){
@@ -1025,7 +1262,7 @@ void CG_NewClientInfo( int clientNum ) {
 						}
 					}
 					Q_strncpyz( newInfo.modelName, modelStr, sizeof( newInfo.modelName ) );
-					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.modelName ) );		
+					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.skinName ) );		
 				}	
 			}
 			else if( cg_teammodel.string && cg_enemymodel.string ){
@@ -1038,7 +1275,7 @@ void CG_NewClientInfo( int clientNum ) {
 					}
 					
 					Q_strncpyz( newInfo.modelName, modelStr, sizeof( newInfo.modelName ) );
-					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.modelName ) );			
+					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.skinName ) );			
 				}
 				else if( !enemy ){
 					if (!(clientNum == cg.clientNum)){
@@ -1058,7 +1295,7 @@ void CG_NewClientInfo( int clientNum ) {
 						}
 					}
 					Q_strncpyz( newInfo.modelName, modelStr, sizeof( newInfo.modelName ) );
-					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.modelName ) );		
+					Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.skinName ) );		
 				}	
 			}	
 			else{
@@ -1137,8 +1374,8 @@ void CG_NewClientInfo( int clientNum ) {
 							*skin++ = 0;
 						}
 					}
-					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.modelName ) );
-					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.modelName ) );			
+					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.headModelName ) );
+					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.headSkinName ) );			
 				}
 				else if( ci->team == TEAM_RED ){
 					if (!(clientNum == cg.clientNum)){
@@ -1157,8 +1394,8 @@ void CG_NewClientInfo( int clientNum ) {
 							*skin++ = 0;
 						}
 					}
-					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.modelName ) );
-					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.modelName ) );	
+					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.headModelName ) );
+					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.headSkinName ) );	
 				}	
 			}
 			else if( cg_teammodel.string && cg_enemymodel.string ){
@@ -1170,8 +1407,8 @@ void CG_NewClientInfo( int clientNum ) {
 						*skin++ = 0;
 					}
 					
-					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.modelName ) );
-					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.modelName ) );			
+					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.headModelName ) );
+					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.headSkinName ) );			
 				}
 				else if( !enemy ){
 					if (!(clientNum == cg.clientNum)){
@@ -1190,8 +1427,8 @@ void CG_NewClientInfo( int clientNum ) {
 							*skin++ = 0;
 						}
 					}
-					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.modelName ) );
-					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.modelName ) );		
+					Q_strncpyz( newInfo.headModelName, modelStr, sizeof( newInfo.headModelName ) );
+					Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.headSkinName ) );		
 				}	
 			}
 			else{

@@ -207,7 +207,7 @@ typedef int		clipHandle_t;
 #define	BIG_INFO_VALUE		8192
 
 
-#define	MAX_QPATH			64		// max length of a quake game pathname
+#define	MAX_QPATH			128		// max length of a quake game pathname
 #ifdef PATH_MAX
 #define MAX_OSPATH			PATH_MAX
 #else
