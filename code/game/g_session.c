@@ -44,14 +44,15 @@ void G_WriteClientSessionData( gclient_t *client ) {
 	const char	*s;
 	const char	*var;
 
-	s = va("%i %i %i %i %i %i %i", 
+	s = va("%i %i %i %i %i %i %i %i", 
 		client->sess.sessionTeam,
 		client->sess.spectatorTime,
 		client->sess.spectatorState,
 		client->sess.spectatorClient,
 		client->sess.wins,
 		client->sess.losses,
-		client->sess.teamLeader
+		client->sess.teamLeader,
+		client->sess.specOnly
 		);
 
 	var = va( "session%i", (int)(client - level.clients) );
@@ -78,14 +79,15 @@ void G_ReadSessionData( gclient_t *client ) {
 	var = va( "session%i", (int)(client - level.clients) );
 	trap_Cvar_VariableStringBuffer( var, s, sizeof(s) );
 
-	sscanf( s, "%i %i %i %i %i %i %i",
+	sscanf( s, "%i %i %i %i %i %i %i %i",
 		&sessionTeam,                 // bk010221 - format
 		&client->sess.spectatorTime,
 		&spectatorState,              // bk010221 - format
 		&client->sess.spectatorClient,
 		&client->sess.wins,
 		&client->sess.losses,
-		&teamLeader                   // bk010221 - format
+		&teamLeader,                   // bk010221 - format
+		&client->sess.specOnly
 		);
 
 	// bk001205 - format issues

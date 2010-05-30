@@ -666,6 +666,7 @@ void SetTeam( gentity_t *ent, char *s ) {
 	spectatorState_t	specState;
 	int					specClient;
 	int					teamLeader;
+	int				specOnly;
     char	            userinfo[MAX_INFO_STRING];
     qboolean            force;
 
@@ -680,7 +681,12 @@ void SetTeam( gentity_t *ent, char *s ) {
         trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	specClient = 0;
 	specState = SPECTATOR_NOT;
-	if ( !Q_stricmp( s, "scoreboard" ) || !Q_stricmp( s, "score" )  ) {
+	specOnly = client->sess.specOnly;
+	if ( !Q_stricmp( s, "speconly" ) || !Q_stricmp( s, "so" ) ){
+		team =  TEAM_SPECTATOR;
+		specState = SPECTATOR_FREE;
+		specOnly = 1;
+	} else if ( !Q_stricmp( s, "scoreboard" ) || !Q_stricmp( s, "score" )  ) {
 		team = TEAM_SPECTATOR;
 		specState = SPECTATOR_SCOREBOARD;
 	} else if ( !Q_stricmp( s, "follow1" ) ) {
@@ -727,9 +733,11 @@ void SetTeam( gentity_t *ent, char *s ) {
 			    // It's ok, the team we are switching to has less or same number of players
 		    }
         }
+	specOnly = 0;
 	} else {
 		// force them to spectators if there aren't any spots free
 		team = TEAM_FREE;
+		specOnly = 0;
 	}
     if ( !force ) {
 	    // override decision if limiting the players
@@ -799,6 +807,7 @@ void SetTeam( gentity_t *ent, char *s ) {
 	client->sess.sessionTeam = team;
 	client->sess.spectatorState = specState;
 	client->sess.spectatorClient = specClient;
+	client->sess.specOnly = specOnly;
 
 	client->sess.teamLeader = qfalse;
 	if ( team == TEAM_RED || team == TEAM_BLUE ) {
@@ -869,7 +878,10 @@ void Cmd_Team_f( gentity_t *ent ) {
 			trap_SendServerCommand( ent-g_entities, "print \"Deathmatch-Playing\n\"" );
 			break;
 		case TEAM_SPECTATOR:
-			trap_SendServerCommand( ent-g_entities, "print \"Spectator team\n\"" );
+			if( ent->client->sess.specOnly )
+				trap_SendServerCommand( ent-g_entities, "print \"Speconly team\n\"" );
+			else
+				trap_SendServerCommand( ent-g_entities, "print \"Spectator team\n\"" );
 			break;
 		}
 		return;

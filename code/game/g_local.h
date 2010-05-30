@@ -193,7 +193,7 @@ typedef enum {
 	SPECTATOR_NOT,
 	SPECTATOR_FREE,
 	SPECTATOR_FOLLOW,
-	SPECTATOR_SCOREBOARD
+	SPECTATOR_SCOREBOARD,
 } spectatorState_t;
 
 typedef enum {
@@ -235,6 +235,7 @@ typedef struct {
 	int			spectatorClient;	// for chasecam and follow mode
 	int			wins, losses;		// tournament stats
 	qboolean	teamLeader;			// true when this client is a team leader
+	int			specOnly;
 } clientSession_t;
 
 //

@@ -2818,7 +2818,7 @@ void CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
 		head->shaderRGBA[3] = hexToAlpha(cg_redHeadColor.string);
 		return;
 	}
-	if( localPlayer->team != TEAM_FREE && ( localPlayer->team == ci->team && !cg_forceteammodels.integer ) ){
+	else if( localPlayer->team != TEAM_FREE && ( localPlayer->team == ci->team && !cg_forceteammodels.integer ) ){
 		legs->shaderRGBA[0] = hexToRed(cg_teamLegsColor.string);
 		legs->shaderRGBA[1] = hexToGreen(cg_teamLegsColor.string);
 		legs->shaderRGBA[2] = hexToBlue(cg_teamLegsColor.string);
@@ -2833,6 +2833,23 @@ void CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
 		head->shaderRGBA[1] = hexToGreen(cg_teamHeadColor.string);
 		head->shaderRGBA[2] = hexToBlue(cg_teamHeadColor.string);
 		head->shaderRGBA[3] = hexToAlpha(cg_teamHeadColor.string);
+		return;
+	}
+	else{
+		legs->shaderRGBA[0] = hexToRed(cg_enemyLegsColor.string);
+		legs->shaderRGBA[1] = hexToGreen(cg_enemyLegsColor.string);
+		legs->shaderRGBA[2] = hexToBlue(cg_enemyLegsColor.string);
+		legs->shaderRGBA[3] = hexToAlpha(cg_enemyLegsColor.string);
+
+		torso->shaderRGBA[0] = hexToRed(cg_enemyTorsoColor.string);
+		torso->shaderRGBA[1] = hexToGreen(cg_enemyTorsoColor.string);
+		torso->shaderRGBA[2] = hexToBlue(cg_enemyTorsoColor.string);
+		torso->shaderRGBA[3] = hexToAlpha(cg_enemyTorsoColor.string);
+
+		head->shaderRGBA[0] = hexToRed(cg_enemyHeadColor.string);
+		head->shaderRGBA[1] = hexToGreen(cg_enemyHeadColor.string);
+		head->shaderRGBA[2] = hexToBlue(cg_enemyHeadColor.string);
+		head->shaderRGBA[3] = hexToAlpha(cg_enemyHeadColor.string);
 		return;
 	}
 }

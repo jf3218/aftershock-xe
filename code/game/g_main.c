@@ -950,6 +950,8 @@ void AddTournamentPlayer( void ) {
 			client->sess.spectatorClient < 0  ) {
 			continue;
 		}
+		if ( client->sess.specOnly )
+			continue;
 
 		if ( !nextInLine || client->sess.spectatorTime < nextInLine->sess.spectatorTime ) {
 			nextInLine = client;

@@ -63,6 +63,9 @@ TeamMain_MenuEvent
 ===============
 */
 static void TeamMain_MenuEvent( void* ptr, int event ) {
+	int gametype;
+	char	info[MAX_INFO_STRING];
+
 	if( event != QM_ACTIVATED ) {
 		return;
 	}
@@ -84,7 +87,11 @@ static void TeamMain_MenuEvent( void* ptr, int event ) {
 		break;
 
 	case ID_SPECTATE:
-		trap_Cmd_ExecuteText( EXEC_APPEND, "cmd team spectator\n" );
+		gametype = atoi( Info_ValueForKey( info,"g_gametype" ) );
+		if( gametype == GT_TOURNAMENT )
+			trap_Cmd_ExecuteText( EXEC_APPEND, "cmd team speconly\n" );	
+		else
+			trap_Cmd_ExecuteText( EXEC_APPEND, "cmd team spectator\n" );
 		UI_ForceMenuOff();
 		break;
 	}
@@ -171,6 +178,7 @@ void TeamMain_MenuInit( void ) {
 	case GT_FFA:
 	case GT_LMS:
 	case GT_TOURNAMENT:
+		s_teammain.joingame.string	= "JOIN QUEUE";
 		s_teammain.joinred.generic.flags  |= QMF_GRAYED;
 		s_teammain.joinblue.generic.flags |= QMF_GRAYED;
 		break;
