@@ -423,6 +423,8 @@ struct gclient_s {
 
 	int 			rewards[MAX_REWARDS];
 
+	int			accuracy[WP_NUM_WEAPONS][2];
+
 };
 
 

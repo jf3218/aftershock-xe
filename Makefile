@@ -2135,7 +2135,7 @@ clean: clean-debug clean-release
 ifeq ($(PLATFORM),mingw32)
 	@$(MAKE) -C $(NSISDIR) clean
 else
-	@$(MAKE) -C $(LOKISETUPDIR) clean
+#	@$(MAKE) -C $(LOKISETUPDIR) clean
 endif
 
 clean-debug:
@@ -2164,7 +2164,7 @@ toolsclean2:
 	@rm -f $(TOOLSOBJ_D_FILES)
 	@rm -f $(LBURG) $(DAGCHECK_C) $(Q3RCC) $(Q3CPP) $(Q3LCC) $(Q3ASM)
 
-distclean: clean toolsclean
+distclean: toolsclean
 	@rm -rf $(BUILD_DIR)
 
 installer: release

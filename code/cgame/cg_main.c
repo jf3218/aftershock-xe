@@ -2411,7 +2411,7 @@ void CG_FairCvars() {
 }
 */
 
-void CG_oaUnofficialCvars() {
+void CG_oaUnofficialCvars( void ) {
 	char rendererinfos[128];
 
 	trap_Cvar_VariableStringBuffer("com_maxfps",rendererinfos,sizeof(rendererinfos) );

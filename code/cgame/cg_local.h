@@ -545,10 +545,18 @@ typedef struct {
 	int			numScores;
 	int			selectedScore;
 	int			teamScores[2];
+
 	score_t		scores[MAX_CLIENTS];
 	qboolean	showScores;
 	qboolean	scoreBoardShowing;
 	int			scoreFadeTime;
+
+	int		accuracys[8][2];
+	int		accRequestTime;
+	qboolean	showAcc;
+	qboolean	accBoardShowing;
+	int		accFadeTime;
+
 	char		killerName[MAX_NAME_LENGTH];
 	char			spectatorList[MAX_STRING_CHARS];		// list of names
 	int				spectatorLen;												// length of list
@@ -1424,7 +1432,7 @@ void CG_BuildSpectatorString( void );
 void SnapVectorTowards( vec3_t v, vec3_t to );
 
 //void CG_FairCvars();
-void CG_oaUnofficialCvars();
+void CG_oaUnofficialCvars( void );
 
 //
 // cg_view.c
@@ -1536,13 +1544,13 @@ void CG_LoadDeferredPlayers( void );
 
 
 //
-// cg_events.c
+// cg_event.c
 //
 void CG_CheckEvents( centity_t *cent );
 const char	*CG_PlaceString( int rank );
 void CG_EntityEvent( centity_t *cent, vec3_t position );
 void CG_PainEvent( centity_t *cent, int health );
-
+void CG_AddDeathNotice( char name1[ MAX_NAME_LENGTH ], int team1, char name2[ MAX_NAME_LENGTH ], int team2, qboolean twoIcons, qhandle_t icon1, qhandle_t icon2 );
 
 //
 // cg_ents.c

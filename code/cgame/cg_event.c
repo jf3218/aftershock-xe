@@ -418,7 +418,7 @@ CG_AddDeathNotice
 */
 
 void CG_AddDeathNotice( char name1[ MAX_NAME_LENGTH ], int team1, char name2[ MAX_NAME_LENGTH ], int team2, qboolean twoIcons, qhandle_t icon1, qhandle_t icon2 ) {
-  int i,j;
+  int i;
   for( i=DEATHNOTICE_HEIGHT-1 ; i > 0 ; i-- ) {
     if ( cgs.deathNoticeTime[ i-1 ] != 0 ) {
       cgs.deathNoticeTime[ i ] = cgs.deathNoticeTime[ i-1 ];

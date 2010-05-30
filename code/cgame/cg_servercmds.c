@@ -125,6 +125,23 @@ static void CG_ParseScores( void ) {
 
 /*
 =================
+CG_ParseScores
+
+=================
+*/
+static void CG_ParseAccuracy( void ) {
+	int		i;
+
+	for ( i = 0 ; i < 8 ; i++ ) {
+		cg.accuracys[i][0] = atoi( CG_Argv( i*2 + 1 ) );
+		cg.accuracys[i][1] = atoi( CG_Argv( i*2 + 2 ) );
+		CG_Printf("shots: %i   Hits: %i\n", cg.accuracys[i][0], cg.accuracys[i][1]);
+	}
+
+}
+
+/*
+=================
 CG_ParseElimination
 
 =================
@@ -1346,6 +1363,11 @@ static void CG_ServerCommand( void ) {
 		return;
 	}
 
+	if ( !strcmp( cmd, "accs" ) ) {
+		CG_ParseAccuracy();
+		return;
+	}
+	
 	if ( !strcmp( cmd, "ddtaken" ) ) {
 		CG_ParseDDtimetaken();
 		return;

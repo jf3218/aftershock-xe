@@ -317,6 +317,8 @@ static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t
 	const char *local_config;
 	const char* v;
 
+	local_team = 0;
+
 	if (cg_forceModel.integer){
     		local_config = CG_ConfigString(cg.clientNum + CS_PLAYERS);
     		v = Info_ValueForKey(local_config, "t");
@@ -519,6 +521,8 @@ static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t 
 	int i;
 	const char *local_config;
 	const char* v;
+	
+	local_team = 0;
 
 	if (cg_forceModel.integer){
     		local_config = CG_ConfigString(cg.clientNum + CS_PLAYERS);
@@ -1134,9 +1138,7 @@ void CG_NewClientInfo( int clientNum ) {
 	const char	*configstring;
 	const char	*v;
 	char		*slash;
-
 	int local_team, enemy;
-  	char *model_name, cvar_str[MAX_CVAR_VALUE_STRING];
   	const char *local_config;
 
 	ci = &cgs.clientinfo[clientNum];
@@ -1146,6 +1148,9 @@ void CG_NewClientInfo( int clientNum ) {
 		memset( ci, 0, sizeof( *ci ) );
 		return;		// player just left
 	}
+
+	local_team = 0;
+	enemy = 0;
 
 	if (cg_forceModel.integer)
   	{
@@ -2745,7 +2750,6 @@ CG_setColor
 */
 void CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
 		  refEntity_t * legs, int state){
-	int enemy;
 	
   	clientInfo_t *localPlayer;
   	localPlayer = &cgs.clientinfo[cg.clientNum];
