@@ -2974,29 +2974,6 @@ static qboolean CG_DrawScoreboard( void ) {
 #endif
 }
 
-#define ACCBOARD_XPOS 500
-#define ACCBOARD_YPOS 150
-#define ACCBOARD_HEIGHT 180
-#define ACCBOARD_WIDTH 75
-#define ACCITEM_SIZE 16
-
-static qboolean CG_DrawAccboard( void ) {
-	int i;
-	
-	if( !cg.showAcc ){
-		return qfalse;
-	}
-	CG_DrawTeamBackground( ACCBOARD_XPOS, ACCBOARD_YPOS, ACCBOARD_WIDTH, ACCBOARD_HEIGHT, 0.33f, TEAM_BLUE );
-	for( i = 0 ; i < 8 ; i++ ){
-		CG_DrawPic( ACCBOARD_XPOS + 10, ACCBOARD_YPOS + 10 +i*20, ACCITEM_SIZE, ACCITEM_SIZE, cg_weapons[i+2].weaponIcon );
-		if( cg.accuracys[i][0] > 0 )
-			CG_DrawSmallStringColor(ACCBOARD_XPOS + 10 + ACCITEM_SIZE + 10, ACCBOARD_YPOS + 10 +i*20 + ACCITEM_SIZE/2 - SMALLCHAR_HEIGHT/2 , va("%i%s",(int)(((float)cg.accuracys[i][1]*100)/((float)(cg.accuracys[i][0]))),"%"), colorWhite);
-		else
-			CG_DrawSmallStringColor(ACCBOARD_XPOS + 10 + ACCITEM_SIZE + 10, ACCBOARD_YPOS + 10 +i*20 + ACCITEM_SIZE/2 - SMALLCHAR_HEIGHT/2 , "0%", colorWhite);
-	}
-	return qtrue;
-}
-
 /*
 =================
 CG_DrawIntermission
@@ -3038,7 +3015,7 @@ static qboolean CG_DrawFollow( void ) {
 	color[3] = 1;
 
 
-	CG_DrawBigString( 320 - 9 * 8, 24, "following", 0.5F );
+	CG_DrawBigString( 320 - 9 * 8, 24, "following", 1.0F );
 
 	name = cgs.clientinfo[ cg.snap->ps.clientNum ].name;
 

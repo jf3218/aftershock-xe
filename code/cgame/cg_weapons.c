@@ -1902,6 +1902,48 @@ void CG_OutOfAmmoChange( void ) {
 }
 
 
+#define ACCBOARD_XPOS 500
+#define ACCBOARD_YPOS 150
+#define ACCBOARD_HEIGHT 20
+#define ACCBOARD_WIDTH 75
+#define ACCITEM_SIZE 16
+
+qboolean CG_DrawAccboard( void ) {
+	int counter, weaponNum, i;
+	
+	i = 0;
+
+	if( !cg.showAcc ){
+		return qfalse;
+	}
+	trap_R_SetColor( colorWhite );
+	
+	for( counter = 0; counter < 8 ; counter++ ){
+		if( cg_weapons[counter+2].weaponIcon )
+			i++;
+	}
+
+	CG_DrawTeamBackground( ACCBOARD_XPOS, ACCBOARD_YPOS, ACCBOARD_WIDTH, 20*(i + 1), 0.33f, TEAM_BLUE );
+
+	i = 0;
+
+	for( counter = 0 ; counter < 8 ; counter++ ){
+		if( cg_weapons[counter+2].weaponIcon ){
+			CG_DrawPic( ACCBOARD_XPOS + 10, ACCBOARD_YPOS + 10 +i*20, ACCITEM_SIZE, ACCITEM_SIZE, cg_weapons[counter+2].weaponIcon );
+			if( cg.accuracys[counter][0] > 0 )
+				CG_DrawSmallStringColor(ACCBOARD_XPOS + 10 + ACCITEM_SIZE + 10, ACCBOARD_YPOS + 10 +i*20 + ACCITEM_SIZE/2 - SMALLCHAR_HEIGHT/2 ,
+					 va("%i%s",(int)(((float)cg.accuracys[counter][1]*100)/((float)(cg.accuracys[counter][0]))),"%"), colorWhite);
+			else
+				CG_DrawSmallStringColor(ACCBOARD_XPOS + 10 + ACCITEM_SIZE + 10, ACCBOARD_YPOS + 10 +i*20 + ACCITEM_SIZE/2 - SMALLCHAR_HEIGHT/2 , "-%", colorWhite);
+			i++;
+		}
+	}
+
+	trap_R_SetColor(NULL);
+	return qtrue;
+}
+
+
 
 /*
 ===================================================================================================
