@@ -135,7 +135,6 @@ static void CG_ParseAccuracy( void ) {
 	for ( i = 0 ; i < 8 ; i++ ) {
 		cg.accuracys[i][0] = atoi( CG_Argv( i*2 + 1 ) );
 		cg.accuracys[i][1] = atoi( CG_Argv( i*2 + 2 ) );
-		CG_Printf("shots: %i   Hits: %i\n", cg.accuracys[i][0], cg.accuracys[i][1]);
 	}
 
 }
