@@ -1549,9 +1549,19 @@ void CG_DrawWeaponSelect( void ) {
 	// count the number of weapons owned
 	bits = cg.snap->ps.stats[ STAT_WEAPONS ];
 	count = 0;
-	for ( i = 1 ; i < MAX_WEAPONS ; i++ ) {
-		if ( bits & ( 1 << i ) ) {
-			count++;
+
+	if( cg_weaponBarStyle.integer < 3 ) {
+		for ( i = 1 ; i < MAX_WEAPONS ; i++ ) {
+			if ( bits & ( 1 << i ) ) {
+				count++;
+			}
+		}
+	}
+	else {
+		for ( i = 1 ; i < MAX_WEAPONS ; i++ ) {
+			if ( cg_weapons[i].weaponIcon ) {
+				count++;
+			}
 		}
 	}
 	
@@ -1564,6 +1574,15 @@ void CG_DrawWeaponSelect( void ) {
 			break;
 		case 2:
 			CG_DrawWeaponBar2(count,bits, color);
+			break;
+		case 3:
+			CG_DrawWeaponBar3(count,bits, color);
+			break;
+		case 4:
+			CG_DrawWeaponBar4(count,bits, color);
+			break;
+		case 5:
+			CG_DrawWeaponBar5(count,bits, color);
 			break;
 		default:
 			CG_DrawWeaponBar0(count,bits, color);
@@ -1587,7 +1606,7 @@ void CG_DrawWeaponBar0(int count, int bits, float *color){
 	int w;
 	char *s;
 	
-	for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
+	for ( i = MAX_WEAPONS - 1 ; i >= 0 ; i++ ) {
                 //Sago: Do mad change of grapple placement:
                 if(i==10)
                     continue;
@@ -1691,7 +1710,7 @@ void CG_DrawWeaponBar2(int count, int bits, float *color){
 	int w;
 	char *s;
 	
-	for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
+	for ( i = MAX_WEAPONS - 1 ; i >= 0 ; i-- ) {
                 //Sago: Do mad change of grapple placement:
                 if(i==10)
                     continue;
@@ -1730,8 +1749,130 @@ void CG_DrawWeaponBar2(int count, int bits, float *color){
 	}	
 }
 
+/*
+===============
+CG_DrawWeaponBar3
+===============
+*/
 
+void CG_DrawWeaponBar3(int count, int bits, float *color){
 
+	int y = 200 + count * 12;
+	int x = 0;
+	int i;
+	int w;
+	char *s;
+	
+	for ( i = MAX_WEAPONS - 1 ; i >= 0 ; i-- ) {
+		if( cg_weapons[i].weaponIcon ){
+			if( i != WP_GAUNTLET ) {
+				// draw weapon icon
+				if ( i == cg.weaponSelect) {
+					CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderLeft );
+				}
+	
+				CG_DrawPic( x+2, y+4, 16, 16, cg_weapons[i].weaponIcon );
+				if ( ( bits & ( 1 << i ) ) ) {
+					if(cg.snap->ps.ammo[i] == 0){
+						CG_DrawPic( x+2, y+4, 16, 16, cgs.media.noammoShader );
+					}	
+			
+					/** Draw Weapon Ammo **/
+					if(cg.snap->ps.ammo[ i ]!=-1){
+						s = va("%i", cg.snap->ps.ammo[ i ] );
+						w = CG_DrawStrlen( s ) * SMALLCHAR_WIDTH;
+						CG_DrawSmallStringColor(x - w/2 + 32, y+4, s, color);
+					}
+				}
+				y -= 24;
+			}
+
+		}
+	}	
+}
+
+/*
+===============
+CG_DrawWeaponBar4
+===============
+*/
+
+void CG_DrawWeaponBar4(int count, int bits, float *color){
+
+	int y = 370;
+	int x = 320 - (count-1) * 15;
+	int i;
+	int w;
+	char *s;
+	
+	
+	for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
+                if( cg_weapons[i].weaponIcon ){
+			if( i != WP_GAUNTLET ) {
+				// draw weapon icon
+				if ( i == cg.weaponSelect) {
+					CG_DrawPic( x, y, 30, 38, cgs.media.selectionShaderMid );
+				}
+	
+				CG_DrawPic( x+7, y+2, 16, 16, cg_weapons[i].weaponIcon );
+				if ( ( bits & ( 1 << i ) ) ) {
+					if(cg.snap->ps.ammo[i] == 0){
+						CG_DrawPic( x+7, y+2, 16, 16, cgs.media.noammoShader );
+					}
+		
+					if(cg.snap->ps.ammo[ i ]!=-1){
+						s = va("%i", cg.snap->ps.ammo[ i ] );
+						w = CG_DrawStrlen( s ) * SMALLCHAR_WIDTH;
+						CG_DrawSmallStringColor(x - w/2 + 15, y+20, s, color);
+					}
+				}
+				x += 30;
+			}
+		}
+	}
+}
+
+/*
+===============
+CG_DrawWeaponBar5
+===============
+*/
+
+void CG_DrawWeaponBar5(int count, int bits, float *color){
+
+	int y = 200 + count * 12;
+	int x = 640-50;
+	int i;
+	int w;
+	char *s;
+	
+	for ( i = MAX_WEAPONS-1 ; i >= 0 ; i-- ) {
+		if( cg_weapons[i].weaponIcon ){
+			if( i != WP_GAUNTLET ) {
+				// draw weapon icon
+				if ( i == cg.weaponSelect) {
+					CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderRight );
+				}
+		
+				CG_DrawPic( x+2, y+4, 16, 16, cg_weapons[i].weaponIcon );
+				if ( ( bits & ( 1 << i ) ) ) {
+					if(cg.snap->ps.ammo[i] == 0){
+						CG_DrawPic( x+2, y+4, 16, 16, cgs.media.noammoShader );
+					}	
+				
+					/** Draw Weapon Ammo **/
+					if(cg.snap->ps.ammo[ i ]!=-1){
+						s = va("%i", cg.snap->ps.ammo[ i ] );
+						w = CG_DrawStrlen( s ) * SMALLCHAR_WIDTH;
+						CG_DrawSmallStringColor(x - w/2 + 32, y+4, s, color);
+					}
+				}
+	
+				y -= 24;
+			}
+		}
+	}	
+}
 
 /*
 ===============
