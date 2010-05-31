@@ -842,9 +842,9 @@ void ClearRegisteredItems( void ) {
 			RegisterItem( BG_FindItemForWeapon( WP_RAILGUN ) );
 			RegisterItem( BG_FindItemForWeapon( WP_PLASMAGUN ) );
 			RegisterItem( BG_FindItemForWeapon( WP_BFG ) );
-			RegisterItem( BG_FindItemForWeapon( WP_NAILGUN ) );
-			RegisterItem( BG_FindItemForWeapon( WP_PROX_LAUNCHER ) );
-			RegisterItem( BG_FindItemForWeapon( WP_CHAINGUN ) );
+//			RegisterItem( BG_FindItemForWeapon( WP_NAILGUN ) );
+//			RegisterItem( BG_FindItemForWeapon( WP_PROX_LAUNCHER ) );
+//			RegisterItem( BG_FindItemForWeapon( WP_CHAINGUN ) );
 		}
 	}
 	if( g_gametype.integer == GT_HARVESTER ) {
@@ -880,6 +880,10 @@ void RegisterItem( gitem_t *item ) {
 	if ( !item ) {
 		G_Error( "RegisterItem: NULL" );
 	}
+	
+	if ( item->giType == IT_WEAPON && ( item->giTag == WP_NAILGUN || item->giTag == WP_CHAINGUN || item->giTag == WP_PROX_LAUNCHER ) )
+		return;
+
 	itemRegistered[ item - bg_itemlist ] = qtrue;
 }
 
