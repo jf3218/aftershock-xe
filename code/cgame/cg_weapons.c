@@ -1606,7 +1606,7 @@ void CG_DrawWeaponBar0(int count, int bits, float *color){
 	int w;
 	char *s;
 	
-	for ( i = MAX_WEAPONS - 1 ; i >= 0 ; i++ ) {
+	for ( i = MAX_WEAPONS - 1 ; i >= 0 ; i-- ) {
                 //Sago: Do mad change of grapple placement:
                 if(i==10)
                     continue;
