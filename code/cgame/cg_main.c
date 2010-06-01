@@ -314,6 +314,8 @@ vmCvar_t	cg_plasmaBallAlpha;
 
 vmCvar_t	cg_drawItemPickups;
 
+vmCvar_t	cg_mapConfigs;
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -536,6 +538,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_plasmaBallAlpha, "cg_plasmaBallAlpha", "255", CVAR_ARCHIVE},
 
 	{&cg_drawItemPickups, "cg_drawItemPickups", "7", CVAR_ARCHIVE},
+
+	{&cg_mapConfigs, "cg_mapConfigs", "0", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -2128,6 +2132,35 @@ void CG_AssetCache( void ) {
 	cgDC.Assets.sliderThumb = trap_R_RegisterShaderNoMip( ASSET_SLIDER_THUMB );
 }
 #endif
+
+#define DEFAULT_MAPCONFIG "mapconfigs/default.cfg"
+
+void CG_mapConfigs( void ){
+	fileHandle_t	f;
+	char* filename;
+	char* buf;
+	int len;
+
+	filename = strchr( cgs.mapname, '/' );
+	filename++;
+	buf = strstr( filename, ".bsp");
+	buf[0] = '\0';
+
+	filename = va("mapconfigs/%s.cfg", filename );
+
+	len = trap_FS_FOpenFile( filename, &f, FS_READ );
+
+	if( len <= 0 ){
+		CG_Printf("File %s not found", filename);
+		trap_SendConsoleCommand("exec mapconfigs/default.cfg");	
+		return;
+	}
+
+	trap_FS_FCloseFile( f );
+	trap_SendConsoleCommand(va("exec %s", filename));
+	
+	return;
+}
 /*
 =================
 CG_Init
@@ -2250,9 +2283,10 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	addChallenge(GENERAL_TEST);
 
 	trap_S_ClearLoopingSounds( qtrue );
-	if( qtrue ){
-		trap_SendConsoleCommand("record new");
-	}
+
+	if( cg_mapConfigs.integer )
+		CG_mapConfigs();
+
 }
 
 /*

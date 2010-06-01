@@ -1398,6 +1398,8 @@ extern vmCvar_t 		cg_plasmaBallAlpha;
 
 extern vmCvar_t 		cg_drawItemPickups;
 
+extern vmCvar_t			cg_mapConfigs;
+
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
 //void CG_AddBoundingBox( centity_t *cent );
