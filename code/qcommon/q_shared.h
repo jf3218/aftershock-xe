@@ -372,7 +372,7 @@ extern	vec4_t		colorDkGrey;
 #define COLOR_MENU      '8'
 //#define ColorIndex(c)   ((c) - '0')
 
-#define ColorIndex(c)   ((c) >= '0' && (c) <= '9')?((c)-'0'):(((c) >= 'a' && (c) <= 'z')?((c)-'a'+10):((c)-'A'+36))
+#define ColorIndex(c)   ( ( (c) >= '0' ) && ( (c) <= '8') )?((c)-'0'):(((c) >= 'a' && (c) <= 'z')?((c)-'a'+10):((c)-'A'+36))
 
 #define S_COLOR_BLACK	"^0"
 #define S_COLOR_RED		"^1"
