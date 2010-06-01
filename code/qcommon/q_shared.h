@@ -360,7 +360,7 @@ extern	vec4_t		colorMdGrey;
 extern	vec4_t		colorDkGrey;
 
 #define Q_COLOR_ESCAPE	'^'
-#define Q_IsColorString(p)      ((p) && *(p) == Q_COLOR_ESCAPE && *((p)+1) && ( ( *((p)+1) >= '0' && *((p)+1) <= '8' ) || ( *((p)+1) >= 'a' && *((p)+1) <= 'z' ) || ( *((p)+1) >= 'A' && *((p)+1) <= 'Z') ) ) // ^[0-8]
+#define Q_IsColorString(p)      ((p) && *(p) == Q_COLOR_ESCAPE && *((p)+1) && ( ( *((p)+1) >= '0' && *((p)+1) <= '9' ) || ( *((p)+1) >= 'a' && *((p)+1) <= 'z' ) || ( *((p)+1) >= 'A' && *((p)+1) <= 'Z') ) ) // ^[0-8]
 #define COLOR_BLACK		'0'
 #define COLOR_RED		'1'
 #define COLOR_GREEN		'2'
@@ -372,7 +372,7 @@ extern	vec4_t		colorDkGrey;
 #define COLOR_MENU      '8'
 //#define ColorIndex(c)   ((c) - '0')
 
-#define ColorIndex(c)   ( ( (c) >= '0' ) && ( (c) <= '8') )?((c)-'0'):(((c) >= 'a' && (c) <= 'z')?((c)-'a'+10):((c)-'A'+36))
+#define ColorIndex(c)   ( (((c)) >= 'A' && ((c)) <= 'Z') ? (((c))-'A'+36) : ((((c)) >= 'a' && ((c)) <= 'z')?(((c))-'a'+10):(((c))-'0')) )
 
 #define S_COLOR_BLACK	"^0"
 #define S_COLOR_RED		"^1"
