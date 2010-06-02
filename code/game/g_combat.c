@@ -558,7 +558,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
                                 G_LogPrintf( "Award: %i %i: %s gained the %s award!\n", attacker->client->ps.clientNum, 0, attacker->client->pers.netname, "GAUNTLET" );
 
 				// add the sprite over the player's head
-				attacker->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP );
+				attacker->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP | EF_AWARD_AIRROCKET | EF_AWARD_AIRGRENADE );
 				attacker->client->ps.eFlags |= EF_AWARD_GAUNTLET;
 				attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 
@@ -703,7 +703,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
                                 if(!level.hadBots) //There has not been any bots
                                     ChallengeMessage(attacker,AWARD_EXCELLENT);
 				// add the sprite over the player's head
-				attacker->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP );
+				attacker->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP | EF_AWARD_AIRROCKET | EF_AWARD_AIRGRENADE );
 				attacker->client->ps.eFlags |= EF_AWARD_EXCELLENT;
 				attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 			} else { 
@@ -1201,16 +1201,30 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 				if( sqrt((targ->client->ps.origin[0]-attacker->client->ps.origin[0]) * (targ->client->ps.origin[0]-attacker->client->ps.origin[0]) +
 						(targ->client->ps.origin[1]-attacker->client->ps.origin[1]) * (targ->client->ps.origin[1]-attacker->client->ps.origin[1]) + 
 						(targ->client->ps.origin[2]-attacker->client->ps.origin[2]) * (targ->client->ps.origin[2]-attacker->client->ps.origin[2])) > 300 ){
+
 					attacker->client->rewards[REWARD_AIRROCKET]++;
 					RewardMessage(attacker, REWARD_AIRROCKET, attacker->client->rewards[REWARD_AIRROCKET] );
+
+					attacker->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP | EF_AWARD_AIRROCKET 
+						| EF_AWARD_AIRGRENADE );
+
+					attacker->client->ps.eFlags |= EF_AWARD_AIRROCKET;
+					attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 				}
 			}
 			else if( ( targ->client->lastGroundTime != 0 ) && ( level.time - targ->client->lastGroundTime > 750 ) && ( mod == MOD_GRENADE ) ){
 				if( sqrt((targ->client->ps.origin[0]-attacker->client->ps.origin[0]) * (targ->client->ps.origin[0]-attacker->client->ps.origin[0]) +
 						(targ->client->ps.origin[1]-attacker->client->ps.origin[1]) * (targ->client->ps.origin[1]-attacker->client->ps.origin[1]) + 
 						(targ->client->ps.origin[2]-attacker->client->ps.origin[2]) * (targ->client->ps.origin[2]-attacker->client->ps.origin[2])) > 200 ){
+
 					attacker->client->rewards[REWARD_AIRGRENADE]++;
 					RewardMessage(attacker, REWARD_AIRGRENADE, attacker->client->rewards[REWARD_AIRGRENADE]);
+
+					attacker->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP | EF_AWARD_AIRROCKET 
+						| EF_AWARD_AIRGRENADE );
+
+					attacker->client->ps.eFlags |= EF_AWARD_AIRGRENADE;
+					attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 				}
 			}
 		}

@@ -295,6 +295,8 @@ typedef enum {
 #define	EF_AWARD_ASSIST		0x00020000		// draw a assist sprite
 #define EF_AWARD_DENIED		0x00040000		// denied
 #define EF_TEAMVOTED		0x00080000		// already cast a team vote
+#define EF_AWARD_AIRROCKET	0x00100000		// draw a airrocket sprite
+#define EF_AWARD_AIRGRENADE	0x00100000		// draw a airgrenade sprite
 
 // NOTE: may not have more than 16
 typedef enum {
