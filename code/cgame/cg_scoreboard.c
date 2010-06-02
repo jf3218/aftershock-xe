@@ -144,6 +144,12 @@ static void CG_DrawClientScore( int y, score_t *score, float *color, float fade,
 				CG_DrawSmallStringColor( iconx, y, string, color );
 			}
 		}
+
+	}
+
+	if ( cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION ){
+		CG_DrawStringExt( 260, y, va("%i", (int)(score->dmgdone/100)), colorGreen, qtrue, qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );
+		CG_DrawStringExt( 260, y+TINYCHAR_HEIGHT, va("%i", (int)(score->dmgtaken/100)), colorRed, qtrue, qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );
 	}
 
 	// draw the face

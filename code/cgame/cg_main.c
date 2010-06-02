@@ -2151,7 +2151,7 @@ void CG_mapConfigs( void ){
 	len = trap_FS_FOpenFile( filename, &f, FS_READ );
 
 	if( len <= 0 ){
-		CG_Printf("File %s not found", filename);
+		CG_Printf("File %s not found, trying to exec mapconfigs/default.cfg\n", filename);
 		trap_SendConsoleCommand("exec mapconfigs/default.cfg");	
 		return;
 	}

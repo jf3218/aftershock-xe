@@ -1191,6 +1191,12 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		} else {
 			attacker->client->ps.persistant[PERS_HITS]++;
 			attacker->client->ps.persistant[PERS_DAMAGE_DONE] += damage;
+
+			if( !( mod==MOD_FALLING || mod==MOD_LAVA || mod==MOD_SLIME || mod==MOD_TRIGGER_HURT || mod==MOD_SUICIDE || mod==MOD_TELEFRAG )) {
+					attacker->client->dmgdone += damage;
+					targ->client->dmgtaken += damage;
+			}
+
 			if( ( targ->client->lastGroundTime != 0 ) && ( level.time - targ->client->lastGroundTime > 750 ) && ( mod == MOD_ROCKET ) ){
 				if( sqrt((targ->client->ps.origin[0]-attacker->client->ps.origin[0]) * (targ->client->ps.origin[0]-attacker->client->ps.origin[0]) +
 						(targ->client->ps.origin[1]-attacker->client->ps.origin[1]) * (targ->client->ps.origin[1]-attacker->client->ps.origin[1]) + 

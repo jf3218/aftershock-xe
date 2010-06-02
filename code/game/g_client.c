@@ -1685,6 +1685,9 @@ void ClientSpawn(gentity_t *ent) {
 	int		accuracy[WP_NUM_WEAPONS][2];
 	int		eventSequence;
 	char	userinfo[MAX_INFO_STRING];
+	int		saveddmgdone;
+	int 		saveddmgtaken;
+ 
 
 	index = ent - g_entities;
 	client = ent->client;
@@ -1825,6 +1828,10 @@ void ClientSpawn(gentity_t *ent) {
 	saved = client->pers;
 	savedSess = client->sess;
 	savedPing = client->ps.ping;
+
+	saveddmgdone = client->dmgdone;
+	saveddmgtaken = client->dmgtaken;
+
 //	savedAreaBits = client->areabits;
 	accuracy_hits = client->accuracy_hits;
 	accuracy_shots = client->accuracy_shots;
@@ -1849,6 +1856,10 @@ void ClientSpawn(gentity_t *ent) {
 	client->pers = saved;
 	client->sess = savedSess;
 	client->ps.ping = savedPing;
+
+	client->dmgdone = saveddmgdone;
+	client->dmgtaken = saveddmgtaken;
+
 //	client->areabits = savedAreaBits;
 	client->accuracy_hits = accuracy_hits;
 	client->accuracy_shots = accuracy_shots;
