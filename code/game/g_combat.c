@@ -1227,6 +1227,22 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 					attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 				}
 			}
+
+			if( mod == MOD_ROCKET ){
+				attacker->client->lastRocketTime = level.time;
+				if( level.time - attacker->client->lastRailTime < 300 ){
+					attacker->client->rewards[REWARD_RLRG]++;
+					RewardMessage(attacker, REWARD_RLRG, attacker->client->rewards[REWARD_RLRG]);
+				}
+			}
+
+			if( mod == MOD_RAILGUN ){
+				attacker->client->lastRailTime = level.time;
+				if( level.time - attacker->client->lastRocketTime < 300 ){
+					attacker->client->rewards[REWARD_RLRG]++;
+					RewardMessage(attacker, REWARD_RLRG, attacker->client->rewards[REWARD_RLRG]);
+				}
+			}
 		}
 		attacker->client->ps.persistant[PERS_ATTACKEE_ARMOR] = (targ->health<<8)|(client->ps.stats[STAT_ARMOR]);
 	}

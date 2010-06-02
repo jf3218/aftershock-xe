@@ -1291,6 +1291,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.medalAirrocket = trap_R_RegisterShaderNoMip( "medal_airrocket" );
 	cgs.media.medalAirgrenade = trap_R_RegisterShaderNoMip( "medal_airgrenade" );
 	cgs.media.medalCapture = trap_R_RegisterShaderNoMip( "medal_capture" );
+	cgs.media.medalRocketrail = trap_R_RegisterShaderNoMip( "medal_rocketrail" );
 
 
 	memset( cg_items, 0, sizeof( cg_items ) );

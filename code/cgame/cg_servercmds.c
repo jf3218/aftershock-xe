@@ -273,6 +273,9 @@ static void CG_ParseRewards( void ) {
 	else if( reward == REWARD_AIRGRENADE ){
 		pushReward(cgs.media.airgrenadeSound, cgs.media.medalAirgrenade, rewardCount);
 	}
+	else if( reward == REWARD_RLRG ){
+		pushReward(cgs.media.impressiveSound, cgs.media.medalRocketrail, rewardCount);
+	}
 }	
 
 /*

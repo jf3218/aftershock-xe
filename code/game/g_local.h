@@ -428,6 +428,9 @@ struct gclient_s {
 	int			dmgdone;
 	int			dmgtaken;
 
+	int			lastRocketTime;
+	int			lastRailTime;
+
 };
 
 

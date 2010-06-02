@@ -170,6 +170,23 @@ medal_capture
 	}
 }
 
+medal_airrocket
+{
+	nopicmip
+	{
+		clampmap menu/medals/medal_airrocket.tga
+		blendFunc blend
+	}
+}
+
+medal_airgrenade
+{
+	nopicmip
+	{
+		clampmap menu/medals/medal_airgrenade.tga
+		blendFunc blend
+	}
+}
 
 icons/iconw_gauntlet
 {

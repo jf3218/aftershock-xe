@@ -188,6 +188,15 @@ medal_airgrenade
 	}
 }
 
+medal_rocketrail
+{
+	nopicmip
+	{
+		clampmap menu/medals/medal_rocketrail.tga
+		blendFunc blend
+	}
+}
+
 icons/iconw_gauntlet
 {
 	nopicmip
