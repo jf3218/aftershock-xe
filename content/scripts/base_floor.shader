@@ -1,8 +1,9 @@
 textures/base_floor/proto_rustygrate
-//last edited by **HD
+//last edited by **HD :surfaceparm trans
 {
 	surfaceparm metalsteps
 	surfaceparm nodamage
+	surfaceparm trans
 	cull none
 	nopicmip
 	{
@@ -21,10 +22,11 @@ textures/base_floor/proto_rustygrate
 }
 
 textures/base_floor/proto_rustygrate2
-//last edited by **HD
+//last edited by **HD : surfaceparm trans
 {
 	surfaceparm metalsteps
 	surfaceparm nodamage
+	surfaceparm trans
 	cull none
 	nopicmip
 	{
@@ -43,10 +45,11 @@ textures/base_floor/proto_rustygrate2
 }
 
 textures/base_floor/rusty_pentragrate
-//last edited by **HD
+//last edited by **HD : surfaceparm trans
 {
 	surfaceparm metalsteps
 	surfaceparm nodamage
+	surfaceparm trans
 	cull none
 	nopicmip
 	{
@@ -65,10 +68,11 @@ textures/base_floor/rusty_pentragrate
 }
 
 textures/base_floor/proto_grate
-//last edited by **HD
+//last edited by **HD : surfaceparm trans
 {
 	surfaceparm metalsteps
 	surfaceparm nodamage
+	surfaceparm trans
 	cull none
 	nopicmip
 	{
@@ -87,10 +91,11 @@ textures/base_floor/proto_grate
 }
 
 textures/base_floor/proto_grate3
-//last edited by **HD
+//last edited by **HD : surfaceparm trans
 {
 	surfaceparm metalsteps
 	surfaceparm nodamage
+	surfaceparm trans
 	cull none
 	nopicmip
 	{

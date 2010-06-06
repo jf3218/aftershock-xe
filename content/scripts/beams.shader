@@ -56,3 +56,16 @@ lightningBoltScroll
 	}
 }
 
+lightningBoltScrollColor
+{
+	nopicmip
+	cull disable
+	{
+		animmap 30 textures/oafx/lightningscroll.tga
+		blendfunc add
+		tcMod scroll -2 0
+		rgbGen entity
+		alphaGen entity
+	}
+}
+

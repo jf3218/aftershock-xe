@@ -316,6 +316,11 @@ vmCvar_t	cg_drawItemPickups;
 
 vmCvar_t	cg_mapConfigs;
 
+vmCvar_t	cg_enemyWeaponColor;
+vmCvar_t	cg_teamWeaponColor;
+vmCvar_t	cg_forceWeaponColor;
+
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -540,6 +545,10 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_drawItemPickups, "cg_drawItemPickups", "7", CVAR_ARCHIVE},
 
 	{&cg_mapConfigs, "cg_mapConfigs", "0", CVAR_ARCHIVE},
+
+	{&cg_teamWeaponColor, "cg_teamWeaponColor", "0xFFFFFFFF", CVAR_ARCHIVE},
+	{&cg_enemyWeaponColor, "cg_enemyWeaponColor", "0x00FF00FF", CVAR_ARCHIVE},
+	{&cg_forceWeaponColor, "cg_forceWeaponColor", "0", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -1120,6 +1129,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.nailPuffShader = trap_R_RegisterShader( "nailtrail" );
 	cgs.media.blueProxMine = trap_R_RegisterModel( "models/weaphits/proxmineb.md3" );
 	cgs.media.plasmaBallShader = trap_R_RegisterShader( "sprites/plasma1" );
+	cgs.media.plasmaBallShaderColor = trap_R_RegisterShader( "sprites/plasma1Color" );
 	cgs.media.bloodTrailShader = trap_R_RegisterShader( "bloodTrail" );
 	cgs.media.lagometerShader = trap_R_RegisterShader("lagometer" );
 	cgs.media.connectionShader = trap_R_RegisterShader( "disconnected" );

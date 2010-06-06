@@ -219,6 +219,9 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
  
 	localEntity_t *le;
 	refEntity_t   *re;
+
+	clientInfo_t *localPlayer;
+  	localPlayer = &cgs.clientinfo[cg.clientNum];
  
 #define RADIUS   4
 #define ROTATION 1
@@ -240,17 +243,56 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
  
 	VectorCopy(start, re->origin);
 	VectorCopy(end, re->oldorigin);
- 
-	re->shaderRGBA[0] = ci->color1[0] * 255;
-	re->shaderRGBA[1] = ci->color1[1] * 255;
-	re->shaderRGBA[2] = ci->color1[2] * 255;
-	re->shaderRGBA[3] = 255;
 
-	le->color[0] = ci->color1[0] * 0.75;
-	le->color[1] = ci->color1[1] * 0.75;
-	le->color[2] = ci->color1[2] * 0.75;
-	le->color[3] = 1.0f;
+	if( cg_forceWeaponColor.integer & 16 ){
+		
+		if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
+			if( localPlayer->team != ci->team ){
+				re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+				re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
+				re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+				re->shaderRGBA[3] = hexToAlpha( cg_enemyWeaponColor.string );
+	
+				le->color[0] = ((float)hexToRed( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+				le->color[1] = ((float)hexToGreen( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+				le->color[2] = ((float)hexToBlue( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+				le->color[3] = ((float)hexToAlpha( cg_enemyWeaponColor.string ))/255.0;
+			}
+			else{
+				re->shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+				re->shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
+				re->shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+				re->shaderRGBA[3] = hexToAlpha( cg_teamWeaponColor.string );
+	
+				le->color[0] = ((float)hexToRed( cg_teamWeaponColor.string ))/255.0 * 0.75;
+				le->color[1] = ((float)hexToGreen( cg_teamWeaponColor.string ))/255.0 * 0.75;
+				le->color[2] = ((float)hexToBlue( cg_teamWeaponColor.string ))/255.0 * 0.75;
+				le->color[3] = ((float)hexToAlpha( cg_teamWeaponColor.string ))/255.0;
+			}
+		}
+		else{
+			re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+			re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
+			re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+			re->shaderRGBA[3] = hexToAlpha( cg_enemyWeaponColor.string );
 
+			le->color[0] = ((float)hexToRed( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+			le->color[1] = ((float)hexToGreen( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+			le->color[2] = ((float)hexToBlue( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+			le->color[3] = ((float)hexToAlpha( cg_enemyWeaponColor.string ))/255.0;
+		}
+	}
+	else{
+		re->shaderRGBA[0] = ci->color1[0] * 255;
+		re->shaderRGBA[1] = ci->color1[1] * 255;
+		re->shaderRGBA[2] = ci->color1[2] * 255;
+		re->shaderRGBA[3] = 255;
+
+		le->color[0] = ci->color1[0] * 0.75;
+		le->color[1] = ci->color1[1] * 0.75;
+		le->color[2] = ci->color1[2] * 0.75;
+		le->color[3] = 1.0f;
+	}
 	AxisClear( re->axis );
  
 	if (cg_oldRail.integer)
@@ -295,15 +337,55 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 			re->radius = 1.1f;
 			re->customShader = cgs.media.railRingsShader;
 
-			re->shaderRGBA[0] = ci->color2[0] * 255;
-			re->shaderRGBA[1] = ci->color2[1] * 255;
-			re->shaderRGBA[2] = ci->color2[2] * 255;
-			re->shaderRGBA[3] = 255;
+			if( cg_forceWeaponColor.integer & 16 ){
+		
+				if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
+					if( localPlayer->team != ci->team ){
+						re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+						re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
+						re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+						re->shaderRGBA[3] = hexToAlpha( cg_enemyWeaponColor.string );
+	
+						le->color[0] = ((float)hexToRed( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+						le->color[1] = ((float)hexToGreen( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+						le->color[2] = ((float)hexToBlue( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+						le->color[3] = ((float)hexToAlpha( cg_enemyWeaponColor.string ))/255.0;
+					}
+					else{
+						re->shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+						re->shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
+						re->shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+						re->shaderRGBA[3] = hexToAlpha( cg_teamWeaponColor.string );
+	
+						le->color[0] = ((float)hexToRed( cg_teamWeaponColor.string ))/255.0 * 0.75;
+						le->color[1] = ((float)hexToGreen( cg_teamWeaponColor.string ))/255.0 * 0.75;
+						le->color[2] = ((float)hexToBlue( cg_teamWeaponColor.string ))/255.0 * 0.75;
+						le->color[3] = ((float)hexToAlpha( cg_teamWeaponColor.string ))/255.0;
+					}
+				}
+				else{
+					re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+					re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
+					re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+					re->shaderRGBA[3] = hexToAlpha( cg_enemyWeaponColor.string );
 
-			le->color[0] = ci->color2[0] * 0.75;
-			le->color[1] = ci->color2[1] * 0.75;
-			le->color[2] = ci->color2[2] * 0.75;
-			le->color[3] = 1.0f;
+					le->color[0] = ((float)hexToRed( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+					le->color[1] = ((float)hexToGreen( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+					le->color[2] = ((float)hexToBlue( cg_enemyWeaponColor.string ))/255.0 * 0.75;
+					le->color[3] = ((float)hexToAlpha( cg_enemyWeaponColor.string ))/255.0;
+				}
+			}
+			else{
+				re->shaderRGBA[0] = ci->color1[0] * 255;
+				re->shaderRGBA[1] = ci->color1[1] * 255;
+				re->shaderRGBA[2] = ci->color1[2] * 255;
+				re->shaderRGBA[3] = 255;
+		
+				le->color[0] = ci->color1[0] * 0.75;
+				le->color[1] = ci->color1[1] * 0.75;
+				le->color[2] = ci->color1[2] * 0.75;
+				le->color[3] = 1.0f;
+			}
 
 			le->pos.trType = TR_LINEAR;
 			le->pos.trTime = cg.time;
@@ -696,6 +778,7 @@ void CG_RegisterWeapon( int weaponNum ) {
 
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/lightning/lg_fire.wav", qfalse );
 		cgs.media.lightningShader = trap_R_RegisterShaderNoMip( "lightningBoltScroll");
+		cgs.media.lightningShaderColor = trap_R_RegisterShaderNoMip( "lightningBoltScrollColor");
 		cgs.media.lightningExplosionModel = trap_R_RegisterModel( "models/weaphits/crackle.md3" );
 		cgs.media.sfx_lghit1 = trap_S_RegisterSound( "sound/weapons/lightning/lg_hit.wav", qfalse );
 		cgs.media.sfx_lghit2 = trap_S_RegisterSound( "sound/weapons/lightning/lg_hit2.wav", qfalse );
@@ -986,6 +1069,10 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 	refEntity_t  beam;
 	vec3_t   forward;
 	vec3_t   muzzlePoint, endPoint;
+	
+	clientInfo_t *local, *other;
+  	local = &cgs.clientinfo[cg.clientNum];
+	other = &cgs.clientinfo[cent->currentState.number];
 
 	if (cent->currentState.weapon != WP_LIGHTNING) {
 		return;
@@ -1069,7 +1156,31 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 	VectorCopy( origin, beam.origin );
 
 	beam.reType = RT_LIGHTNING;
-	beam.customShader = cgs.media.lightningShader;
+	if( cg_forceWeaponColor.integer & 8 ){
+		beam.customShader = cgs.media.lightningShaderColor;
+		if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
+			if( local->team != other->team ){
+				beam.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+				beam.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
+				beam.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+				beam.shaderRGBA[3] = hexToAlpha( cg_enemyWeaponColor.string );
+			}
+			else{
+				beam.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+				beam.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
+				beam.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+				beam.shaderRGBA[3] = hexToAlpha( cg_teamWeaponColor.string );
+			}
+		}
+		else{
+			beam.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+			beam.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
+			beam.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+			beam.shaderRGBA[3] = hexToAlpha( cg_enemyWeaponColor.string );
+		}
+	}
+	else
+		beam.customShader = cgs.media.lightningShader;
 	trap_R_AddRefEntityToScene( &beam );
 
 	// add the impact flare if it hit something

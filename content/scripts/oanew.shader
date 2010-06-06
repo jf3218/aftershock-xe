@@ -595,6 +595,25 @@ sprites/plasma1
 	}
 }
 
+sprites/plasma1Color
+{
+	nopicmip
+	{
+		clampmap sprites/plasmaa.tga
+		blendfunc gl_src_alpha gl_one
+		tcMod rotate -145
+		alphaGen entity
+		rgbGen entity
+	}
+	{
+		clampmap sprites/plasmaa.tga
+		blendfunc gl_src_alpha gl_one
+		tcMod rotate 177
+		alphaGen entity
+		rgbGen entity
+	}
+}
+
 bfgshot
 {
 	cull disable

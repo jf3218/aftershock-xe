@@ -402,6 +402,10 @@ static void CG_Missile( centity_t *cent ) {
 	const weaponInfo_t		*weapon;
 //	int	col;
 
+	clientInfo_t *local, *other;
+  	local = &cgs.clientinfo[cg.clientNum];
+	other = &cgs.clientinfo[cent->currentState.clientNum];
+
 	s1 = &cent->currentState;
 	if ( s1->weapon > WP_NUM_WEAPONS ) {
 		s1->weapon = 0;
@@ -457,7 +461,29 @@ static void CG_Missile( centity_t *cent ) {
 		ent.reType = RT_SPRITE;
 		ent.radius = 16;
 		ent.rotation = 0;
-		ent.customShader = cgs.media.plasmaBallShader;
+
+		if( /*cg_forceWeaponColor.integer & 8*/ qfalse ){
+			ent.customShader = cgs.media.plasmaBallShaderColor;
+			if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
+				if( local->team != other->team ){
+					ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+					ent.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
+					ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+				}
+				else{
+					ent.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+					ent.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
+					ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+				}
+			}
+			else{
+				ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+				ent.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
+				ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+			}
+		}
+		else
+			ent.customShader = cgs.media.plasmaBallShader;
 
 		ent.shaderRGBA[3] = cg_plasmaBallAlpha.integer;
 

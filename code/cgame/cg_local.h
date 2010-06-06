@@ -764,6 +764,7 @@ typedef struct {
 	qhandle_t	railCoreShader;
 
 	qhandle_t	lightningShader;
+	qhandle_t	lightningShaderColor;
 
 	qhandle_t	friendShader;
 
@@ -785,6 +786,7 @@ typedef struct {
 	qhandle_t	smokePuffRageProShader;
 	qhandle_t	shotgunSmokePuffShader;
 	qhandle_t	plasmaBallShader;
+	qhandle_t	plasmaBallShaderColor;
 	qhandle_t	waterBubbleShader;
 	qhandle_t	bloodTrailShader;
 //#ifdef MISSIONPACK
@@ -1402,6 +1404,10 @@ extern vmCvar_t 		cg_plasmaBallAlpha;
 extern vmCvar_t 		cg_drawItemPickups;
 
 extern vmCvar_t			cg_mapConfigs;
+
+extern vmCvar_t			cg_enemyWeaponColor;
+extern vmCvar_t			cg_teamWeaponColor;
+extern vmCvar_t			cg_forceWeaponColor;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

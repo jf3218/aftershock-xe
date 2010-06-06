@@ -14,7 +14,5 @@ textures/sfx/largerblock3b3_pent
 	{
 		map textures/sfx/pentagramfloor_red_glow.tga
 		blendfunc add
-		rgbGen wave sin 1 .1 0.25 1
-		depthfunc equal
-  }
+	}
 }
