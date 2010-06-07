@@ -195,7 +195,7 @@ vmCvar_t	cg_noTaunt;
 vmCvar_t	cg_noProjectileTrail;
 vmCvar_t	cg_oldRail;
 vmCvar_t	cg_oldRocket;
-vmCvar_t	cg_oldPlasma;
+vmCvar_t	cg_plasmaTrail;
 vmCvar_t	cg_trueLightning;
 vmCvar_t        cg_music;
 
@@ -320,6 +320,8 @@ vmCvar_t	cg_enemyWeaponColor;
 vmCvar_t	cg_teamWeaponColor;
 vmCvar_t	cg_forceWeaponColor;
 
+vmCvar_t	cg_rocketTrailRadius;
+vmCvar_t	cg_grenadeTrailRadius;
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -453,7 +455,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_bigFont, "ui_bigFont", "0.4", CVAR_ARCHIVE},
 	{ &cg_oldRail, "cg_oldRail", "0", CVAR_ARCHIVE},
 	{ &cg_oldRocket, "cg_oldRocket", "1", CVAR_ARCHIVE},
-	{ &cg_oldPlasma, "cg_oldPlasma", "1", CVAR_ARCHIVE},
+	{ &cg_plasmaTrail, "cg_plasmaTrail", "0", CVAR_ARCHIVE},
 //unlagged - client options
 	{ &cg_delag, "cg_delag", "0", CVAR_ARCHIVE | CVAR_USERINFO },
 //	{ &cg_debugDelag, "cg_debugDelag", "0", CVAR_USERINFO | CVAR_CHEAT },
@@ -549,6 +551,9 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_teamWeaponColor, "cg_teamWeaponColor", "0xFFFFFFFF", CVAR_ARCHIVE},
 	{&cg_enemyWeaponColor, "cg_enemyWeaponColor", "0x00FF00FF", CVAR_ARCHIVE},
 	{&cg_forceWeaponColor, "cg_forceWeaponColor", "0", CVAR_ARCHIVE},
+
+	{&cg_rocketTrailRadius, "cg_rocketTrailRadius", "64", CVAR_ARCHIVE},
+	{&cg_grenadeTrailRadius, "cg_grenadeTrailRadius", "32", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -1138,6 +1143,8 @@ static void CG_RegisterGraphics( void ) {
 
 	cgs.media.tracerShader = trap_R_RegisterShader( "gfx/misc/tracer" );
 	cgs.media.selectShader = trap_R_RegisterShader( "gfx/2d/select" );
+
+	cgs.media.grenadeSkinColor = trap_R_RegisterShader( "rocketProjectileColor" );
 
 	for (i = 0; i < NUM_CROSSHAIRS; i++ ) {
 		if (i < 10)

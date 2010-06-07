@@ -270,7 +270,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 				le->color[3] = ((float)hexToAlpha( cg_teamWeaponColor.string ))/255.0;
 			}
 		}
-		else{
+		else if( localPlayer != ci ){
 			re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 			re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 			re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
@@ -280,6 +280,17 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 			le->color[1] = ((float)hexToGreen( cg_enemyWeaponColor.string ))/255.0 * 0.75;
 			le->color[2] = ((float)hexToBlue( cg_enemyWeaponColor.string ))/255.0 * 0.75;
 			le->color[3] = ((float)hexToAlpha( cg_enemyWeaponColor.string ))/255.0;
+		}
+		else{
+			re->shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+			re->shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
+			re->shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+			re->shaderRGBA[3] = hexToAlpha( cg_teamWeaponColor.string );
+
+			le->color[0] = ((float)hexToRed( cg_teamWeaponColor.string ))/255.0 * 0.75;
+			le->color[1] = ((float)hexToGreen( cg_teamWeaponColor.string ))/255.0 * 0.75;
+			le->color[2] = ((float)hexToBlue( cg_teamWeaponColor.string ))/255.0 * 0.75;
+			le->color[3] = ((float)hexToAlpha( cg_teamWeaponColor.string ))/255.0;
 		}
 	}
 	else{
@@ -363,7 +374,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 						le->color[3] = ((float)hexToAlpha( cg_teamWeaponColor.string ))/255.0;
 					}
 				}
-				else{
+				else if( localPlayer != ci ){
 					re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 					re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 					re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
@@ -373,6 +384,17 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 					le->color[1] = ((float)hexToGreen( cg_enemyWeaponColor.string ))/255.0 * 0.75;
 					le->color[2] = ((float)hexToBlue( cg_enemyWeaponColor.string ))/255.0 * 0.75;
 					le->color[3] = ((float)hexToAlpha( cg_enemyWeaponColor.string ))/255.0;
+				}
+				else{
+					re->shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+					re->shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
+					re->shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+					re->shaderRGBA[3] = hexToAlpha( cg_teamWeaponColor.string );
+
+					le->color[0] = ((float)hexToRed( cg_teamWeaponColor.string ))/255.0 * 0.75;
+					le->color[1] = ((float)hexToGreen( cg_teamWeaponColor.string ))/255.0 * 0.75;
+					le->color[2] = ((float)hexToBlue( cg_teamWeaponColor.string ))/255.0 * 0.75;
+					le->color[3] = ((float)hexToAlpha( cg_teamWeaponColor.string ))/255.0;
 				}
 			}
 			else{
@@ -419,6 +441,46 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 	entityState_t	*es;
 	vec3_t	up;
 	localEntity_t	*smoke;
+	float		red, green, blue, alpha;
+
+	clientInfo_t *local, *other;
+  	local = &cgs.clientinfo[cg.clientNum];
+	other = &cgs.clientinfo[cg_entities[ent->currentState.otherEntityNum].currentState.number];
+
+	if( ( ( wi->item->giTag == WP_GRENADE_LAUNCHER ) && ( cg_forceWeaponColor.integer & 2 ) ) || ( ( wi->item->giTag == WP_ROCKET_LAUNCHER ) && ( cg_forceWeaponColor.integer & 4 ) ) ){
+		if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
+			if( local->team != other->team ){
+				red = ((float)hexToRed( cg_enemyWeaponColor.string ))/255.0f;
+				green = ((float)hexToGreen( cg_enemyWeaponColor.string ))/255.0f;
+				blue = ((float)hexToBlue( cg_enemyWeaponColor.string ))/255.0f;
+				alpha = 0.33f;
+			}
+			else{
+				red = ((float)hexToRed( cg_teamWeaponColor.string ))/255.0f;
+				green = ((float)hexToGreen( cg_teamWeaponColor.string ))/255.0f;
+				blue = ((float)hexToBlue( cg_teamWeaponColor.string ))/255.0f;
+				alpha = 0.33f;
+			}
+		}
+		else if( cg.clientNum != cg_entities[ent->currentState.otherEntityNum].currentState.number ){
+			red = ((float)hexToRed( cg_enemyWeaponColor.string ))/255.0f;
+			green = ((float)hexToGreen( cg_enemyWeaponColor.string ))/255.0f;
+			blue = ((float)hexToBlue( cg_enemyWeaponColor.string ))/255.0f;
+			alpha = 0.33f;
+		}
+		else{
+			red = ((float)hexToRed( cg_teamWeaponColor.string ))/255.0f;
+			green = ((float)hexToGreen( cg_teamWeaponColor.string ))/255.0f;
+			blue = ((float)hexToBlue( cg_teamWeaponColor.string ))/255.0f;
+			alpha = 0.33f;
+		}
+	}
+	else{
+		red = 1;
+		green = 1;
+		blue = 1;
+		alpha = 0.33f;
+	}
 
 	if ( cg_noProjectileTrail.integer ) {
 		return;
@@ -457,8 +519,32 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 
 	for ( ; t <= ent->trailTime ; t += step ) {
 		BG_EvaluateTrajectory( &es->pos, t, lastPos );
-
-		smoke = CG_SmokePuff( lastPos, up, 
+		if( wi->item->giTag == WP_GRENADE_LAUNCHER ){
+			smoke = CG_SmokePuff( lastPos, up, 
+					  cg_grenadeTrailRadius.integer, 
+					  red, green, blue, alpha,
+					  wi->wiTrailTime, 
+					  t,
+					  0,
+					  0, 
+					  cgs.media.smokePuffShader );
+			// use the optimized local entity add
+			smoke->leType = LE_SCALE_FADE;
+		}
+		else if( wi->item->giTag == WP_ROCKET_LAUNCHER ){
+			smoke = CG_SmokePuff( lastPos, up, 
+					  cg_rocketTrailRadius.integer, 
+					  red, green, blue, alpha,
+					  wi->wiTrailTime, 
+					  t,
+					  0,
+					  0, 
+					  cgs.media.smokePuffShader );
+			// use the optimized local entity add
+			smoke->leType = LE_SCALE_FADE;
+		}
+		else{
+			smoke = CG_SmokePuff( lastPos, up, 
 					  wi->trailRadius, 
 					  1, 1, 1, 0.33f,
 					  wi->wiTrailTime, 
@@ -466,8 +552,9 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 					  0,
 					  0, 
 					  cgs.media.smokePuffShader );
-		// use the optimized local entity add
-		smoke->leType = LE_SCALE_FADE;
+			// use the optimized local entity add
+			smoke->leType = LE_SCALE_FADE;
+		}
 	}
 
 }
@@ -487,6 +574,8 @@ static void CG_NailTrail( centity_t *ent, const weaponInfo_t *wi ) {
 	entityState_t	*es;
 	vec3_t	up;
 	localEntity_t	*smoke;
+
+	
 
 	if ( cg_noProjectileTrail.integer ) {
 		return;
@@ -557,7 +646,7 @@ static void CG_PlasmaTrail( centity_t *cent, const weaponInfo_t *wi ) {
 
 	float	waterScale = 1.0f;
 
-	if ( cg_noProjectileTrail.integer || cg_oldPlasma.integer ) {
+	if ( cg_noProjectileTrail.integer || !cg_plasmaTrail.integer ) {
 		return;
 	}
 
@@ -1172,11 +1261,17 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 				beam.shaderRGBA[3] = hexToAlpha( cg_teamWeaponColor.string );
 			}
 		}
-		else{
+		else if( cg.clientNum != cent->currentState.number ){
 			beam.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 			beam.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 			beam.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
 			beam.shaderRGBA[3] = hexToAlpha( cg_enemyWeaponColor.string );
+		}
+		else{
+			beam.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+			beam.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
+			beam.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+			beam.shaderRGBA[3] = hexToAlpha( cg_teamWeaponColor.string );
 		}
 	}
 	else

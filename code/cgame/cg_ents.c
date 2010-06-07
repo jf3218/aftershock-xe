@@ -404,7 +404,7 @@ static void CG_Missile( centity_t *cent ) {
 
 	clientInfo_t *local, *other;
   	local = &cgs.clientinfo[cg.clientNum];
-	other = &cgs.clientinfo[cent->currentState.clientNum];
+	other = &cgs.clientinfo[cg_entities[cent->currentState.otherEntityNum].currentState.number];
 
 	s1 = &cent->currentState;
 	if ( s1->weapon > WP_NUM_WEAPONS ) {
@@ -462,7 +462,7 @@ static void CG_Missile( centity_t *cent ) {
 		ent.radius = 16;
 		ent.rotation = 0;
 
-		if( /*cg_forceWeaponColor.integer & 8*/ qfalse ){
+		if( cg_forceWeaponColor.integer & 32 ){
 			ent.customShader = cgs.media.plasmaBallShaderColor;
 			if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
 				if( local->team != other->team ){
@@ -476,10 +476,15 @@ static void CG_Missile( centity_t *cent ) {
 					ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
 				}
 			}
-			else{
+			else if( cg.clientNum != cg_entities[cent->currentState.otherEntityNum].currentState.number ){
 				ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 				ent.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 				ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+			}
+			else{
+				ent.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+				ent.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
+				ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
 			}
 		}
 		else
@@ -494,6 +499,33 @@ static void CG_Missile( centity_t *cent ) {
 	// flicker between two skins
 	ent.skinNum = cg.clientFrame & 1;
 	ent.hModel = weapon->missileModel;
+
+	if( weapon->item->giTag == WP_GRENADE_LAUNCHER && cg_forceWeaponColor.integer & 1 ){
+		ent.customShader = cgs.media.grenadeSkinColor;
+		if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
+			if( local->team != other->team ){
+				ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+				ent.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
+				ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+			}
+			else{
+				ent.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+				ent.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
+				ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+			}
+		}
+		else if( cg.clientNum != cg_entities[cent->currentState.otherEntityNum].currentState.number ){
+			ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+			ent.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
+			ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+		}
+		else{
+			ent.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+			ent.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
+			ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+		}	
+	}	
+	
 	ent.renderfx = weapon->missileRenderfx | RF_NOSHADOW;
 
 //#ifdef MISSIONPACK

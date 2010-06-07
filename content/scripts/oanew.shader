@@ -542,6 +542,7 @@ smokePuff
 		clampmap gfx/misc/smokepuff3.tga
 		blendfunc blend
 		tcMod rotate -55
+		rgbGen entity
 		alphaGen Vertex
 	}
 }

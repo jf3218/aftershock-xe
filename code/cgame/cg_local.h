@@ -794,6 +794,8 @@ typedef struct {
 	qhandle_t	blueProxMine;
 //#endif
 
+	qhandle_t	grenadeSkinColor;
+
 	qhandle_t	numberShaders[11];
 
 	qhandle_t	shadowMarkShader;
@@ -1284,7 +1286,7 @@ extern	vmCvar_t		cg_noTaunt;
 extern	vmCvar_t		cg_noProjectileTrail;
 extern	vmCvar_t		cg_oldRail;
 extern	vmCvar_t		cg_oldRocket;
-extern	vmCvar_t		cg_oldPlasma;
+extern	vmCvar_t		cg_plasmaTrail;
 extern	vmCvar_t		cg_trueLightning;
 extern	vmCvar_t		cg_music;
 #ifdef MISSIONPACK
@@ -1408,6 +1410,9 @@ extern vmCvar_t			cg_mapConfigs;
 extern vmCvar_t			cg_enemyWeaponColor;
 extern vmCvar_t			cg_teamWeaponColor;
 extern vmCvar_t			cg_forceWeaponColor;
+
+extern vmCvar_t			cg_rocketTrailRadius;
+extern vmCvar_t			cg_grenadeTrailRadius;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
