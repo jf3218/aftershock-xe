@@ -365,6 +365,7 @@ static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t
 				}
 				else
 						team = "blue";
+				break;
 			}
 			default: {
 				if( cg_forceteammodels.integer && cg_forceModel.integer ){
@@ -409,6 +410,7 @@ static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t
 	}
 	
 	charactersFolder = "";
+	CG_Printf( "%s\n", team );
 
 	while(1) {
 		for ( i = 0; i < 2; i++ ) {
