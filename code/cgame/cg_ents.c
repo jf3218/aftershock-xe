@@ -296,6 +296,9 @@ static void CG_Item( centity_t *cent ) {
 
 	ent.hModel = cg_items[es->modelindex].models[0];
 
+	if( cg_brightItems.integer && cg_items[es->modelindex].brightSkin )
+		ent.customShader = cg_items[es->modelindex].brightSkin;
+
 	VectorCopy( cent->lerpOrigin, ent.origin);
 	VectorCopy( cent->lerpOrigin, ent.oldorigin);
 

@@ -814,6 +814,9 @@ void CG_RegisterWeapon( int weaponNum ) {
 	// load cmodel before model so filecache works
 	weaponInfo->weaponModel = trap_R_RegisterModel( item->world_model[0] );
 
+	if( item->brightSkin )
+		weaponInfo->brightSkin = trap_R_RegisterShader( item->brightSkin );
+
 	// calc midpoint for rotation
 	trap_R_ModelBounds( weaponInfo->weaponModel, mins, maxs );
 	for ( i = 0 ; i < 3 ; i++ ) {
@@ -1044,6 +1047,8 @@ void CG_RegisterItemVisuals( int itemNum ) {
 			itemInfo->models[1] = trap_R_RegisterModel( item->world_model[1] );
 		}
 	}
+	if ( item->brightSkin )
+		itemInfo->brightSkin = trap_R_RegisterShader( item->brightSkin );
 }
 
 
@@ -1502,6 +1507,9 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 	if (!gun.hModel) {
 		return;
 	}
+	
+	if( weapon->brightSkin && cg_brightItems.integer )
+		gun.customShader = weapon->brightSkin;
 
 	if ( !ps ) {
 		// add weapon ready sound

@@ -77,7 +77,8 @@ gitem_t	bg_itemlist[] =
 		IT_ARMOR,
 		0,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED item_armor_combat (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -93,7 +94,8 @@ gitem_t	bg_itemlist[] =
 		IT_ARMOR,
 		0,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED item_armor_body (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -109,7 +111,8 @@ gitem_t	bg_itemlist[] =
 		IT_ARMOR,
 		0,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 	//
@@ -129,7 +132,8 @@ gitem_t	bg_itemlist[] =
 		IT_HEALTH,
 		0,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED item_health (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -146,7 +150,8 @@ gitem_t	bg_itemlist[] =
 		IT_HEALTH,
 		0,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED item_health_large (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -163,7 +168,8 @@ gitem_t	bg_itemlist[] =
 		IT_HEALTH,
 		0,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED item_health_mega (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -180,7 +186,8 @@ gitem_t	bg_itemlist[] =
 		IT_HEALTH,
 		0,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 
@@ -201,7 +208,8 @@ gitem_t	bg_itemlist[] =
 		IT_WEAPON,
 		WP_GAUNTLET,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED weapon_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -217,7 +225,8 @@ gitem_t	bg_itemlist[] =
 		IT_WEAPON,
 		WP_SHOTGUN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		"models/weapons2/shotgun/skin_bright"
 	},
 
 /*QUAKED weapon_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -233,7 +242,8 @@ gitem_t	bg_itemlist[] =
 		IT_WEAPON,
 		WP_MACHINEGUN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		"models/weapons2/machinegun/skin_bright"
 	},
 
 /*QUAKED weapon_grenadelauncher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -249,7 +259,8 @@ gitem_t	bg_itemlist[] =
 		IT_WEAPON,
 		WP_GRENADE_LAUNCHER,
 /* precache */ "",
-/* sounds */ "sound/weapons/grenade/hgrenb1a.wav sound/weapons/grenade/hgrenb2a.wav"
+/* sounds */ "sound/weapons/grenade/hgrenb1a.wav sound/weapons/grenade/hgrenb2a.wav",
+		"models/weapons2/grenadel/skin_bright"
 	},
 
 /*QUAKED weapon_rocketlauncher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -265,7 +276,8 @@ gitem_t	bg_itemlist[] =
 		IT_WEAPON,
 		WP_ROCKET_LAUNCHER,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		"models/weapons2/rocketl/skin_bright"
 	},
 
 /*QUAKED weapon_lightning (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -281,7 +293,8 @@ gitem_t	bg_itemlist[] =
 		IT_WEAPON,
 		WP_LIGHTNING,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		"models/weapons2/lightning/skin_bright"
 	},
 
 /*QUAKED weapon_railgun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -297,7 +310,8 @@ gitem_t	bg_itemlist[] =
 		IT_WEAPON,
 		WP_RAILGUN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		"models/weapons2/railgun/skin_bright"
 	},
 
 /*QUAKED weapon_plasmagun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -313,7 +327,8 @@ gitem_t	bg_itemlist[] =
 		IT_WEAPON,
 		WP_PLASMAGUN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		"models/weapons2/plasma/skin_bright"
 	},
 
 /*QUAKED weapon_bfg (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -329,7 +344,8 @@ gitem_t	bg_itemlist[] =
 		IT_WEAPON,
 		WP_BFG,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		"models/weapons2/bfg/skin_bright"
 	},
 
 /*QUAKED weapon_grapplinghook (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -345,7 +361,8 @@ gitem_t	bg_itemlist[] =
 		IT_WEAPON,
 		WP_GRAPPLING_HOOK,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 	//
@@ -365,7 +382,8 @@ gitem_t	bg_itemlist[] =
 		IT_AMMO,
 		WP_SHOTGUN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED ammo_bullets (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -381,7 +399,8 @@ gitem_t	bg_itemlist[] =
 		IT_AMMO,
 		WP_MACHINEGUN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED ammo_grenades (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -397,7 +416,8 @@ gitem_t	bg_itemlist[] =
 		IT_AMMO,
 		WP_GRENADE_LAUNCHER,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED ammo_cells (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -413,7 +433,8 @@ gitem_t	bg_itemlist[] =
 		IT_AMMO,
 		WP_PLASMAGUN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED ammo_lightning (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -429,7 +450,8 @@ gitem_t	bg_itemlist[] =
 		IT_AMMO,
 		WP_LIGHTNING,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED ammo_rockets (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -445,7 +467,8 @@ gitem_t	bg_itemlist[] =
 		IT_AMMO,
 		WP_ROCKET_LAUNCHER,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED ammo_slugs (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -461,7 +484,8 @@ gitem_t	bg_itemlist[] =
 		IT_AMMO,
 		WP_RAILGUN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED ammo_bfg (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -477,7 +501,8 @@ gitem_t	bg_itemlist[] =
 		IT_AMMO,
 		WP_BFG,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 	//
@@ -496,7 +521,8 @@ gitem_t	bg_itemlist[] =
 		IT_HOLDABLE,
 		HI_TELEPORTER,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 /*QUAKED holdable_medkit (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
@@ -513,7 +539,8 @@ gitem_t	bg_itemlist[] =
 		IT_HOLDABLE,
 		HI_MEDKIT,
 /* precache */ "",
-/* sounds */ "sound/items/use_medkit.wav"
+/* sounds */ "sound/items/use_medkit.wav",
+		""
 	},
 
 	//
@@ -533,7 +560,8 @@ gitem_t	bg_itemlist[] =
 		IT_POWERUP,
 		PW_QUAD,
 /* precache */ "",
-/* sounds */ "sound/items/damage2.wav sound/items/damage3.wav"
+/* sounds */ "sound/items/damage2.wav sound/items/damage3.wav",
+		""
 	},
 
 /*QUAKED item_enviro (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -550,7 +578,8 @@ gitem_t	bg_itemlist[] =
 		IT_POWERUP,
 		PW_BATTLESUIT,
 /* precache */ "",
-/* sounds */ "sound/items/airout.wav sound/items/protect3.wav"
+/* sounds */ "sound/items/airout.wav sound/items/protect3.wav",
+		""
 	},
 
 /*QUAKED item_haste (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -567,7 +596,8 @@ gitem_t	bg_itemlist[] =
 		IT_POWERUP,
 		PW_HASTE,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED item_invis (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -584,7 +614,8 @@ gitem_t	bg_itemlist[] =
 		IT_POWERUP,
 		PW_INVIS,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED item_regen (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -601,7 +632,8 @@ gitem_t	bg_itemlist[] =
 		IT_POWERUP,
 		PW_REGEN,
 /* precache */ "",
-/* sounds */ "sound/items/regen.wav"
+/* sounds */ "sound/items/regen.wav",
+		""
 	},
 
 /*QUAKED item_flight (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -618,7 +650,8 @@ gitem_t	bg_itemlist[] =
 		IT_POWERUP,
 		PW_FLIGHT,
 /* precache */ "",
-/* sounds */ "sound/items/flight.wav"
+/* sounds */ "sound/items/flight.wav",
+		""
 	},
 
 /*QUAKED team_CTF_redflag (1 0 0) (-16 -16 -16) (16 16 16)
@@ -635,7 +668,8 @@ Only in CTF games
 		IT_TEAM,
 		PW_REDFLAG,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED team_CTF_blueflag (0 0 1) (-16 -16 -16) (16 16 16)
@@ -652,7 +686,8 @@ Only in CTF games
 		IT_TEAM,
 		PW_BLUEFLAG,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED holdable_kamikaze (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -668,7 +703,8 @@ Only in CTF games
 		IT_HOLDABLE,
 		HI_KAMIKAZE,
 /* precache */ "",
-/* sounds */ "sound/items/kamikazerespawn.wav"
+/* sounds */ "sound/items/kamikazerespawn.wav",
+		""
 	},
 
 /*QUAKED holdable_portal (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -684,7 +720,8 @@ Only in CTF games
 		IT_HOLDABLE,
 		HI_PORTAL,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED holdable_invulnerability (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -700,7 +737,8 @@ Only in CTF games
 		IT_HOLDABLE,
 		HI_INVULNERABILITY,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED ammo_nails (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -716,7 +754,8 @@ Only in CTF games
 		IT_AMMO,
 		WP_NAILGUN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED ammo_mines (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -732,7 +771,8 @@ Only in CTF games
 		IT_AMMO,
 		WP_PROX_LAUNCHER,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED ammo_belt (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -748,7 +788,8 @@ Only in CTF games
 		IT_AMMO,
 		WP_CHAINGUN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 	//
@@ -767,7 +808,8 @@ Only in CTF games
 		IT_PERSISTANT_POWERUP,
 		PW_SCOUT,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED item_guard (.3 .3 1) (-16 -16 -16) (16 16 16) suspended redTeam blueTeam
@@ -783,7 +825,8 @@ Only in CTF games
 		IT_PERSISTANT_POWERUP,
 		PW_GUARD,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED item_doubler (.3 .3 1) (-16 -16 -16) (16 16 16) suspended redTeam blueTeam
@@ -799,7 +842,8 @@ Only in CTF games
 		IT_PERSISTANT_POWERUP,
 		PW_DOUBLER,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED item_doubler (.3 .3 1) (-16 -16 -16) (16 16 16) suspended redTeam blueTeam
@@ -815,7 +859,8 @@ Only in CTF games
 		IT_PERSISTANT_POWERUP,
 		PW_AMMOREGEN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
         
@@ -833,7 +878,8 @@ Only in One Flag CTF games
 		IT_TEAM,
 		PW_NEUTRALFLAG,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 	{
@@ -847,7 +893,8 @@ Only in One Flag CTF games
 		IT_TEAM,
 		0,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 	{
@@ -861,7 +908,8 @@ Only in One Flag CTF games
 		IT_TEAM,
 		0,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 /*QUAKED weapon_nailgun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
 */
@@ -876,7 +924,8 @@ Only in One Flag CTF games
 		IT_WEAPON,
 		WP_NAILGUN,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED weapon_prox_launcher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -897,7 +946,8 @@ Only in One Flag CTF games
 			"sound/weapons/proxmine/wstbimpl.wav "
 			"sound/weapons/proxmine/wstbimpm.wav "
 			"sound/weapons/proxmine/wstbimpd.wav "
-			"sound/weapons/proxmine/wstbactv.wav"
+			"sound/weapons/proxmine/wstbactv.wav",
+		""
 	},
 
 /*QUAKED weapon_chaingun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -913,7 +963,8 @@ Only in One Flag CTF games
 		IT_WEAPON,
 		WP_CHAINGUN,
 /* precache */ "",
-/* sounds */ "sound/weapons/vulcan/wvulwind.wav"
+/* sounds */ "sound/weapons/vulcan/wvulwind.wav",
+		""
 	},
 //#endif
 
@@ -931,7 +982,8 @@ Only in DD games
 		IT_TEAM,
 		DD_POINTABLUE,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED team_DD_point
@@ -948,7 +1000,8 @@ Only in DD games
 		IT_TEAM,
 		DD_POINTBBLUE,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED team_DD_point
@@ -965,7 +1018,8 @@ Only in DD games
 		IT_TEAM,
 		DD_POINTARED,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED team_DD_point
@@ -982,7 +1036,8 @@ Only in DD games
 		IT_TEAM,
 		DD_POINTBRED,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED team_DD_point
@@ -999,7 +1054,8 @@ Only in DD games
 		IT_TEAM,
 		DD_POINTAWHITE,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED team_DD_point
@@ -1016,7 +1072,8 @@ Only in DD games
 		IT_TEAM,
 		DD_POINTBWHITE,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 //Now things for standard domination:
@@ -1036,7 +1093,8 @@ Only in Domination games
 		IT_TEAM,
 		DOM_POINTWHITE,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED 
@@ -1053,7 +1111,8 @@ Only in Domination games
 		IT_TEAM,
 		DOM_POINTRED,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 /*QUAKED 
@@ -1070,7 +1129,8 @@ Only in Domination games
 		IT_TEAM,
 		DOM_POINTBLUE,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},
 
 	// end of list marker

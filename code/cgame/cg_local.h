@@ -422,6 +422,8 @@ typedef struct weaponInfo_s {
 	sfxHandle_t		readySound;
 	sfxHandle_t		firingSound;
 	qboolean		loopFireSound;
+	
+	qhandle_t		brightSkin;
 } weaponInfo_t;
 
 
@@ -432,6 +434,7 @@ typedef struct {
 	qboolean		registered;
 	qhandle_t		models[MAX_ITEM_MODELS];
 	qhandle_t		icon;
+	qhandle_t		brightSkin;
 } itemInfo_t;
 
 
@@ -1413,6 +1416,8 @@ extern vmCvar_t			cg_forceWeaponColor;
 
 extern vmCvar_t			cg_rocketTrailRadius;
 extern vmCvar_t			cg_grenadeTrailRadius;
+
+extern vmCvar_t			cg_brightItems;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

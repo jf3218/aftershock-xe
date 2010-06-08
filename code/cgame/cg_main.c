@@ -323,6 +323,8 @@ vmCvar_t	cg_forceWeaponColor;
 vmCvar_t	cg_rocketTrailRadius;
 vmCvar_t	cg_grenadeTrailRadius;
 
+vmCvar_t	cg_brightItems;
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -554,6 +556,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 
 	{&cg_rocketTrailRadius, "cg_rocketTrailRadius", "64", CVAR_ARCHIVE},
 	{&cg_grenadeTrailRadius, "cg_grenadeTrailRadius", "32", CVAR_ARCHIVE},
+
+	{&cg_brightItems, "cg_brightItems", "0", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
