@@ -143,6 +143,50 @@ static void CG_ParseAccuracy( void ) {
 
 /*
 =================
+CG_ParseRespawnTimer
+
+=================
+*/
+static void CG_ParseRespawnTimer( void ) {
+	int		entityNum;
+	int 		itemType;
+	int 		quantity;
+	int		respawnTime;
+	qboolean	found;
+	int 		i;
+	
+	found = qfalse;
+	
+	entityNum = atoi( CG_Argv(1) );
+	itemType = atoi( CG_Argv(2) );
+	quantity = atoi( CG_Argv(3) );
+	respawnTime = atoi( CG_Argv(4) );
+	
+
+	
+	if( ( itemType == IT_ARMOR && quantity >= 50 ) || ( itemType == IT_HEALTH && quantity == 100 ) ){
+		CG_Printf( "Pickup %i, quantity %i\n", itemType, quantity );
+		for( i = 0 ; i < MAX_RESPAWN_TIMERS && cgs.respawnTimerUsed[i] ; i++ ){
+			if( cgs.respawnTimerEntitynum[ i ] == entityNum ){
+				cgs.respawnTimerTime[ i ] = respawnTime;
+				found = qtrue;
+				CG_Printf( "updated respawnTime\n" );
+			}
+		}
+		if( !found ){
+			cgs.respawnTimerUsed[ i ] = qtrue;
+			cgs.respawnTimerQuantity[ i ] = quantity;
+			cgs.respawnTimerTime[ i ] = respawnTime;
+			cgs.respawnTimerType[ i ] = itemType;
+			cgs.respawnTimerEntitynum[ i ] = entityNum;
+			CG_Printf( "added respawnTime %i\n", i );
+		}
+	}
+
+}
+
+/*
+=================
 CG_ParseElimination
 
 =================
@@ -1446,6 +1490,11 @@ static void CG_ServerCommand( void ) {
 	// challenge completed is determened by the server. A client should consider this message valid:
 	if ( !strcmp( cmd, "ch" ) ) {
 		CG_ParseChallenge();
+		return;
+	}
+	
+	if ( !strcmp( cmd, "respawnTime" ) ) {
+		CG_ParseRespawnTimer();
 		return;
 	}
 

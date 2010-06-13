@@ -1149,6 +1149,7 @@ extern vmCvar_t     disable_ammo_mines;
 extern vmCvar_t     disable_ammo_nails;
 extern vmCvar_t     disable_holdable_kamikaze;
 
+extern vmCvar_t	    g_allowRespawnTimer;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

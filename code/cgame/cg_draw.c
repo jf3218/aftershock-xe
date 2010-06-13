@@ -2070,6 +2070,42 @@ static void CG_DrawReward( void ) {
 	trap_R_SetColor( NULL );
 }
 
+#define RESPAWNTIMER_XPOS 0
+#define RESPAWNTIMER_SECOND_XPOS 580
+#define RESPAWNTIMER_YPOS 240
+#define RESPAWNTIMER_ICONSIZE 32
+#define RESPAWNTIMER_STEP 36
+
+void CG_DrawRespawnTimers( void ){
+	int i;
+	int time;
+	int y;
+	
+	for( i = 0 ; i < MAX_RESPAWN_TIMERS && cgs.respawnTimerUsed[i] ; i++ )
+	  
+	y = - i * RESPAWNTIMER_STEP/2 - RESPAWNTIMER_ICONSIZE/2;
+	
+  
+	for( i = 0 ; i < MAX_RESPAWN_TIMERS ; i++ ){
+	      //CG_Printf( ".\n");
+	      //CG_DrawPic( RESPAWNTIMER_XPOS, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP , ICON_SIZE, ICON_SIZE, cg_items[ 3 ].icon );
+	      if( cgs.respawnTimerUsed[i] ){
+		      time = (cgs.respawnTimerTime[i] - cg.time);
+		      if( cg_weaponBarStyle.integer == 0 || cg_weaponBarStyle.integer == 3 ){
+			      CG_DrawPic( RESPAWNTIMER_SECOND_XPOS, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + y , RESPAWNTIMER_ICONSIZE, RESPAWNTIMER_ICONSIZE, cg_items[cg_entities[cgs.respawnTimerEntitynum[i]].currentState.modelindex].icon  );
+			      if( time > 0 )
+				      CG_DrawSmallString( RESPAWNTIMER_SECOND_XPOS + RESPAWNTIMER_STEP, y + RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + (RESPAWNTIMER_STEP - RESPAWNTIMER_ICONSIZE)/2 + SMALLCHAR_HEIGHT/2 , va("%i", time/1000 + 1), 1.0f );
+		      }
+		      else{
+			      CG_DrawPic( RESPAWNTIMER_XPOS, y + RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP , RESPAWNTIMER_ICONSIZE, RESPAWNTIMER_ICONSIZE, cg_items[cg_entities[cgs.respawnTimerEntitynum[i]].currentState.modelindex].icon  );
+			      if( time > 0 )
+				      CG_DrawSmallString( RESPAWNTIMER_XPOS + RESPAWNTIMER_STEP, y + RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + (RESPAWNTIMER_STEP - RESPAWNTIMER_ICONSIZE)/2 + SMALLCHAR_HEIGHT/2 , va("%i", time/1000 + 1), 1.0f );
+		      }      
+	      }
+	}
+}
+	  
+
 
 /*
 ===============================================================================
@@ -3393,6 +3429,7 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 
                         CG_DrawReward();
 			CG_DrawPickupItem();
+			
 		}
     
 		if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
@@ -3438,6 +3475,8 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
                 CG_DrawCenterDDString();
                 CG_DrawCenter1FctfString();
 		CG_DrawCenterString();
+		if( cg_drawRespawnTimer.integer )
+			CG_DrawRespawnTimers();
 	}
 
 	cg.accBoardShowing = CG_DrawAccboard();

@@ -99,6 +99,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define DEFAULT_REDTEAM_NAME		"Vim supporters"
 #define DEFAULT_BLUETEAM_NAME		"Emacs supporters"
 
+#define MAX_RESPAWN_TIMERS		16
+
 typedef enum {
 	FOOTSTEP_NORMAL,
 	FOOTSTEP_BOOT,
@@ -1153,7 +1155,14 @@ typedef struct {
 	qhandle_t deathNoticeIcon1[ DEATHNOTICE_HEIGHT ];
 	qhandle_t deathNoticeIcon2[ DEATHNOTICE_HEIGHT ];
 	qboolean deathNoticeTwoIcons[ DEATHNOTICE_HEIGHT ];
+	
+	qboolean respawnTimerUsed[ MAX_RESPAWN_TIMERS ];
+	int respawnTimerEntitynum[ MAX_RESPAWN_TIMERS ];
+	int respawnTimerType[ MAX_RESPAWN_TIMERS ];
+	int respawnTimerQuantity[ MAX_RESPAWN_TIMERS ];
+	int respawnTimerTime[ MAX_RESPAWN_TIMERS ];
 
+	
 	int cursorX;
 	int cursorY;
 	qboolean eventHandling;
@@ -1418,6 +1427,11 @@ extern vmCvar_t			cg_rocketTrailRadius;
 extern vmCvar_t			cg_grenadeTrailRadius;
 
 extern vmCvar_t			cg_brightItems;
+
+extern vmCvar_t			cg_autoaction;
+
+extern vmCvar_t			cg_drawRespawnTimer;
+
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

@@ -136,6 +136,29 @@ void AccMessage( gentity_t *ent ) {
 
 /*
 ==================
+AccMessage
+
+==================
+*/
+void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime ) {
+	char		entry[32];
+	gentity_t	*ent;
+	int		i;
+
+	Com_sprintf (entry, sizeof(entry),
+				" %i %i %i %i ", entityNum, type, quantity, respawnTime);
+				
+	for (i = 0; i < MAX_CLIENTS; i++) {
+		ent = &g_entities[i];
+		if ( ( ent->inuse ) && ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) ) {
+
+		      trap_SendServerCommand( ent-g_entities, va("respawnTime%s", entry ));
+		}
+	}
+}
+
+/*
+==================
 DominationPointStatusMessage
 
 ==================

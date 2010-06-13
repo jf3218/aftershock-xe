@@ -56,7 +56,8 @@ gitem_t	bg_itemlist[] =
 		0,
 		0,
 /* precache */ "",
-/* sounds */ ""
+/* sounds */ "",
+		""
 	},	// leave index 0 alone
 
 	//

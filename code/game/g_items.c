@@ -567,6 +567,9 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace) {
 		ent->think = RespawnItem;
 	}
 	trap_LinkEntity( ent );
+	
+	if( g_allowRespawnTimer.integer )
+		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, level.time + respawn * 1000 );
 }
 
 
@@ -719,8 +722,10 @@ void FinishSpawningItem( gentity_t *ent ) {
 		return;
 	}
 
-
 	trap_LinkEntity (ent);
+	
+	if( g_allowRespawnTimer.integer )
+		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink );
 }
 
 
@@ -987,6 +992,7 @@ void G_SpawnItem (gentity_t *ent, gitem_t *item) {
 	if ( item->giType == IT_PERSISTANT_POWERUP ) {
 		ent->s.generic1 = ent->spawnflags;
 	}
+	
 }
 
 

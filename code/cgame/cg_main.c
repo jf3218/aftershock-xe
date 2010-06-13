@@ -325,6 +325,10 @@ vmCvar_t	cg_grenadeTrailRadius;
 
 vmCvar_t	cg_brightItems;
 
+vmCvar_t	cg_autoaction;
+
+vmCvar_t	cg_drawRespawnTimer;
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -558,6 +562,10 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_grenadeTrailRadius, "cg_grenadeTrailRadius", "32", CVAR_ARCHIVE},
 
 	{&cg_brightItems, "cg_brightItems", "0", CVAR_ARCHIVE},
+	
+	{&cg_autoaction, "cg_autoaction", "0", CVAR_ARCHIVE},
+	
+	{&cg_drawRespawnTimer, "cg_drawRespawnTimer", "1", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -2193,6 +2201,7 @@ Will perform callbacks to make the loading info screen update.
 */
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	const char	*s;
+	int i;
 
 	// clear everything
 	memset( &cgs, 0, sizeof( cgs ) );
@@ -2308,6 +2317,14 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 
 	if( cg_mapConfigs.integer )
 		CG_mapConfigs();
+	
+	for( i = 0 ; i < MAX_RESPAWN_TIMERS ; i++ ){
+		cgs.respawnTimerEntitynum[i] = -1;
+		cgs.respawnTimerQuantity[i] = 0;
+		cgs.respawnTimerTime[i] = -1;
+		cgs.respawnTimerType[i] = -1;
+		cgs.respawnTimerUsed[i] = qfalse;
+	}
 
 }
 

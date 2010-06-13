@@ -198,6 +198,8 @@ vmCvar_t     disable_ammo_mines;
 vmCvar_t     disable_ammo_nails;
 vmCvar_t     disable_holdable_kamikaze;
 
+vmCvar_t     g_allowRespawnTimer;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -401,6 +403,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &disable_ammo_mines, "disable_ammo_mines", "1", 0, 0, qfalse},
 	{ &disable_ammo_nails, "disable_ammo_nails", "1", 0, 0, qfalse},
 	{ &disable_holdable_kamikaze, "disable_holdable_kamikaze", "1", 0, 0, qfalse},
+	
+	{ &g_allowRespawnTimer, "g_allowRespawnTimer", "1", 0, 0, qfalse},
 
 	
 };
