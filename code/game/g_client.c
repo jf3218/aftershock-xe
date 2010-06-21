@@ -1657,6 +1657,8 @@ void ClientBegin( int clientNum ) {
         //Send the list of custom vote options:
         if(strlen(custom_vote_info))
             SendCustomVoteCommands(clientNum);
+	
+	SendReadymask();
 }
 
 /*
@@ -1687,6 +1689,8 @@ void ClientSpawn(gentity_t *ent) {
 	char	userinfo[MAX_INFO_STRING];
 	int		saveddmgdone;
 	int 		saveddmgtaken;
+	int 		stats[STATS_MAX];
+	qboolean	ready;
  
 
 	index = ent - g_entities;
@@ -1840,6 +1844,12 @@ void ClientSpawn(gentity_t *ent) {
 		accuracy[i][0] = client->accuracy[i][0];
 		accuracy[i][1] = client->accuracy[i][1];
 	}
+	
+	for( i = 0 ; i < STATS_MAX ; i++ ){
+		stats[i] = client->stats[i];	
+	}
+	
+	ready = client->ready;
 
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		persistant[i] = client->ps.persistant[i];
@@ -1868,6 +1878,12 @@ void ClientSpawn(gentity_t *ent) {
 		client->accuracy[i][0] = accuracy[i][0];
 		client->accuracy[i][1] = accuracy[i][1];
 	}
+	
+	for( i = 0 ; i < STATS_MAX ; i++ ){
+		client->stats[i] = stats[i];
+	}
+	
+	client->ready = ready;
 
 	client->lastkilled_client = -1;
 

@@ -127,6 +127,46 @@ static void CG_ParseScores( void ) {
 
 /*
 =================
+CG_ParseStatistics
+
+=================
+*/
+static void CG_ParseStatistics( void ) {
+	int		i, j, numStats, len;
+	fileHandle_t f;
+	char		*name, *string;
+
+	numStats = atoi( CG_Argv( 1 ) );
+	if ( numStats > MAX_CLIENTS ) {
+		numStats = MAX_CLIENTS;
+	}
+
+#define NUM_DATA_STATS 22
+#define FIRST_DATA_STATS 1
+
+	trap_FS_FOpenFile(va("test.txt"), &f, FS_WRITE);
+
+	for ( i = 0 ; i < numStats ; i++ ) {
+		//for( j = 0; j < NUM_DATA_STATS; j++)
+		
+		  name = cgs.clientinfo[atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 1 ) )].name;
+		  
+		  string = va("Playername:    %s\n", name );
+		  
+		  len = CG_DrawStrlen(string);
+		  
+		  trap_FS_Write(string, len, f);
+		  
+		  CG_Printf("	MH %i\n", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 22 ) ));
+		  
+	}
+	
+	
+
+}
+
+/*
+=================
 CG_ParseScores
 
 =================
@@ -165,12 +205,10 @@ static void CG_ParseRespawnTimer( void ) {
 
 	
 	if( ( itemType == IT_ARMOR && quantity >= 50 ) || ( itemType == IT_HEALTH && quantity == 100 ) ){
-		CG_Printf( "Pickup %i, quantity %i\n", itemType, quantity );
 		for( i = 0 ; i < MAX_RESPAWN_TIMERS && cgs.respawnTimerUsed[i] ; i++ ){
 			if( cgs.respawnTimerEntitynum[ i ] == entityNum ){
 				cgs.respawnTimerTime[ i ] = respawnTime;
 				found = qtrue;
-				CG_Printf( "updated respawnTime\n" );
 			}
 		}
 		if( !found ){
@@ -179,10 +217,20 @@ static void CG_ParseRespawnTimer( void ) {
 			cgs.respawnTimerTime[ i ] = respawnTime;
 			cgs.respawnTimerType[ i ] = itemType;
 			cgs.respawnTimerEntitynum[ i ] = entityNum;
-			CG_Printf( "added respawnTime %i\n", i );
+			cgs.respawnTimerNumber = i + 1;
 		}
 	}
 
+}
+
+/*
+=================
+CG_ParseRespawnTimer
+
+=================
+*/
+static void CG_ParseReadyMask( void ) {
+	cg.readyMask = atoi( CG_Argv( 1 ) );
 }
 
 /*
@@ -439,6 +487,10 @@ void CG_ParseServerinfo( void ) {
 
 	cgs.newItemHeight = atoi( Info_ValueForKey( info, "g_newItemHeight" ) );
 	trap_Cvar_Set("g_newItemHeight", va("%i", cgs.newItemHeight));
+	
+	cgs.startWhenReady = atoi( Info_ValueForKey( info, "g_startWhenReady" ) );
+	CG_Printf( "%i\n", cgs.newItemHeight );
+	//trap_Cvar_Set("g_startWhenReady", va("%i", cgs.startWhenReady));
 }
 
 /*
@@ -796,6 +848,9 @@ require a reload of all the media
 ===============
 */
 static void CG_MapRestart( void ) {
+	int i;
+	i = 0;
+  
 	if ( cg_showmiss.integer ) {
 		CG_Printf( "CG_MapRestart\n" );
 	}
@@ -835,6 +890,19 @@ static void CG_MapRestart( void ) {
 	}
 #endif
 	trap_Cvar_Set("cg_thirdPerson", "0");
+	
+	for( i = 0 ; i < MAX_RESPAWN_TIMERS ; i++ ){
+		cgs.respawnTimerEntitynum[i] = -1;
+		cgs.respawnTimerQuantity[i] = 0;
+		cgs.respawnTimerTime[i] = -1;
+		cgs.respawnTimerType[i] = -1;
+		cgs.respawnTimerUsed[i] = qfalse;
+	}
+	cgs.respawnTimerNumber = 0;
+	
+	cg.readyMask = 0;
+	
+	CG_SetGameString();
 }
 
 #define MAX_VOICEFILESIZE	16384
@@ -1410,6 +1478,11 @@ static void CG_ServerCommand( void ) {
 		CG_ParseScores();
 		return;
 	}
+	
+	if ( !strcmp( cmd, "statistics" ) ) {
+		CG_ParseStatistics();
+		return;
+	}
 
 	if ( !strcmp( cmd, "accs" ) ) {
 		CG_ParseAccuracy();
@@ -1498,6 +1571,11 @@ static void CG_ServerCommand( void ) {
 		return;
 	}
 
+	if ( !strcmp( cmd, "readyMask" ) ) {
+		CG_ParseReadyMask();
+		return;
+	}
+	
 	if ( !strcmp( cmd, "reward" ) ) {
 		CG_ParseRewards();
 		return;

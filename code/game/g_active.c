@@ -462,7 +462,7 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 			}
 		} else {
 			// count down health when over max
-			if ( ent->health > client->ps.stats[STAT_MAX_HEALTH] ) {
+			if ( ent->health > client->ps.stats[STAT_MAX_HEALTH] && !( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ) ) {
 				ent->health--;
 			}
 			//Start killing players in LMS, if we are in overtime
@@ -480,7 +480,7 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 		}
 
 		// count down armor when over max
-		if ( client->ps.stats[STAT_ARMOR] > client->ps.stats[STAT_MAX_HEALTH] ) {
+		if ( client->ps.stats[STAT_ARMOR] > client->ps.stats[STAT_MAX_HEALTH] && !( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ) ) {
 			client->ps.stats[STAT_ARMOR]--;
 		}
 	}

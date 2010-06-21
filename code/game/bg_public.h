@@ -273,6 +273,14 @@ typedef enum {
 	REWARD_RLRG
 } rewards_t;
 
+typedef enum {
+	STATS_HEALTH,
+	STATS_ARMOR,
+	STATS_YA,
+	STATS_RA,
+	STATS_MH,
+	STATS_MAX
+} stats_t;
 
 // entityState_t->eFlags
 #define	EF_DEAD				0x00000001		// don't draw a foe marker over players with EF_DEAD

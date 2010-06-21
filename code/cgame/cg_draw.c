@@ -2081,15 +2081,13 @@ void CG_DrawRespawnTimers( void ){
 	int time;
 	int y;
 	
-	for( i = 0 ; i < MAX_RESPAWN_TIMERS && cgs.respawnTimerUsed[i] ; i++ )
+	i = cgs.respawnTimerNumber;
 	  
 	y = - i * RESPAWNTIMER_STEP/2 - RESPAWNTIMER_ICONSIZE/2;
 	
   
-	for( i = 0 ; i < MAX_RESPAWN_TIMERS ; i++ ){
-	      //CG_Printf( ".\n");
-	      //CG_DrawPic( RESPAWNTIMER_XPOS, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP , ICON_SIZE, ICON_SIZE, cg_items[ 3 ].icon );
-	      if( cgs.respawnTimerUsed[i] ){
+	for( i = 0 ; i < cgs.respawnTimerNumber ; i++ ){
+	      //if( cgs.respawnTimerUsed[i] ){
 		      time = (cgs.respawnTimerTime[i] - cg.time);
 		      if( cg_weaponBarStyle.integer == 0 || cg_weaponBarStyle.integer == 3 ){
 			      CG_DrawPic( RESPAWNTIMER_SECOND_XPOS, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + y , RESPAWNTIMER_ICONSIZE, RESPAWNTIMER_ICONSIZE, cg_items[cg_entities[cgs.respawnTimerEntitynum[i]].currentState.modelindex].icon  );
@@ -2101,11 +2099,33 @@ void CG_DrawRespawnTimers( void ){
 			      if( time > 0 )
 				      CG_DrawSmallString( RESPAWNTIMER_XPOS + RESPAWNTIMER_STEP, y + RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + (RESPAWNTIMER_STEP - RESPAWNTIMER_ICONSIZE)/2 + SMALLCHAR_HEIGHT/2 , va("%i", time/1000 + 1), 1.0f );
 		      }      
-	      }
+	      //}
 	}
 }
-	  
 
+#define READYMSG_YPOS 	100
+
+static void CG_DrawReady( void ){
+	char	*msg;
+	int 	len;
+	
+	if( !cgs.startWhenReady )
+		return;
+	
+	if( cg.warmup >= 0 )
+		return;
+  
+	if ( cg.readyMask & ( 1 << cg.snap->ps.clientNum ) ) {
+		msg = va("^2You are READY");
+		len = CG_DrawStrlen(msg);
+		CG_DrawBigString( 320 - len * BIGCHAR_WIDTH/2 , READYMSG_YPOS, msg, 1.0f);
+	}
+	else{
+		msg = va("^1You are not READY");
+		len = CG_DrawStrlen(msg);
+		CG_DrawBigString( 320 - len * BIGCHAR_WIDTH/2 , READYMSG_YPOS, msg, 1.0f);
+	}
+}
 
 /*
 ===============================================================================
@@ -3178,7 +3198,7 @@ static void CG_DrawWarmup( void ) {
 		}
 
 		if ( ci1 && ci2 ) {
-			s = va( "%s vs %s", ci1->name, ci2->name );
+			s = va( "%s ^7vs %s", ci1->name, ci2->name );
 #ifdef MISSIONPACK
 			w = CG_Text_Width(s, 0.6f, 0);
 			CG_Text_Paint(320 - w / 2, 60, 0.6f, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWEDMORE);
@@ -3475,8 +3495,11 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
                 CG_DrawCenterDDString();
                 CG_DrawCenter1FctfString();
 		CG_DrawCenterString();
-		if( cg_drawRespawnTimer.integer )
+		
+		if( cg_drawRespawnTimer.integer && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR )
 			CG_DrawRespawnTimers();
+		
+		CG_DrawReady();
 	}
 
 	cg.accBoardShowing = CG_DrawAccboard();

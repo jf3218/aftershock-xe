@@ -676,6 +676,8 @@ typedef struct {
 	int			stateHead, stateTail;
 //unlagged - optimized prediction
 
+	int		readyMask;
+
 } cg_t;
 
 
@@ -1161,6 +1163,7 @@ typedef struct {
 	int respawnTimerType[ MAX_RESPAWN_TIMERS ];
 	int respawnTimerQuantity[ MAX_RESPAWN_TIMERS ];
 	int respawnTimerTime[ MAX_RESPAWN_TIMERS ];
+	int respawnTimerNumber;
 
 	
 	int cursorX;
@@ -1192,6 +1195,10 @@ typedef struct {
     int             altExcellent;
 
 	int	newItemHeight;
+	
+	char	*gameString;
+	int	demoStarted;
+	int 	startWhenReady;
 } cgs_t;
 
 //==============================================================================

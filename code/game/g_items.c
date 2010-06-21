@@ -276,6 +276,11 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other) {
 int Pickup_Health (gentity_t *ent, gentity_t *other) {
 	int			max;
 	int			quantity;
+	
+	other->client->stats[STATS_HEALTH] += ent->item->quantity;
+	
+	if( ent->item->quantity == 100 )
+		other->client->stats[STATS_MH]++;
 
 	// small and mega healths will go over the max
 	if( other->client && bg_itemlist[other->client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_GUARD ) {
@@ -312,6 +317,13 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 
 int Pickup_Armor( gentity_t *ent, gentity_t *other ) {
 	int		upperBound;
+	
+	other->client->stats[STATS_ARMOR] += ent->item->quantity;
+	
+	if( ent->item->quantity == 50 )
+		other->client->stats[STATS_YA]++;
+	else if( ent->item->quantity == 100 )
+		other->client->stats[STATS_RA]++;
 
 	other->client->ps.stats[STAT_ARMOR] += ent->item->quantity;
 

@@ -118,7 +118,7 @@ AccMessage
 ==================
 */
 void AccMessage( gentity_t *ent ) {
-	char		entry[1024];
+	char		entry[128];
 
 	Com_sprintf (entry, sizeof(entry),
 				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", ent->client->accuracy[WP_MACHINEGUN][0], ent->client->accuracy[WP_MACHINEGUN][1],
@@ -144,6 +144,10 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime 
 	char		entry[32];
 	gentity_t	*ent;
 	int		i;
+	
+	if ( level.warmupTime ) {
+		return;
+	}
 
 	Com_sprintf (entry, sizeof(entry),
 				" %i %i %i %i ", entityNum, type, quantity, respawnTime);
@@ -155,6 +159,65 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime 
 		      trap_SendServerCommand( ent-g_entities, va("respawnTime%s", entry ));
 		}
 	}
+}
+
+/*
+==================
+DeathmatchScoreboardMessage
+
+==================
+*/
+void G_SendStats( gentity_t *ent ) {
+	char		entry[2048];
+	char		string[2800];
+	int			stringlength;
+	int			i, j;
+	gclient_t	*cl;
+	int			numSorted;
+
+
+	// send the latest information on all clients
+	string[0] = 0;
+	stringlength = 0;
+
+	numSorted = level.numConnectedClients;
+	
+	for (i=0 ; i < numSorted ; i++) {
+	  
+		cl = &level.clients[level.sortedClients[i]];
+		
+		G_Printf(" clientNum %i\n", level.sortedClients[i]);
+			
+		Com_sprintf (entry, sizeof(entry),
+			" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
+									  cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1],
+									  cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1],
+									  cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1],
+									  cl->accuracy[WP_ROCKET_LAUNCHER][0], cl->accuracy[WP_ROCKET_LAUNCHER][1],
+									  cl->accuracy[WP_LIGHTNING][0], cl->accuracy[WP_LIGHTNING][1],
+									  cl->accuracy[WP_RAILGUN][0], cl->accuracy[WP_RAILGUN][1],
+									  cl->accuracy[WP_PLASMAGUN][0], cl->accuracy[WP_PLASMAGUN][1],
+									  cl->accuracy[WP_BFG][0], cl->accuracy[WP_BFG][1],
+									  cl->stats[STATS_HEALTH],
+									  cl->stats[STATS_ARMOR],
+									  cl->stats[STATS_YA],
+									  cl->stats[STATS_RA],
+									  cl->stats[STATS_MH]);
+		
+		j = strlen(entry);
+		if (stringlength + j > 1024)
+			break;
+		strcpy (string + stringlength, entry);
+		stringlength += j;
+	}
+
+	
+	
+
+
+	trap_SendServerCommand( ent-g_entities, va("statistics %i %s", i, 
+				string ) );
+
 }
 
 /*
@@ -292,6 +355,55 @@ RewardMessage
 
 void RewardMessage(gentity_t *ent, int reward, int rewardCount) {
 	trap_SendServerCommand( ent-g_entities, va("reward %i %i", reward, rewardCount) );
+}
+
+/*
+==================
+SendReadymask
+
+==================
+*/
+
+void SendReadymask( void ) {
+	int			ready, notReady, playerCount;
+	int			i;
+	gclient_t	*cl;
+	gentity_t 	*ent;
+	int			readyMask;
+	char		entry[16];
+  
+	// see which players are ready
+	ready = 0;
+	notReady = 0;
+	readyMask = 0;
+        playerCount = 0;
+	for (i=0 ; i< g_maxclients.integer ; i++) {
+		cl = level.clients + i;
+		if ( cl->pers.connected != CON_CONNECTED ) {
+			continue;
+		}
+
+                playerCount++;
+		if ( cl->ready || ( g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT ) ) {
+			ready++;
+			if ( i < 16 ) {
+				readyMask |= 1 << i;
+			}
+		} else {
+			notReady++;
+		}
+	}
+	
+	level.readyMask = readyMask;
+	Com_sprintf (entry, sizeof(entry), " %i ", readyMask);
+				
+	for (i = 0; i < MAX_CLIENTS; i++) {
+		ent = &g_entities[i];
+		if ( ( ent->inuse ) && ( ent->client->sess.sessionTeam != TEAM_SPECTATOR ) ) {
+
+		      trap_SendServerCommand( ent-g_entities, va("readyMask%s", entry ));
+		}
+	}
 }
 
 /*
@@ -686,6 +798,22 @@ Cmd_Timeout_f
 */
 void Cmd_Timeout_f( gentity_t *ent ) {
 	
+}
+
+/*
+=================
+Cmd_Ready_f
+=================
+*/
+void Cmd_Ready_f( gentity_t *ent ) {
+  
+	if( ent->client->ready )
+		ent->client->ready = qfalse;
+	else
+		ent->client->ready = qtrue;
+	
+	
+	SendReadymask();
 }
 
 /*
@@ -2262,6 +2390,7 @@ commands_t cmds[ ] =
 
   { "score", CMD_INTERMISSION, Cmd_Score_f },
   { "acc", CMD_INTERMISSION, Cmd_Acc_f},
+  { "stats", CMD_INTERMISSION, G_SendStats },
 
   // cheats
   { "give", CMD_CHEAT|CMD_LIVING, Cmd_Give_f },
@@ -2287,6 +2416,7 @@ commands_t cmds[ ] =
   { "getmappage", 0, Cmd_GetMappage_f },
   { "gc", 0, Cmd_GameCommand_f },
   { "timeout", 0, Cmd_Timeout_f },
+  { "ready", 0, Cmd_Ready_f },
   
 };
 

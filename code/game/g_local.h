@@ -431,6 +431,9 @@ struct gclient_s {
 	int			lastRocketTime;
 	int			lastRailTime;
 
+	qboolean		ready;
+	
+	int			stats[STATS_MAX];
 };
 
 
@@ -559,6 +562,7 @@ typedef struct {
     qboolean    RedTeamLocked;
     qboolean    BlueTeamLocked;
     qboolean    FFALocked;
+    int		readyMask;
      
 } level_locals_t;
 
@@ -1150,6 +1154,7 @@ extern vmCvar_t     disable_ammo_nails;
 extern vmCvar_t     disable_holdable_kamikaze;
 
 extern vmCvar_t	    g_allowRespawnTimer;
+extern vmCvar_t	    g_startWhenReady;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

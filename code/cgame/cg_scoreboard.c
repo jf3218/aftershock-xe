@@ -247,6 +247,14 @@ static void CG_DrawClientScore( int y, score_t *score, float *color, float fade,
         if(ci->isDead) {
             CG_DrawBigStringColor( iconx-60, y, "DEAD", color );
         }
+        
+       
+       if( cg.warmup < 0 && !( ci->team == TEAM_SPECTATOR ) && cgs.startWhenReady ){
+		if( cg.readyMask & ( 1 << score->client ) )
+			CG_DrawSmallStringColor( 0, y, "READY", colorGreen );
+		else
+			CG_DrawSmallStringColor( 0, y, "NOT READY", colorRed );
+       }
 }
 
 /*
