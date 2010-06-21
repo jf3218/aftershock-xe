@@ -489,7 +489,6 @@ void CG_ParseServerinfo( void ) {
 	trap_Cvar_Set("g_newItemHeight", va("%i", cgs.newItemHeight));
 	
 	cgs.startWhenReady = atoi( Info_ValueForKey( info, "g_startWhenReady" ) );
-	CG_Printf( "%i\n", cgs.newItemHeight );
 	//trap_Cvar_Set("g_startWhenReady", va("%i", cgs.startWhenReady));
 }
 
