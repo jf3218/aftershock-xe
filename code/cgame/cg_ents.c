@@ -1111,6 +1111,38 @@ void CG_AddPacketEntities( void ) {
 	int					num;
 	centity_t			*cent;
 	playerState_t		*ps;
+	
+	/*int 			sorted[ MAX_ENTITIES ];
+	int				lastmax=0, max=0, number = 0, lastnumber=0, dist;
+	int			i,j;
+	
+	for( i = 0; i < cg.nextSnap->numEntities; i++ ){
+	  
+		for( j = 0; j < cg.nextSnap->numEntities; j++ ){
+		  
+			cent = &cg_entities[ cg.snap->entities[ j ].number ];
+			
+			dist = sqrt( ( cent->currentState.origin[0] - cg.snap->ps.origin[0] )*( cent->currentState.origin[0] - cg.snap->ps.origin[0] ) +
+				( cent->currentState.origin[1] - cg.snap->ps.origin[1] )*( cent->currentState.origin[1] - cg.snap->ps.origin[1] ) +
+				( cent->currentState.origin[2] - cg.snap->ps.origin[2] )*( cent->currentState.origin[2] - cg.snap->ps.origin[2] ) );
+			
+			if( dist > lastmax && i != 0)
+				continue;
+			
+			if( dist < max )
+				continue;
+			
+			if( ( dist = lastmax && j != lastnumber ) || dist < lastmax ){
+				max = dist;
+				number = j;
+			}
+		}
+		sorted[i] = number;
+		lastnumber = number;
+		lastmax = max;
+		max = 0;
+		number = 0;
+	}*/
 
 	// set cg.frameInterpolation
 	if ( cg.nextSnap ) {
@@ -1166,6 +1198,7 @@ void CG_AddPacketEntities( void ) {
 	// add each entity sent over by the server
 	for ( num = 0 ; num < cg.snap->numEntities ; num++ ) {
 		cent = &cg_entities[ cg.snap->entities[ num ].number ];
+		//cent = &cg_entities[ cg.snap->entities[ sorted[num] ].number ];
 //unlagged - early transitioning
 		if ( !cg.nextSnap || (cent->nextState.eType != ET_MISSILE && cent->nextState.eType != ET_GENERAL) ) {
 //unlagged - early transitioning

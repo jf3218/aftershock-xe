@@ -305,7 +305,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_delagHitscan, "g_delagHitscan", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qtrue },
 	{ &g_truePing, "g_truePing", "0", CVAR_ARCHIVE, 0, qtrue },
 	// it's CVAR_SYSTEMINFO so the client's sv_fps will be automagically set to its value
-	{ &sv_fps, "sv_fps", "20", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
+	{ &sv_fps, "sv_fps", "40", CVAR_SYSTEMINFO | CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse },
         { &g_lagLightning, "g_lagLightning", "1", CVAR_ARCHIVE, 0, qtrue },
 //unlagged - server options
 
@@ -322,12 +322,12 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_elimination_activewarmup, "elimination_activewarmup", "5", CVAR_ARCHIVE | CVAR_NORESTART , 0, qtrue },
         { &g_elimination_allgametypes, "g_elimination", "0", CVAR_LATCH | CVAR_NORESTART, 0, qfalse },
 
-	{ &g_elimination_machinegun, "elimination_machinegun", "500", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
-	{ &g_elimination_shotgun, "elimination_shotgun", "500", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
-	{ &g_elimination_grenade, "elimination_grenade", "100", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
+	{ &g_elimination_machinegun, "elimination_machinegun", "200", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
+	{ &g_elimination_shotgun, "elimination_shotgun", "30", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
+	{ &g_elimination_grenade, "elimination_grenade", "20", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 	{ &g_elimination_rocket, "elimination_rocket", "50", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 	{ &g_elimination_railgun, "elimination_railgun", "20", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
-	{ &g_elimination_lightning, "elimination_lightning", "300", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
+	{ &g_elimination_lightning, "elimination_lightning", "200", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 	{ &g_elimination_plasmagun, "elimination_plasmagun", "200", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 	{ &g_elimination_chain, "elimination_chain", "0", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 	{ &g_elimination_mine, "elimination_mine", "0", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
@@ -337,7 +337,7 @@ static cvarTable_t		gameCvarTable[] = {
 
         { &g_elimination_lockspectator, "elimination_lockspectator", "0", CVAR_NORESTART, 0, qtrue },
         
-        { &g_awardpushing, "g_awardpushing", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qtrue },
+        { &g_awardpushing, "g_awardpushing", "0", CVAR_ARCHIVE | CVAR_NORESTART, 0, qtrue },
 
         //g_persistantpowerups
         #ifdef MISSIONPACK
@@ -2427,8 +2427,6 @@ void CheckTournament( void ) {
 					clientsReady++;
 			}
 		}
-		
-		G_Printf("ready %i\n",clientsReady);
 		
 		if( g_startWhenReady.integer == 1 && ( clientsReady < level.numPlayingClients/2 ) )
 			notEnough = qtrue;

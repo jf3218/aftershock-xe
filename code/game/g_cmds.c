@@ -377,9 +377,9 @@ void SendReadymask( void ) {
 	notReady = 0;
 	readyMask = 0;
         playerCount = 0;
-	for (i=0 ; i< g_maxclients.integer ; i++) {
+	for ( i = 0; i < g_maxclients.integer; i++ ) {
 		cl = level.clients + i;
-		if ( cl->pers.connected != CON_CONNECTED ) {
+		if ( cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam == TEAM_SPECTATOR ) {
 			continue;
 		}
 
@@ -399,7 +399,7 @@ void SendReadymask( void ) {
 				
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		ent = &g_entities[i];
-		if ( ( ent->inuse ) && ( ent->client->sess.sessionTeam != TEAM_SPECTATOR ) ) {
+		if ( ( ent->inuse ) ) {
 
 		      trap_SendServerCommand( ent-g_entities, va("readyMask%s", entry ));
 		}
@@ -811,7 +811,6 @@ void Cmd_Ready_f( gentity_t *ent ) {
 		ent->client->ready = qfalse;
 	else
 		ent->client->ready = qtrue;
-	
 	
 	SendReadymask();
 }

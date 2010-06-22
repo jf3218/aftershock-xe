@@ -230,7 +230,25 @@ CG_ParseRespawnTimer
 =================
 */
 static void CG_ParseReadyMask( void ) {
-	cg.readyMask = atoi( CG_Argv( 1 ) );
+	int readyMask, i;
+	readyMask = atoi( CG_Argv( 1 ) );
+	
+	if( cg.warmup >= 0 )
+		return;
+	
+	if( readyMask != cg.readyMask ) {
+		for( i = 0; i < 32 ; i++ ) {
+			if ( ( cg.readyMask & ( 1 << i ) ) != ( readyMask & ( 1 << i ) ) ){
+			  
+				if( readyMask & ( 1 << i ) )
+					CG_CenterPrint( va("%s ^2is ready", cgs.clientinfo[ i ].name ), 120, BIGCHAR_WIDTH );
+				else
+					CG_CenterPrint( va("%s ^1is not ready", cgs.clientinfo[ i ].name ), 120, BIGCHAR_WIDTH );
+				CG_Printf("Playername %i %s\n", i, cgs.clientinfo[ i ].name );
+			}
+		}
+		cg.readyMask = readyMask;
+	}
 }
 
 /*
@@ -490,6 +508,8 @@ void CG_ParseServerinfo( void ) {
 	
 	cgs.startWhenReady = atoi( Info_ValueForKey( info, "g_startWhenReady" ) );
 	//trap_Cvar_Set("g_startWhenReady", va("%i", cgs.startWhenReady));
+	if( cg_autosnaps.integer )
+		trap_Cvar_Set("snaps", va("%i", atoi( Info_ValueForKey( info, "sv_fps" ) )));
 }
 
 /*
