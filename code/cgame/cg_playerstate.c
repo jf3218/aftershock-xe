@@ -480,7 +480,7 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 	if ( cgs.timelimit > 0 ) {
 		int		msec;
 
-		msec = cg.time - cgs.levelStartTime;
+		msec = cg.time - cgs.timeoutAdd - cgs.levelStartTime;
 		if ( !( cg.timelimitWarnings & 4 ) && msec > ( cgs.timelimit * 60 + 2 ) * 1000 ) {
 			cg.timelimitWarnings |= 1 | 2 | 4;
 			trap_S_StartLocalSound( cgs.media.suddenDeathSound, CHAN_ANNOUNCER );

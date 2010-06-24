@@ -563,7 +563,12 @@ typedef struct {
     qboolean    BlueTeamLocked;
     qboolean    FFALocked;
     int		readyMask;
-     
+    
+    qboolean	timeout;
+    int		timeoutTime;
+    int		timeoutAdd;
+    int		timeoutDelay;
+    
 } level_locals_t;
 
 //KK-OAX These are some Print Shortcuts for KillingSprees and Admin
@@ -1155,6 +1160,11 @@ extern vmCvar_t     disable_holdable_kamikaze;
 
 extern vmCvar_t	    g_allowRespawnTimer;
 extern vmCvar_t	    g_startWhenReady;
+
+extern vmCvar_t	    g_timeoutAllowed;
+extern vmCvar_t	    g_timeoutTime;
+
+extern vmCvar_t     g_delagprojectiles;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

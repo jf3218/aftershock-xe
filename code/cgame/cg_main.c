@@ -969,11 +969,11 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.tiedLeadSound = trap_S_RegisterSound( "sound/feedback/tiedlead.wav", qtrue);
 	cgs.media.lostLeadSound = trap_S_RegisterSound( "sound/feedback/lostlead.wav", qtrue);
 
-#ifdef MISSIONPACK
+//#ifdef MISSIONPACK
 	cgs.media.voteNow = trap_S_RegisterSound( "sound/feedback/vote_now.wav", qtrue);
 	cgs.media.votePassed = trap_S_RegisterSound( "sound/feedback/vote_passed.wav", qtrue);
 	cgs.media.voteFailed = trap_S_RegisterSound( "sound/feedback/vote_failed.wav", qtrue);
-#endif
+//#endif
 
 	cgs.media.watrInSound = trap_S_RegisterSound( "sound/player/watr_in.wav", qfalse);
 	cgs.media.watrOutSound = trap_S_RegisterSound( "sound/player/watr_out.wav", qfalse);
@@ -2200,22 +2200,6 @@ void CG_mapConfigs( void ){
 	return;
 }
 
-static const char *gameNames[] = {
-	"FFA",
-	"1v1",
-	"SP",
-	"TDM",
-	"CTF",
-	"OCTF",
-	"O",
-	"H",
-	"CA",
-	"CTFE",
-	"LMS",
-	"DD",
-	"D"
-};
-
 void CG_SetGameString( void ){
 	qtime_t	now;
 	char		*p;
@@ -2224,6 +2208,21 @@ void CG_SetGameString( void ){
 	char		*playerName;
 	clientInfo_t	*ci1, *ci2;
 	int 		i;
+	char *gameNames[] = {
+	  "FFA",
+	  "1v1",
+	  "SP",
+	  "TDM",
+	  "CTF",
+	  "OCTF",
+	  "O",
+	  "H",
+	  "CA",
+	  "CTFE",
+	  "LMS",
+	  "DD",
+	  "D"
+	};
 
 	trap_RealTime( &now );
 	

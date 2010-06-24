@@ -1199,6 +1199,12 @@ typedef struct {
 	char	*gameString;
 	int	demoStarted;
 	int 	startWhenReady;
+	
+	qboolean	timeout;
+	int 		timeoutTime;
+	int		timeoutAdd;
+	int		timeoutDelay;
+	int		timeoutCount;
 } cgs_t;
 
 //==============================================================================

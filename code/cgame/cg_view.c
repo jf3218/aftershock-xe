@@ -777,6 +777,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 	int		inwater;
 
 	cg.time = serverTime;
+	
 	cg.demoPlayback = demoPlayback;
 
 	// update cvars

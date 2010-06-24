@@ -22,7 +22,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 #include "g_local.h"
 
-#define	MISSILE_PRESTEP_TIME	50
+// new missile prestep
+// 0  =  old behavior
+// 1  =  new simple prestep
+// 2+ =  compensate for client ping up to this number
+/*#define NEWPRESTEP(behavior,ping,svfps) (\ // jessicaRA: this is how messy the old prestep looked, lets try a function instead?  it may even be faster as a function without the tests being duplicated all over
+    trap_Cvar_VariableValue( "sv_running" ) == 0 ? 0 : \
+    behavior == 0 ? 50 : \
+    behavior > 1 && ping > behavior ? (1000/svfps) + behavior : \
+    behavior > 1 && ping <= behavior ? (1000/svfps) + ping : \
+    (1000/svfps) \
+)*/
+
+int lagNudge(gentity_t *myself);
 
 /*
 ================
@@ -85,7 +97,6 @@ void G_ExplodeMissile( gentity_t *ent ) {
 		if( G_RadiusDamage( ent->r.currentOrigin, ent->parent, ent->splashDamage, ent->splashRadius, ent
 			, ent->splashMethodOfDeath ) ) {
 			g_entities[ent->r.ownerNum].client->accuracy_hits++;
-			g_entities[ent->r.ownerNum].client->accuracy[ent->s.weapon][1]++;
 		}
 	}
 
@@ -357,7 +368,6 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 			if( LogAccuracyHit( other, &g_entities[ent->r.ownerNum] ) ) {
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
 				hitClient = qtrue;
-				g_entities[ent->r.ownerNum].client->accuracy[ent->s.weapon][1]++;
 			}
 			BG_EvaluateTrajectoryDelta( &ent->s.pos, level.time, velocity );
 			if ( VectorLength( velocity ) == 0 ) {
@@ -476,7 +486,6 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 			other, ent->splashMethodOfDeath ) ) {
 			if( !hitClient ) {
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
-				g_entities[ent->r.ownerNum].client->accuracy[ent->s.weapon][1]++;
 			}
 		}
 	}
@@ -586,7 +595,7 @@ gentity_t *fire_plasma (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->target_ent = NULL;
 
 	bolt->s.pos.trType = TR_LINEAR;
-	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;		// move a bit on the very first frame
+	bolt->s.pos.trTime = level.time - lagNudge(self);	// move a bit on the very first frame
 	VectorCopy( start, bolt->s.pos.trBase );
 	VectorScale( dir, 2000, bolt->s.pos.trDelta );
 	SnapVector( bolt->s.pos.trDelta );			// save net bandwidth
@@ -632,7 +641,7 @@ gentity_t *fire_grenade (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->target_ent = NULL;
 
 	bolt->s.pos.trType = TR_GRAVITY;
-	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;		// move a bit on the very first frame
+	bolt->s.pos.trTime = level.time - lagNudge(self);		// move a bit on the very first frame
 	VectorCopy( start, bolt->s.pos.trBase );
 	VectorScale( dir, 700, bolt->s.pos.trDelta );
 	SnapVector( bolt->s.pos.trDelta );			// save net bandwidth
@@ -677,7 +686,7 @@ gentity_t *fire_bfg (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->target_ent = NULL;
 
 	bolt->s.pos.trType = TR_LINEAR;
-	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;		// move a bit on the very first frame
+	bolt->s.pos.trTime = level.time - lagNudge(self);		// move a bit on the very first frame
 	VectorCopy( start, bolt->s.pos.trBase );
 	VectorScale( dir, 2000, bolt->s.pos.trDelta );
 	SnapVector( bolt->s.pos.trDelta );			// save net bandwidth
@@ -721,7 +730,7 @@ gentity_t *fire_rocket (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->target_ent = NULL;
 
 	bolt->s.pos.trType = TR_LINEAR;
-	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;		// move a bit on the very first frame
+	bolt->s.pos.trTime = level.time - lagNudge(self);		// move a bit on the very first frame
 	VectorCopy( start, bolt->s.pos.trBase );
 	VectorScale( dir, 900, bolt->s.pos.trDelta );
 	SnapVector( bolt->s.pos.trDelta );			// save net bandwidth
@@ -767,7 +776,7 @@ gentity_t *fire_grapple (gentity_t *self, vec3_t start, vec3_t dir) {
 		hooktime = self->client->pers.cmd.serverTime + 50;
 	}
 	else {
-		hooktime = level.time - MISSILE_PRESTEP_TIME;
+		hooktime = level.time - lagNudge(self);
 	}
 
 	hook->s.pos.trTime = hooktime;
@@ -881,7 +890,7 @@ gentity_t *fire_prox( gentity_t *self, vec3_t start, vec3_t dir ) {
 	bolt->s.generic1 = self->client->sess.sessionTeam;
 
 	bolt->s.pos.trType = TR_GRAVITY;
-	bolt->s.pos.trTime = level.time - MISSILE_PRESTEP_TIME;		// move a bit on the very first frame
+	bolt->s.pos.trTime = level.time - lagNudge(self);		// move a bit on the very first frame
 	VectorCopy( start, bolt->s.pos.trBase );
 	VectorScale( dir, 700, bolt->s.pos.trDelta );
 	SnapVector( bolt->s.pos.trDelta );			// save net bandwidth
@@ -889,4 +898,37 @@ gentity_t *fire_prox( gentity_t *self, vec3_t start, vec3_t dir ) {
 	VectorCopy (start, bolt->r.currentOrigin);
 
 	return bolt;
+}
+
+/*
+==================
+lagNudge
+==================
+This does the anti lag stuff for projectiles.
+*/
+
+int lagNudge(gentity_t *myself) {
+	if (trap_Cvar_VariableValue( "sv_running" ) == 0) return 0; // the server deals with the nudge, not clients
+	if (g_delagprojectiles.integer <= 0) {
+		return 0; // old behavior
+	} else if (g_delagprojectiles.integer == 1) {
+		return 50; // less old behavior, unlagged versions use this
+	} else if (g_delagprojectiles.integer == 2) {
+		return 1000/sv_fps.integer; // accurate to 1 server snap, usually no different from 50msec
+	} else {
+		// add client ping to the nudge, clamped at g_delagprojectiles
+		// it would be ideal to time shift before the nudge but that would effect rocket jumps badly
+		// so this is the best which i can do for now.  tracing hits along the path the rocket would
+		// take may be an option for testing if the player is rocket jumping for if we should time
+		// shift or not but it would come with some problems for rockets which would hit the floor
+		// around enemies.  then the test starts to get very complex and i seriously have to wonder
+		// if pings would raise to 200 from the complex tests on every rocket.
+		// maybe client side prediction will also somewhat help do this already?
+		// the error in this method is small unless firing rockets at point blank range.
+		int tmp;
+		tmp = myself->client->ps.ping;
+		if (tmp > g_delagprojectiles.integer) tmp = g_delagprojectiles.integer;
+		tmp += 1000/sv_fps.integer;
+		return tmp;
+	}
 }

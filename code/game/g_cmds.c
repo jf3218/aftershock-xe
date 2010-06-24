@@ -185,8 +185,6 @@ void G_SendStats( gentity_t *ent ) {
 	for (i=0 ; i < numSorted ; i++) {
 	  
 		cl = &level.clients[level.sortedClients[i]];
-		
-		G_Printf(" clientNum %i\n", level.sortedClients[i]);
 			
 		Com_sprintf (entry, sizeof(entry),
 			" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
@@ -796,8 +794,36 @@ void Cmd_Kill_f( gentity_t *ent ) {
 Cmd_Timeout_f
 =================
 */
-void Cmd_Timeout_f( gentity_t *ent ) {
+void Cmd_Timeout_f( gentity_t *player ) {
+	int i;
+	gentity_t *ent;
 	
+	if( !g_timeoutAllowed.integer )
+		return;
+	
+	if( !level.timeout ){
+		level.timeout = qtrue;
+		level.timeoutTime = level.time;
+		level.timeoutAdd = g_timeoutTime.integer;
+		level.timeoutDelay += level.timeoutAdd;
+		
+		ent = &g_entities[0];
+		for (i=0 ; i<level.num_entities ; i++, ent++) {
+			if( ent->inuse ){
+				if( ent->nextthink > 0 )
+					ent->nextthink += level.timeoutAdd;
+				if( ent->eventTime > 0 )
+					ent->eventTime += level.timeoutAdd;
+			}
+		}
+		
+		trap_SendServerCommand( -1, va("timeout %i %i", level.timeoutTime, level.timeoutAdd ) );
+	}
+}
+
+void G_Timein( void ) {
+	level.timeout = qfalse;
+	trap_SendServerCommand( -1, va("timein") );
 }
 
 /*

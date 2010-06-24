@@ -202,6 +202,11 @@ vmCvar_t     g_allowRespawnTimer;
 
 vmCvar_t     g_startWhenReady;
 
+vmCvar_t     g_timeoutAllowed;
+vmCvar_t     g_timeoutTime;
+
+vmCvar_t        g_delagprojectiles;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -408,6 +413,11 @@ static cvarTable_t		gameCvarTable[] = {
 	
 	{ &g_allowRespawnTimer, "g_allowRespawnTimer", "1", 0, 0, qfalse},
 	{ &g_startWhenReady, "g_startWhenReady", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
+	
+	{ &g_timeoutAllowed, "g_timeoutAllowed", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
+	{ &g_timeoutTime, "g_timeoutTime", "60", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
+	
+	{ &g_delagprojectiles, "g_delagprojectiles", "100", CVAR_SYSTEMINFO, 0, qfalse },
 
 	
 };
@@ -707,6 +717,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	
 	level.time = levelTime;
 	level.startTime = levelTime;
+	
+	level.timeoutAdd = 0;
+	level.timeoutDelay = 0;
 
 	level.snd_fry = G_SoundIndex("sound/player/fry.wav");	// FIXME standing in lava / slime
 
@@ -1805,7 +1818,7 @@ void CheckExitRules( void ) {
 	}
 
 	if ( g_timelimit.integer && !level.warmupTime ) {
-		if ( level.time - level.startTime >= g_timelimit.integer*60000 ) {
+		if ( level.time - level.startTime - level.timeoutDelay >= g_timelimit.integer*60000 ) {
 			trap_SendServerCommand( -1, "print \"Timelimit hit.\n\"");
 			LogExit( "Timelimit hit." );
 			return;
@@ -2383,7 +2396,7 @@ void CheckTournament( void ) {
 				if( ( g_startWhenReady.integer && 
 				  ( g_entities[level.sortedClients[0]].client->ready || ( g_entities[level.sortedClients[0]].r.svFlags & SVF_BOT ) ) && 
 				  ( g_entities[level.sortedClients[1]].client->ready || ( g_entities[level.sortedClients[1]].r.svFlags & SVF_BOT ) ) ) || 
-				  !g_startWhenReady.integer ){
+				  !g_startWhenReady.integer || !g_doWarmup.integer ){
 					// fudge by -1 to account for extra delays
 					if ( g_warmup.integer > 1 ) {
 						level.warmupTime = level.time + ( g_warmup.integer - 1 ) * 1000;
@@ -2428,9 +2441,9 @@ void CheckTournament( void ) {
 			}
 		}
 		
-		if( g_startWhenReady.integer == 1 && ( clientsReady < level.numPlayingClients/2 ) )
+		if( g_doWarmup.integer && g_startWhenReady.integer == 1 && ( clientsReady < level.numPlayingClients/2 ) )
 			notEnough = qtrue;
-		if( g_startWhenReady.integer == 2 && ( clientsReady < level.numPlayingClients ) )
+		if( g_doWarmup.integer && g_startWhenReady.integer == 2 && ( clientsReady < level.numPlayingClients ) )
 			notEnough = qtrue;
 		
 
@@ -2657,10 +2670,20 @@ void G_RunFrame( int levelTime ) {
 	if ( level.restarted ) {
 		return;
 	}
-
+	
+	/*if( level.timeout && ( ( levelTime- level.timeoutAdd ) < level.timeoutTime ) )
+		return;*/
 	level.framenum++;
 	level.previousTime = level.time;
-	level.time = levelTime;
+		
+	if( !(level.timeout && ( ( levelTime- level.timeoutAdd ) < level.timeoutTime ) ) ){
+		level.time = levelTime;
+	}
+	
+	if( (level.timeout && ( ( levelTime- level.timeoutAdd ) > level.timeoutTime ) ) ){
+		G_Timein();
+	}
+	
 	msec = level.time - level.previousTime;
 
 	// get any cvar changes

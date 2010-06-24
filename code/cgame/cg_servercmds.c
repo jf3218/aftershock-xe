@@ -132,9 +132,30 @@ CG_ParseStatistics
 =================
 */
 static void CG_ParseStatistics( void ) {
-	int		i, j, numStats, len;
+	int		i, j, numStats, len = 128;
 	fileHandle_t f;
 	char		*name, *string;
+	char		*team;
+	clientInfo_t    *ci;
+	int 		scorenum;
+	score_t		*score;
+	int		clientnum;
+	int 		shots, hits, acc;
+	char *gameNames[] = {
+	  "FFA",
+	  "1v1",
+	  "SP",
+	  "TDM",
+	  "CTF",
+	  "OCTF",
+	  "O",
+	  "H",
+	  "CA",
+	  "CTFE",
+	  "LMS",
+	  "DD",
+	  "D"
+	};
 
 	numStats = atoi( CG_Argv( 1 ) );
 	if ( numStats > MAX_CLIENTS ) {
@@ -144,20 +165,166 @@ static void CG_ParseStatistics( void ) {
 #define NUM_DATA_STATS 22
 #define FIRST_DATA_STATS 1
 
-	trap_FS_FOpenFile(va("test.txt"), &f, FS_WRITE);
+	CG_SetGameString();
+
+	trap_FS_FOpenFile(va("stats/%s.txt", cgs.gameString), &f, FS_WRITE);
+	//CG_Printf( "%s \n", cgs.gameString );
+	
+	string = va("Gametype:   %4s \n", gameNames[cgs.gametype]);
+	len = strlen( string );
+	trap_FS_Write(string, len, f);
+	
+	if( cgs.gametype > GT_TEAM ){
+		string = va("Red:   %2i     Blue:   %2i \n \n \n \n", cgs.scores1, cgs.scores2);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+	}
+	
+	string = va("---------------------------------------\n\n\n" );
+	len = strlen( string );
+	trap_FS_Write(string, len, f);
 
 	for ( i = 0 ; i < numStats ; i++ ) {
-		//for( j = 0; j < NUM_DATA_STATS; j++)
-		
-		  name = cgs.clientinfo[atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 1 ) )].name;
 		  
-		  string = va("Playername:    %s\n", name );
+		  clientnum = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 1 ));
 		  
-		  len = CG_DrawStrlen(string);
+		  for ( j = 0 ; j < cg.numScores ; j++ ) {
+			if( clientnum == cg.scores[j].client ){
+				scorenum = j;
+				score = &cg.scores[j];
+			}
+		  }
+			  
+		  ci = &cgs.clientinfo[clientnum];
 		  
+		  name = ci->name;
+		  
+		  if( ci->team == TEAM_FREE )
+			  team = "Free";
+		  else if( ci->team == TEAM_BLUE )
+			  team = "Blue";
+		  else if( ci->team == TEAM_RED )
+			  team = "Red";
+		  else if( ci->team == TEAM_SPECTATOR )
+			  team = "Spectator";
+		  
+		  
+		  string = va("name: %s        Team: %10s         Time: %3i \n\n", name, team, score->time );
+		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
-		  CG_Printf("	MH %i\n", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 22 ) ));
+		  
+		  string = va("Score %4i     Accuracy %3i \n", score->score, score->accuracy );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  //if( cgs.gametype == GT_ELIMINATION ) {
+			  string = va("Damage done %4i     Damage taken %4i \n \n", score->dmgdone, score->dmgtaken );
+			  len = strlen( string );
+			  trap_FS_Write(string, len, f);
+		  //}
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 2 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 ));
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("MG      %5i      %5i      %3i \n", shots, hits, acc );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 5 ));
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("SG      %5i      %5i      %3i \n", shots, hits, acc );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 6 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 7 ));
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("GL      %5i      %5i      %3i\n", shots, hits, acc );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 8 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 9 ));
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("RL      %5i      %5i      %3i\n", shots, hits, acc );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 10 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 11 ));
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("LG      %5i      %5i      %3i\n", shots, hits, acc );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 12 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 13 ));
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("RG      %5i      %5i      %3i\n", shots, hits, acc );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 14 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 15 ));
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("PG      %5i      %5i      %3i\n", shots, hits, acc );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 16 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 17 ));
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("BFG     %5i      %5i      %3i\n", shots, hits, acc );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 19 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 20 ));
+		  acc = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 21 ));
+		  string = va("Armor   %5i         %2iYA     %2iRA\n", shots, hits, acc );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 18 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 22 ));
+		  string = va("Health  %5i         %2iMH\n", shots, hits );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  
+		  string = va("---------------------------------------\n\n\n" );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
 		  
 	}
 	
@@ -179,6 +346,31 @@ static void CG_ParseAccuracy( void ) {
 		cg.accuracys[i][1] = atoi( CG_Argv( i*2 + 2 ) );
 	}
 
+}
+
+/*
+=================
+CG_ParseTimeout
+
+=================
+*/
+static void CG_ParseTimeout( void ) {
+	cgs.timeout = qtrue;
+	cgs.timeoutTime = atoi( CG_Argv( 1 ) );
+	cgs.timeoutAdd = atoi( CG_Argv( 2 ) );
+	cgs.timeoutDelay = cgs.timeoutDelay + cgs.timeoutAdd;
+	CG_Printf( "Timeout for %f seconds", ((float)cgs.timeoutAdd)/1000.0f);
+
+}
+
+/*
+=================
+CG_ParseTimein
+
+=================
+*/
+static void CG_ParseTimein( void ) {
+	cgs.timeout = qfalse;
 }
 
 /*
@@ -244,7 +436,7 @@ static void CG_ParseReadyMask( void ) {
 					CG_CenterPrint( va("%s ^2is ready", cgs.clientinfo[ i ].name ), 120, BIGCHAR_WIDTH );
 				else
 					CG_CenterPrint( va("%s ^1is not ready", cgs.clientinfo[ i ].name ), 120, BIGCHAR_WIDTH );
-				CG_Printf("Playername %i %s\n", i, cgs.clientinfo[ i ].name );
+				//CG_Printf("Playername %i %s\n", i, cgs.clientinfo[ i ].name );
 			}
 		}
 		cg.readyMask = readyMask;
@@ -652,9 +844,9 @@ static void CG_ConfigStringModified( void ) {
 		cgs.voteModified = qtrue;
 	} else if ( num == CS_VOTE_STRING ) {
 		Q_strncpyz( cgs.voteString, str, sizeof( cgs.voteString ) );
-#ifdef MISSIONPACK
+//#ifdef MISSIONPACK
 		trap_S_StartLocalSound( cgs.media.voteNow, CHAN_ANNOUNCER );
-#endif //MISSIONPACK
+//#endif //MISSIONPACK
 	} else if ( num >= CS_TEAMVOTE_TIME && num <= CS_TEAMVOTE_TIME + 1) {
 		cgs.teamVoteTime[num-CS_TEAMVOTE_TIME] = atoi( str );
 		cgs.teamVoteModified[num-CS_TEAMVOTE_TIME] = qtrue;
@@ -666,9 +858,9 @@ static void CG_ConfigStringModified( void ) {
 		cgs.teamVoteModified[num-CS_TEAMVOTE_NO] = qtrue;
 	} else if ( num >= CS_TEAMVOTE_STRING && num <= CS_TEAMVOTE_STRING + 1) {
 		Q_strncpyz( cgs.teamVoteString[num-CS_TEAMVOTE_STRING], str, sizeof( cgs.teamVoteString ) );
-#ifdef MISSIONPACK
+//#ifdef MISSIONPACK
 		trap_S_StartLocalSound( cgs.media.voteNow, CHAN_ANNOUNCER );
-#endif	
+//#endif	
 	} else if ( num == CS_INTERMISSION ) {
 		cg.intermissionStarted = atoi( str );
 	} else if ( num >= CS_MODELS && num < CS_MODELS+MAX_MODELS ) {
@@ -922,6 +1114,9 @@ static void CG_MapRestart( void ) {
 	cg.readyMask = 0;
 	
 	CG_SetGameString();
+	
+	cgs.timeoutAdd = 0;
+	cgs.timeoutDelay = 0;
 }
 
 #define MAX_VOICEFILESIZE	16384
@@ -1447,7 +1642,7 @@ static void CG_ServerCommand( void ) {
 
 	if ( !strcmp( cmd, "print" ) ) {
 		CG_Printf( "%s", CG_Argv(1) );
-#ifdef MISSIONPACK
+//#ifdef MISSIONPACK
 		cmd = CG_Argv(1);			// yes, this is obviously a hack, but so is the way we hear about
 									// votes passing or failing
 		if ( !Q_stricmpn( cmd, "vote failed", 11 ) || !Q_stricmpn( cmd, "team vote failed", 16 )) {
@@ -1455,7 +1650,7 @@ static void CG_ServerCommand( void ) {
 		} else if ( !Q_stricmpn( cmd, "vote passed", 11 ) || !Q_stricmpn( cmd, "team vote passed", 16 ) ) {
 			trap_S_StartLocalSound( cgs.media.votePassed, CHAN_ANNOUNCER );
 		}
-#endif
+//#endif
 		return;
 	}
 
@@ -1505,6 +1700,16 @@ static void CG_ServerCommand( void ) {
 
 	if ( !strcmp( cmd, "accs" ) ) {
 		CG_ParseAccuracy();
+		return;
+	}
+	
+	if ( !strcmp( cmd, "timeout" ) ) {
+		CG_ParseTimeout();
+		return;
+	}
+	
+	if ( !strcmp( cmd, "timein" ) ) {
+		CG_ParseTimein();
 		return;
 	}
 	

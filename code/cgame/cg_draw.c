@@ -865,8 +865,11 @@ void CG_DrawTimer( void ) {
 	int			w;
 	int			mins, seconds, tens;
 	int			msec;
-
-	msec = cg.time - cgs.levelStartTime;
+	
+	if( !cgs.timeout )
+		msec = cg.time - cgs.timeoutDelay - cgs.levelStartTime;
+	else
+		msec = cgs.timeoutTime - cgs.levelStartTime;
 
 	seconds = msec / 1000;
 	mins = seconds / 60;
@@ -1167,6 +1170,62 @@ Lots of stuff
 	return y + BIGCHAR_HEIGHT + 4;
 }
 
+void CG_DrawTimeout( void ){
+	int 	msec;
+	int	sec;
+	char	*st;
+	int	w;
+	int	cw;
+	float	scale;
+	
+	if( !cgs.timeout )
+		return;
+	
+	msec = cgs.timeoutTime + cgs.timeoutAdd - cg.time;
+	sec = msec/1000;
+	
+	st = va( "Timeout ends in: %i", sec + 1 );
+	
+	if( sec != cgs.timeoutCount ){
+		cgs.timeoutCount = sec;
+		switch ( sec ) {
+			case 0:
+				trap_S_StartLocalSound( cgs.media.count1Sound, CHAN_ANNOUNCER );
+				break;
+			case 1:
+				trap_S_StartLocalSound( cgs.media.count2Sound, CHAN_ANNOUNCER );
+				break;
+			case 2:
+				trap_S_StartLocalSound( cgs.media.count3Sound, CHAN_ANNOUNCER );
+				break;
+			default:
+				break;
+		}
+	}
+		scale = 0.45f;
+		switch ( cgs.timeoutCount ) {
+		case 0:
+			cw = 28;
+			scale = 0.54f;
+			break;
+		case 1:
+			cw = 24;
+			scale = 0.51f;
+			break;
+		case 2:
+			cw = 20;
+			scale = 0.48f;
+			break;
+		default:
+			cw = 16;
+			scale = 0.45f;
+			break;
+		}
+	w = CG_DrawStrlen( st );
+	
+	CG_DrawStringExt( 320 - w * cw/2, 70, st, colorWhite, 
+				qfalse, qtrue, cw, (int)(cw * 1.5), 0 );
+}
 
 /*
 =================
@@ -2240,6 +2299,9 @@ static void CG_DrawLagometer( void ) {
 	float	ax, ay, aw, ah, mid, range;
 	int		color;
 	float	vscale;
+	
+	if( cgs.timeout )
+		return;
 
 	if ( !cg_lagometer.integer || cgs.localServer ) {
 		CG_DrawDisconnect();
@@ -3465,6 +3527,8 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 	CG_DrawTeamVote();
 
 	CG_DrawLagometer();
+	
+	CG_DrawTimeout();
 
 #ifdef MISSIONPACK
 	if (!cg_paused.integer) {
