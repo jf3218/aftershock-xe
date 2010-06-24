@@ -434,6 +434,8 @@ struct gclient_s {
 	qboolean		ready;
 	
 	int			stats[STATS_MAX];
+	
+	char 			*lastPickup;
 };
 
 

@@ -498,6 +498,8 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace) {
 	default:
 		return;
 	}
+	
+	other->client->lastPickup = ent->item->shortPickup_name;
 
 	if ( !respawn ) {
 		return;

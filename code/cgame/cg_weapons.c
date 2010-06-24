@@ -1866,7 +1866,7 @@ CG_DrawWeaponBar1
 
 void CG_DrawWeaponBar1(int count, int bits, float *color){
 
-	int y = 370;
+	int y = 330;
 	int x = 320 - (count-1) * 15;
 	int i;
 	int w;
@@ -2013,7 +2013,7 @@ CG_DrawWeaponBar4
 
 void CG_DrawWeaponBar4(int count, int bits, float *color){
 
-	int y = 370;
+	int y = 330;
 	int x = 320 - (count-1) * 15;
 	int i;
 	int w;

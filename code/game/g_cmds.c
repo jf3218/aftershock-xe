@@ -113,11 +113,11 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 
 /*
 ==================
-AccMessage
+G_SendAccMessage
 
 ==================
 */
-void AccMessage( gentity_t *ent ) {
+void G_SendAccMessage( gentity_t *ent ) {
 	char		entry[128];
 
 	Com_sprintf (entry, sizeof(entry),
@@ -136,7 +136,7 @@ void AccMessage( gentity_t *ent ) {
 
 /*
 ==================
-AccMessage
+G_SendRespawnTimer
 
 ==================
 */
@@ -150,12 +150,11 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime 
 	}
 
 	Com_sprintf (entry, sizeof(entry),
-				" %i %i %i %i ", entityNum, type, quantity, respawnTime);
+			" %i %i %i %i ", entityNum, type, quantity, respawnTime);
 				
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		ent = &g_entities[i];
 		if ( ( ent->inuse ) && ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) ) {
-
 		      trap_SendServerCommand( ent-g_entities, va("respawnTime%s", entry ));
 		}
 	}
@@ -434,7 +433,7 @@ Request current scoreboard information
 ==================
 */
 void Cmd_Acc_f( gentity_t *ent ) {
-	AccMessage( ent );
+	G_SendAccMessage( ent );
 }
 
 /*
@@ -1406,6 +1405,11 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 						default:
 							Com_sprintf( text, sizeof(text), text, "" );
 					}
+				}
+				else if( text[counter + 1] == 'P' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					Com_sprintf( text, sizeof(text), text, ent->client->lastPickup );
 				}
 			}
 		}

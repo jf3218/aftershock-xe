@@ -1691,6 +1691,7 @@ void ClientSpawn(gentity_t *ent) {
 	int 		saveddmgtaken;
 	int 		stats[STATS_MAX];
 	qboolean	ready;
+	char		*lastPickup;
  
 
 	index = ent - g_entities;
@@ -1850,6 +1851,8 @@ void ClientSpawn(gentity_t *ent) {
 	}
 	
 	ready = client->ready;
+	
+	lastPickup = client->lastPickup;
 
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		persistant[i] = client->ps.persistant[i];
@@ -1884,6 +1887,8 @@ void ClientSpawn(gentity_t *ent) {
 	}
 	
 	client->ready = ready;
+	
+	client->lastPickup = lastPickup;
 
 	client->lastkilled_client = -1;
 

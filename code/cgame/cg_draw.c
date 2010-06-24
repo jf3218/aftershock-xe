@@ -1857,7 +1857,7 @@ static void CG_DrawTeamInfo( void ) {
 		w *= TINYCHAR_WIDTH;
 		w += TINYCHAR_WIDTH * 2;
 
-		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+		/*if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
 			hcolor[0] = 1.0f;
 			hcolor[1] = 0.0f;
 			hcolor[2] = 0.0f;
@@ -1877,6 +1877,8 @@ static void CG_DrawTeamInfo( void ) {
 		trap_R_SetColor( hcolor );
 		CG_DrawPic( TEAMCHATLOC_X, TEAMCHATLOC_Y - h, 640, h, cgs.media.teamStatusBar );
 		trap_R_SetColor( NULL );
+		
+		*/
 
 		hcolor[0] = hcolor[1] = hcolor[2] = 1.0f;
 		hcolor[3] = 1.0f;
