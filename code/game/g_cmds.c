@@ -162,6 +162,45 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime 
 
 /*
 ==================
+G_SendStartGame
+
+==================
+*/
+void G_SendStartGame( void ) {
+	gentity_t	*ent;
+	int	i;	
+  
+	if( level.intermissiontime )
+		return;
+	
+	for (i = 0; i < MAX_CLIENTS; i++) {
+		ent = &g_entities[i];
+		if ( ( ent->inuse ) ) {
+		      trap_SendServerCommand( ent-g_entities, va("startOfGame"));
+		}
+	}
+}
+
+/*
+==================
+G_SendEndGame
+==================
+*/
+void G_SendEndGame( void ) {
+	gentity_t	*ent;
+	int	i;
+	
+	for (i = 0; i < MAX_CLIENTS; i++) {
+		ent = &g_entities[i];
+		if ( ( ent->inuse ) ) {
+		      trap_SendServerCommand( ent-g_entities, va("endOfGame"));
+		}
+	}
+	
+}
+
+/*
+==================
 DeathmatchScoreboardMessage
 
 ==================
@@ -173,7 +212,9 @@ void G_SendStats( gentity_t *ent ) {
 	int			i, j;
 	gclient_t	*cl;
 	int			numSorted;
-
+	
+	if( !level.intermissiontime )
+		return;
 
 	// send the latest information on all clients
 	string[0] = 0;

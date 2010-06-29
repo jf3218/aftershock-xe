@@ -677,6 +677,8 @@ typedef struct {
 //unlagged - optimized prediction
 
 	int		readyMask;
+	char	*gameString;
+	int	demoStarted;
 
 } cg_t;
 
@@ -1196,8 +1198,7 @@ typedef struct {
 
 	int	newItemHeight;
 	
-	char	*gameString;
-	int	demoStarted;
+	
 	int 	startWhenReady;
 	
 	qboolean	timeout;

@@ -2200,72 +2200,6 @@ void CG_mapConfigs( void ){
 	return;
 }
 
-void CG_SetGameString( void ){
-	qtime_t	now;
-	char		*p;
-	char		*mapName;
-	char		*buf;
-	char		*playerName;
-	clientInfo_t	*ci1, *ci2;
-	int 		i;
-	char *gameNames[] = {
-	  "FFA",
-	  "1v1",
-	  "SP",
-	  "TDM",
-	  "CTF",
-	  "OCTF",
-	  "O",
-	  "H",
-	  "CA",
-	  "CTFE",
-	  "LMS",
-	  "DD",
-	  "D"
-	};
-
-	trap_RealTime( &now );
-	
-	mapName = strchr( cgs.mapname, '/' );
-	mapName++;
-	buf = strstr( mapName, ".bsp");
-	buf[0] = '\0';
-	
-	if( cgs.gametype == GT_TOURNAMENT ){
-		// find the two active players
-		ci1 = NULL;
-		ci2 = NULL;
-		
-		for ( i = 0 ; i < cgs.maxclients ; i++ ) {
-		  
-			if ( cgs.clientinfo[i].infoValid && cgs.clientinfo[i].team == TEAM_FREE ) {
-				if ( !ci1 ) {
-					ci1 = &cgs.clientinfo[i];
-				} else {
-					ci2 = &cgs.clientinfo[i];
-				}
-			}
-			
-		}
-		playerName = va("%sVS%s", ci1->name, ci2->name);
-	}
-	else{
-		playerName = va("%s", cgs.clientinfo[cg.clientNum].name);
-	}
-	
-	cgs.gameString = va("%04d%02d%02d%02d%02d%02d-%s-%s-%s", 1900 + now.tm_year,
-			1 + now.tm_mon,
-			now.tm_mday,
-			now.tm_hour,
-			now.tm_min,
-			now.tm_sec,
-			gameNames[cgs.gametype],
-			playerName,
-			mapName);
-			
-	CG_Printf( "gamestring: %s\n", cgs.gameString);
-}
-
 /*
 =================
 CG_Init
@@ -2402,7 +2336,6 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	}
 	cgs.respawnTimerNumber = 0;
 	
-	CG_SetGameString();
 }
 
 /*
@@ -2587,20 +2520,20 @@ void CG_Autoaction( void ){
 		return;
 	}
 	
-	//CG_Printf("gamestring %s\n", cgs.gameString );
+	//CG_Printf("gamestring %s\n", cg.gameString );
 	if( cg_autoaction.integer & 1 ){
-		  if( !cgs.demoStarted && !cg.intermissionStarted ){
-			  cgs.demoStarted = 1;
-			  trap_SendConsoleCommand(va("record"/* %s", cgs.gameString*/) );
+		  if( !cg.demoStarted && !cg.intermissionStarted ){
+			  cg.demoStarted = 1;
+			  trap_SendConsoleCommand(va("record"/* %s", cg.gameString*/) );
 		  }
 	}
 	if( cg.intermissionStarted ){
-		if( cg_autoaction.integer & 1  && cgs.demoStarted  ){
+		if( cg_autoaction.integer & 1  && cg.demoStarted  ){
 			  trap_SendConsoleCommand( "stoprecord" );
-			  cgs.demoStarted = 0;
+			  cg.demoStarted = 0;
 		}
 		if( cg_autoaction.integer & 2 )
-			  trap_SendConsoleCommand(va("screenshotJPEG %s", cgs.gameString) );
+			  trap_SendConsoleCommand("screenshotJPEG %s" );
 	}
 }
 	

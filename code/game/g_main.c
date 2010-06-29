@@ -1471,6 +1471,8 @@ void BeginIntermission( void ) {
 
 	// send the current scoring to all clients
 	SendScoreboardMessageToAllClients();
+	
+	G_SendEndGame();
 
 }
 
@@ -2403,8 +2405,9 @@ void CheckTournament( void ) {
 					} else {
 						level.warmupTime = 0;
 					}
-
+					
 					trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
+					G_SendStartGame();
 				}
 			}
 			return;
@@ -2441,7 +2444,7 @@ void CheckTournament( void ) {
 			}
 		}
 		
-		if( g_doWarmup.integer && g_startWhenReady.integer == 1 && ( clientsReady < level.numPlayingClients/2 ) )
+		if( g_doWarmup.integer && g_startWhenReady.integer == 1 && ( clientsReady < level.numPlayingClients/2 + 1 ) )
 			notEnough = qtrue;
 		if( g_doWarmup.integer && g_startWhenReady.integer == 2 && ( clientsReady < level.numPlayingClients ) )
 			notEnough = qtrue;
@@ -2471,6 +2474,7 @@ void CheckTournament( void ) {
 			// fudge by -1 to account for extra delays
 			level.warmupTime = level.time + ( g_warmup.integer - 1 ) * 1000;
 			trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
+			G_SendStartGame();
 			return;
 		}
 

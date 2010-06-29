@@ -58,6 +58,137 @@ static int CG_ValidOrder(const char *p) {
 }
 #endif
 
+static char	gameString[128];
+
+char *CG_RemoveColorFromString( char *s ){
+	char *output;
+	int len;
+	int i;
+	int count = 0;
+	
+	len = strlen( s );
+	while (s && *s && count < len) {
+		if ( Q_IsColorString(s) ) {
+			s += 2;
+			continue;
+		} else {
+			*output = *s;
+			s++;
+			count++;
+			output++;
+		}
+	}
+	output -= count;
+	s -= len;
+	return output;
+}	
+
+void CG_SetGameString( void ){
+	qtime_t	now;
+	char		*p;
+	char		*mapname;
+	char		*buf;
+	char		*playerName;
+	clientInfo_t	*ci1, *ci2;
+	int 		i;
+	char *gameNames[] = {
+	  "FFA",
+	  "1v1",
+	  "SP",
+	  "TDM",
+	  "CTF",
+	  "OCTF",
+	  "O",
+	  "H",
+	  "CA",
+	  "CTFE",
+	  "LMS",
+	  "DD",
+	  "D"
+	};
+
+	trap_RealTime( &now );
+	
+	mapname = strchr( cgs.mapname, '/' );
+	mapname++;
+	buf = strstr( mapname, ".bsp");
+	buf[0] = '\0';
+	
+	if( cgs.gametype == GT_TOURNAMENT ){
+		// find the two active players
+		ci1 = NULL;
+		ci2 = NULL;
+		
+		for ( i = 0 ; i < cgs.maxclients ; i++ ) {
+		  
+			if ( cgs.clientinfo[i].infoValid && cgs.clientinfo[i].team == TEAM_FREE ) {
+				if ( !ci1 ) {
+					ci1 = &cgs.clientinfo[i];
+				} else {
+					ci2 = &cgs.clientinfo[i];
+				}
+			}
+			
+		}
+		playerName = va("%sVS%s", ci1->name, ci2->name);
+	}
+	else{
+		playerName = va("%s", cgs.clientinfo[cg.clientNum].name);
+	}
+	
+	//playerName = CG_RemoveColorFromString( playerName );
+	
+	Com_sprintf(gameString, sizeof(gameString), "%04d%02d%02d%02d%02d%02d-%s-%s-%s", 1900 + now.tm_year,
+			1 + now.tm_mon,
+			now.tm_mday,
+			now.tm_hour,
+			now.tm_min,
+			now.tm_sec,
+			gameNames[cgs.gametype],
+			playerName,
+			mapname);
+			
+	CG_Printf( "gamestring: %s\n", gameString);
+}
+
+/*
+=================
+CG_StartOfGame
+
+=================
+*/
+static void CG_StartOfGame( void ){
+	char 		*cmd;
+	CG_SetGameString();
+	
+	if( cg_autoaction.integer & 1 ) {
+		cg.demoStarted = 1;
+		cmd = va("record %s\n", gameString); 
+		trap_SendConsoleCommand( cmd );
+	}
+}
+
+/*
+=================
+CG_EndOfGame
+
+=================
+*/
+static void CG_EndOfGame(void ){
+	char		*cmd;
+	if( cg_autoaction.integer & 1 ){
+		cg.demoStarted = 0;
+		trap_SendConsoleCommand("stoprecord;" );
+	}
+	if( cg_autoaction.integer & 2 ){
+		cmd = va("screenshot %s;",gameString);
+		trap_SendConsoleCommand( cmd );
+		CG_Printf(cmd);
+	}
+	if( cg_autoaction.integer & 4 )
+		trap_SendConsoleCommand( "stats;" );
+}
+
 /*
 =================
 CG_ParseScores
@@ -165,10 +296,10 @@ static void CG_ParseStatistics( void ) {
 #define NUM_DATA_STATS 22
 #define FIRST_DATA_STATS 1
 
-	CG_SetGameString();
+	
 
-	trap_FS_FOpenFile(va("stats/%s.txt", cgs.gameString), &f, FS_WRITE);
-	//CG_Printf( "%s \n", cgs.gameString );
+	trap_FS_FOpenFile(va("stats/%s.txt", gameString), &f, FS_WRITE);
+	//CG_Printf( "%s \n", cg.gameString );
 	
 	string = va("Gametype:   %4s \n", gameNames[cgs.gametype]);
 	len = strlen( string );
@@ -1113,8 +1244,6 @@ static void CG_MapRestart( void ) {
 	
 	cg.readyMask = 0;
 	
-	CG_SetGameString();
-	
 	cgs.timeoutAdd = 0;
 	cgs.timeoutDelay = 0;
 }
@@ -1627,6 +1756,16 @@ static void CG_ServerCommand( void ) {
 
 	if ( !cmd[0] ) {
 		// server claimed the command
+		return;
+	}
+	
+	if ( !strcmp( cmd, "endOfGame" ) ) {
+		CG_EndOfGame();
+		return;
+	}
+	
+	if ( !strcmp( cmd, "startOfGame" ) ) {
+		CG_StartOfGame();
 		return;
 	}
 

@@ -1659,6 +1659,11 @@ void ClientBegin( int clientNum ) {
             SendCustomVoteCommands(clientNum);
 	
 	SendReadymask();
+	Cmd_Timeout_f( ent );
+	
+	if( !( level.warmupTime < 0 ) )
+		trap_SendServerCommand( ent - g_entities, va("startOfGame"));
+	
 }
 
 /*
@@ -2224,6 +2229,8 @@ void ClientDisconnect( int clientNum ) {
 	if ( ent->r.svFlags & SVF_BOT ) {
 		BotAIShutdownClient( clientNum, qfalse );
 	}
+	
+	SendReadymask();
 }
 
 

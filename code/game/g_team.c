@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "g_local.h"
 
+gentity_t *SelectRandomDeathmatchSpawnPoint( void );
 
 typedef struct teamgame_s {
 	float			last_flag_capture;
@@ -1495,12 +1496,15 @@ gentity_t *SelectRandomTeamSpawnPoint( int teamstate, team_t team ) {
 	char		*classname;
 
 	if(g_gametype.integer == GT_ELIMINATION) { //change sides every round
-		if((level.roundNumber+level.eliminationSides)%2==1){
+		/*if((level.roundNumber+level.eliminationSides)%2==1){
 			if(team == TEAM_RED)
 				team = TEAM_BLUE;
 			else if(team == TEAM_BLUE)
 				team = TEAM_RED;
-		}
+		}*/
+		//Random Spawn
+		spot = SelectRandomDeathmatchSpawnPoint();
+		return spot;
 	}
 
 	if (teamstate == TEAM_BEGIN) {
