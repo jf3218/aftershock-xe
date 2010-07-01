@@ -565,6 +565,44 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 				// also play humiliation on target
 				self->client->ps.persistant[PERS_PLAYEREVENTS] ^= PLAYEREVENT_GAUNTLETREWARD;
 			}
+			
+			if( self!=attacker )
+                        {
+                            switch(meansOfDeath)
+                            {
+                                case MOD_GAUNTLET:
+				    attacker->client->accuracy[WP_GAUNTLET][3]++;
+                                    break;
+                                case MOD_MACHINEGUN:
+				    attacker->client->accuracy[WP_MACHINEGUN][3]++;
+                                    break;
+                                case MOD_SHOTGUN:
+				    attacker->client->accuracy[WP_SHOTGUN][3]++;
+                                    break;
+                                case MOD_GRENADE:
+                                case MOD_GRENADE_SPLASH:
+				    attacker->client->accuracy[WP_GRENADE_LAUNCHER][3]++;
+                                    break;
+                                case MOD_ROCKET:
+                                case MOD_ROCKET_SPLASH:
+				    attacker->client->accuracy[WP_ROCKET_LAUNCHER][3]++;
+                                    break;
+                                case MOD_LIGHTNING:
+				    attacker->client->accuracy[WP_LIGHTNING][3]++;
+                                    break;
+                                case MOD_PLASMA:
+                                case MOD_PLASMA_SPLASH:
+				    attacker->client->accuracy[WP_PLASMAGUN][3]++;
+                                    break;
+                                case MOD_RAILGUN:
+				    attacker->client->accuracy[WP_RAILGUN][3]++;
+                                    break;
+                                case MOD_BFG:
+                                case MOD_BFG_SPLASH:
+				    attacker->client->accuracy[WP_BFG][3]++;
+                                    break;
+                            };
+			}
 
                         //If neither attacker or taget is bots and not the same
                         if(!(attacker->r.svFlags & SVF_BOT) && !(self->r.svFlags & SVF_BOT) && self!=attacker)
@@ -1191,6 +1229,41 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		} else {
 			attacker->client->ps.persistant[PERS_HITS]++;
 			attacker->client->ps.persistant[PERS_DAMAGE_DONE] += damage;
+			
+			switch( mod ){
+				case MOD_GAUNTLET:
+					attacker->client->accuracy[WP_GAUNTLET][2] += damage;
+					break;
+				case MOD_MACHINEGUN:
+					attacker->client->accuracy[WP_MACHINEGUN][2] += damage;
+					break;
+				case MOD_SHOTGUN:
+					attacker->client->accuracy[WP_SHOTGUN][2] += damage;
+					break;
+				case MOD_GRENADE:
+				case MOD_GRENADE_SPLASH:
+					attacker->client->accuracy[WP_GRENADE_LAUNCHER][2] += damage;
+					break;
+				case MOD_ROCKET:
+				case MOD_ROCKET_SPLASH:
+					attacker->client->accuracy[WP_ROCKET_LAUNCHER][2] += damage;
+					break;
+				case MOD_LIGHTNING:
+					attacker->client->accuracy[WP_LIGHTNING][2] += damage;
+					break;
+				case MOD_RAILGUN:
+					attacker->client->accuracy[WP_RAILGUN][2] += damage;
+					break;
+				case MOD_PLASMA:
+				case MOD_PLASMA_SPLASH:
+					attacker->client->accuracy[WP_PLASMAGUN][2] += damage;
+					break;
+				case MOD_BFG:
+				case MOD_BFG_SPLASH:
+					attacker->client->accuracy[WP_BFG][2] += damage;
+					break;
+			}
+				
 
 			if( !( mod==MOD_FALLING || mod==MOD_LAVA || mod==MOD_SLIME || mod==MOD_TRIGGER_HURT || mod==MOD_SUICIDE || mod==MOD_TELEFRAG )) {
 					attacker->client->dmgdone += damage;

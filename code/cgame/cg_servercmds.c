@@ -58,10 +58,10 @@ static int CG_ValidOrder(const char *p) {
 }
 #endif
 
-static char	gameString[128];
+char	gameString[128];
 
-char *CG_RemoveColorFromString( char *s ){
-	char *output;
+/*char *CG_ClearName( char *s ){
+	char output[64];
 	int len;
 	int i;
 	int count = 0;
@@ -71,26 +71,30 @@ char *CG_RemoveColorFromString( char *s ){
 		if ( Q_IsColorString(s) ) {
 			s += 2;
 			continue;
-		} else {
+		}else if( *s == '*' || *s == '/' ){
+			s++;
+		}
+		  else {
 			*output = *s;
 			s++;
 			count++;
 			output++;
 		}
 	}
+	*output = '\0';
 	output -= count;
-	s -= len;
+	s -= (len-1);
 	return output;
-}	
+}*/	
 
 void CG_SetGameString( void ){
 	qtime_t	now;
 	char		*p;
 	char		*mapname;
 	char		*buf;
-	char		*playerName;
+	char		playerName[128];
 	clientInfo_t	*ci1, *ci2;
-	int 		i;
+	int 		i, count;
 	char *gameNames[] = {
 	  "FFA",
 	  "1v1",
@@ -130,13 +134,28 @@ void CG_SetGameString( void ){
 			}
 			
 		}
-		playerName = va("%sVS%s", ci1->name, ci2->name);
+		Com_sprintf(playerName, sizeof(playerName),"%sVS%s", ci1->name, ci2->name);
 	}
 	else{
-		playerName = va("%s", cgs.clientinfo[cg.clientNum].name);
+		Com_sprintf(playerName, sizeof(playerName),"%s", cgs.clientinfo[cg.clientNum].name);
 	}
-	
-	//playerName = CG_RemoveColorFromString( playerName );
+	count = 0;
+	for( i = 0; i < 128 ; i++ ){
+		if( playerName[i] == '/' || playerName[i] == '*' || playerName[i] == '|' ){
+			continue;
+		}
+		else if( playerName[i] == '^' && ( ( playerName[i+1] >= '0' && playerName[i+1] <= '9' ) || ( playerName[i+1] >= 'a' && playerName[i+1] <= 'z' ) || ( playerName[i+1] >= 'A' && playerName[i+1] <= 'Z' ) ) ){
+			i++;
+			continue;
+		}
+		else {
+			playerName[count] = playerName[i];
+			count++;
+		}
+	}
+			
+		
+		
 	
 	Com_sprintf(gameString, sizeof(gameString), "%04d%02d%02d%02d%02d%02d-%s-%s-%s", 1900 + now.tm_year,
 			1 + now.tm_mon,
@@ -159,6 +178,10 @@ CG_StartOfGame
 */
 static void CG_StartOfGame( void ){
 	char 		*cmd;
+	
+	if( cg.demoPlayback )
+		return;
+	
 	CG_SetGameString();
 	
 	if( cg_autoaction.integer & 1 ) {
@@ -176,12 +199,17 @@ CG_EndOfGame
 */
 static void CG_EndOfGame(void ){
 	char		*cmd;
+	
+	if( cg.demoPlayback )
+		return;
+  
+	
 	if( cg_autoaction.integer & 1 ){
 		cg.demoStarted = 0;
 		trap_SendConsoleCommand("stoprecord;" );
 	}
 	if( cg_autoaction.integer & 2 ){
-		cmd = va("screenshot %s;",gameString);
+		cmd = va("screenshotJPEG %s;",gameString);
 		trap_SendConsoleCommand( cmd );
 		CG_Printf(cmd);
 	}
@@ -271,7 +299,7 @@ static void CG_ParseStatistics( void ) {
 	int 		scorenum;
 	score_t		*score;
 	int		clientnum;
-	int 		shots, hits, acc;
+	int 		shots, hits, acc, dmg, kills;
 	char *gameNames[] = {
 	  "FFA",
 	  "1v1",
@@ -293,7 +321,7 @@ static void CG_ParseStatistics( void ) {
 		numStats = MAX_CLIENTS;
 	}
 
-#define NUM_DATA_STATS 22
+#define NUM_DATA_STATS 40
 #define FIRST_DATA_STATS 1
 
 	
@@ -340,7 +368,7 @@ static void CG_ParseStatistics( void ) {
 			  team = "Spectator";
 		  
 		  
-		  string = va("name: %s        Team: %10s         Time: %3i \n\n", name, team, score->time );
+		  string = va("name:%20s     Team:%10s     Time:%3i     Handicap:%3i \n\n", name, team, score->time, ci->handicap );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -355,99 +383,131 @@ static void CG_ParseStatistics( void ) {
 			  trap_FS_Write(string, len, f);
 		  //}
 		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 2 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 ));
+		  string = va("        Shots       Hits      Acc       Dmg    Kills\n");
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = 0;
+		  hits = 0;
+		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 2 ));
+		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 ));
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("MG      %5i      %5i      %3i \n", shots, hits, acc );
+		  string = va("GAUNT                                  %4i      %3i\n", dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
-		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 5 ));
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 0*4 + 1 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 0*4 + 2 ));
+		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 0*4 + 3 ));
+		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 0*4 + 4 ));
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("SG      %5i      %5i      %3i \n", shots, hits, acc );
+		  string = va("MG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
 		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 6 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 7 ));
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 1*4 + 1 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 1*4 + 2 ));
+		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 1*4 + 3 ));
+		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 1*4 + 4 ));
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("GL      %5i      %5i      %3i\n", shots, hits, acc );
+		  string = va("SG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
 		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 8 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 9 ));
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 2*4 + 1 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 2*4 + 2 ));
+		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 2*4 + 3 ));
+		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 2*4 + 4 ));
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("RL      %5i      %5i      %3i\n", shots, hits, acc );
+		  string = va("GL      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 10 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 11 ));
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 3*4 + 1 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 3*4 + 2 ));
+		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 3*4 + 3 ));
+		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 3*4 + 4 ));
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("LG      %5i      %5i      %3i\n", shots, hits, acc );
+		  string = va("RL      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 12 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 13 ));
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 4*4 + 1 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 4*4 + 2 ));
+		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 4*4 + 3 ));
+		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 4*4 + 4 ));
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("RG      %5i      %5i      %3i\n", shots, hits, acc );
+		  string = va("LG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 14 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 15 ));
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 5*4 + 1 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 5*4 + 2 ));
+		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 5*4 + 3 ));
+		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 5*4 + 4 ));
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("PG      %5i      %5i      %3i\n", shots, hits, acc );
+		  string = va("RG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 16 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 17 ));
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 6*4 + 1 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 6*4 + 2 ));
+		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 6*4 + 3 ));
+		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 6*4 + 4 ));
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("BFG     %5i      %5i      %3i\n", shots, hits, acc );
+		  string = va("PG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 7*4 + 1 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 7*4 + 2 ));
+		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 7*4 + 3 ));
+		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 + 7*4 + 4 ));
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("BFG     %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
 		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 19 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 20 ));
-		  acc = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 21 ));
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 37 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 38 ));
+		  acc = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 39 ));
 		  string = va("Armor   %5i         %2iYA     %2iRA\n", shots, hits, acc );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 18 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 22 ));
+		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 36 ));
+		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 40 ));
 		  string = va("Health  %5i         %2iMH\n", shots, hits );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
@@ -1246,6 +1306,7 @@ static void CG_MapRestart( void ) {
 	
 	cgs.timeoutAdd = 0;
 	cgs.timeoutDelay = 0;
+	
 }
 
 #define MAX_VOICEFILESIZE	16384

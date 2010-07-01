@@ -2190,12 +2190,12 @@ void CG_mapConfigs( void ){
 
 	if( len <= 0 ){
 		CG_Printf("File %s not found, trying to exec mapconfigs/default.cfg\n", filename);
-		trap_SendConsoleCommand("exec mapconfigs/default.cfg");	
+		trap_SendConsoleCommand("exec mapconfigs/default.cfg;");	
 		return;
 	}
 
 	trap_FS_FCloseFile( f );
-	trap_SendConsoleCommand(va("exec %s", filename));
+	trap_SendConsoleCommand(va("exec %s;", filename));
 	
 	return;
 }
@@ -2335,7 +2335,6 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 		cgs.respawnTimerUsed[i] = qfalse;
 	}
 	cgs.respawnTimerNumber = 0;
-	
 }
 
 /*
@@ -2349,6 +2348,12 @@ void CG_Shutdown( void ) {
 	// some mods may need to do cleanup work here,
 	// like closing files or archiving session data
 	challenges_save();
+	
+	if( cg.demoStarted ){
+	  	cg.demoStarted = qfalse;
+		trap_SendConsoleCommand("stoprecord;");
+	}
+	
 }
 
 
