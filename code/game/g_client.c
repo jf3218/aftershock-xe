@@ -1664,6 +1664,10 @@ void ClientBegin( int clientNum ) {
 	if( !( level.warmupTime < 0 ) )
 		trap_SendServerCommand( ent - g_entities, va("startOfGame"));
 	
+	ent->client->lastAttacker = -1;
+	ent->client->lastTarget = -1;
+	ent->client->lastKiller = -1;
+	
 }
 
 /*
@@ -1697,6 +1701,10 @@ void ClientSpawn(gentity_t *ent) {
 	int 		stats[STATS_MAX];
 	qboolean	ready;
 	char		*lastPickup;
+	vec3_t		lastDeathOrigin;
+	int		lastAttacker;
+	int		lastKiller;
+	int		lastTarget;
  
 
 	index = ent - g_entities;
@@ -1860,6 +1868,12 @@ void ClientSpawn(gentity_t *ent) {
 	ready = client->ready;
 	
 	lastPickup = client->lastPickup;
+	
+	VectorCopy( client->lastDeathOrigin, lastDeathOrigin );
+	
+	lastAttacker = client->lastAttacker;
+	lastKiller = client->lastKiller;
+	lastTarget = client->lastTarget;
 
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		persistant[i] = client->ps.persistant[i];
@@ -1898,7 +1912,13 @@ void ClientSpawn(gentity_t *ent) {
 	client->ready = ready;
 	
 	client->lastPickup = lastPickup;
-
+	
+	VectorCopy( lastDeathOrigin, client->lastDeathOrigin );
+	
+	client->lastAttacker = lastAttacker;
+	client->lastKiller = lastKiller;
+	client->lastTarget = lastTarget;
+	
 	client->lastkilled_client = -1;
 
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {

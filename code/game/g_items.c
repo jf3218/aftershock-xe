@@ -657,6 +657,27 @@ gentity_t *Drop_Item( gentity_t *ent, gitem_t *item, float angle ) {
 	return LaunchItem( item, ent->s.pos.trBase, velocity );
 }
 
+gentity_t *Drop_Item_Command( gentity_t *ent, gitem_t *item, float angle ) {
+	vec3_t	velocity;
+	vec3_t	angles;
+	vec3_t position;
+
+	VectorCopy( ent->s.apos.trBase, angles );
+	angles[YAW] += angle;
+	angles[PITCH] = 0;	// always forward
+
+	AngleVectors( angles, velocity, NULL, NULL );
+	VectorScale( velocity, 100, velocity );
+	VectorAdd( velocity, ent->s.pos.trBase, position );
+	
+	AngleVectors( angles, velocity, NULL, NULL );
+	VectorScale( velocity, 150, velocity );
+	velocity[2] += 200 + crandom() * 50;
+	
+	
+	return LaunchItem( item, position, velocity );
+}
+
 
 /*
 ================
@@ -1111,4 +1132,58 @@ void G_RunItem( gentity_t *ent ) {
 
 	G_BounceItem( ent, &tr );
 }
+
+int G_FindNearestItem( gentity_t *ent ){
+	int mindist = -1;
+	int dist;
+	int count;
+	int minnumber = -1;
+	
+	for( count = 0; count < MAX_GENTITIES; count++ ){
+	  
+		if( !g_entities[count].inuse || g_entities[count].s.eType != ET_ITEM )
+			continue;
+		
+		if( ( g_entities[count].item->giType == IT_ARMOR && g_entities[count].item->quantity >= 50 ) || ( g_entities[count].item->giType == IT_HEALTH && g_entities[count].item->quantity >= 100 )
+		  || g_entities[count].item->giType == IT_WEAPON || g_entities[count].item->giType == IT_POWERUP || g_entities[count].item->giType == IT_PERSISTANT_POWERUP || g_entities[count].item->giType == IT_HOLDABLE 
+		  || g_entities[count].item->giType == IT_TEAM ){
+			dist = ( ent->r.currentOrigin[0] - g_entities[count].s.origin[0] ) * ( ent->r.currentOrigin[0] - g_entities[count].s.origin[0] )
+			     + ( ent->r.currentOrigin[1] - g_entities[count].s.origin[1] ) * ( ent->r.currentOrigin[1] - g_entities[count].s.origin[1] )
+			     + ( ent->r.currentOrigin[2] - g_entities[count].s.origin[2] ) * ( ent->r.currentOrigin[2] - g_entities[count].s.origin[2] );
+			if( dist < mindist || mindist == -1 ){
+				mindist = dist;
+				minnumber = g_entities[count].s.number;
+			}
+		}
+	}
+	return minnumber;
+}
+
+int G_FindNearestItemSpawn( gentity_t *ent ){
+	int mindist = -1;
+	int dist;
+	int count;
+	int minnumber = -1;
+	
+	for( count = 0; count < MAX_GENTITIES; count++ ){
+	  
+		if( !g_entities[count].inuse || g_entities[count].s.eType != ET_ITEM || g_entities[count].flags == FL_DROPPED_ITEM )
+			continue;
+		
+		if( ( g_entities[count].item->giType == IT_ARMOR && g_entities[count].item->quantity >= 50 ) || ( g_entities[count].item->giType == IT_HEALTH && g_entities[count].item->quantity >= 100 )
+		  || g_entities[count].item->giType == IT_WEAPON || g_entities[count].item->giType == IT_POWERUP || g_entities[count].item->giType == IT_PERSISTANT_POWERUP || g_entities[count].item->giType == IT_HOLDABLE 
+		  || g_entities[count].item->giType == IT_TEAM ){
+			dist = ( ent->r.currentOrigin[0] - g_entities[count].s.origin[0] ) * ( ent->r.currentOrigin[0] - g_entities[count].s.origin[0] )
+			     + ( ent->r.currentOrigin[1] - g_entities[count].s.origin[1] ) * ( ent->r.currentOrigin[1] - g_entities[count].s.origin[1] )
+			     + ( ent->r.currentOrigin[2] - g_entities[count].s.origin[2] ) * ( ent->r.currentOrigin[2] - g_entities[count].s.origin[2] );
+			if( dist < mindist || mindist == -1 ){
+				mindist = dist;
+				minnumber = g_entities[count].s.number;
+			}
+		}
+	}
+	return minnumber;
+}
+
+
 

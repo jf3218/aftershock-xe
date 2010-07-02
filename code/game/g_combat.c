@@ -535,6 +535,8 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	self->enemy = attacker;
 
 	self->client->ps.persistant[PERS_KILLED]++;
+	
+	VectorCopy( self->r.currentOrigin, self->client->lastDeathOrigin );
 
 	if (attacker && attacker->client) {
 		attacker->client->lastkilled_client = self->s.number;
@@ -544,6 +546,9 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
                             if(g_gametype.integer <GT_TEAM && g_ffa_gt!=1 && self->client->ps.persistant[PERS_SCORE]>0 || level.numNonSpectatorClients<3) //Cannot get negative scores by suicide
                                 AddScore( attacker, self->r.currentOrigin, -1 );
 		} else {
+		  
+			self->client->lastKiller = attacker->s.number;
+			
 			if(g_gametype.integer!=GT_LMS)
 				AddScore( attacker, self->r.currentOrigin, 1 );
 
@@ -761,7 +766,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	Team_FragBonuses(self, inflictor, attacker);
 
 	// if I committed suicide, the flag does not fall, it returns.
-	if (meansOfDeath == MOD_SUICIDE) {
+	if ( meansOfDeath == MOD_SUICIDE && !g_itemDrop.integer ) {
 		if ( self->client->ps.powerups[PW_NEUTRALFLAG] ) {		// only happens in One Flag CTF
 			Team_ReturnFlag( TEAM_FREE );
 			self->client->ps.powerups[PW_NEUTRALFLAG] = 0;
@@ -1227,6 +1232,8 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		if ( OnSameTeam( targ, attacker ) ) {
 			attacker->client->ps.persistant[PERS_HITS]--;
 		} else {
+			attacker->client->lastTarget = targ->s.number;
+			targ->client->lastAttacker = attacker->s.number;
 			attacker->client->ps.persistant[PERS_HITS]++;
 			attacker->client->ps.persistant[PERS_DAMAGE_DONE] += damage;
 			

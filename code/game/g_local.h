@@ -436,6 +436,13 @@ struct gclient_s {
 	int			stats[STATS_MAX];
 	
 	char 			*lastPickup;
+	
+	vec3_t			lastDeathOrigin;
+	
+	int			lastAttacker;
+	int			lastKiller;
+	int			lastTarget;
+	
 };
 
 
@@ -1167,6 +1174,8 @@ extern vmCvar_t	    g_timeoutAllowed;
 extern vmCvar_t	    g_timeoutTime;
 
 extern vmCvar_t     g_delagprojectiles;
+
+extern vmCvar_t	    g_itemDrop;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

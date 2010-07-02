@@ -1388,18 +1388,75 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	Q_strncpyz( text, chatText, sizeof(text) );
 
 	
-	if( mode == SAY_TEAM ){
+	if( mode == SAY_TEAM  && ent->client->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR ){
 		for( counter = 0 ; counter < MAX_SAY_TEXT ; counter++ ){
 			if( ( text[counter] == '#' ) && ( counter < MAX_SAY_TEXT - 1 ) ){
-				if( text[counter + 1] == 'H' ){
+		
+				if( text[counter + 1] == 'A' ){
+					text[counter] = '%';
+					text[counter + 1] = 'i';
+					Com_sprintf( text, sizeof(text), text, ent->client->ps.stats[STAT_ARMOR] );
+				}
+				else if( text[counter + 1] == 'C' ){
+				  
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					if( ent->client->ps.persistant[PERS_KILLED] ){
+					  
+						Team_GetDeathLocationMsg(ent, location, sizeof(location));
+						Com_sprintf( text, sizeof(text), text, location );
+					}
+					else
+						Com_sprintf( text, sizeof(text), text, "");
+				}
+				else if( text[counter + 1] == 'D' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					
+					if( ent->client->lastAttacker != -1 )
+						Com_sprintf( text, sizeof(text), text, g_entities[ent->client->lastAttacker].client->pers.netname );
+					else
+						Com_sprintf( text, sizeof(text), text, "");
+					
+				}
+				else if( text[counter + 1] == 'F' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					if( G_FindNearestTeammate( ent ) != -1 )
+						Com_sprintf( text, sizeof(text), text, g_entities[G_FindNearestTeammate( ent )].client->pers.netname );
+					else
+						Com_sprintf( text, sizeof(text), text, "" );
+				}
+				else if( text[counter + 1] == 'H' ){
 					text[counter] = '%';
 					text[counter + 1] = 'i';
 					Com_sprintf( text, sizeof(text), text, ent->health );
 				}
-				else if( text[counter + 1] == 'A' ){
+				else if( text[counter + 1] == 'I' ){
 					text[counter] = '%';
-					text[counter + 1] = 'i';
-					Com_sprintf( text, sizeof(text), text, ent->client->ps.stats[STAT_ARMOR] );
+					text[counter + 1] = 's';
+					if( G_FindNearestItem( ent ) != -1 )
+						Com_sprintf( text, sizeof(text), text, g_entities[G_FindNearestItem( ent )].item->shortPickup_name );
+					else
+						Com_sprintf( text, sizeof(text), text, "" );
+				}
+				else if( text[counter + 1] == 'K' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					
+					if( ent->client->lastKiller != -1 )
+						Com_sprintf( text, sizeof(text), text, g_entities[ent->client->lastKiller].client->pers.netname );
+					else
+						Com_sprintf( text, sizeof(text), text, "");
+					
+				}
+				else if( text[counter + 1] == 'l' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					if( G_FindNearestItemSpawn( ent ) != -1 )
+						Com_sprintf( text, sizeof(text), text, g_entities[G_FindNearestItemSpawn( ent )].item->shortPickup_name );
+					else
+						Com_sprintf( text, sizeof(text), text, "" );
 				}
 				else if( text[counter + 1] == 'L' ){
 					text[counter] = '%';
@@ -1411,6 +1468,44 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 					text[counter] = '%';
 					text[counter + 1] = 'i';
 					Com_sprintf( text, sizeof(text), text, ent->client->ps.ammo[ ent->client->ps.weapon ] );
+				}
+				else if( text[counter + 1] == 'P' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					Com_sprintf( text, sizeof(text), text, ent->client->lastPickup );
+				}
+				else if( text[counter + 1] == 'T' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					
+					if( ent->client->lastTarget != -1 )
+						Com_sprintf( text, sizeof(text), text, g_entities[ent->client->lastTarget].client->pers.netname );
+					else
+						Com_sprintf( text, sizeof(text), text, "");
+					
+				}
+				else if( text[counter + 1] == 'U' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					
+					if( ent->client->ps.powerups[PW_BLUEFLAG] )
+						Com_sprintf( text, sizeof(text), text, va("%s %s", "^4FLAG", "%s" ));
+					if( ent->client->ps.powerups[PW_REDFLAG] )
+						Com_sprintf( text, sizeof(text), text, va("%s %s", "^1FLAG", "%s" ));
+					if( ent->client->ps.powerups[PW_NEUTRALFLAG] )
+						Com_sprintf( text, sizeof(text), text, va("%s %s", "^7FLAG", "%s" ));
+					if( ent->client->ps.powerups[PW_INVIS] )
+						Com_sprintf( text, sizeof(text), text, va("%s %s", "^7INVIS", "%s" ));
+					if( ent->client->ps.powerups[PW_QUAD] )
+						Com_sprintf( text, sizeof(text), text, va("%s %s", "^5QUAD", "%s" ));
+					if( ent->client->ps.powerups[PW_REGEN] )
+						Com_sprintf( text, sizeof(text), text, va("%s %s", "^1REGEN", "%s" ));
+					if( ent->client->ps.powerups[PW_FLIGHT] )
+						Com_sprintf( text, sizeof(text), text, va("%s %s", "^2FLIGHT", "%s" ));
+					if( ent->client->ps.powerups[PW_BATTLESUIT] )
+						Com_sprintf( text, sizeof(text), text, va("%s %s", "^2BATTLESUIT", "%s" ));
+					Com_sprintf( text, sizeof(text), text, "");
+					
 				}
 				else if( text[counter + 1] == 'W' ){
 					text[counter] = '%';
@@ -1446,11 +1541,6 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 						default:
 							Com_sprintf( text, sizeof(text), text, "" );
 					}
-				}
-				else if( text[counter + 1] == 'P' ){
-					text[counter] = '%';
-					text[counter + 1] = 's';
-					Com_sprintf( text, sizeof(text), text, ent->client->lastPickup );
 				}
 			}
 		}
@@ -2429,6 +2519,54 @@ void Cmd_GetMappage_f( gentity_t *ent ) {
 	trap_SendServerCommand( ent-g_entities, string );
 }
 
+void Cmd_DropWeapon_f( gentity_t *ent ){
+	gitem_t		*item;
+	int			weapon;
+	
+	if( !g_itemDrop.integer )
+		return;
+	
+	weapon = ent->s.weapon;
+	item = BG_FindItemForWeapon( weapon );
+	if( ( ent->client->ps.stats[STAT_WEAPONS] & ( 1 << item->giTag ) ) && ( weapon != WP_GAUNTLET ) ) {
+		item->quantity = ent->client->ps.ammo[weapon];
+		ent->client->ps.ammo[weapon] = 0;
+		ent->client->ps.stats[STAT_WEAPONS] &= ~( 1 << item->giTag );
+		Drop_Item_Command( ent, item, 0 );
+	}
+}
+
+void Cmd_DropFlag_f( gentity_t *other ){
+	gitem_t		*item;
+	
+	if( !g_itemDrop.integer )
+		return;
+	
+	if ( other->client->ps.powerups[PW_NEUTRALFLAG] ) {		// only happens in One Flag CTF
+		Drop_Item_Command( other, BG_FindItemForPowerup( PW_NEUTRALFLAG ), 0 );
+		other->client->ps.powerups[PW_NEUTRALFLAG] = 0;
+	}
+	else if ( other->client->ps.powerups[PW_REDFLAG] ) {		// only happens in standard CTF
+		Drop_Item_Command( other, BG_FindItemForPowerup( PW_REDFLAG ), 0 );
+		other->client->ps.powerups[PW_REDFLAG] = 0;
+	}
+	else if ( other->client->ps.powerups[PW_BLUEFLAG] ) {	// only happens in standard CTF
+		Drop_Item_Command( other, BG_FindItemForPowerup( PW_BLUEFLAG ), 0 );
+		other->client->ps.powerups[PW_BLUEFLAG] = 0;
+	}
+}
+
+void Cmd_Drop_f( gentity_t *ent ){
+  
+	if( !g_itemDrop.integer )
+		return;
+	if( ent->client->ps.powerups[PW_NEUTRALFLAG] || ent->client->ps.powerups[PW_REDFLAG] || ent->client->ps.powerups[PW_BLUEFLAG] )
+		Cmd_DropFlag_f( ent );
+	else
+		Cmd_DropWeapon_f( ent );
+}
+	
+
 //KK-OAX This is the table that ClientCommands runs the console entry against. 
 commands_t cmds[ ] = 
 {
@@ -2487,6 +2625,9 @@ commands_t cmds[ ] =
   { "gc", 0, Cmd_GameCommand_f },
   { "timeout", 0, Cmd_Timeout_f },
   { "ready", 0, Cmd_Ready_f },
+  { "dropweapon", 0, Cmd_DropWeapon_f },
+  { "dropflag", 0, Cmd_DropFlag_f },
+  { "drop", 0, Cmd_Drop_f },
   
 };
 

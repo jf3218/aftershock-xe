@@ -207,6 +207,8 @@ vmCvar_t     g_timeoutTime;
 
 vmCvar_t        g_delagprojectiles;
 
+vmCvar_t     g_itemDrop;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -418,8 +420,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_timeoutTime, "g_timeoutTime", "60", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 	
 	{ &g_delagprojectiles, "g_delagprojectiles", "100", CVAR_SYSTEMINFO, 0, qfalse },
-
 	
+	{ &g_itemDrop, "g_itemDrop", "1", CVAR_SYSTEMINFO, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing

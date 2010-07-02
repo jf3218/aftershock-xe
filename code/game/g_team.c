@@ -1451,7 +1451,7 @@ gentity_t *Team_GetLocation(gentity_t *ent)
 
 /*
 ===========
-Team_GetLocation
+Team_GetLocationMsg
 
 Report a location for the player. Uses placed nearby target_location entities
 ============
@@ -1461,6 +1461,73 @@ qboolean Team_GetLocationMsg(gentity_t *ent, char *loc, int loclen)
 	gentity_t *best;
 
 	best = Team_GetLocation( ent );
+	
+	if (!best)
+		return qfalse;
+
+	if (best->count) {
+		if (best->count < 0)
+			best->count = 0;
+		if (best->count > 7)
+			best->count = 7;
+		Com_sprintf(loc, loclen, "%c%c%s" S_COLOR_WHITE, Q_COLOR_ESCAPE, best->count + '0', best->message );
+	} else
+		Com_sprintf(loc, loclen, "%s", best->message);
+
+	return qtrue;
+}
+
+/*
+===========
+Team_GetDeathLocation
+
+Report a location for the player. Uses placed nearby target_location entities
+============
+*/
+gentity_t *Team_GetDeathLocation(gentity_t *ent)
+{
+	gentity_t		*eloc, *best;
+	float			bestlen, len;
+	vec3_t			origin;
+
+	best = NULL;
+	bestlen = 3*8192.0*8192.0;
+
+	VectorCopy( ent->client->lastDeathOrigin, origin );
+
+	for (eloc = level.locationHead; eloc; eloc = eloc->nextTrain) {
+		len = ( origin[0] - eloc->r.currentOrigin[0] ) * ( origin[0] - eloc->r.currentOrigin[0] )
+			+ ( origin[1] - eloc->r.currentOrigin[1] ) * ( origin[1] - eloc->r.currentOrigin[1] )
+			+ ( origin[2] - eloc->r.currentOrigin[2] ) * ( origin[2] - eloc->r.currentOrigin[2] );
+
+		if ( len > bestlen ) {
+			continue;
+		}
+
+		if ( !trap_InPVS( origin, eloc->r.currentOrigin ) ) {
+			continue;
+		}
+
+		bestlen = len;
+		best = eloc;
+	}
+
+	return best;
+}
+
+
+/*
+===========
+Team_GetDeathLocationMsg
+
+Report a location for the player. Uses placed nearby target_location entities
+============
+*/
+qboolean Team_GetDeathLocationMsg(gentity_t *ent, char *loc, int loclen)
+{
+	gentity_t *best;
+
+	best = Team_GetDeathLocation( ent );
 	
 	if (!best)
 		return qfalse;
@@ -2162,5 +2229,28 @@ void ShuffleTeams(void) {
     //Restart!
     trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
 
+}
+
+int G_FindNearestTeammate( gentity_t *ent ){
+	int mindist = -1;
+	int dist;
+	int count;
+	int minnumber = -1;
+	
+	for( count = 0; count < MAX_GENTITIES; count++ ){
+		if( !g_entities[count].inuse || g_entities[count].s.eType != ET_PLAYER || 
+		  ( g_entities[count].client->ps.persistant[PERS_TEAM] != ent->client->ps.persistant[PERS_TEAM] ) || g_entities[count].s.number == ent->s.number )
+			continue;
+
+		dist = ( ent->r.currentOrigin[0] - g_entities[count].s.origin[0] ) * ( ent->r.currentOrigin[0] - g_entities[count].s.origin[0] )
+			     + ( ent->r.currentOrigin[1] - g_entities[count].s.origin[1] ) * ( ent->r.currentOrigin[1] - g_entities[count].s.origin[1] )
+			     + ( ent->r.currentOrigin[2] - g_entities[count].s.origin[2] ) * ( ent->r.currentOrigin[2] - g_entities[count].s.origin[2] );
+			     
+		if( dist < mindist || mindist == -1 ){
+			mindist = dist;
+			minnumber = g_entities[count].s.number;
+		}
+	}
+	return minnumber;
 }
 

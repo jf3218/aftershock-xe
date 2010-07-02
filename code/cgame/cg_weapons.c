@@ -226,7 +226,8 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 #define RADIUS   4
 #define ROTATION 1
 #define SPACING  5
- 
+
+
 	start[2] -= 4;
  
 	le = CG_AllocLocalEntity();
