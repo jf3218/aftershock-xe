@@ -1350,6 +1350,16 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	// don't let text be too long for malicious reasons
 	char		text[MAX_SAY_TEXT];
 	char		location[64];
+	trace_t		tr;
+	vec3_t		start, end, forward, right, up, muzzle;
+	int		count;
+	int 		enemies;
+	qboolean	powerup;
+	char	userinfo[MAX_INFO_STRING];
+	float		fov;
+	float		x, y, z;
+	vec3_t		angles;
+	vec3_t		dist;
 
     if ((ent->r.svFlags & SVF_BOT) && trap_Cvar_VariableValue( "bot_nochat" )>1) return;
 
@@ -1394,6 +1404,16 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 		
 				if( text[counter + 1] == 'A' ){
 					text[counter] = '%';
+					text[counter + 1] = 's';
+					if( ent->client->ps.stats[STAT_ARMOR] < 50 )
+						Com_sprintf( text, sizeof(text), text, va("^1%i",ent->client->ps.stats[STAT_ARMOR]) );
+					else if( ent->client->ps.stats[STAT_ARMOR] < 100 )
+						Com_sprintf( text, sizeof(text), text, va("^3%i",ent->client->ps.stats[STAT_ARMOR]) );
+					else
+						Com_sprintf( text, sizeof(text), text, va("^2%i",ent->client->ps.stats[STAT_ARMOR]) );
+				}
+				else if( text[counter + 1] == 'a' ){
+					text[counter] = '%';
 					text[counter + 1] = 'i';
 					Com_sprintf( text, sizeof(text), text, ent->client->ps.stats[STAT_ARMOR] );
 				}
@@ -1402,7 +1422,6 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 					text[counter] = '%';
 					text[counter + 1] = 's';
 					if( ent->client->ps.persistant[PERS_KILLED] ){
-					  
 						Team_GetDeathLocationMsg(ent, location, sizeof(location));
 						Com_sprintf( text, sizeof(text), text, location );
 					}
@@ -1419,6 +1438,96 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 						Com_sprintf( text, sizeof(text), text, "");
 					
 				}
+				else if( text[counter + 1] == 'E' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					
+					enemies = 0;
+					
+					AngleVectors (ent->client->ps.viewangles, forward, right, up);
+					CalcMuzzlePoint ( ent, forward, right, up, muzzle );
+					
+					trap_GetUserinfo( ent->client->ps.clientNum , userinfo, sizeof(userinfo) );
+					fov = atof( Info_ValueForKey( userinfo, "cg_fov" ) );
+					
+					for( count = 0; count < MAX_GENTITIES; count++ ){
+					  
+						if( g_entities[count].inuse && g_entities[count].s.eType == ET_PLAYER &&
+						  ( g_entities[count].client->ps.persistant[PERS_TEAM] != ent->client->ps.persistant[PERS_TEAM] ) && ( ent->health > 0 ) && 
+						  g_entities[count].client->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR ){
+						  
+							trap_Trace(&tr, muzzle, NULL, NULL, g_entities[count].r.currentOrigin, ENTITYNUM_NONE, MASK_SOLID);
+							
+							dist[0] = g_entities[count].r.currentOrigin[0]-muzzle[0];
+							dist[1] = g_entities[count].r.currentOrigin[1]-muzzle[1];
+							dist[2] = g_entities[count].r.currentOrigin[2]-muzzle[2];
+							
+							vectoangles(dist, angles);
+							
+							//G_Printf(" %f   %f   %f\n", angles[0], angles[1], angles[2]);
+							
+							angles[1] = ent->client->ps.viewangles[1] - angles[1];
+							
+							if( angles[1] < -180 )
+								angles[1] += 360;
+							if( angles[1] > 180 )
+								angles[1] -= 360;
+							
+							angles[0] = ent->client->ps.viewangles[0] - angles[0];
+							
+							if( angles[0] < -180 )
+								angles[0] += 360;
+							if( angles[0] > 180 )
+								angles[0] -= 360;
+							
+							//G_Printf("angle %f   %f\n", angles[1], angles[0] );
+
+							if( tr.fraction == 1.0 && ( angles[1] >= -fov/2 && angles[1] <= fov/2) && ( angles[0] >= -fov/2 && angles[0] <= fov/2) ){
+								powerup = qfalse;
+								if( g_entities[tr.entityNum].client->ps.powerups[PW_BLUEFLAG] == INT_MAX ){
+									Com_sprintf( text, sizeof(text), text, va("%s %s", "^4FLAG", "%s" ));
+									powerup = qtrue;
+								}
+								if( g_entities[tr.entityNum].client->ps.powerups[PW_REDFLAG] == INT_MAX ){
+									Com_sprintf( text, sizeof(text), text, va("%s %s", "^1FLAG", "%s" ));
+									powerup = qtrue;
+								}
+								if( g_entities[tr.entityNum].client->ps.powerups[PW_NEUTRALFLAG] == INT_MAX ){
+									Com_sprintf( text, sizeof(text), text, va("%s %s", "^7FLAG", "%s" ));
+									powerup = qtrue;
+								}
+								/*if( g_entities[tr.entityNum].client->ps.powerups[PW_INVIS] == INT_MAX )
+									Com_sprintf( text, sizeof(text), text, va("%s %s", "^7INVIS", "%s" ));*/
+								if( g_entities[tr.entityNum].client->ps.powerups[PW_QUAD] == INT_MAX ){
+									Com_sprintf( text, sizeof(text), text, va("%s %s", "^5QUAD", "%s" ));
+									powerup = qtrue;
+								}
+								if( g_entities[tr.entityNum].client->ps.powerups[PW_REGEN] == INT_MAX ){
+									Com_sprintf( text, sizeof(text), text, va("%s %s", "^1REGEN", "%s" ));
+									powerup = qtrue;
+								}
+								if( g_entities[tr.entityNum].client->ps.powerups[PW_FLIGHT] == INT_MAX ){
+									Com_sprintf( text, sizeof(text), text, va("%s %s", "^2FLIGHT", "%s" ));
+									powerup = qtrue;
+								}
+								if( g_entities[tr.entityNum].client->ps.powerups[PW_BATTLESUIT] == INT_MAX ){
+									Com_sprintf( text, sizeof(text), text, va("%s %s", "^2BATTLESUIT", "%s" ));
+									powerup = qtrue;
+								}
+								if( !powerup )
+									enemies++;
+								else
+									Com_sprintf( text, sizeof(text), text, va("+ %s","%s"));
+							}
+						}
+					}
+					if( enemies == 0 )
+						Com_sprintf( text, sizeof(text), text, "0 enemies");
+					else if( enemies == 1 )
+						Com_sprintf( text, sizeof(text), text, "1 enemy");
+					else 
+						Com_sprintf( text, sizeof(text), text, va("%i enemies", enemies ));
+				}
 				else if( text[counter + 1] == 'F' ){
 					text[counter] = '%';
 					text[counter + 1] = 's';
@@ -1428,6 +1537,16 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 						Com_sprintf( text, sizeof(text), text, "" );
 				}
 				else if( text[counter + 1] == 'H' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					if( ent->health < 25 )
+						Com_sprintf( text, sizeof(text), text, va("^1%i",ent->health) );
+					else if( ent->health < 75 )
+						Com_sprintf( text, sizeof(text), text, va("^3%i",ent->health) );
+					else
+						Com_sprintf( text, sizeof(text), text, va("^2%i",ent->health) );
+				}
+				else if( text[counter + 1] == 'h' ){
 					text[counter] = '%';
 					text[counter + 1] = 'i';
 					Com_sprintf( text, sizeof(text), text, ent->health );
@@ -1474,6 +1593,20 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 					text[counter + 1] = 's';
 					Com_sprintf( text, sizeof(text), text, ent->client->lastPickup );
 				}
+				else if( text[counter + 1] == 'S' ){
+					text[counter] = '%';
+					text[counter + 1] = 's';
+					
+					AngleVectors (ent->client->ps.viewangles, forward, right, up);
+					CalcMuzzlePoint ( ent, forward, right, up, muzzle );
+					VectorMA (muzzle, 8192 * 16, forward, end);
+					trap_Trace (&tr, muzzle, NULL, NULL, end, ent->s.number, MASK_ALL);
+					
+					if( g_entities[tr.entityNum].inuse && g_entities[tr.entityNum].s.eType == ET_ITEM )
+						Com_sprintf( text, sizeof(text), text, g_entities[tr.entityNum].item->shortPickup_name );
+					else
+						Com_sprintf( text, sizeof(text), text, "" );
+				}
 				else if( text[counter + 1] == 'T' ){
 					text[counter] = '%';
 					text[counter + 1] = 's';
@@ -1488,21 +1621,21 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 					text[counter] = '%';
 					text[counter + 1] = 's';
 					
-					if( ent->client->ps.powerups[PW_BLUEFLAG] )
+					if( ent->client->ps.powerups[PW_BLUEFLAG] == INT_MAX )
 						Com_sprintf( text, sizeof(text), text, va("%s %s", "^4FLAG", "%s" ));
-					if( ent->client->ps.powerups[PW_REDFLAG] )
+					if( ent->client->ps.powerups[PW_REDFLAG] == INT_MAX )
 						Com_sprintf( text, sizeof(text), text, va("%s %s", "^1FLAG", "%s" ));
-					if( ent->client->ps.powerups[PW_NEUTRALFLAG] )
+					if( ent->client->ps.powerups[PW_NEUTRALFLAG] == INT_MAX )
 						Com_sprintf( text, sizeof(text), text, va("%s %s", "^7FLAG", "%s" ));
-					if( ent->client->ps.powerups[PW_INVIS] )
+					if( ent->client->ps.powerups[PW_INVIS] == INT_MAX )
 						Com_sprintf( text, sizeof(text), text, va("%s %s", "^7INVIS", "%s" ));
-					if( ent->client->ps.powerups[PW_QUAD] )
+					if( ent->client->ps.powerups[PW_QUAD] == INT_MAX )
 						Com_sprintf( text, sizeof(text), text, va("%s %s", "^5QUAD", "%s" ));
-					if( ent->client->ps.powerups[PW_REGEN] )
+					if( ent->client->ps.powerups[PW_REGEN] == INT_MAX )
 						Com_sprintf( text, sizeof(text), text, va("%s %s", "^1REGEN", "%s" ));
-					if( ent->client->ps.powerups[PW_FLIGHT] )
+					if( ent->client->ps.powerups[PW_FLIGHT] == INT_MAX )
 						Com_sprintf( text, sizeof(text), text, va("%s %s", "^2FLIGHT", "%s" ));
-					if( ent->client->ps.powerups[PW_BATTLESUIT] )
+					if( ent->client->ps.powerups[PW_BATTLESUIT] == INT_MAX )
 						Com_sprintf( text, sizeof(text), text, va("%s %s", "^2BATTLESUIT", "%s" ));
 					Com_sprintf( text, sizeof(text), text, "");
 					
@@ -2529,10 +2662,8 @@ void Cmd_DropWeapon_f( gentity_t *ent ){
 	weapon = ent->s.weapon;
 	item = BG_FindItemForWeapon( weapon );
 	if( ( ent->client->ps.stats[STAT_WEAPONS] & ( 1 << item->giTag ) ) && ( weapon != WP_GAUNTLET ) ) {
-		item->quantity = ent->client->ps.ammo[weapon];
-		ent->client->ps.ammo[weapon] = 0;
-		ent->client->ps.stats[STAT_WEAPONS] &= ~( 1 << item->giTag );
-		Drop_Item_Command( ent, item, 0 );
+		G_Printf("Droppedidroppedidu\n");
+		Drop_Item_Weapon( ent, item, 0 );
 	}
 }
 
@@ -2542,16 +2673,16 @@ void Cmd_DropFlag_f( gentity_t *other ){
 	if( !g_itemDrop.integer )
 		return;
 	
-	if ( other->client->ps.powerups[PW_NEUTRALFLAG] ) {		// only happens in One Flag CTF
-		Drop_Item_Command( other, BG_FindItemForPowerup( PW_NEUTRALFLAG ), 0 );
+	if ( other->client->ps.powerups[PW_NEUTRALFLAG] ) {
+		Drop_Item_Flag( other, BG_FindItemForPowerup( PW_NEUTRALFLAG ), 0 );
 		other->client->ps.powerups[PW_NEUTRALFLAG] = 0;
 	}
-	else if ( other->client->ps.powerups[PW_REDFLAG] ) {		// only happens in standard CTF
-		Drop_Item_Command( other, BG_FindItemForPowerup( PW_REDFLAG ), 0 );
+	else if ( other->client->ps.powerups[PW_REDFLAG] ) {
+		Drop_Item_Flag( other, BG_FindItemForPowerup( PW_REDFLAG ), 0 );
 		other->client->ps.powerups[PW_REDFLAG] = 0;
 	}
-	else if ( other->client->ps.powerups[PW_BLUEFLAG] ) {	// only happens in standard CTF
-		Drop_Item_Command( other, BG_FindItemForPowerup( PW_BLUEFLAG ), 0 );
+	else if ( other->client->ps.powerups[PW_BLUEFLAG] ) {
+		Drop_Item_Flag( other, BG_FindItemForPowerup( PW_BLUEFLAG ), 0 );
 		other->client->ps.powerups[PW_BLUEFLAG] = 0;
 	}
 }

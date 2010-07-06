@@ -2242,9 +2242,9 @@ int G_FindNearestTeammate( gentity_t *ent ){
 		  ( g_entities[count].client->ps.persistant[PERS_TEAM] != ent->client->ps.persistant[PERS_TEAM] ) || g_entities[count].s.number == ent->s.number )
 			continue;
 
-		dist = ( ent->r.currentOrigin[0] - g_entities[count].s.origin[0] ) * ( ent->r.currentOrigin[0] - g_entities[count].s.origin[0] )
-			     + ( ent->r.currentOrigin[1] - g_entities[count].s.origin[1] ) * ( ent->r.currentOrigin[1] - g_entities[count].s.origin[1] )
-			     + ( ent->r.currentOrigin[2] - g_entities[count].s.origin[2] ) * ( ent->r.currentOrigin[2] - g_entities[count].s.origin[2] );
+		dist = ( ent->r.currentOrigin[0] - g_entities[count].r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - g_entities[count].r.currentOrigin[0] )
+			     + ( ent->r.currentOrigin[1] - g_entities[count].r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - g_entities[count].r.currentOrigin[1] )
+			     + ( ent->r.currentOrigin[2] - g_entities[count].r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - g_entities[count].r.currentOrigin[2] );
 			     
 		if( dist < mindist || mindist == -1 ){
 			mindist = dist;

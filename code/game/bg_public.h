@@ -700,6 +700,7 @@ typedef struct gitem_s {
 	char		*sounds;		// string of all sounds this item will use
 	char		*brightSkin;
 	char		*shortPickup_name;
+	int		lastDrop;
 } gitem_t;
 
 // included in both the game dll and the client

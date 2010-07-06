@@ -187,9 +187,9 @@ void CG_SpawnEffect( vec3_t org ) {
 	re->reType = RT_MODEL;
 	re->shaderTime = cg.time / 1000.0f;
 
-#ifndef MISSIONPACK
+/*#ifndef MISSIONPACK
 	re->customShader = cgs.media.teleportEffectShader;
-#endif
+#endif*/
 	re->hModel = cgs.media.teleportEffectModel;
 	AxisClear( re->axis );
 

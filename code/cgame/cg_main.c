@@ -347,7 +347,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_autoswitch, "cg_autoswitch", "1", CVAR_ARCHIVE },
 	{ &cg_drawGun, "cg_drawGun", "1", CVAR_ARCHIVE },
 	{ &cg_zoomFov, "cg_zoomfov", "22.5", CVAR_ARCHIVE },
-	{ &cg_fov, "cg_fov", "90", CVAR_ARCHIVE },
+	{ &cg_fov, "cg_fov", "90", CVAR_ARCHIVE | CVAR_USERINFO },
 	{ &cg_viewsize, "cg_viewsize", "100", CVAR_ARCHIVE },
 	{ &cg_shadows, "cg_shadows", "1", CVAR_ARCHIVE  },
 	{ &cg_gibs, "cg_gibs", "1", CVAR_ARCHIVE  },
@@ -1299,12 +1299,12 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.bulletFlashModel = trap_R_RegisterModel("models/weaphits/bullet.md3");
 	cgs.media.ringFlashModel = trap_R_RegisterModel("models/weaphits/ring02.md3");
 	cgs.media.dishFlashModel = trap_R_RegisterModel("models/weaphits/boom01.md3");
-#ifdef MISSIONPACK
+//#ifdef MISSIONPACK
 	cgs.media.teleportEffectModel = trap_R_RegisterModel( "models/powerups/pop.md3" );
-#else
+/*#else
 	cgs.media.teleportEffectModel = trap_R_RegisterModel( "models/misc/telep.md3" );
 	cgs.media.teleportEffectShader = trap_R_RegisterShader( "teleportEffect" );
-#endif
+#endif*/
 	cgs.media.kamikazeEffectModel = trap_R_RegisterModel( "models/weaphits/kamboom2.md3" );
 	cgs.media.kamikazeShockWave = trap_R_RegisterModel( "models/weaphits/kamwave.md3" );
 	cgs.media.kamikazeHeadModel = trap_R_RegisterModel( "models/powerups/kamikazi.md3" );
@@ -1405,8 +1405,13 @@ static void CG_RegisterGraphics( void ) {
 	trap_R_RegisterModel( "models/players/kyonshi/lower.md3" );
 	trap_R_RegisterModel( "models/players/kyonshi/upper.md3" );
 	trap_R_RegisterModel( "models/players/kyonshi/head.md3" );
+	
+	
 
 #endif
+	cgs.media.particleSpark = trap_R_RegisterShader("spark");
+	cgs.media.particlePlasma = trap_R_RegisterShader("plasmaSpark");
+	
 	CG_ClearParticles ();
 /*
 	for (i=1; i<MAX_PARTICLES_AREAS; i++)

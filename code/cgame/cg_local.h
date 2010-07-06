@@ -1049,6 +1049,9 @@ typedef struct {
 	sfxHandle_t	wstbimpmSound;
 	sfxHandle_t	wstbimpdSound;
 	sfxHandle_t	wstbactvSound;
+	
+	qhandle_t	particleSpark;
+	qhandle_t	particlePlasma;
 
 } cgMedia_t;
 

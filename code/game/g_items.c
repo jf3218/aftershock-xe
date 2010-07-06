@@ -232,8 +232,10 @@ int Pickup_Ammo (gentity_t *ent, gentity_t *other)
 
 int Pickup_Weapon (gentity_t *ent, gentity_t *other) {
 	int		quantity;
-
-	if ( ent->count < 0 ) {
+	
+	if( ent->item->lastDrop )
+		quantity = ent->item->quantity;
+	else if ( ent->count < 0 ) {
 		quantity = 0; // None for you, sir!
 	} else {
 		if ( ent->count ) {
@@ -253,6 +255,8 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other) {
 			}
 		}
 	}
+	
+	//G_Printf("%i \n", quantity );
 
 	// add the weapon
 	other->client->ps.stats[STAT_WEAPONS] |= ( 1 << ent->item->giTag );
@@ -461,6 +465,10 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace) {
 			if(other->client->sess.sessionTeam == level.pointStatusB)
 				return;
 	}
+	
+	if( ent->item->lastDrop + 500 > level.time )
+		return;
+	//G_Printf( "%i   vs   %i\n", ent->item->lastDrop, level.time);
 
 	G_LogPrintf( "Item: %i %s\n", other->s.number, ent->item->classname );
 
@@ -657,7 +665,42 @@ gentity_t *Drop_Item( gentity_t *ent, gitem_t *item, float angle ) {
 	return LaunchItem( item, ent->s.pos.trBase, velocity );
 }
 
-gentity_t *Drop_Item_Command( gentity_t *ent, gitem_t *item, float angle ) {
+gentity_t *Drop_Item_Weapon( gentity_t *ent, gitem_t *item, float angle ) {
+	vec3_t	velocity;
+	vec3_t	angles;
+	vec3_t position;
+	gentity_t *output;
+	gitem_t	newItem;
+
+	VectorCopy( ent->s.apos.trBase, angles );
+	angles[YAW] += angle;
+	angles[PITCH] = 0;	// always forward
+
+	AngleVectors( angles, velocity, NULL, NULL );
+	VectorScale( velocity, 0, velocity );
+	VectorAdd( velocity, ent->s.pos.trBase, position );
+	
+	AngleVectors( angles, velocity, NULL, NULL );
+	VectorScale( velocity, 150, velocity );
+	velocity[2] += 200 + crandom() * 50;
+	
+	
+	output = LaunchItem( item, position, velocity );
+	
+	newItem = *(output->item);
+	
+	newItem.quantity = ent->client->ps.ammo[ent->s.weapon];
+	ent->client->ps.ammo[ent->s.weapon] = 0;
+	ent->client->ps.stats[STAT_WEAPONS] &= ~( 1 << item->giTag );
+	newItem.lastDrop = level.time;
+	output->item = &newItem;
+	
+	return output;
+	
+	
+}
+
+gentity_t *Drop_Item_Flag( gentity_t *ent, gitem_t *item, float angle ) {
 	vec3_t	velocity;
 	vec3_t	angles;
 	vec3_t position;
@@ -667,12 +710,14 @@ gentity_t *Drop_Item_Command( gentity_t *ent, gitem_t *item, float angle ) {
 	angles[PITCH] = 0;	// always forward
 
 	AngleVectors( angles, velocity, NULL, NULL );
-	VectorScale( velocity, 100, velocity );
+	VectorScale( velocity, 0, velocity );
 	VectorAdd( velocity, ent->s.pos.trBase, position );
 	
 	AngleVectors( angles, velocity, NULL, NULL );
 	VectorScale( velocity, 150, velocity );
 	velocity[2] += 200 + crandom() * 50;
+	
+	item->lastDrop = level.time;
 	
 	
 	return LaunchItem( item, position, velocity );

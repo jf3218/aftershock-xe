@@ -703,7 +703,7 @@ static void CG_PlasmaTrail( centity_t *cent, const weaponInfo_t *wi ) {
     re->shaderTime = cg.time / 1000.0f;
     re->reType = RT_SPRITE;
     re->radius = 0.25f;
-	re->customShader = cgs.media.railRingsShader;
+	re->customShader = /*cgs.media.railRingsShader*/ cgs.media.particlePlasma;
 	le->bounceFactor = 0.3f;
 
     re->shaderRGBA[0] = wi->flashDlightColor[0] * 63;
@@ -1147,6 +1147,164 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles ) {
 	angles[PITCH] += scale * fracsin * 0.01;
 }
 
+/*
+=================
+CG_ExplosionParticles
+
+
+=================
+*/
+
+void CG_ExplosionParticles( int weapon, vec3_t origin , vec3_t dir, vec3_t color) {
+	int number; // number of particles
+	int jump; // amount to nudge the particles trajectory vector up by
+	int speed; // speed of particles
+	int light; // amount of light for each particle
+	vec4_t lColor; // color of light for each particle
+	qhandle_t shader; // shader to use for the particles
+	int index;
+	vec3_t randVec, tempVec;
+	
+	VectorMA( origin, 1, dir, origin);
+
+	// set defaults
+	number = 32;
+	jump = 50;
+	speed = 300;
+	light = 50;
+	lColor[0] = 1.0f;
+	lColor[1] = 1.0f;
+	lColor[2] = 1.0f;
+	lColor[3] = 1.0f; // alpha
+
+	switch( weapon ) {
+		case WP_MACHINEGUN:
+			number = 1;
+			jump = 30;
+			light = 100;
+			speed = 150;
+			lColor[0] = 1.0f;
+			lColor[1] = 0.56f;
+			lColor[2] = 0.0f;
+			shader = cgs.media.particleSpark;
+			break;
+		case WP_SHOTGUN:
+			number = 1;
+			jump = 30;
+			light = 100;
+			speed = 150;
+			lColor[0] = 1.0f;
+			lColor[1] = 0.56f;
+			lColor[2] = 0.0f;
+			shader = cgs.media.particleSpark;
+			break;
+		case WP_ROCKET_LAUNCHER:
+			number = 32;
+			jump = 70;
+			light = 100;
+			lColor[0] = 1.0f;
+			lColor[1] = 0.56f;
+			lColor[2] = 0.0f;
+			shader = cgs.media.particleSpark;
+			break;
+		case WP_GRENADE_LAUNCHER:
+			number = 32;
+			jump = 60;
+			light = 100;
+			lColor[0] = 1.0f;
+			lColor[1] = 0.56f;
+			lColor[2] = 0.0f;
+			shader = cgs.media.particleSpark;
+			break;
+		case WP_LIGHTNING:
+			number = 1;
+			jump = 30;
+			light = 100;
+			lColor[0] = 1.0f;
+			lColor[1] = 0.56f;
+			lColor[2] = 0.0f;
+			shader = cgs.media.particlePlasma;
+			break;
+		case WP_PLASMAGUN:
+			number = 2;
+			jump = 30;
+			light = 100;
+			speed = 150;
+			lColor[0] = 0.0f;
+			lColor[1] = 0.56f;
+			lColor[2] = 1.0f;
+			shader = cgs.media.particlePlasma;
+			break;
+		case WP_RAILGUN:
+			number = 2;
+			jump = 30;
+			light = 100;
+			speed = 150;
+			lColor[0] = 0.0f;
+			lColor[1] = 0.56f;
+			lColor[2] = 1.0f;
+			shader = cgs.media.particlePlasma;
+			break;
+		default:
+			return;
+	}
+
+	for( index = 0; index < number; index++ ) {
+		localEntity_t *le;
+		refEntity_t *re;
+
+		le = CG_AllocLocalEntity(); //allocate a local entity
+		re = &le->refEntity;
+		le->leFlags = LEF_PUFF_DONT_SCALE; //don't change the particle size
+		le->leType = /*LE_MOVE_SCALE_FADE*/LE_FRAGMENT; // particle should fade over time
+		le->startTime = cg.time; // set the start time of the particle to the current time
+		le->endTime = cg.time + 2000 + random() * 1000; //set the end time
+		le->lifeRate = 1.0 / ( le->endTime - le->startTime );
+		re = &le->refEntity;
+		re->shaderTime = cg.time / 1000.0f;
+		re->reType = RT_SPRITE;
+		re->rotation = 0;
+		re->radius = 3;
+		re->customShader = shader;
+		re->shaderRGBA[0] = 0xff;
+		re->shaderRGBA[1] = 0xff;
+		re->shaderRGBA[2] = 0xff;
+		re->shaderRGBA[3] = 0xff;
+		le->light = light;
+		VectorCopy( lColor, le->lightColor );
+		le->color[3] = 1.0;
+		le->pos.trType = TR_GRAVITY; // moves in a gravity affected arc
+		le->pos.trTime = cg.time;
+		le->bounceFactor = 0.2f;
+		VectorCopy( origin, le->pos.trBase );
+		VectorCopy( origin, re->origin );
+
+		tempVec[0] = crandom(); //between 1 and -1
+		tempVec[1] = crandom();
+		tempVec[2] = crandom();
+		
+		//if( weapon == WP_PLASMAGUN || weapon == WP_MACHINEGUN || weapon == WP_SHOTGUN || weapon == WP_RAILGUN)
+		if( weapon != WP_LIGHTNING )
+			VectorMA( tempVec, 2, dir, tempVec );
+		
+		/*if( weapon == WP_RAILGUN ){
+			re->shaderRGBA[0] = (int)(color[0]*255);
+			re->shaderRGBA[1] = (int)(color[1]*255);
+			re->shaderRGBA[2] = (int)(color[2]*255);
+			re->shaderRGBA[3] = 255;
+			le->color[0] = color[0];
+			le->color[1] = color[1];
+			le->color[2] = color[2];
+			le->color[3] = 1.0f;
+		}*/
+			
+		
+		VectorNormalize(tempVec);
+		VectorScale(tempVec, speed, randVec);
+		randVec[2] += jump; //nudge the particles up a bit
+		VectorCopy( randVec, le->pos.trDelta );
+	}
+}
 
 /*
 ===============
@@ -1303,6 +1461,7 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 		angles[2] = rand() % 360;
 		AnglesToAxis( angles, beam.axis );
 		trap_R_AddRefEntityToScene( &beam );
+		CG_ExplosionParticles(WP_LIGHTNING, beam.origin, NULL, NULL);
 	}
 }
 /*
@@ -2374,7 +2533,6 @@ void CG_FireWeapon( centity_t *cent ) {
 //unlagged - attack prediction #1
 }
 
-
 /*
 =================
 CG_MissileHitWall
@@ -2414,7 +2572,7 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 
 	switch ( weapon ) {
 	default:
-//#ifdef MISSIONPACK
+#ifdef MISSIONPACK
 	case WP_NAILGUN:
 		if( soundType == IMPACTSOUND_FLESH ) {
 			sfx = cgs.media.sfx_nghitflesh;
@@ -2426,7 +2584,7 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		mark = cgs.media.holeMarkShader;
 		radius = 12;
 		break;
-//#endif
+#endif
 	case WP_LIGHTNING:
 		// no explosion at LG impact, it is added with the beam
 		r = rand() & 3;
@@ -2440,7 +2598,7 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		mark = cgs.media.holeMarkShader;
 		radius = 12;
 		break;
-//#ifdef MISSIONPACK
+#ifdef MISSIONPACK
 	case WP_PROX_LAUNCHER:
 		mod = cgs.media.dishFlashModel;
 		shader = cgs.media.grenadeExplosionShader;
@@ -2450,7 +2608,7 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		light = 300;
 		isSprite = qtrue;
 		break;
-//#endif
+#endif
 	case WP_GRENADE_LAUNCHER:
 		mod = cgs.media.dishFlashModel;
 		shader = cgs.media.grenadeExplosionShader;
@@ -2472,13 +2630,13 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		lightColor[0] = 1;
 		lightColor[1] = 0.75;
 		lightColor[2] = 0.0;
-		if (!cg_oldRocket.integer) {
+		/*if (!cg_oldRocket.integer) {
 			// explosion sprite animation
 			VectorMA( origin, 24, dir, sprOrg );
 			VectorScale( dir, 64, sprVel );
 
 			CG_ParticleExplosion( "explode1", sprOrg, sprVel, 1400, 20, 30 );
-		}
+		}*/
 		break;
 	case WP_RAILGUN:
 		mod = cgs.media.ringFlashModel;
@@ -2510,7 +2668,7 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		radius = 4;
 		break;
 
-//#ifdef MISSIONPACK
+#ifdef MISSIONPACK
 	case WP_CHAINGUN:
 		mod = cgs.media.bulletFlashModel;
 		if( soundType == IMPACTSOUND_FLESH ) {
@@ -2533,7 +2691,7 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 
 		radius = 8;
 		break;
-//#endif
+#endif
 
 	case WP_MACHINEGUN:
 		mod = cgs.media.bulletFlashModel;
@@ -2578,12 +2736,18 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 	alphaFade = (mark == cgs.media.energyMarkShader);	// plasma fades alpha, all others fade color
 	if ( weapon == WP_RAILGUN ) {
 		float	*color;
+		vec3_t	impactColor;
 
 		// colorize with client color
 		color = cgs.clientinfo[clientNum].color1;
 		CG_ImpactMark( mark, origin, dir, random()*360, color[0],color[1], color[2],1, alphaFade, radius, qfalse );
+		impactColor[0] = color[0];
+		impactColor[1] = color[1];
+		impactColor[2] = color[2];
+		CG_ExplosionParticles(weapon, origin, dir, impactColor);
 	} else {
 		CG_ImpactMark( mark, origin, dir, random()*360, 1,1,1,1, alphaFade, radius, qfalse );
+		CG_ExplosionParticles(weapon, origin, dir, NULL);
 	}
 }
 

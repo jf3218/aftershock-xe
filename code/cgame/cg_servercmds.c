@@ -300,6 +300,8 @@ static void CG_ParseStatistics( void ) {
 	score_t		*score;
 	int		clientnum;
 	int 		shots, hits, acc, dmg, kills;
+	char		*mapname;
+	char		*buf;
 	char *gameNames[] = {
 	  "FFA",
 	  "1v1",
@@ -324,12 +326,15 @@ static void CG_ParseStatistics( void ) {
 #define NUM_DATA_STATS 40
 #define FIRST_DATA_STATS 1
 
-	
+	mapname = strchr( cgs.mapname, '/' );
+	mapname++;
+	buf = strstr( mapname, ".bsp");
+	buf[0] = '\0';
 
 	trap_FS_FOpenFile(va("stats/%s.txt", gameString), &f, FS_WRITE);
 	//CG_Printf( "%s \n", cg.gameString );
 	
-	string = va("Gametype:   %4s \r", gameNames[cgs.gametype]);
+	string = va("Gametype:   %4s    %s\r", gameNames[cgs.gametype], mapname );
 	len = strlen( string );
 	trap_FS_Write(string, len, f);
 	
@@ -587,7 +592,7 @@ static void CG_ParseRespawnTimer( void ) {
 	
 
 	
-	if( ( itemType == IT_ARMOR && quantity >= 50 ) || ( itemType == IT_HEALTH && quantity == 100 ) ){
+	if( ( itemType == IT_ARMOR && quantity >= 50 ) || ( itemType == IT_HEALTH && quantity == 100 ) || itemType == IT_POWERUP ){
 		for( i = 0 ; i < MAX_RESPAWN_TIMERS && cgs.respawnTimerUsed[i] ; i++ ){
 			if( cgs.respawnTimerEntitynum[ i ] == entityNum ){
 				cgs.respawnTimerTime[ i ] = respawnTime;

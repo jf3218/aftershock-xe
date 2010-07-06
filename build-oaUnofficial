@@ -3,7 +3,7 @@
 make
 cp -rf ./build/release-linux-x86_64/baseq3/vm ./content
 cd content
-zip zzz-oaUnofficial.pk3 -r icons/ vm/ sound/ models/ gfx/ scripts/ textures/ menu/ default.cfg -x *.svn* -u
+zip zzz-oaUnofficial.pk3 -r icons/ vm/ sound/ models/ gfx/ scripts/ textures/ menu/ sprites/ default.cfg -x *.svn* -u
 cp zzz-oaUnofficial.pk3 ../
 cd ..
 cp zzz-oaUnofficial.pk3 ../oaUnofficial/oaUnofficial/
