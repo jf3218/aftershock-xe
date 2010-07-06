@@ -334,6 +334,8 @@ vmCvar_t	cg_drawRespawnTimer;
 
 vmCvar_t	cg_autosnaps;
 
+vmCvar_t	cg_particles;
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -574,6 +576,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_drawRespawnTimer, "cg_drawRespawnTimer", "1", CVAR_ARCHIVE},
 	
 	{&cg_autosnaps, "cg_autosnaps", "1", CVAR_ARCHIVE},
+	
+	{&cg_particles, "cg_particles", "1", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

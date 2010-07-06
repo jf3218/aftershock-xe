@@ -1165,6 +1165,9 @@ void CG_ExplosionParticles( int weapon, vec3_t origin , vec3_t dir, vec3_t color
 	int index;
 	vec3_t randVec, tempVec;
 	
+	if( !cg_particles.integer )
+		return;
+	
 	VectorMA( origin, 1, dir, origin);
 
 	// set defaults
@@ -1284,7 +1287,7 @@ void CG_ExplosionParticles( int weapon, vec3_t origin , vec3_t dir, vec3_t color
 		tempVec[2] = crandom();
 		
 		//if( weapon == WP_PLASMAGUN || weapon == WP_MACHINEGUN || weapon == WP_SHOTGUN || weapon == WP_RAILGUN)
-		if( weapon != WP_LIGHTNING )
+		if( weapon != WP_LIGHTNING  && weapon != WP_GRENADE_LAUNCHER )
 			VectorMA( tempVec, 2, dir, tempVec );
 		
 		/*if( weapon == WP_RAILGUN ){

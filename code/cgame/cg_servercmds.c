@@ -343,6 +343,11 @@ static void CG_ParseStatistics( void ) {
 		len = strlen( string );
 		trap_FS_Write(string, len, f);
 	}
+	else{
+		string = va("\r \r \r \r", cgs.scores1, cgs.scores2);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+	}
 	
 	string = va("---------------------------------------\r\r\r" );
 	len = strlen( string );

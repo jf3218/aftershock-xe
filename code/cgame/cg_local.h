@@ -1451,6 +1451,8 @@ extern vmCvar_t			cg_drawRespawnTimer;
 
 extern vmCvar_t			cg_autosnaps;
 
+extern vmCvar_t			cg_particles;
+
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
