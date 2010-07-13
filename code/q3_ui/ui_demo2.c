@@ -136,6 +136,22 @@ static void meowdrawdemo( void ) {
     Menu_Draw(&s_demos.menu);
 }
 
+static int QDECL UI_Demo_SortCompare( const void *arg1, const void *arg2 ){
+	int num1, num2;
+	const char *a, *b;
+	
+	num1 = *(int *)arg1;
+	num2 = *(int *)arg2;
+	
+	a = s_demos.list.itemnames[num1];
+	b = s_demos.list.itemnames[num2];
+	
+	trap_Print(s_demos.list.itemnames[num1]);
+	
+	
+	return Q_stricmp(a,b);
+}
+
 /*
 ===============
 Demos_MenuInit
@@ -254,6 +270,7 @@ static void Demos_MenuInit( void ) {
 	demoname = s_demos.names;
 	for ( i = 0; i < s_demos.list.numitems; i++ ) {
 		s_demos.list.itemnames[i] = demoname;
+		
 
 		// strip extension
 		len = strlen( demoname );
@@ -274,6 +291,9 @@ static void Demos_MenuInit( void ) {
 	Menu_AddItem( &s_demos.menu, &s_demos.right );
 	Menu_AddItem( &s_demos.menu, &s_demos.back );
 	Menu_AddItem( &s_demos.menu, &s_demos.go );
+	
+	
+		
 }
 
 /*
@@ -300,5 +320,6 @@ UI_DemosMenu
 */
 void UI_DemosMenu( void ) {
 	Demos_MenuInit();
+	qsort( s_demos.list.itemnames, s_demos.list.numitems, sizeof( s_demos.list.itemnames[0] ), UI_Demo_SortCompare );
 	UI_PushMenu( &s_demos.menu );
 }

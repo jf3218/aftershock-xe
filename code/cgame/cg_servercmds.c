@@ -245,7 +245,7 @@ static void CG_ParseScores( void ) {
 
 	memset( cg.scores, 0, sizeof( cg.scores ) );
 
-#define NUM_DATA 17
+#define NUM_DATA 18
 #define FIRST_DATA 4
 
 	for ( i = 0 ; i < cg.numScores ; i++ ) {
@@ -267,6 +267,7 @@ static void CG_ParseScores( void ) {
 		cg.scores[i].isDead = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 15));
 		cg.scores[i].dmgdone = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 16));
 		cg.scores[i].dmgtaken = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 17));
+		cg.scores[i].specOnly = atoi(CG_Argv(i * NUM_DATA + FIRST_DATA + 18));
 		//cgs.roundStartTime = 
 
 		if ( cg.scores[i].client < 0 || cg.scores[i].client >= MAX_CLIENTS ) {
@@ -323,7 +324,7 @@ static void CG_ParseStatistics( void ) {
 		numStats = MAX_CLIENTS;
 	}
 
-#define NUM_DATA_STATS 40
+#define NUM_DATA_STATS 47
 #define FIRST_DATA_STATS 1
 
 	mapname = strchr( cgs.mapname, '/' );
@@ -518,10 +519,23 @@ static void CG_ParseStatistics( void ) {
 		  
 		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 36 ));
 		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 40 ));
-		  string = va("Health  %5i         %2iMH\r", shots, hits );
+		  string = va("Health  %5i         %2iMH\r\r", shots, hits );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
+		  string = va("Impressive   %3i   Excellent   %3i   Airgrenade   %3i   Airrocket   %3i\r", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 41 )),
+			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 42 )),
+			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 46 )), atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 47 )));
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  if( cgs.gametype == GT_CTF ) {
+		  string = va("Assist       %3i   Defend      %3i   Capture      %3i\r", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 43 )),
+			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 44 )),
+			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 45 )));
+			      len = strlen( string );
+			      trap_FS_Write(string, len, f);
+		  }
 		  
 		  string = va("---------------------------------------\r\r\r" );
 		  len = strlen( string );
@@ -900,7 +914,7 @@ void CG_ParseServerinfo( void ) {
 	trap_Cvar_Set("g_newItemHeight", va("%i", cgs.newItemHeight));
 	
 	cgs.startWhenReady = atoi( Info_ValueForKey( info, "g_startWhenReady" ) );
-	//trap_Cvar_Set("g_startWhenReady", va("%i", cgs.startWhenReady));
+	trap_Cvar_Set("g_startWhenReady", va("%i", cgs.startWhenReady));
 	if( cg_autosnaps.integer )
 		trap_Cvar_Set("snaps", va("%i", atoi( Info_ValueForKey( info, "sv_fps" ) )));
 }
@@ -1630,6 +1644,11 @@ voiceChatList_t *CG_VoiceChatListForClient( int clientNum ) {
 	return &voiceChatLists[0];
 }
 
+void CG_ParseLivingCount(){
+	cgs.redLivingCount = atoi( CG_Argv(1));
+	cgs.blueLivingCount = atoi( CG_Argv(2));
+}
+
 #define MAX_VOICECHATBUFFER		32
 
 typedef struct bufferedVoiceChat_s
@@ -1863,7 +1882,12 @@ static void CG_ServerCommand( void ) {
 //#endif
 		return;
 	}
-
+	if ( !strcmp( cmd, "screenPrint" ) ) {
+		Q_strncpyz( text, CG_Argv(1), MAX_SAY_TEXT );
+		CG_RemoveChatEscapeChar( text );
+		CG_AddToChat(text);
+		return;
+	}
 	if ( !strcmp( cmd, "chat" ) ) {
 		if ( !cg_teamChatsOnly.integer ) {
 			trap_S_StartLocalSound( cgs.media.talkSound, CHAN_LOCAL_SOUND );
@@ -1905,6 +1929,11 @@ static void CG_ServerCommand( void ) {
 	
 	if ( !strcmp( cmd, "statistics" ) ) {
 		CG_ParseStatistics();
+		return;
+	}
+	
+	if ( !strcmp( cmd, "livingCount" ) ) {
+		CG_ParseLivingCount();
 		return;
 	}
 

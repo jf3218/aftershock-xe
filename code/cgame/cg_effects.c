@@ -164,6 +164,77 @@ localEntity_t *CG_SmokePuff( const vec3_t p, const vec3_t vel,
 
 /*
 ==================
+CG_LaunchSparks
+==================
+*/
+void CG_LaunchSparks( vec3_t origin ) {
+	int number; // number of particles
+	int jump; // amount to nudge the particles trajectory vector up by
+	int speed; // speed of particles
+	int light; // amount of light for each particle
+	vec4_t lColor; // color of light for each particle
+	qhandle_t shader; // shader to use for the particles
+	int index;
+	vec3_t randVec, tempVec;
+	
+	if( !cg_particles.integer )
+		return;
+
+	// set defaults
+	number = 64;
+	jump = 50;
+	speed = 100;
+	light = 50;
+	lColor[0] = 1.0f;
+	lColor[1] = 1.0f;
+	lColor[2] = 1.0f;
+	lColor[3] = 1.0f; // alpha
+	
+	shader = cgs.media.particlePlasma;
+
+	for( index = 0; index < number; index++ ) {
+		localEntity_t *le;
+		refEntity_t *re;
+
+		le = CG_AllocLocalEntity(); //allocate a local entity
+		re = &le->refEntity;
+		le->leFlags = LEF_PUFF_DONT_SCALE; //don't change the particle size
+		le->leType = LE_MOVE_SCALE_FADE;// particle should fade over time
+		le->startTime = cg.time; // set the start time of the particle to the current time
+		le->endTime = cg.time + 1000 + random() * 1000; //set the end time
+		le->lifeRate = 1.0 / ( le->endTime - le->startTime );
+		re = &le->refEntity;
+		re->shaderTime = cg.time / 1000.0f;
+		re->reType = RT_SPRITE;
+		re->rotation = 0;
+		re->radius = 5*random();
+		re->customShader = shader;
+		re->shaderRGBA[0] = 0xff;
+		re->shaderRGBA[1] = 0xff;
+		re->shaderRGBA[2] = 0xff;
+		re->shaderRGBA[3] = 0xff;
+		le->light = light;
+		VectorCopy( lColor, le->lightColor );
+		le->color[3] = 1.0;
+		le->pos.trType = TR_LINEAR; // moves in a gravity affected arc
+		le->pos.trTime = cg.time;
+		le->bounceFactor = 0.0f;
+		VectorCopy( origin, le->pos.trBase );
+		VectorCopy( origin, re->origin );
+
+		tempVec[0] = crandom(); //between 1 and -1
+		tempVec[1] = crandom();
+		tempVec[2] = crandom();	
+		
+		VectorNormalize(tempVec);
+		VectorScale(tempVec, speed, randVec);
+		randVec[2] += jump; //nudge the particles up a bit
+		VectorCopy( randVec, le->pos.trDelta );
+	}
+}
+
+/*
+==================
 CG_SpawnEffect
 
 Player teleporting in or out
@@ -194,11 +265,13 @@ void CG_SpawnEffect( vec3_t org ) {
 	AxisClear( re->axis );
 
 	VectorCopy( org, re->origin );
-#ifdef MISSIONPACK
+//#ifdef MISSIONPACK
 	re->origin[2] += 16;
-#else
+/*#else
 	re->origin[2] -= 24;
-#endif
+#endif*/
+	CG_LaunchSparks( org );
+		
 }
 
 /*
@@ -223,7 +296,7 @@ void CG_LightningBoltBeam( vec3_t start, vec3_t end ) {
 	VectorCopy( end, beam->oldorigin );
 
 	beam->reType = RT_LIGHTNING;
-	beam->customShader = cgs.media.lightningShader;
+	beam->customShader = cgs.media.lightningShader[0];
 }
 
 /*
@@ -492,7 +565,7 @@ This is the spurt of blood when a character gets hit
 void CG_Bleed( vec3_t origin, int entityNum ) {
 	localEntity_t	*ex;
 
-	if ( !cg_blood.integer ) {
+	if ( !cg_hitMarks.integer ) {
 		return;
 	}
 
@@ -500,22 +573,26 @@ void CG_Bleed( vec3_t origin, int entityNum ) {
 	ex->leType = LE_EXPLOSION;
 
 	ex->startTime = cg.time;
-	ex->endTime = ex->startTime + 500;
+	
 	
 	VectorCopy ( origin, ex->refEntity.origin);
 	ex->refEntity.reType = RT_SPRITE;
 	ex->refEntity.rotation = rand() % 360;
-	ex->refEntity.radius = 24;
-
-	ex->refEntity.customShader = cgs.media.bloodExplosionShader;
-
+	if( cg_blood.integer ){
+		ex->endTime = ex->startTime + 500;
+		ex->refEntity.radius = 24;
+		ex->refEntity.customShader = cgs.media.bloodExplosionShader;
+	}
+	else{
+		ex->endTime = ex->startTime + 1500;
+		ex->refEntity.radius = 24;
+		ex->refEntity.customShader = cgs.media.particleSpark;
+	}
 	// don't show player's own blood in view
 	if ( entityNum == cg.snap->ps.clientNum ) {
 		ex->refEntity.renderfx |= RF_THIRD_PERSON;
 	}
 }
-
-
 
 /*
 ==================
@@ -561,6 +638,10 @@ void CG_GibPlayer( vec3_t playerOrigin ) {
 	vec3_t	origin, velocity;
 
 	if ( !cg_blood.integer ) {
+		if( cg_gibs.integer ){
+			VectorCopy( playerOrigin, origin );
+			CG_LaunchSparks( origin );
+		}
 		return;
 	}
 

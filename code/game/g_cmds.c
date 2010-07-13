@@ -69,7 +69,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 
 		if(g_gametype.integer == GT_LMS) {
 			Com_sprintf (entry, sizeof(entry),
-				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
+				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
 				cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
 				scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy, 
 				cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
@@ -81,11 +81,12 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 				cl->ps.persistant[PERS_CAPTURES],
 				cl->pers.livesLeft + (cl->isEliminated?0:1),
 				cl->dmgdone,
-				cl->dmgtaken);
+				cl->dmgtaken,
+				cl->sess.specOnly);
 		}
 		else {
 			Com_sprintf (entry, sizeof(entry),
-				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
+				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
 				cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
 				scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy, 
 				cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
@@ -97,7 +98,8 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 				cl->ps.persistant[PERS_CAPTURES],
 				cl->isEliminated,
 				cl->dmgdone,
-				cl->dmgtaken);
+				cl->dmgtaken,
+				cl->sess.specOnly);
 		}
 		j = strlen(entry);
 		if (stringlength + j > 1024)
@@ -132,6 +134,21 @@ void G_SendAccMessage( gentity_t *ent ) {
 										 );
 
 	trap_SendServerCommand( ent-g_entities, va("accs%s", entry ));
+}
+
+/*
+==================
+G_SendLivingCount
+
+==================
+*/
+void G_SendLivingCount() {
+	char		entry[128];
+
+	Com_sprintf (entry, sizeof(entry),
+				" %i %i ", TeamLivingCount( -1, TEAM_RED ), TeamLivingCount( -1, TEAM_BLUE ) ); 
+
+	trap_SendServerCommand( -1, va("livingCount%s", entry ));
 }
 
 /*
@@ -227,7 +244,7 @@ void G_SendStats( gentity_t *ent ) {
 		cl = &level.clients[level.sortedClients[i]];
 			
 		Com_sprintf (entry, sizeof(entry),
-			" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i], cl->accuracy[WP_GAUNTLET][2], cl->accuracy[WP_GAUNTLET][3], 
+			" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i], cl->accuracy[WP_GAUNTLET][2], cl->accuracy[WP_GAUNTLET][3], 
 									  cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1], cl->accuracy[WP_MACHINEGUN][2], cl->accuracy[WP_MACHINEGUN][3], 
 									  cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1], cl->accuracy[WP_SHOTGUN][2], cl->accuracy[WP_SHOTGUN][3],
 									  cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1], cl->accuracy[WP_GRENADE_LAUNCHER][2], cl->accuracy[WP_GRENADE_LAUNCHER][3],
@@ -240,7 +257,14 @@ void G_SendStats( gentity_t *ent ) {
 									  cl->stats[STATS_ARMOR],
 									  cl->stats[STATS_YA],
 									  cl->stats[STATS_RA],
-									  cl->stats[STATS_MH]);
+									  cl->stats[STATS_MH],
+									  cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
+									  cl->ps.persistant[PERS_EXCELLENT_COUNT],
+									  cl->ps.persistant[PERS_ASSIST_COUNT],
+									  cl->ps.persistant[PERS_DEFEND_COUNT],
+									  cl->ps.persistant[PERS_CAPTURES],
+									  cl->rewards[REWARD_AIRGRENADE],
+									  cl->rewards[REWARD_AIRROCKET]);
 		
 		j = strlen(entry);
 		if (stringlength + j > 1024)

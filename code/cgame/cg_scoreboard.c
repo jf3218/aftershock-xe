@@ -181,9 +181,12 @@ static void CG_DrawClientScore( int y, score_t *score, float *color, float fade,
 	if ( score->ping == -1 ) {
 		Com_sprintf(string, sizeof(string),
 			" connecting    %s", ci->name);
-	} else if ( ci->team == TEAM_SPECTATOR ) {
+	} else if ( ci->team == TEAM_SPECTATOR  && ( ( cgs.gametype == GT_TOURNAMENT && score->specOnly ) || cgs.gametype != GT_TOURNAMENT ) ) {
 		Com_sprintf(string, sizeof(string),
 			" SPECT %3i %4i %s", score->ping, score->time, ci->name);
+	} else if ( ci->team == TEAM_SPECTATOR  && ( cgs.gametype == GT_TOURNAMENT && !score->specOnly ) ) {
+		Com_sprintf(string, sizeof(string),
+			" QUEUE %3i %4i %s", score->ping, score->time, ci->name);
 	} else {
 		/*if(cgs.gametype == GT_LMS)
 			Com_sprintf(string, sizeof(string),

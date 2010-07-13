@@ -1480,6 +1480,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	// don't do the "xxx connected" messages if they were caried over from previous level
 	if ( firstTime ) {
 		trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " connected\n\"", client->pers.netname) );
+		trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_YELLOW "%s" S_COLOR_YELLOW " connected\"", client->pers.netname) );
 	}
 
 	if ( g_gametype.integer >= GT_TEAM &&
@@ -1668,6 +1669,9 @@ void ClientBegin( int clientNum ) {
 	ent->client->lastTarget = -1;
 	ent->client->lastKiller = -1;
 	
+	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
+		G_SendLivingCount();
+	
 }
 
 /*
@@ -1726,10 +1730,10 @@ void ClientSpawn(gentity_t *ent) {
 		// N_G: Another condition that makes no sense to me, see for
 		// yourself if you really meant this
 		// Sago: I beleive the TeamCount is to make sure people can join even if the game can't start
-		if( ( level.roundNumber == level.roundNumberStarted ) ||
+		if( ( ( level.roundNumber == level.roundNumberStarted ) ||
 			( (level.time < level.roundStartTime - g_elimination_activewarmup.integer*1000 ) &&
 			TeamCount( -1, TEAM_BLUE ) &&
-			TeamCount( -1, TEAM_RED )  ) )
+			TeamCount( -1, TEAM_RED )  ) ) && level.roundNumberStarted > 0 )
 		{	
 			client->sess.spectatorState = SPECTATOR_FREE;
 			client->isEliminated = qtrue;
@@ -2136,6 +2140,9 @@ else
 
 	// clear entity state values
 	BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
+	
+	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
+		G_SendLivingCount();
 }
 
 
@@ -2216,7 +2223,8 @@ void ClientDisconnect( int clientNum ) {
 
         if ( ent->client->pers.connected == CON_CONNECTED && ent->client->sess.sessionTeam != TEAM_SPECTATOR)
             PlayerStore_store(Info_ValueForKey(userinfo,"cl_guid"),ent->client->ps);
-
+	
+	trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_YELLOW "%s" S_COLOR_YELLOW " disconnected\"", ent->client->pers.netname) );
 	G_LogPrintf( "ClientDisconnect: %i\n", clientNum );
 
 	// if we are playing in tourney mode and losing, give a win to the other player
@@ -2255,6 +2263,9 @@ void ClientDisconnect( int clientNum ) {
 	}
 	
 	SendReadymask();
+	
+	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
+		G_SendLivingCount();
 }
 
 

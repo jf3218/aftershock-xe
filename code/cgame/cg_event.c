@@ -273,10 +273,10 @@ static void CG_Obituary( entityState_t *ent ) {
 
 	if ( attacker != ENTITYNUM_WORLD ) {
 
-                if(ent->generic1) {
+                /*if(ent->generic1) {
                     message = "was killed by ^1TEAMMATE^7";
                 }
-                else
+                else*/
 		switch (mod) {
 		case MOD_GRAPPLE:
 			icon1 = cg_weapons[WP_GRAPPLING_HOOK].weaponIcon;
@@ -1302,7 +1302,10 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		// with the kamikaze sound, downside is that the gib sound will also
 		// not be played when someone is gibbed while just carrying the kamikaze
 		if ( !(es->eFlags & EF_KAMIKAZE) ) {
-			trap_S_StartSound( NULL, es->number, CHAN_BODY, cgs.media.gibSound );
+			if( cg_blood.integer )
+				trap_S_StartSound( NULL, es->number, CHAN_BODY, cgs.media.gibSound );
+			else
+				trap_S_StartSound( NULL, es->number, CHAN_BODY, cgs.media.teleInSound );
 		}
 		CG_GibPlayer( cent->lerpOrigin );
 		break;

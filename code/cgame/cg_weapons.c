@@ -754,7 +754,7 @@ void CG_GrappleTrail( centity_t *ent, const weaponInfo_t *wi ) {
 		return; // Don't draw if close
 
 	beam.reType = RT_LIGHTNING;
-	beam.customShader = cgs.media.lightningShader;
+	beam.customShader = cgs.media.lightningShader[0];
 
 	AxisClear( beam.axis );
 	beam.shaderRGBA[0] = 0xff;
@@ -870,8 +870,16 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->firingSound = trap_S_RegisterSound( "sound/weapons/lightning/lg_hum.wav", qfalse );
 
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/lightning/lg_fire.wav", qfalse );
-		cgs.media.lightningShader = trap_R_RegisterShaderNoMip( "lightningBoltScroll");
-		cgs.media.lightningShaderColor = trap_R_RegisterShaderNoMip( "lightningBoltScrollColor");
+		
+		cgs.media.lightningShader[0] = trap_R_RegisterShaderNoMip( "lightningBoltScroll");
+		cgs.media.lightningShaderColor[0] = trap_R_RegisterShaderNoMip( "lightningBoltScrollColor");
+		cgs.media.lightningShader[1] = trap_R_RegisterShaderNoMip( "lightningBoltScrollThin");
+		cgs.media.lightningShaderColor[1] = trap_R_RegisterShaderNoMip( "lightningBoltScrollThinColor");
+		cgs.media.lightningShader[2] = trap_R_RegisterShaderNoMip( "lightningBoltnew");
+		cgs.media.lightningShaderColor[2] = trap_R_RegisterShaderNoMip( "lightningBoltnewColor");
+		cgs.media.lightningShader[3] = trap_R_RegisterShaderNoMip( "lightningBoltSimple");
+		cgs.media.lightningShaderColor[3] = trap_R_RegisterShaderNoMip( "lightningBoltSimpleColor");
+		
 		cgs.media.lightningExplosionModel = trap_R_RegisterModel( "models/weaphits/crackle.md3" );
 		cgs.media.sfx_lghit1 = trap_S_RegisterSound( "sound/weapons/lightning/lg_hit.wav", qfalse );
 		cgs.media.sfx_lghit2 = trap_S_RegisterSound( "sound/weapons/lightning/lg_hit2.wav", qfalse );
@@ -1226,6 +1234,7 @@ void CG_ExplosionParticles( int weapon, vec3_t origin , vec3_t dir, vec3_t color
 			lColor[0] = 1.0f;
 			lColor[1] = 0.56f;
 			lColor[2] = 0.0f;
+			speed = 150;
 			shader = cgs.media.particlePlasma;
 			break;
 		case WP_PLASMAGUN:
@@ -1267,7 +1276,7 @@ void CG_ExplosionParticles( int weapon, vec3_t origin , vec3_t dir, vec3_t color
 		re->shaderTime = cg.time / 1000.0f;
 		re->reType = RT_SPRITE;
 		re->rotation = 0;
-		re->radius = 3;
+		re->radius = 5*random();
 		re->customShader = shader;
 		re->shaderRGBA[0] = 0xff;
 		re->shaderRGBA[1] = 0xff;
@@ -1303,7 +1312,7 @@ void CG_ExplosionParticles( int weapon, vec3_t origin , vec3_t dir, vec3_t color
 			
 		
 		VectorNormalize(tempVec);
-		VectorScale(tempVec, speed, randVec);
+		VectorScale(tempVec, speed + crandom() * speed/2, randVec);
 		randVec[2] += jump; //nudge the particles up a bit
 		VectorCopy( randVec, le->pos.trDelta );
 	}
@@ -1325,7 +1334,7 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 	refEntity_t  beam;
 	vec3_t   forward;
 	vec3_t   muzzlePoint, endPoint;
-	
+	int	style;
 	clientInfo_t *local, *other;
   	local = &cgs.clientinfo[cg.clientNum];
 	other = &cgs.clientinfo[cent->currentState.number];
@@ -1412,8 +1421,15 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 	VectorCopy( origin, beam.origin );
 
 	beam.reType = RT_LIGHTNING;
+	
+	style = cg_lightningStyle.integer;
+	if( style < 0 )
+		style = 0;
+	if( style >= MAX_LGSTYLES )
+		style = MAX_LGSTYLES - 1;
+	
 	if( cg_forceWeaponColor.integer & 8 ){
-		beam.customShader = cgs.media.lightningShaderColor;
+		beam.customShader = cgs.media.lightningShaderColor[style];
 		if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
 			if( local->team != other->team ){
 				beam.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
@@ -1442,7 +1458,8 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 		}
 	}
 	else
-		beam.customShader = cgs.media.lightningShader;
+		beam.customShader = cgs.media.lightningShader[style];
+	
 	trap_R_AddRefEntityToScene( &beam );
 
 	// add the impact flare if it hit something
@@ -2397,6 +2414,7 @@ void CG_Weapon_f( void ) {
 	}
 
 	cg.weaponSelect = num;
+	
 }
 
 /*
@@ -2483,8 +2501,9 @@ void CG_FireWeapon( centity_t *cent ) {
 	int				c;
 	weaponInfo_t	*weap;
 
-	if((cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION) && cgs.roundStartTime>=cg.time)
+	if((cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION) && ( cgs.roundStartTime>=cg.time ) && cg.warmup == 0 )
 		return; //if we havn't started in ELIMINATION then do not fire
+		
 
 	ent = &cent->currentState;
 	if ( ent->weapon == WP_NONE ) {

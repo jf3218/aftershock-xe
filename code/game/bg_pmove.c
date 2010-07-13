@@ -1605,6 +1605,9 @@ static void PM_Weapon( void ) {
 		PM_FinishWeaponChange();
 		return;
 	}
+	
+	if((pm->ps->pm_flags & PMF_ELIMWARMUP))
+		return;
 
 	if ( pm->ps->weaponstate == WEAPON_RAISING ) {
 		pm->ps->weaponstate = WEAPON_READY;
@@ -2002,7 +2005,6 @@ void PmoveSingle (pmove_t *pmove) {
 	PM_SetWaterLevel();
 
 	// weapons
-	if(!(pm->ps->pm_flags & PMF_ELIMWARMUP))
 	PM_Weapon();
 
 	// torso animation

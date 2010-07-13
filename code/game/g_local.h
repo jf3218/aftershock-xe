@@ -325,6 +325,7 @@ typedef struct {
 struct gclient_s {
 	// ps MUST be the first element, because the server expects it
 	playerState_t	ps;				// communicated by server to clients
+	playerState_t	spec;
 
 	// the rest of the structure is private to game
 	clientPersistant_t	pers;
@@ -442,6 +443,10 @@ struct gclient_s {
 	int			lastAttacker;
 	int			lastKiller;
 	int			lastTarget;
+	
+	int			preservedScore[MAX_PERSISTANT];
+	
+	qboolean 		died;
 	
 };
 
@@ -1034,7 +1039,7 @@ extern	vmCvar_t	g_synchronousClients;
 extern	vmCvar_t	g_motd;
 extern	vmCvar_t	g_warmup;
 extern	vmCvar_t	g_doWarmup;
-extern	vmCvar_t	g_blood;
+extern	vmCvar_t	g_gibs;
 extern	vmCvar_t	g_allowVote;
 extern	vmCvar_t	g_teamAutoJoin;
 extern	vmCvar_t	g_teamForceBalance;

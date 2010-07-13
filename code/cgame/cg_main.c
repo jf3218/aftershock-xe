@@ -116,7 +116,7 @@ vmCvar_t	cg_drawFPS;
 vmCvar_t	cg_drawSnapshot;
 vmCvar_t	cg_draw3dIcons;
 vmCvar_t	cg_drawIcons;
-vmCvar_t	cg_drawAmmoWarning;
+vmCvar_t	cg_ammoWarning;
 vmCvar_t	cg_drawCrosshair;
 vmCvar_t	cg_drawCrosshairNames;
 vmCvar_t	cg_drawRewards;
@@ -336,6 +336,10 @@ vmCvar_t	cg_autosnaps;
 
 vmCvar_t	cg_particles;
 
+vmCvar_t	cg_lightningStyle;
+
+vmCvar_t	cg_hitMarks;
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -360,7 +364,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_drawSnapshot, "cg_drawSnapshot", "0", CVAR_ARCHIVE  },
 	{ &cg_draw3dIcons, "cg_draw3dIcons", "1", CVAR_ARCHIVE  },
 	{ &cg_drawIcons, "cg_drawIcons", "1", CVAR_ARCHIVE  },
-	{ &cg_drawAmmoWarning, "cg_drawAmmoWarning", "1", CVAR_ARCHIVE  },
+	{ &cg_ammoWarning, "cg_ammoWarning", "3", CVAR_ARCHIVE  },
 	{ &cg_drawAttacker, "cg_drawAttacker", "1", CVAR_ARCHIVE  },
 	{ &cg_drawSpeed, "cg_drawSpeed", "0", CVAR_ARCHIVE  },
 	{ &cg_drawCrosshair, "cg_drawCrosshair", "4", CVAR_ARCHIVE },
@@ -423,7 +427,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	// but we also reference them here
 	{ &cg_buildScript, "com_buildScript", "0", 0 },	// force loading of all possible data amd error on failures
 	{ &cg_paused, "cl_paused", "0", CVAR_ROM },
-	{ &cg_blood, "com_blood", "1", CVAR_ARCHIVE },
+	{ &cg_blood, "cg_blood", "0", CVAR_ARCHIVE },
 	{ &cg_alwaysWeaponBar, "cg_alwaysWeaponBar", "1", CVAR_ARCHIVE},	//Elimination
         { &cg_hitBeep, "cg_hitBeep", "2", CVAR_ARCHIVE},
         { &cg_voip_teamonly, "cg_voipTeamOnly", "1", CVAR_ARCHIVE},
@@ -578,6 +582,10 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_autosnaps, "cg_autosnaps", "1", CVAR_ARCHIVE},
 	
 	{&cg_particles, "cg_particles", "1", CVAR_ARCHIVE},
+	
+	{&cg_lightningStyle, "cg_lightningStyle", "0", CVAR_ARCHIVE},
+	
+	{&cg_hitMarks, "cg_hitMarks", "1", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

@@ -1415,6 +1415,61 @@ static float CG_DrawFollowMessage( float y ) {
 	return y + SMALLCHAR_HEIGHT+4;
 }
 
+/*
+=================
+CG_DrawScores
+
+Draw the small two score display
+=================
+*/
+static float CG_DrawLivingCount( float y ) {
+	const char	*s;
+	int			s1, s2, score;
+	int			x, w;
+	int			v;
+	vec4_t		color;
+
+
+	if( cgs.gametype != GT_ELIMINATION && cgs.gametype != GT_CTF_ELIMINATION )
+		return y;
+	
+	s1 = cgs.redLivingCount;
+	s2 = cgs.blueLivingCount;
+
+
+	// draw from the right side to left
+	x = 640;
+	color[0] = 0.0f;
+	color[1] = 0.0f;
+	color[2] = 1.0f;
+	color[3] = 0.33f;
+	s = va( "%2i", s2 );
+	w = CG_DrawStrlen( s ) * BIGCHAR_WIDTH + 8;
+	x -= w;
+	CG_FillRect( x, y-4,  w, BIGCHAR_HEIGHT+8, color );
+	
+	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+		CG_DrawPic( x, y-4, w, BIGCHAR_HEIGHT+8, cgs.media.selectShader );
+	}
+	CG_DrawBigString( x + 4, y, s, 1.0F);
+                
+	color[0] = 1.0f;
+	color[1] = 0.0f;
+	color[2] = 0.0f;
+	color[3] = 0.33f;
+	s = va( "%2i", s1 );
+	w = CG_DrawStrlen( s ) * BIGCHAR_WIDTH + 8;
+	x -= w;
+	CG_FillRect( x, y-4,  w, BIGCHAR_HEIGHT+8, color );
+	
+	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+		CG_DrawPic( x, y-4, w, BIGCHAR_HEIGHT+8, cgs.media.selectShader );
+	}
+	CG_DrawBigString( x + 4, y, s, 1.0F);
+
+	return y + BIGCHAR_HEIGHT;
+}
+
 
 /*
 =====================
@@ -1467,6 +1522,7 @@ static void CG_DrawUpperRight(stereoFrame_t stereoFrame)
 	if ( cg_drawSpeed.integer ) {
 		y = CG_DrawSpeedMeter( y );
 	}
+	CG_DrawLivingCount( y );
 
 }
 
@@ -3161,7 +3217,7 @@ static void CG_DrawAmmoWarning( void ) {
 	if(cgs.nopickup)
 		return;
 
-	if ( cg_drawAmmoWarning.integer == 0 ) {
+	if ( !( cg_ammoWarning.integer & 1 ) ) {
 		return;
 	}
 

@@ -296,7 +296,7 @@ void body_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 	if ( self->health > GIB_HEALTH ) {
 		return;
 	}
-	if ( !g_blood.integer ) {
+	if ( !g_gibs.integer ) {
 		self->health = GIB_HEALTH+1;
 		return;
 	}
@@ -527,10 +527,10 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	ent->s.otherEntityNum2 = killer;
         //Sago: Hmmm... generic? Can I transmit anything I like? Like if it is a team kill? Let's try
         ent->s.generic1 = OnSameTeam (self, self->enemy);
-        if( !((g_gametype.integer==GT_ELIMINATION || g_gametype.integer==GT_CTF_ELIMINATION) && level.time < level.roundStartTime) )
+        //if( !((g_gametype.integer==GT_ELIMINATION || g_gametype.integer==GT_CTF_ELIMINATION) && level.time < level.roundStartTime) )
             ent->r.svFlags = SVF_BROADCAST;	// send to everyone (if not an elimination gametype during active warmup)
-        else
-            ent->r.svFlags = SVF_NOCLIENT;
+        //else
+        //    ent->r.svFlags = SVF_NOCLIENT;
 
 	self->enemy = attacker;
 
@@ -850,7 +850,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	memset( self->client->ps.powerups, 0, sizeof(self->client->ps.powerups) );
 
 	// never gib in a nodrop
-	if ( (self->health <= GIB_HEALTH && !(contents & CONTENTS_NODROP) && g_blood.integer) || meansOfDeath == MOD_SUICIDE) {
+	if ( (self->health <= GIB_HEALTH && !(contents & CONTENTS_NODROP) && g_gibs.integer) || meansOfDeath == MOD_SUICIDE) {
 		// gib death
 		GibEntity( self, killer );
 	} else {
@@ -895,6 +895,15 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	}
 
 	trap_LinkEntity (self);
+	
+	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ){
+		G_SendLivingCount();
+		/*if( level.roundNumberStarted != 0 ){
+			self->client->died = qtrue;
+			for( i = 0; i < MAX_PERSISTANT; i++ )
+				self->client->preservedScore[i] = self->client->ps.persistant[i];
+		}*/
+	}
 
 }
 

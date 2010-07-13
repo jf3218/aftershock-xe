@@ -35,37 +35,43 @@ If the ammo has gone low enough to generate the warning, play a sound
 ==============
 */
 void CG_CheckAmmo( void ) {
-	int		i;
 	int		total;
 	int		previous;
-	int		weapons;
-
+	int 		weapon;
+	
 	// see about how many seconds of ammo we have remaining
-	weapons = cg.snap->ps.stats[ STAT_WEAPONS ];
+
+	weapon = cg.predictedPlayerState.weapon;
 	total = 0;
-	for ( i = WP_MACHINEGUN ; i < WP_NUM_WEAPONS ; i++ ) {
-		if ( ! ( weapons & ( 1 << i ) ) || i == WP_GRAPPLING_HOOK ) {
-			continue;
-		}
-		switch ( i ) {
+	
+	if( cg.lastweapon != weapon ){
+		cg.lowAmmoWarning = 0;
+		cg.lastweapon = weapon;
+	}
+
+	//weapons with -1 ammo
+	if( weapon == WP_GRAPPLING_HOOK || weapon == WP_GAUNTLET || weapon == WP_NONE )
+		return;
+		
+	switch ( weapon ) {
 		case WP_ROCKET_LAUNCHER:
 		case WP_GRENADE_LAUNCHER:
 		case WP_RAILGUN:
 		case WP_SHOTGUN:
-//#ifdef MISSIONPACK
+#ifdef MISSIONPACK
 		case WP_PROX_LAUNCHER:
-//#endif
-			total += cg.snap->ps.ammo[i] * 1000;
+#endif
+			total += cg.snap->ps.ammo[weapon] * 1000;
 			break;
 		default:
-			total += cg.snap->ps.ammo[i] * 200;
+			total += cg.snap->ps.ammo[weapon] * 200;
 			break;
-		}
-		if ( total >= 5000 ) {
-			cg.lowAmmoWarning = 0;
-			return;
-		}
 	}
+	if ( total >= 5000 ) {
+		cg.lowAmmoWarning = 0;
+		return;
+	}
+
 
 	previous = cg.lowAmmoWarning;
 
@@ -75,6 +81,9 @@ void CG_CheckAmmo( void ) {
 		cg.lowAmmoWarning = 1;
 	}
 
+	if( !( cg_ammoWarning.integer & 2 ) )
+		return;
+	
 	// play a sound on transitions
 	if ( cg.lowAmmoWarning != previous ) {
 		trap_S_StartLocalSound( cgs.media.noAmmoSound, CHAN_LOCAL_SOUND );
@@ -546,6 +555,8 @@ void CG_TransitionPlayerState( playerState_t *ps, playerState_t *ops ) {
 		&& ps->persistant[PERS_TEAM] != TEAM_SPECTATOR ) {
 		CG_CheckLocalSounds( ps, ops );
 	}
+	
+	
 
 	// check for going low on ammo
 	CG_CheckAmmo();

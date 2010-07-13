@@ -308,6 +308,7 @@ typedef struct {
 	int			isDead;
 	int			dmgdone;
 	int			dmgtaken;
+	int			specOnly;
 } score_t;
 
 // each client has an associated clientInfo_t
@@ -528,6 +529,7 @@ typedef struct {
 
 	// input state sent to server
 	int			weaponSelect;
+	int			lastweapon;
 
 	// auto rotating items
 	vec3_t		autoAngles;
@@ -771,9 +773,11 @@ typedef struct {
 
 	qhandle_t	railRingsShader;
 	qhandle_t	railCoreShader;
+	
+#define MAX_LGSTYLES 4	
 
-	qhandle_t	lightningShader;
-	qhandle_t	lightningShaderColor;
+	qhandle_t	lightningShader[MAX_LGSTYLES];
+	qhandle_t	lightningShaderColor[MAX_LGSTYLES];
 
 	qhandle_t	friendShader;
 
@@ -1209,6 +1213,8 @@ typedef struct {
 	int		timeoutAdd;
 	int		timeoutDelay;
 	int		timeoutCount;
+	int		redLivingCount;
+	int		blueLivingCount;
 } cgs_t;
 
 //==============================================================================
@@ -1234,7 +1240,7 @@ extern	vmCvar_t		cg_drawFPS;
 extern	vmCvar_t		cg_drawSnapshot;
 extern	vmCvar_t		cg_draw3dIcons;
 extern	vmCvar_t		cg_drawIcons;
-extern	vmCvar_t		cg_drawAmmoWarning;
+extern	vmCvar_t		cg_ammoWarning;
 extern	vmCvar_t		cg_drawCrosshair;
 extern	vmCvar_t		cg_drawCrosshairNames;
 extern	vmCvar_t		cg_drawRewards;
@@ -1452,6 +1458,10 @@ extern vmCvar_t			cg_drawRespawnTimer;
 extern vmCvar_t			cg_autosnaps;
 
 extern vmCvar_t			cg_particles;
+
+extern vmCvar_t			cg_lightningStyle;
+
+extern vmCvar_t			cg_hitMarks;
 
 
 //unlagged - cg_unlagged.c

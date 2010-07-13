@@ -71,7 +71,7 @@ vmCvar_t	g_doWarmup;
 vmCvar_t	g_restarted;
 vmCvar_t	g_logfile;
 vmCvar_t	g_logfileSync;
-vmCvar_t	g_blood;
+vmCvar_t	g_gibs;
 vmCvar_t	g_podiumDist;
 vmCvar_t	g_podiumDrop;
 vmCvar_t	g_allowVote;
@@ -268,7 +268,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_debugDamage, "g_debugDamage", "0", 0, 0, qfalse },
 	{ &g_debugAlloc, "g_debugAlloc", "0", 0, 0, qfalse },
 	{ &g_motd, "g_motd", "", 0, 0, qfalse },
-	{ &g_blood, "com_blood", "1", 0, 0, qfalse },
+	{ &g_gibs, "g_gibs", "1", 0, 0, qfalse },
 
 	{ &g_podiumDist, "g_podiumDist", "80", 0, 0, qfalse },
 	{ &g_podiumDrop, "g_podiumDrop", "70", 0, 0, qfalse },
@@ -1089,13 +1089,21 @@ int QDECL SortRanks( const void *a, const void *b ) {
 
 	// then spectators
 	if ( ca->sess.sessionTeam == TEAM_SPECTATOR && cb->sess.sessionTeam == TEAM_SPECTATOR ) {
-		if ( ca->sess.spectatorTime < cb->sess.spectatorTime ) {
-			return -1;
+		if( ( ca->sess.specOnly && cb->sess.specOnly ) || ( !ca->sess.specOnly && !cb->sess.specOnly ) ) {
+			if ( ca->sess.spectatorTime < cb->sess.spectatorTime ) {
+				return -1;
+			}
+			if ( ca->sess.spectatorTime > cb->sess.spectatorTime ) {
+				return 1;
+			}
+			return 0;
 		}
-		if ( ca->sess.spectatorTime > cb->sess.spectatorTime ) {
+		if( ca->sess.specOnly ){
 			return 1;
 		}
-		return 0;
+		if( cb->sess.specOnly ){
+			return -1;
+		}
 	}
 	if ( ca->sess.sessionTeam == TEAM_SPECTATOR ) {
 		return 1;
@@ -1105,14 +1113,20 @@ int QDECL SortRanks( const void *a, const void *b ) {
 	}
 
         //In elimination and CTF elimination, sort dead players last
-        if((g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION)
+        /*if((g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION)
                 && level.roundNumber==level.roundNumberStarted && (ca->isEliminated != cb->isEliminated)) {
             if( ca->isEliminated )
                 return 1;
             if( cb->isEliminated )
                 return -1;
-        }
-
+        }*/ //that sucks
+        
+        if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION){
+		if( ca->dmgdone > cb->dmgdone )
+		    return -1;
+		if( ca->dmgdone < cb->dmgdone )
+		    return 1;
+	}
 	// then sort by score
 	if ( ca->ps.persistant[PERS_SCORE]
 		> cb->ps.persistant[PERS_SCORE] ) {
@@ -1940,23 +1954,47 @@ void StartEliminationRound(void) {
 //things to do at end of round:
 void EndEliminationRound(void)
 {
+	int i,j;
+	
 	DisableWeapons();
 	level.roundNumber++;
 	level.roundStartTime = level.time+1000*g_elimination_warmup.integer;
 	SendEliminationMessageToAllClients();
         CalculateRanks();
 	level.roundRespawned = qfalse;
+	
+	/*for ( i = 0 ; i < level.maxclients ; i++ ) {
+		if ( level.clients[ i ].pers.connected == CON_CONNECTED && level.clients[i].died ) {
+			G_Printf("yayks\n");
+			level.clients[i].died = qfalse;
+			for( j = 0; j < MAX_PERSISTANT; j++ )
+				level.clients[ i ].ps.persistant[i] = level.clients[ i ].preservedScore[i];
+		}
+	}*/
+	
 	if(g_elimination_ctf_oneway.integer)
 		SendAttackingTeamMessageToAllClients();
 }
 
 //Things to do if we don't want to move the roundNumber
 void RestartEliminationRound(void) {
+	
+	int i,j;
+	
 	DisableWeapons();
 	level.roundNumberStarted = level.roundNumber-1;
 	level.roundStartTime = level.time+1000*g_elimination_warmup.integer;
 	SendEliminationMessageToAllClients();
 	level.roundRespawned = qfalse;
+	
+	/*for ( i = 0 ; i < level.maxclients ; i++ ) {
+		if ( level.clients[ i ].pers.connected == CON_CONNECTED && level.clients[i].isEliminated ) {
+			for( j = 0; j < MAX_PERSISTANT; j++ )
+				level.clients[ i ].ps.persistant[i] = level.clients[ i ].preservedScore[i];
+		}
+	}*/
+	
+	
 	if(g_elimination_ctf_oneway.integer)
 		SendAttackingTeamMessageToAllClients();
 }
