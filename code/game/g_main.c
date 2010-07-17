@@ -722,6 +722,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	
 	level.timeoutAdd = 0;
 	level.timeoutDelay = 0;
+	level.endgameSend = qfalse;
 
 	level.snd_fry = G_SoundIndex("sound/player/fry.wav");	// FIXME standing in lava / slime
 
@@ -1488,7 +1489,6 @@ void BeginIntermission( void ) {
 	// send the current scoring to all clients
 	SendScoreboardMessageToAllClients();
 	
-	G_SendEndGame();
 
 }
 
@@ -1800,6 +1800,9 @@ void CheckExitRules( void ) {
 	// if at the intermission, wait for all non-bots to
 	// signal ready, then go to next level
 	if ( level.intermissiontime ) {
+		if( ( level.time > level.intermissiontime + 2000 ) && ( !level.endgameSend ) ){
+			G_SendEndGame();
+		}
 		CheckIntermissionExit ();
 		return;
 	} else {

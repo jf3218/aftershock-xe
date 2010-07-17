@@ -42,7 +42,7 @@ DEMOS MENU
 #define ART_ARROWUP		"menu/art_blueish/arrows_vert_top"
 #define ART_ARROWDN		"menu/art_blueish/arrows_vert_bot"
 
-#define MAX_DEMOS			128
+#define MAX_DEMOS			256
 #define NAMEBUFSIZE			( MAX_DEMOS * 16 )
 
 #define ID_BACK				10
@@ -54,6 +54,8 @@ DEMOS MENU
 #define ARROWS_WIDTH		128
 #define ARROWS_HEIGHT		48
 
+static void Demos_MenuInit( qboolean firstStart );
+static char	*currentFolder = "";
 
 typedef struct {
 	menuframework_s	menu;
@@ -71,7 +73,9 @@ typedef struct {
 	menubitmap_s	go;
 
 	int				numDemos;
+	int				numFolders;
 	char			names[NAMEBUFSIZE];
+	char			folders[NAMEBUFSIZE];
 	char			*demolist[MAX_DEMOS];
 } demos_t;
 
@@ -84,15 +88,43 @@ Demos_MenuEvent
 ===============
 */
 static void Demos_MenuEvent( void *ptr, int event ) {
+	char *buffer;
+	int len;
+	char	path[128];
 	if( event != QM_ACTIVATED ) {
 		return;
 	}
 
 	switch( ((menucommon_s*)ptr)->id ) {
 	case ID_GO:
-		UI_ForceMenuOff ();
-		trap_Cmd_ExecuteText( EXEC_APPEND, va( "demo %s\n",
-								s_demos.list.itemnames[s_demos.list.curvalue]) );
+		
+		//finds the .dm_ string in the current item
+		buffer = strstr( s_demos.list.itemnames[s_demos.list.curvalue], ".dm_");
+		
+		//The current Item is not a demo
+		if( !buffer ){
+			len = strlen( s_demos.list.itemnames[s_demos.list.curvalue] );
+			//if( strcmp( s_demos.list.itemnames[s_demos.list.curvalue], ".." ) != 0 ){
+				if( currentFolder )
+					strcat(currentFolder, "/");
+				currentFolder = "";
+				strcat(currentFolder, s_demos.list.itemnames[s_demos.list.curvalue]);
+			//}
+			Demos_MenuInit( qfalse );
+			UI_PushMenu( &s_demos.menu );
+			
+		}
+		else{
+			UI_ForceMenuOff ();
+			if( currentFolder ){
+				Com_sprintf(path, sizeof(path),"demo %s/%s\n", currentFolder, s_demos.list.itemnames[s_demos.list.curvalue]);
+				trap_Cmd_ExecuteText( EXEC_APPEND, path );
+			}
+			else{
+				Com_sprintf(path, sizeof(path),"demo %s\n", s_demos.list.itemnames[s_demos.list.curvalue]);
+				trap_Cmd_ExecuteText( EXEC_APPEND, path );
+			}				
+		}
 		break;
 	case ID_BACK:
 		UI_PopMenu();
@@ -146,7 +178,7 @@ static int QDECL UI_Demo_SortCompare( const void *arg1, const void *arg2 ){
 	a = s_demos.list.itemnames[num1];
 	b = s_demos.list.itemnames[num2];
 	
-	trap_Print(s_demos.list.itemnames[num1]);
+	Com_Printf("%i %i\n", num1, num2);
 	
 	
 	return Q_stricmp(a,b);
@@ -157,12 +189,19 @@ static int QDECL UI_Demo_SortCompare( const void *arg1, const void *arg2 ){
 Demos_MenuInit
 ===============
 */
-static void Demos_MenuInit( void ) {
+static void Demos_MenuInit( qboolean firstStart ) {
 	int		i;
 	int		len;
-	char	*demoname, extension[32];
-
-	memset( &s_demos, 0 ,sizeof(demos_t) );
+	char	*demoname, extension[16];
+	char	folder[128];
+	const char	*buffer;
+	
+	if( firstStart ){
+		currentFolder = NULL;
+		memset( &s_demos, 0 ,sizeof(demos_t) );
+	
+	
+	
 	s_demos.menu.key = UI_DemosMenu_Key;
 
 	Demos_Cache();
@@ -252,8 +291,24 @@ static void Demos_MenuInit( void ) {
 	s_demos.list.generic.y			= 50;
 	s_demos.list.width				= 70;
 	s_demos.list.height				= 23;
+	
+	}
+
+	if( currentFolder )
+		Com_sprintf(folder, sizeof(folder),"demos/%s", currentFolder);
+	else{
+		Com_sprintf(folder, sizeof(folder),"demos");
+	}
+	
+	s_demos.numFolders = trap_FS_GetFileList( folder, "/", s_demos.folders, sizeof(s_demos.folders) );
+	
 	Com_sprintf(extension, sizeof(extension), "dm_%d", (int)trap_Cvar_VariableValue( "protocol" ) );
-	s_demos.list.numitems			= trap_FS_GetFileList( "demos", extension, s_demos.names, NAMEBUFSIZE );
+	
+	s_demos.list.numitems = trap_FS_GetFileList( folder, extension, s_demos.names, sizeof(s_demos.names) );
+	
+	
+	
+	s_demos.list.numitems			+= s_demos.numFolders;
 	s_demos.list.itemnames			= (const char **)s_demos.demolist;
 	//s_demos.list.columns			= 1;
 
@@ -267,10 +322,9 @@ static void Demos_MenuInit( void ) {
 	else if (s_demos.list.numitems > MAX_DEMOS)
 		s_demos.list.numitems = MAX_DEMOS;
 
-	demoname = s_demos.names;
-	for ( i = 0; i < s_demos.list.numitems; i++ ) {
+	demoname = s_demos.folders;
+	for ( i = 0; i < s_demos.numFolders; i++ ) {
 		s_demos.list.itemnames[i] = demoname;
-		
 
 		// strip extension
 		len = strlen( demoname );
@@ -281,7 +335,20 @@ static void Demos_MenuInit( void ) {
 
 		demoname += len + 1;
 	}
+	demoname =  s_demos.names;
+	for ( i = s_demos.numFolders; i < s_demos.list.numitems; i++ ) {
+		s_demos.list.itemnames[i] = demoname;
 
+		// strip extension
+		len = strlen( demoname );
+		if (!Q_stricmp(demoname +  len - 4,".dm3"))
+			demoname[len-4] = '\0';
+
+//		Q_strupr(demoname);
+
+		demoname += len + 1;
+	}
+	
 	Menu_AddItem( &s_demos.menu, &s_demos.banner );
 	Menu_AddItem( &s_demos.menu, &s_demos.framel );
 	Menu_AddItem( &s_demos.menu, &s_demos.framer );
@@ -290,10 +357,7 @@ static void Demos_MenuInit( void ) {
 	Menu_AddItem( &s_demos.menu, &s_demos.left );
 	Menu_AddItem( &s_demos.menu, &s_demos.right );
 	Menu_AddItem( &s_demos.menu, &s_demos.back );
-	Menu_AddItem( &s_demos.menu, &s_demos.go );
-	
-	
-		
+	Menu_AddItem( &s_demos.menu, &s_demos.go );	
 }
 
 /*
@@ -319,7 +383,6 @@ UI_DemosMenu
 ===============
 */
 void UI_DemosMenu( void ) {
-	Demos_MenuInit();
-	qsort( s_demos.list.itemnames, s_demos.list.numitems, sizeof( s_demos.list.itemnames[0] ), UI_Demo_SortCompare );
+	Demos_MenuInit( qtrue );
 	UI_PushMenu( &s_demos.menu );
 }

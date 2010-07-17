@@ -466,9 +466,13 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace) {
 				return;
 	}
 	
-	if( ent->item->lastDrop + 500 > level.time )
+	/*G_Printf( "%i   vs   %i\n", ent->item->lastDrop, level.time);
+	*/
+	if( ent->item->lastDrop + 500 > level.time ){
+		G_Printf( "%i   vs   %i\n", ent->item->lastDrop, level.time);
 		return;
-	//G_Printf( "%i   vs   %i\n", ent->item->lastDrop, level.time);
+	}
+	
 
 	G_LogPrintf( "Item: %i %s\n", other->s.number, ent->item->classname );
 
@@ -645,6 +649,52 @@ gentity_t *LaunchItem( gitem_t *item, vec3_t origin, vec3_t velocity ) {
 
 /*
 ================
+LaunchItem
+
+Spawns an item and tosses it forward
+================
+*/
+gentity_t *LaunchItemWeapon( gitem_t *item, gitem_t *oldItem, vec3_t origin, vec3_t velocity ) {
+	gentity_t	*dropped;
+
+	dropped = G_Spawn();
+
+	dropped->s.eType = ET_ITEM;
+	dropped->s.modelindex = oldItem - bg_itemlist;	// store item number in modelindex
+	dropped->s.modelindex2 = 1; // This is non-zero is it's a dropped item
+
+	dropped->classname = item->classname;
+	dropped->item = item;
+	VectorSet (dropped->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, -ITEM_RADIUS);
+	VectorSet (dropped->r.maxs, ITEM_RADIUS, ITEM_RADIUS, ITEM_RADIUS);
+	dropped->r.contents = CONTENTS_TRIGGER;
+
+	dropped->touch = Touch_Item;
+
+	G_SetOrigin( dropped, origin );
+	dropped->s.pos.trType = TR_GRAVITY;
+	dropped->s.pos.trTime = level.time;
+	VectorCopy( velocity, dropped->s.pos.trDelta );
+
+	dropped->s.eFlags |= EF_BOUNCE_HALF;
+	if ((g_gametype.integer == GT_CTF || g_gametype.integer == GT_1FCTF || g_gametype.integer == GT_CTF_ELIMINATION || g_gametype.integer == GT_DOUBLE_D)			&& item->giType == IT_TEAM) { // Special case for CTF flags
+		dropped->think = Team_DroppedFlagThink;
+		dropped->nextthink = level.time + 30000;
+		Team_CheckDroppedItem( dropped );
+	} else { // auto-remove after 30 seconds
+		dropped->think = G_FreeEntity;
+		dropped->nextthink = level.time + 30000;
+	}
+
+	dropped->flags = FL_DROPPED_ITEM;
+
+	trap_LinkEntity (dropped);
+
+	return dropped;
+}
+
+/*
+================
 Drop_Item
 
 Spawns an item and tosses it forward
@@ -669,7 +719,6 @@ gentity_t *Drop_Item_Weapon( gentity_t *ent, gitem_t *item, float angle ) {
 	vec3_t	velocity;
 	vec3_t	angles;
 	vec3_t position;
-	gentity_t *output;
 	gitem_t	newItem;
 
 	VectorCopy( ent->s.apos.trBase, angles );
@@ -684,20 +733,15 @@ gentity_t *Drop_Item_Weapon( gentity_t *ent, gitem_t *item, float angle ) {
 	VectorScale( velocity, 150, velocity );
 	velocity[2] += 200 + crandom() * 50;
 	
-	
-	output = LaunchItem( item, position, velocity );
-	
-	newItem = *(output->item);
-	
+	newItem = *item;
 	newItem.quantity = ent->client->ps.ammo[ent->s.weapon];
 	ent->client->ps.ammo[ent->s.weapon] = 0;
 	ent->client->ps.stats[STAT_WEAPONS] &= ~( 1 << item->giTag );
 	newItem.lastDrop = level.time;
-	output->item = &newItem;
 	
-	return output;
+	G_Printf("%i\n", newItem.lastDrop );
 	
-	
+	return LaunchItemWeapon( &newItem, item, position, velocity );
 }
 
 gentity_t *Drop_Item_Flag( gentity_t *ent, gitem_t *item, float angle ) {

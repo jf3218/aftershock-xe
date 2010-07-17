@@ -604,13 +604,13 @@ scoreboardPing
 		blendfunc blend
 	}
 }
-gfx/2d/crosshair
+gfx/2d/crosshaira
 {
 	nopicmip
 	{
 		map gfx/2d/crosshair.tga          
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA                
-        rgbGen identity
+		rgbGen identity
 	}
 }
 

@@ -2041,7 +2041,7 @@ else
 	
 	ent->health = client->ps.stats[STAT_ARMOR] = g_elimination_startArmor.integer; //client->ps.stats[STAT_MAX_HEALTH]*2;
 	ent->health = client->ps.stats[STAT_HEALTH] = g_elimination_startHealth.integer; //client->ps.stats[STAT_MAX_HEALTH]*2;	
-
+	
 	
 	//	ent->health = client->ps.stats[STAT_HEALTH] = 0;
 }
@@ -2112,13 +2112,17 @@ else
 
 		// select the highest weapon number available, after any
 		// spawn given items have fired
-		client->ps.weapon = 1;
-		for ( i = WP_NUM_WEAPONS - 1 ; i > 0 ; i-- ) {
-			if ( client->ps.stats[STAT_WEAPONS] & ( 1 << i ) && i !=WP_GRAPPLING_HOOK ) {
-				client->ps.weapon = i;
-				break;
+		if(g_gametype.integer != GT_ELIMINATION && g_gametype.integer != GT_CTF_ELIMINATION && g_gametype.integer != GT_LMS && !g_elimination_allgametypes.integer){
+			client->ps.weapon = 1;
+			for ( i = WP_NUM_WEAPONS - 1 ; i > 0 ; i-- ) {
+				if ( client->ps.stats[STAT_WEAPONS] & ( 1 << i ) && i !=WP_GRAPPLING_HOOK ) {
+					client->ps.weapon = i;
+					break;
+				}
 			}
 		}
+		else
+			client->ps.weapon = WP_ROCKET_LAUNCHER;
 	}
 
 	// run a client frame to drop exactly to the floor,

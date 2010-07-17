@@ -207,6 +207,8 @@ void G_SendEndGame( void ) {
 	gentity_t	*ent;
 	int	i;
 	
+	level.endgameSend = qtrue;
+	
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		ent = &g_entities[i];
 		if ( ( ent->inuse ) ) {
@@ -416,7 +418,16 @@ RewardMessage
 */
 
 void RewardMessage(gentity_t *ent, int reward, int rewardCount) {
-	trap_SendServerCommand( ent-g_entities, va("reward %i %i", reward, rewardCount) );
+	gentity_t *other;
+	int i;
+	
+	for (i = 0; i < MAX_CLIENTS; i++) {
+		other = &g_entities[i];
+		if (  other->client->ps.clientNum == ent->client->ps.clientNum ) {
+
+		      trap_SendServerCommand( other-g_entities, va("reward %i %i", reward, rewardCount) );
+		}
+	}
 }
 
 /*
@@ -2678,23 +2689,25 @@ void Cmd_GetMappage_f( gentity_t *ent ) {
 
 void Cmd_DropWeapon_f( gentity_t *ent ){
 	gitem_t		*item;
+	gentity_t	*out;
 	int			weapon;
 	
-	if( !g_itemDrop.integer )
+	if( !( g_itemDrop.integer & 2 ) )
 		return;
 	
 	weapon = ent->s.weapon;
 	item = BG_FindItemForWeapon( weapon );
 	if( ( ent->client->ps.stats[STAT_WEAPONS] & ( 1 << item->giTag ) ) && ( weapon != WP_GAUNTLET ) ) {
 		G_Printf("Droppedidroppedidu\n");
-		Drop_Item_Weapon( ent, item, 0 );
+		out = Drop_Item_Weapon( ent, item, 0 );
+		G_Printf("%i\n",out->item->lastDrop);
 	}
 }
 
 void Cmd_DropFlag_f( gentity_t *other ){
 	gitem_t		*item;
 	
-	if( !g_itemDrop.integer )
+	if( !( g_itemDrop.integer & 1 ) )
 		return;
 	
 	if ( other->client->ps.powerups[PW_NEUTRALFLAG] ) {
@@ -2713,12 +2726,11 @@ void Cmd_DropFlag_f( gentity_t *other ){
 
 void Cmd_Drop_f( gentity_t *ent ){
   
-	if( !g_itemDrop.integer )
-		return;
-	if( ent->client->ps.powerups[PW_NEUTRALFLAG] || ent->client->ps.powerups[PW_REDFLAG] || ent->client->ps.powerups[PW_BLUEFLAG] )
+	if( ( ent->client->ps.powerups[PW_NEUTRALFLAG] || ent->client->ps.powerups[PW_REDFLAG] || ent->client->ps.powerups[PW_BLUEFLAG] ) && g_itemDrop.integer & 1 )
 		Cmd_DropFlag_f( ent );
-	else
+	else if( g_itemDrop.integer & 2 )
 		Cmd_DropWeapon_f( ent );
+	
 }
 	
 

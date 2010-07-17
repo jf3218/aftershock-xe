@@ -157,7 +157,11 @@ void CG_SetGameString( void ){
 		
 		
 	
-	Com_sprintf(gameString, sizeof(gameString), "%04d%02d%02d%02d%02d%02d-%s-%s-%s", 1900 + now.tm_year,
+	Com_sprintf(gameString, sizeof(gameString), "%04d-%02d-%02d/%04d%02d%02d%02d%02d%02d-%s-%s-%s", 
+		    1900 + now.tm_year,
+			1 + now.tm_mon,
+			now.tm_mday,
+		    1900 + now.tm_year,
 			1 + now.tm_mon,
 			now.tm_mday,
 			now.tm_hour,
@@ -335,22 +339,22 @@ static void CG_ParseStatistics( void ) {
 	trap_FS_FOpenFile(va("stats/%s.txt", gameString), &f, FS_WRITE);
 	//CG_Printf( "%s \n", cg.gameString );
 	
-	string = va("Gametype:   %4s    %s\r", gameNames[cgs.gametype], mapname );
+	string = va("Gametype:   %4s    %s\n", gameNames[cgs.gametype], mapname );
 	len = strlen( string );
 	trap_FS_Write(string, len, f);
 	
 	if( cgs.gametype >= GT_TEAM ){
-		string = va("Red:   %2i     Blue:   %2i \r \r \r \r", cgs.scores1, cgs.scores2);
+		string = va("Red:   %2i     Blue:   %2i \n \n \n \n", cgs.scores1, cgs.scores2);
 		len = strlen( string );
 		trap_FS_Write(string, len, f);
 	}
 	else{
-		string = va("\r \r \r \r", cgs.scores1, cgs.scores2);
+		string = va("\n \n \n \n", cgs.scores1, cgs.scores2);
 		len = strlen( string );
 		trap_FS_Write(string, len, f);
 	}
 	
-	string = va("---------------------------------------\r\r\r" );
+	string = va("---------------------------------------\n\n\n" );
 	len = strlen( string );
 	trap_FS_Write(string, len, f);
 
@@ -379,22 +383,38 @@ static void CG_ParseStatistics( void ) {
 			  team = "Spectator";
 		  
 		  
-		  string = va("name:%20s     Team:%10s     Time:%3i     Handicap:%3i \r\r", name, team, score->time, ci->handicap );
+		  string = va("name:%20s     Team:%10s     Time:%3i     Handicap:%3i \n\n", name, team, score->time, ci->handicap );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
 		  
-		  string = va("Score %4i     Accuracy %3i \r", score->score, score->accuracy );
+		  string = va("Score %4i     Accuracy %3i \n", score->score, score->accuracy );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
 		  //if( cgs.gametype == GT_ELIMINATION ) {
-			  string = va("Damage done %4i     Damage taken %4i \r\r", score->dmgdone, score->dmgtaken );
+			  string = va("Damage done %4i     Damage taken %4i \n", score->dmgdone, score->dmgtaken );
 			  len = strlen( string );
 			  trap_FS_Write(string, len, f);
 		  //}
+		  string = va("Impressive   %3i   Excellent   %3i   Airgrenade   %3i   Airrocket   %3i\n", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 41 )),
+			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 42 )),
+			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 46 )), atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 47 )));
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
 		  
-		  string = va("        Shots       Hits      Acc       Dmg    Kills\r");
+		  if( cgs.gametype == GT_CTF ) {
+		  string = va("Assist       %3i   Defend      %3i   Capture      %3i\n", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 43 )),
+			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 44 )),
+			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 45 )));
+			      len = strlen( string );
+			      trap_FS_Write(string, len, f);
+		  }
+		  
+		  len = strlen( "\n" );
+		  trap_FS_Write("\n", len, f);
+		  
+		  string = va("        Shots       Hits      Acc       Dmg    Kills\n");
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -406,7 +426,7 @@ static void CG_ParseStatistics( void ) {
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("GAUNT                                  %4i      %3i\r", dmg, kills );
+		  string = va("GAUNT                                  %4i      %3i\n", dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -418,7 +438,7 @@ static void CG_ParseStatistics( void ) {
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("MG      %5i      %5i      %3i      %4i      %3i\r", shots, hits, acc, dmg, kills );
+		  string = va("MG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -431,7 +451,7 @@ static void CG_ParseStatistics( void ) {
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("SG      %5i      %5i      %3i      %4i      %3i\r", shots, hits, acc, dmg, kills );
+		  string = va("SG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -444,7 +464,7 @@ static void CG_ParseStatistics( void ) {
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("GL      %5i      %5i      %3i      %4i      %3i\r", shots, hits, acc, dmg, kills );
+		  string = va("GL      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -457,7 +477,7 @@ static void CG_ParseStatistics( void ) {
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("RL      %5i      %5i      %3i      %4i      %3i\r", shots, hits, acc, dmg, kills );
+		  string = va("RL      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -469,7 +489,7 @@ static void CG_ParseStatistics( void ) {
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("LG      %5i      %5i      %3i      %4i      %3i\r", shots, hits, acc, dmg, kills );
+		  string = va("LG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -481,7 +501,7 @@ static void CG_ParseStatistics( void ) {
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("RG      %5i      %5i      %3i      %4i      %3i\r", shots, hits, acc, dmg, kills );
+		  string = va("RG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -493,7 +513,7 @@ static void CG_ParseStatistics( void ) {
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("PG      %5i      %5i      %3i      %4i      %3i\r", shots, hits, acc, dmg, kills );
+		  string = va("PG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -505,7 +525,7 @@ static void CG_ParseStatistics( void ) {
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("BFG     %5i      %5i      %3i      %4i      %3i\r", shots, hits, acc, dmg, kills );
+		  string = va("BFG     %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -513,31 +533,19 @@ static void CG_ParseStatistics( void ) {
 		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 37 ));
 		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 38 ));
 		  acc = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 39 ));
-		  string = va("Armor   %5i         %2iYA     %2iRA\r", shots, hits, acc );
+		  string = va("Armor   %5i         %2iYA     %2iRA\n", shots, hits, acc );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
 		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 36 ));
 		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 40 ));
-		  string = va("Health  %5i         %2iMH\r\r", shots, hits );
+		  string = va("Health  %5i         %2iMH\n", shots, hits );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
-		  string = va("Impressive   %3i   Excellent   %3i   Airgrenade   %3i   Airrocket   %3i\r", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 41 )),
-			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 42 )),
-			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 46 )), atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 47 )));
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
 		  
-		  if( cgs.gametype == GT_CTF ) {
-		  string = va("Assist       %3i   Defend      %3i   Capture      %3i\r", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 43 )),
-			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 44 )),
-			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 45 )));
-			      len = strlen( string );
-			      trap_FS_Write(string, len, f);
-		  }
 		  
-		  string = va("---------------------------------------\r\r\r" );
+		  string = va("---------------------------------------\n\n\n" );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  

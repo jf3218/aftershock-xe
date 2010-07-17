@@ -243,7 +243,7 @@ static void CG_Item( centity_t *cent ) {
 	}
 
 	item = &bg_itemlist[ es->modelindex ];
-	if ( cg_simpleItems.integer && item->giType != IT_TEAM ) {
+	if ( ( cg_simpleItems.integer == 1 && item->giType != IT_TEAM ) || ( cg_simpleItems.integer > 1 ) ) {
 		memset( &ent, 0, sizeof( ent ) );
 		ent.reType = RT_SPRITE;
 		VectorCopy( cent->lerpOrigin, ent.origin );

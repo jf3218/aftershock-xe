@@ -582,6 +582,7 @@ typedef struct {
     int		timeoutTime;
     int		timeoutAdd;
     int		timeoutDelay;
+    qboolean    endgameSend;
     
 } level_locals_t;
 
@@ -652,6 +653,10 @@ void UseHoldableItem( gentity_t *ent );
 void PrecacheItem (gitem_t *it);
 gentity_t *Drop_Item( gentity_t *ent, gitem_t *item, float angle );
 gentity_t *LaunchItem( gitem_t *item, vec3_t origin, vec3_t velocity );
+gentity_t *LaunchItemWeapon( gitem_t *item, gitem_t *oldItem, vec3_t origin, vec3_t velocity );
+gentity_t *Drop_Item_Weapon( gentity_t *ent, gitem_t *item, float angle );
+gentity_t *Drop_Item_Flag( gentity_t *ent, gitem_t *item, float angle );
+
 void SetRespawn (gentity_t *ent, float delay);
 void G_SpawnItem (gentity_t *ent, gitem_t *item);
 void FinishSpawningItem( gentity_t *ent );

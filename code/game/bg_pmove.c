@@ -1599,15 +1599,15 @@ static void PM_Weapon( void ) {
 	if ( pm->ps->weaponTime > 0 ) {
 		return;
 	}
+	
+	if((pm->ps->pm_flags & PMF_ELIMWARMUP))
+		return;
 
 	// change weapon if time
 	if ( pm->ps->weaponstate == WEAPON_DROPPING ) {
 		PM_FinishWeaponChange();
 		return;
 	}
-	
-	if((pm->ps->pm_flags & PMF_ELIMWARMUP))
-		return;
 
 	if ( pm->ps->weaponstate == WEAPON_RAISING ) {
 		pm->ps->weaponstate = WEAPON_READY;
