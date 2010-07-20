@@ -186,7 +186,8 @@ static void CG_StartOfGame( void ){
 	if( cg.demoPlayback )
 		return;
 	
-	CG_SetGameString();
+	if( !cg.demoStarted )
+		CG_SetGameString();
 	
 	if( cg_autoaction.integer & 1 ) {
 		cg.demoStarted = 1;
@@ -349,7 +350,7 @@ static void CG_ParseStatistics( void ) {
 		trap_FS_Write(string, len, f);
 	}
 	else{
-		string = va("\n \n \n \n", cgs.scores1, cgs.scores2);
+		string = va("\n \n \n \n"/*, cgs.scores1, cgs.scores2*/);
 		len = strlen( string );
 		trap_FS_Write(string, len, f);
 	}
@@ -607,6 +608,7 @@ static void CG_ParseRespawnTimer( void ) {
 	int 		itemType;
 	int 		quantity;
 	int		respawnTime;
+	int		nextItem;
 	qboolean	found;
 	int 		i;
 	
@@ -616,6 +618,7 @@ static void CG_ParseRespawnTimer( void ) {
 	itemType = atoi( CG_Argv(2) );
 	quantity = atoi( CG_Argv(3) );
 	respawnTime = atoi( CG_Argv(4) );
+	nextItem = atoi( CG_Argv(5) );
 	
 
 	
@@ -626,13 +629,14 @@ static void CG_ParseRespawnTimer( void ) {
 				found = qtrue;
 			}
 		}
-		if( !found ){
+		if( !found && cg_items[cg_entities[entityNum].currentState.modelindex].registered ){
 			cgs.respawnTimerUsed[ i ] = qtrue;
 			cgs.respawnTimerQuantity[ i ] = quantity;
 			cgs.respawnTimerTime[ i ] = respawnTime;
 			cgs.respawnTimerType[ i ] = itemType;
 			cgs.respawnTimerEntitynum[ i ] = entityNum;
 			cgs.respawnTimerNumber = i + 1;
+			cgs.respawnTimerNextItem[ i ] = nextItem;
 		}
 	}
 
@@ -923,6 +927,7 @@ void CG_ParseServerinfo( void ) {
 	
 	cgs.startWhenReady = atoi( Info_ValueForKey( info, "g_startWhenReady" ) );
 	trap_Cvar_Set("g_startWhenReady", va("%i", cgs.startWhenReady));
+	
 	if( cg_autosnaps.integer )
 		trap_Cvar_Set("snaps", va("%i", atoi( Info_ValueForKey( info, "sv_fps" ) )));
 }
@@ -1331,6 +1336,7 @@ static void CG_MapRestart( void ) {
 		cgs.respawnTimerTime[i] = -1;
 		cgs.respawnTimerType[i] = -1;
 		cgs.respawnTimerUsed[i] = qfalse;
+		cgs.respawnTimerNextItem[i] = -1;
 	}
 	cgs.respawnTimerNumber = 0;
 	

@@ -1672,6 +1672,8 @@ void ClientBegin( int clientNum ) {
 	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
 		G_SendLivingCount();
 	
+	G_SendAllItems();
+	
 }
 
 /*

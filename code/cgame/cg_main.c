@@ -2350,6 +2350,7 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 		cgs.respawnTimerTime[i] = -1;
 		cgs.respawnTimerType[i] = -1;
 		cgs.respawnTimerUsed[i] = qfalse;
+		cgs.respawnTimerNextItem[i] = -1;
 	}
 	cgs.respawnTimerNumber = 0;
 }

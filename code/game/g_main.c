@@ -209,6 +209,8 @@ vmCvar_t        g_delagprojectiles;
 
 vmCvar_t     g_itemDrop;
 
+vmCvar_t     g_writeStats;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -422,6 +424,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_delagprojectiles, "g_delagprojectiles", "100", CVAR_SYSTEMINFO, 0, qfalse },
 	
 	{ &g_itemDrop, "g_itemDrop", "1", CVAR_SYSTEMINFO, 0, qfalse },
+	
+	{ &g_itemDrop, "g_writeStats", "0", CVAR_ARCHIVE, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing
@@ -683,6 +687,24 @@ void G_UpdateCvars( void ) {
 	}
 }
 
+void G_SendAllItems( void ){
+	gentity_t *ent;
+	int i;
+	
+	G_Printf("check\n");
+	
+	for( i = 0; i < MAX_GENTITIES; i++ ){
+		ent = &g_entities[i];
+		if( !ent->inuse )
+			continue;
+		if( !(ent->s.eType == ET_ITEM) )
+			continue;
+		if( (ent->flags == FL_DROPPED_ITEM) )
+			continue;
+		G_Printf("%s\n", ent->item->shortPickup_name);
+		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink, G_FindNearestItemSpawn( ent ) );
+	}
+}
 /*
 ============
 G_InitGame
@@ -872,6 +894,10 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 
             trap_Cvar_Set("voteflags",va("%i",voteflags));
         }
+        
+        G_SendAllItems();
+        
+        
 }
 
 
@@ -1785,6 +1811,322 @@ qboolean ScoreIsTied( void ) {
 	return a == b;
 }
 
+char gameString[128];
+
+void G_SetGameString( void ){
+	qtime_t	now;
+	//char		*p;
+	char		mapname[MAX_MAPNAME];
+	//char		*buf;
+	char		playerName[128];
+	int 		i, count;
+	char *gameNames[] = {
+	  "FFA",
+	  "1v1",
+	  "SP",
+	  "TDM",
+	  "CTF",
+	  "OCTF",
+	  "O",
+	  "H",
+	  "CA",
+	  "CTFE",
+	  "LMS",
+	  "DD",
+	  "D"
+	};
+
+	trap_RealTime( &now );
+	
+	trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
+	
+	if( g_gametype.integer == GT_TOURNAMENT ){
+		// find the two active players
+		Com_sprintf(playerName, sizeof(playerName),"-%sVS%s", level.clients[level.sortedClients[0]].pers.netname, level.clients[level.sortedClients[1]].pers.netname);
+	}
+	else{
+		Com_sprintf(playerName, sizeof(playerName),"");
+	}
+	count = 0;
+	for( i = 0; i < 128 ; i++ ){
+		if( playerName[i] == '/' || playerName[i] == '*' || playerName[i] == '|' ){
+			continue;
+		}
+		else if( playerName[i] == '^' && ( ( playerName[i+1] >= '0' && playerName[i+1] <= '9' ) || ( playerName[i+1] >= 'a' && playerName[i+1] <= 'z' ) || ( playerName[i+1] >= 'A' && playerName[i+1] <= 'Z' ) ) ){
+			i++;
+			continue;
+		}
+		else {
+			playerName[count] = playerName[i];
+			count++;
+		}
+	}
+			
+	Com_sprintf(gameString, sizeof(gameString), "%04d-%02d-%02d/%04d%02d%02d%02d%02d%02d-%s%s-%s", 
+		    1900 + now.tm_year,
+			1 + now.tm_mon,
+			now.tm_mday,
+		    1900 + now.tm_year,
+			1 + now.tm_mon,
+			now.tm_mday,
+			now.tm_hour,
+			now.tm_min,
+			now.tm_sec,
+			gameNames[g_gametype.integer],
+			playerName,
+			mapname);
+			
+	//G_Printf("gamestring: %s\n",gameString );
+}
+
+void G_WriteStats( void ){
+	int		i, numStats, len = 128;
+	fileHandle_t f;
+	char		*name, *string;
+	char		*team;
+	int 		shots, hits, acc, dmg, kills;
+	char		mapname[MAX_MAPNAME];
+	gclient_t	*cl;
+	char	userinfo[MAX_INFO_STRING];
+	char *gameNames[] = {
+	  "FFA",
+	  "1v1",
+	  "SP",
+	  "TDM",
+	  "CTF",
+	  "OCTF",
+	  "O",
+	  "H",
+	  "CA",
+	  "CTFE",
+	  "LMS",
+	  "DD",
+	  "D"
+	};
+	
+	G_SetGameString();
+
+	numStats = level.numConnectedClients;
+
+#define NUM_DATA_STATS 47
+#define FIRST_DATA_STATS 1
+
+	trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
+
+	trap_FS_FOpenFile(va("serverstats/%s.txt", gameString), &f, FS_WRITE);
+	
+	string = va("Gametype:   %4s    %s\n", gameNames[g_gametype.integer], mapname );
+	len = strlen( string );
+	trap_FS_Write(string, len, f);
+	
+	if( g_gametype.integer >= GT_TEAM ){
+		string = va("Red:   %2i     Blue:   %2i \n \n \n \n", level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE]);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+	}
+	else{
+	 	string = va("\n \n \n \n"/*, level.clients[level.sortedClients[0]].ps.persistant[PERS_SCORE], level.clients[level.sortedClients[1]].ps.persistant[PERS_SCORE]*/);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+	}
+	
+	string = va("---------------------------------------\n\n\n" );
+	len = strlen( string );
+	trap_FS_Write(string, len, f);
+
+	for ( i = 0 ; i < numStats ; i++ ) {
+		  
+		  cl = &level.clients[level.sortedClients[i]];
+		  
+		  name = cl->pers.netname;
+		  
+		  if( cl->sess.sessionTeam == TEAM_FREE )
+			  team = "Free";
+		  else if( cl->sess.sessionTeam == TEAM_BLUE )
+			  team = "Blue";
+		  else if( cl->sess.sessionTeam == TEAM_RED )
+			  team = "Red";
+		  else if( cl->sess.sessionTeam == TEAM_SPECTATOR )
+			  team = "Spectator";
+		  
+		  
+		  string = va("name:%20s     Team:%10s     Time:%3i\n\n", name, team, (level.time - cl->pers.enterTime)/60000 );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  if( cl->accuracy_shots ) {
+			acc = cl->accuracy_hits * 100 / cl->accuracy_shots;
+		  }
+		  else {
+			acc = 0;
+		  }
+		  
+		  string = va("Score %4i     Accuracy %3i \n", cl->ps.persistant[PERS_SCORE], acc );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  //if( cgs.gametype == GT_ELIMINATION ) {
+			  string = va("Damage done %4i     Damage taken %4i \n", cl->dmgdone, cl->dmgtaken );
+			  len = strlen( string );
+			  trap_FS_Write(string, len, f);
+		  //}
+		  string = va("Impressive   %3i   Excellent   %3i   Airgrenade   %3i   Airrocket   %3i\n", cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
+			      cl->ps.persistant[PERS_EXCELLENT_COUNT],
+			      cl->rewards[REWARD_AIRGRENADE], cl->rewards[REWARD_AIRROCKET]);
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  if( g_gametype.integer == GT_CTF ) {
+		  string = va("Assist       %3i   Defend      %3i   Capture      %3i\n", cl->ps.persistant[PERS_ASSIST_COUNT],
+			      cl->ps.persistant[PERS_DEFEND_COUNT],
+			      cl->ps.persistant[PERS_CAPTURES]);
+			      len = strlen( string );
+			      trap_FS_Write(string, len, f);
+		  }
+		  
+		  len = strlen( "\n" );
+		  trap_FS_Write("\n", len, f);
+		  
+		  string = va("        Shots       Hits      Acc       Dmg    Kills\n");
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = 0;
+		  hits = 0;
+		  dmg = cl->accuracy[WP_GAUNTLET][2];
+		  kills = cl->accuracy[WP_GAUNTLET][3];
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("GAUNT                                  %4i      %3i\n", dmg, kills );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = cl->accuracy[WP_MACHINEGUN][0];
+		  hits = cl->accuracy[WP_MACHINEGUN][1];
+		  dmg = cl->accuracy[WP_MACHINEGUN][2];
+		  kills = cl->accuracy[WP_MACHINEGUN][3];
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("MG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  
+		  shots = cl->accuracy[WP_SHOTGUN][0];
+		  hits = cl->accuracy[WP_SHOTGUN][1];
+		  dmg = cl->accuracy[WP_SHOTGUN][2];
+		  kills = cl->accuracy[WP_SHOTGUN][3];
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("SG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  
+		  shots = cl->accuracy[WP_GRENADE_LAUNCHER][0];
+		  hits = cl->accuracy[WP_GRENADE_LAUNCHER][1];
+		  dmg = cl->accuracy[WP_GRENADE_LAUNCHER][2];
+		  kills = cl->accuracy[WP_GRENADE_LAUNCHER][3];
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("GL      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  
+		  shots = cl->accuracy[WP_ROCKET_LAUNCHER][0];
+		  hits = cl->accuracy[WP_ROCKET_LAUNCHER][1];
+		  dmg = cl->accuracy[WP_ROCKET_LAUNCHER][2];
+		  kills = cl->accuracy[WP_ROCKET_LAUNCHER][3];
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("RL      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = cl->accuracy[WP_LIGHTNING][0];
+		  hits = cl->accuracy[WP_LIGHTNING][1];
+		  dmg = cl->accuracy[WP_LIGHTNING][2];
+		  kills = cl->accuracy[WP_LIGHTNING][3];
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("LG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = cl->accuracy[WP_RAILGUN][0];
+		  hits = cl->accuracy[WP_RAILGUN][1];
+		  dmg = cl->accuracy[WP_RAILGUN][2];
+		  kills = cl->accuracy[WP_RAILGUN][3];
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("RG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = cl->accuracy[WP_PLASMAGUN][0];
+		  hits = cl->accuracy[WP_PLASMAGUN][1];
+		  dmg = cl->accuracy[WP_PLASMAGUN][2];
+		  kills = cl->accuracy[WP_PLASMAGUN][3];
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("PG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = cl->accuracy[WP_BFG][0];
+		  hits = cl->accuracy[WP_BFG][1];
+		  dmg = cl->accuracy[WP_BFG][2];
+		  kills = cl->accuracy[WP_BFG][3];
+		  if( shots > 0 )
+			  acc = 100.0f*((float)hits)/((float)shots);
+		  else
+			  acc = 0;
+		  string = va("BFG     %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  
+		  shots =cl->stats[STATS_ARMOR];
+		  hits = cl->stats[STATS_YA];
+		  acc = cl->stats[STATS_RA];
+		  string = va("Armor   %5i         %2iYA     %2iRA\n", shots, hits, acc );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  shots = cl->stats[STATS_HEALTH];
+		  hits = cl->stats[STATS_MH];
+		  string = va("Health  %5i         %2iMH\n", shots, hits );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+		  
+		  
+		  string = va("---------------------------------------\n\n\n" );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
+	}
+	trap_FS_FCloseFile(f);
+	return;
+}
+
 /*
 =================
 CheckExitRules
@@ -1802,6 +2144,8 @@ void CheckExitRules( void ) {
 	if ( level.intermissiontime ) {
 		if( ( level.time > level.intermissiontime + 2000 ) && ( !level.endgameSend ) ){
 			G_SendEndGame();
+			if( g_writeStats.integer )
+				G_WriteStats();
 		}
 		CheckIntermissionExit ();
 		return;

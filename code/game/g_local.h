@@ -1187,6 +1187,8 @@ extern vmCvar_t     g_delagprojectiles;
 
 extern vmCvar_t	    g_itemDrop;
 
+extern vmCvar_t	    g_writeStats;
+
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
 int		trap_Milliseconds( void );

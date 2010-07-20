@@ -151,13 +151,29 @@ void G_SendLivingCount() {
 	trap_SendServerCommand( -1, va("livingCount%s", entry ));
 }
 
+qboolean G_ItemCount( int type, int quantity ){
+	gentity_t *ent;
+	int i;
+	int count = 0;
+	
+	for( i = 0; i < MAX_GENTITIES; i++ ){
+		ent = &g_entities[i];
+		if( !ent->inuse )
+			continue;
+		if( ent->s.eType != ET_ITEM )
+			continue;
+		if( ( ent->item->giType == type ) && ( ent->item->quantity == quantity ) )
+			count++;
+	}
+	return( count == 1 );
+}
 /*
 ==================
 G_SendRespawnTimer
 
 ==================
 */
-void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime ) {
+void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum ) {
 	char		entry[32];
 	gentity_t	*ent;
 	int		i;
@@ -165,9 +181,25 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime 
 	if ( level.warmupTime ) {
 		return;
 	}
+	
+	if( ( type != IT_ARMOR ) && ( type != IT_HEALTH ) && ( type != IT_POWERUP ) )
+		return;
+	
+	if( type == IT_ARMOR && quantity < 50 )
+		return;
+	
+	if( type == IT_HEALTH && quantity != 100 )
+		return;
+	
+	G_Printf("type %i, quantity %i\n", type, quantity );
+	
+	if( G_ItemCount(type, quantity) )
+		nextItemEntityNum = -1;
+	
+
 
 	Com_sprintf (entry, sizeof(entry),
-			" %i %i %i %i ", entityNum, type, quantity, respawnTime);
+			" %i %i %i %i %i ", entityNum, type, quantity, respawnTime, nextItemEntityNum );
 				
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		ent = &g_entities[i];

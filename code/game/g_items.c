@@ -233,9 +233,10 @@ int Pickup_Ammo (gentity_t *ent, gentity_t *other)
 int Pickup_Weapon (gentity_t *ent, gentity_t *other) {
 	int		quantity;
 	
-	if( ent->item->lastDrop )
+	/*if( ent->item->lastDrop )
 		quantity = ent->item->quantity;
-	else if ( ent->count < 0 ) {
+	else */
+	if ( ent->count < 0 ) {
 		quantity = 0; // None for you, sir!
 	} else {
 		if ( ent->count ) {
@@ -594,8 +595,8 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace) {
 	}
 	trap_LinkEntity( ent );
 	
-	if( g_allowRespawnTimer.integer )
-		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, level.time + respawn * 1000 );
+	if( g_allowRespawnTimer.integer && !(ent->flags & FL_DROPPED_ITEM) )
+		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, level.time + respawn * 1000, G_FindNearestItemSpawn( ent ) );
 }
 
 
@@ -848,8 +849,8 @@ void FinishSpawningItem( gentity_t *ent ) {
 
 	trap_LinkEntity (ent);
 	
-	if( g_allowRespawnTimer.integer )
-		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink );
+	if( g_allowRespawnTimer.integer && !(ent->flags & FL_DROPPED_ITEM) )
+		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink , G_FindNearestItemSpawn( ent ) );
 }
 
 
@@ -1257,6 +1258,9 @@ int G_FindNearestItemSpawn( gentity_t *ent ){
 	for( count = 0; count < MAX_GENTITIES; count++ ){
 	  
 		if( !g_entities[count].inuse || g_entities[count].s.eType != ET_ITEM || g_entities[count].flags == FL_DROPPED_ITEM )
+			continue;
+		
+		if( ent->s.number == g_entities[count].s.number )
 			continue;
 		
 		if( ( g_entities[count].item->giType == IT_ARMOR && g_entities[count].item->quantity >= 50 ) || ( g_entities[count].item->giType == IT_HEALTH && g_entities[count].item->quantity >= 100 )

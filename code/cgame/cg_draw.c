@@ -2208,11 +2208,15 @@ void CG_DrawRespawnTimers( void ){
 		      time = (cgs.respawnTimerTime[i] - cg.time);
 		      if( cg_weaponBarStyle.integer == 0 || cg_weaponBarStyle.integer == 3 ){
 			      CG_DrawPic( RESPAWNTIMER_SECOND_XPOS, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + y , RESPAWNTIMER_ICONSIZE, RESPAWNTIMER_ICONSIZE, cg_items[cg_entities[cgs.respawnTimerEntitynum[i]].currentState.modelindex].icon  );
+			      if( cgs.respawnTimerNextItem[i] != -1 )
+				      CG_DrawPic( RESPAWNTIMER_SECOND_XPOS + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + y + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, cg_items[cg_entities[cgs.respawnTimerNextItem[i]].currentState.modelindex].icon  );
 			      if( time > 0 )
 				      CG_DrawSmallString( RESPAWNTIMER_SECOND_XPOS + RESPAWNTIMER_STEP, y + RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + (RESPAWNTIMER_STEP - RESPAWNTIMER_ICONSIZE)/2 + SMALLCHAR_HEIGHT/2 , va("%i", time/1000 + 1), 1.0f );
 		      }
 		      else{
 			      CG_DrawPic( RESPAWNTIMER_XPOS, y + RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP , RESPAWNTIMER_ICONSIZE, RESPAWNTIMER_ICONSIZE, cg_items[cg_entities[cgs.respawnTimerEntitynum[i]].currentState.modelindex].icon  );
+			      if( cgs.respawnTimerNextItem[i] != -1 )
+				      CG_DrawPic( RESPAWNTIMER_XPOS + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + y + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, cg_items[cg_entities[cgs.respawnTimerNextItem[i]].currentState.modelindex].icon  );
 			      if( time > 0 )
 				      CG_DrawSmallString( RESPAWNTIMER_XPOS + RESPAWNTIMER_STEP, y + RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + (RESPAWNTIMER_STEP - RESPAWNTIMER_ICONSIZE)/2 + SMALLCHAR_HEIGHT/2 , va("%i", time/1000 + 1), 1.0f );
 		      }      
@@ -3621,7 +3625,8 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 		if( cg_drawRespawnTimer.integer && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR )
 			CG_DrawRespawnTimers();
 		
-		CG_DrawReady();
+		if( cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR )
+			CG_DrawReady();
 	}
 
 	cg.accBoardShowing = CG_DrawAccboard();

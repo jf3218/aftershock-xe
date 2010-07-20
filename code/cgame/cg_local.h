@@ -1173,6 +1173,7 @@ typedef struct {
 	int respawnTimerQuantity[ MAX_RESPAWN_TIMERS ];
 	int respawnTimerTime[ MAX_RESPAWN_TIMERS ];
 	int respawnTimerNumber;
+	int respawnTimerNextItem[ MAX_RESPAWN_TIMERS ];
 
 	
 	int cursorX;
