@@ -2144,7 +2144,7 @@ void CheckExitRules( void ) {
 	if ( level.intermissiontime ) {
 		if( ( level.time > level.intermissiontime + 2000 ) && ( !level.endgameSend ) ){
 			G_SendEndGame();
-			if( g_writeStats.integer )
+			//if( g_writeStats.integer )
 				G_WriteStats();
 		}
 		CheckIntermissionExit ();
