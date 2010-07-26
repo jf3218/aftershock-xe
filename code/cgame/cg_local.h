@@ -1056,6 +1056,9 @@ typedef struct {
 	
 	qhandle_t	particleSpark;
 	qhandle_t	particlePlasma;
+	
+	qhandle_t	blueMarker;
+	qhandle_t	redMarker;
 
 } cgMedia_t;
 
@@ -1174,6 +1177,7 @@ typedef struct {
 	int respawnTimerTime[ MAX_RESPAWN_TIMERS ];
 	int respawnTimerNumber;
 	int respawnTimerNextItem[ MAX_RESPAWN_TIMERS ];
+	int respawnTimerTeam[ MAX_RESPAWN_TIMERS ];
 
 	
 	int cursorX;

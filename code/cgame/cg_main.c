@@ -1425,6 +1425,9 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.particlePlasma = trap_R_RegisterShader("plasmaSpark");
 	
 	CG_ClearParticles ();
+	
+	cgs.media.blueMarker = trap_R_RegisterShader("icons/blue.tga");
+	cgs.media.redMarker = trap_R_RegisterShader("icons/red.tga");
 /*
 	for (i=1; i<MAX_PARTICLES_AREAS; i++)
 	{

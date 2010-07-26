@@ -210,6 +210,7 @@ vmCvar_t        g_delagprojectiles;
 vmCvar_t     g_itemDrop;
 
 vmCvar_t     g_writeStats;
+vmCvar_t     g_statsPath;
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -425,7 +426,9 @@ static cvarTable_t		gameCvarTable[] = {
 	
 	{ &g_itemDrop, "g_itemDrop", "1", CVAR_SYSTEMINFO, 0, qfalse },
 	
-	{ &g_itemDrop, "g_writeStats", "0", CVAR_ARCHIVE, 0, qfalse },
+	{ &g_writeStats, "g_writeStats", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
+	{ &g_statsPath, "g_statsPath", "serverstats", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
+
 };
 
 // bk001129 - made static to avoid aliasing
@@ -689,21 +692,41 @@ void G_UpdateCvars( void ) {
 
 void G_SendAllItems( void ){
 	gentity_t *ent;
-	int i;
+	int i,j;
 	
-	G_Printf("check\n");
-	
-	for( i = 0; i < MAX_GENTITIES; i++ ){
-		ent = &g_entities[i];
-		if( !ent->inuse )
-			continue;
-		if( !(ent->s.eType == ET_ITEM) )
-			continue;
-		if( (ent->flags == FL_DROPPED_ITEM) )
-			continue;
-		G_Printf("%s\n", ent->item->shortPickup_name);
-		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink, G_FindNearestItemSpawn( ent ) );
+	//G_Printf("check\n");
+	if( g_gametype.integer == GT_CTF ){
+		for( j = 0; j < 3; j++ ){
+			for( i = 0; i < MAX_GENTITIES; i++ ){
+				ent = &g_entities[i];
+				if( !ent->inuse )
+					continue;
+				if( !(ent->s.eType == ET_ITEM) )
+					continue;
+				if( (ent->flags == FL_DROPPED_ITEM) )
+					continue;
+				//G_Printf("%s\n", ent->item->shortPickup_name);
+				if( ( G_ItemTeam( ent->s.number ) == TEAM_RED && j == 0 ) || ( G_ItemTeam( ent->s.number ) == TEAM_BLUE && j == 1 ) || ( G_ItemTeam( ent->s.number ) == -1 && j == 2 ) )
+					G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink, G_FindNearestItemSpawn( ent ) );
+			}
+		}
 	}
+	else{
+		for( i = 0; i < MAX_GENTITIES; i++ ){
+			ent = &g_entities[i];
+			if( !ent->inuse )
+				continue;
+			if( !(ent->s.eType == ET_ITEM) )
+				continue;
+			if( (ent->flags == FL_DROPPED_ITEM) )
+				continue;
+			//G_Printf("%s\n", ent->item->shortPickup_name);
+			
+			G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink, G_FindNearestItemSpawn( ent ) );
+		}
+	}
+			
+		
 }
 /*
 ============
@@ -1913,7 +1936,7 @@ void G_WriteStats( void ){
 
 	trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
 
-	trap_FS_FOpenFile(va("serverstats/%s.txt", gameString), &f, FS_WRITE);
+	trap_FS_FOpenFile(va("%s/%s.txt", g_statsPath.string,gameString), &f, FS_WRITE);
 	
 	string = va("Gametype:   %4s    %s\n", gameNames[g_gametype.integer], mapname );
 	len = strlen( string );
@@ -2144,7 +2167,7 @@ void CheckExitRules( void ) {
 	if ( level.intermissiontime ) {
 		if( ( level.time > level.intermissiontime + 2000 ) && ( !level.endgameSend ) ){
 			G_SendEndGame();
-			//if( g_writeStats.integer )
+			if( g_writeStats.integer )
 				G_WriteStats();
 		}
 		CheckIntermissionExit ();

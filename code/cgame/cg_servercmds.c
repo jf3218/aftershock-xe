@@ -611,6 +611,7 @@ static void CG_ParseRespawnTimer( void ) {
 	int		nextItem;
 	qboolean	found;
 	int 		i;
+	int		team;
 	
 	found = qfalse;
 	
@@ -619,6 +620,7 @@ static void CG_ParseRespawnTimer( void ) {
 	quantity = atoi( CG_Argv(3) );
 	respawnTime = atoi( CG_Argv(4) );
 	nextItem = atoi( CG_Argv(5) );
+	team = atoi( CG_Argv(6) );
 	
 
 	
@@ -637,6 +639,7 @@ static void CG_ParseRespawnTimer( void ) {
 			cgs.respawnTimerEntitynum[ i ] = entityNum;
 			cgs.respawnTimerNumber = i + 1;
 			cgs.respawnTimerNextItem[ i ] = nextItem;
+			cgs.respawnTimerTeam[ i ] = team;
 		}
 	}
 

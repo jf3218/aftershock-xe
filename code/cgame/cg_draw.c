@@ -2212,6 +2212,14 @@ void CG_DrawRespawnTimers( void ){
 				      CG_DrawPic( RESPAWNTIMER_SECOND_XPOS + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + y + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, cg_items[cg_entities[cgs.respawnTimerNextItem[i]].currentState.modelindex].icon  );
 			      if( time > 0 )
 				      CG_DrawSmallString( RESPAWNTIMER_SECOND_XPOS + RESPAWNTIMER_STEP, y + RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + (RESPAWNTIMER_STEP - RESPAWNTIMER_ICONSIZE)/2 + SMALLCHAR_HEIGHT/2 , va("%i", time/1000 + 1), 1.0f );
+			      if( cgs.gametype = GT_CTF ){
+				      if( cgs.respawnTimerTeam[ i ] == TEAM_RED ){
+					      CG_DrawPic( RESPAWNTIMER_SECOND_XPOS, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + y + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, cgs.media.redMarker  );
+				      }
+				      else if( cgs.respawnTimerTeam[ i ] == TEAM_BLUE ){
+					      CG_DrawPic( RESPAWNTIMER_SECOND_XPOS, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + y + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, cgs.media.blueMarker  );
+				      }
+			      }
 		      }
 		      else{
 			      CG_DrawPic( RESPAWNTIMER_XPOS, y + RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP , RESPAWNTIMER_ICONSIZE, RESPAWNTIMER_ICONSIZE, cg_items[cg_entities[cgs.respawnTimerEntitynum[i]].currentState.modelindex].icon  );
@@ -2219,6 +2227,14 @@ void CG_DrawRespawnTimers( void ){
 				      CG_DrawPic( RESPAWNTIMER_XPOS + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + y + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, cg_items[cg_entities[cgs.respawnTimerNextItem[i]].currentState.modelindex].icon  );
 			      if( time > 0 )
 				      CG_DrawSmallString( RESPAWNTIMER_XPOS + RESPAWNTIMER_STEP, y + RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + (RESPAWNTIMER_STEP - RESPAWNTIMER_ICONSIZE)/2 + SMALLCHAR_HEIGHT/2 , va("%i", time/1000 + 1), 1.0f );
+			      if( cgs.gametype = GT_CTF ){
+				      if( cgs.respawnTimerTeam[ i ] == TEAM_RED ){
+					      CG_DrawPic( RESPAWNTIMER_XPOS, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + y + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, cgs.media.redMarker  );
+				      }
+				      else if( cgs.respawnTimerTeam[ i ] == TEAM_BLUE ){
+					      CG_DrawPic( RESPAWNTIMER_XPOS, RESPAWNTIMER_YPOS + i * RESPAWNTIMER_STEP + y + RESPAWNTIMER_ICONSIZE - RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, RESPAWNTIMER_ICONSIZE/4, cgs.media.blueMarker  );
+				      }
+			      }
 		      }      
 	      //}
 	}

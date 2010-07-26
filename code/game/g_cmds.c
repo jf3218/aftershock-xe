@@ -167,6 +167,64 @@ qboolean G_ItemCount( int type, int quantity ){
 	}
 	return( count == 1 );
 }
+
+int G_ItemTeam( int entityNum ){
+	gentity_t *ent;
+	gentity_t *blue;
+	gentity_t *red;
+	int i;
+	float distRed, distBlue;
+	
+	//if( g_gametype.integer != GT_CTF )
+	//	return -1;
+	
+	ent = &g_entities[ entityNum ];
+	
+	for( i = 0; i < MAX_GENTITIES; i++ ){
+		if( !g_entities[ i ].inuse )
+			continue;
+		if( g_entities[i].s.eType != ET_ITEM )
+			continue;
+		if( g_entities[i].flags == FL_DROPPED_ITEM )
+			continue;
+		if( g_entities[i].item->giType != IT_TEAM )
+			continue;
+		if( g_entities[i].item->giTag == PW_REDFLAG /*&& !red*/ ){
+			G_Printf("Found RED %i\n", i);
+			red = &g_entities[ i ];
+		}
+		if( g_entities[i].item->giTag == PW_BLUEFLAG /*&& !blue*/ ){
+			G_Printf("Found BLUE %i\n", i);
+			blue = &g_entities[ i ];
+		}
+	}
+	
+	if(!red || !blue )
+		return -1;
+	
+	distRed = /*sqrt*/( ent->r.currentOrigin[0] - red->r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - red->r.currentOrigin[0] )
+		+ ( ent->r.currentOrigin[1] - red->r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - red->r.currentOrigin[1] )
+		+ ( ent->r.currentOrigin[2] - red->r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - red->r.currentOrigin[2] );
+		
+	distBlue = /*sqrt*/( ent->r.currentOrigin[0] - blue->r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - blue->r.currentOrigin[0] )
+		 + ( ent->r.currentOrigin[1] - blue->r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - blue->r.currentOrigin[1] )
+		 + ( ent->r.currentOrigin[2] - blue->r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - blue->r.currentOrigin[2] );
+		 
+	G_Printf("RED: %f,   BLUE: %f    Diff: %f\n", distRed, distBlue, distBlue - distRed );
+		 
+	if( ( distBlue - distRed ) > 20.0f ){
+		G_Printf("RED\n");
+		return TEAM_RED;
+	}
+	else if( ( distBlue - distRed ) < -20.0f ){
+		G_Printf("BLUE\n");
+		return TEAM_BLUE;
+	}
+	else
+		return -1;
+	
+}
+	
 /*
 ==================
 G_SendRespawnTimer
@@ -177,6 +235,7 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
 	char		entry[32];
 	gentity_t	*ent;
 	int		i;
+	int team;
 	
 	if ( level.warmupTime ) {
 		return;
@@ -196,10 +255,11 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
 	if( G_ItemCount(type, quantity) )
 		nextItemEntityNum = -1;
 	
+	team = G_ItemTeam( entityNum );
 
 
 	Com_sprintf (entry, sizeof(entry),
-			" %i %i %i %i %i ", entityNum, type, quantity, respawnTime, nextItemEntityNum );
+			" %i %i %i %i %i %i ", entityNum, type, quantity, respawnTime, nextItemEntityNum , team);
 				
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		ent = &g_entities[i];
