@@ -577,36 +577,46 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
                             {
                                 case MOD_GAUNTLET:
 				    attacker->client->accuracy[WP_GAUNTLET][3]++;
-                                    break;
+				    self->client->accuracy[WP_GAUNTLET][4]++;
+				    break;
                                 case MOD_MACHINEGUN:
 				    attacker->client->accuracy[WP_MACHINEGUN][3]++;
+				    self->client->accuracy[WP_MACHINEGUN][4]++;
                                     break;
                                 case MOD_SHOTGUN:
 				    attacker->client->accuracy[WP_SHOTGUN][3]++;
+				    self->client->accuracy[WP_SHOTGUN][4]++;
                                     break;
                                 case MOD_GRENADE:
                                 case MOD_GRENADE_SPLASH:
 				    attacker->client->accuracy[WP_GRENADE_LAUNCHER][3]++;
+				    self->client->accuracy[WP_GRENADE_LAUNCHER][4]++;
                                     break;
                                 case MOD_ROCKET:
                                 case MOD_ROCKET_SPLASH:
 				    attacker->client->accuracy[WP_ROCKET_LAUNCHER][3]++;
+				    self->client->accuracy[WP_ROCKET_LAUNCHER][4]++;
                                     break;
                                 case MOD_LIGHTNING:
 				    attacker->client->accuracy[WP_LIGHTNING][3]++;
+				    self->client->accuracy[WP_LIGHTNING][4]++;
                                     break;
                                 case MOD_PLASMA:
                                 case MOD_PLASMA_SPLASH:
 				    attacker->client->accuracy[WP_PLASMAGUN][3]++;
+				    self->client->accuracy[WP_PLASMAGUN][4]++;
                                     break;
                                 case MOD_RAILGUN:
 				    attacker->client->accuracy[WP_RAILGUN][3]++;
+				    self->client->accuracy[WP_RAILGUN][4]++;
                                     break;
                                 case MOD_BFG:
                                 case MOD_BFG_SPLASH:
 				    attacker->client->accuracy[WP_BFG][3]++;
+				    self->client->accuracy[WP_BFG][4]++;
                                     break;
                             };
+			    attacker->client->kills++;
 			}
 
                         //If neither attacker or taget is bots and not the same
@@ -766,7 +776,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	Team_FragBonuses(self, inflictor, attacker);
 
 	// if I committed suicide, the flag does not fall, it returns.
-	if ( meansOfDeath == MOD_SUICIDE && !g_itemDrop.integer ) {
+	if ( meansOfDeath == MOD_SUICIDE && !( g_itemDrop.integer & 1 ) ) {
 		if ( self->client->ps.powerups[PW_NEUTRALFLAG] ) {		// only happens in One Flag CTF
 			Team_ReturnFlag( TEAM_FREE );
 			self->client->ps.powerups[PW_NEUTRALFLAG] = 0;

@@ -424,7 +424,7 @@ struct gclient_s {
 
 	int 			rewards[MAX_REWARDS];
 
-	int			accuracy[WP_NUM_WEAPONS][4];
+	int			accuracy[WP_NUM_WEAPONS][5];
 
 	int			dmgdone;
 	int			dmgtaken;
@@ -447,6 +447,8 @@ struct gclient_s {
 	int			preservedScore[MAX_PERSISTANT];
 	
 	qboolean 		died;
+	
+	int			kills;
 	
 };
 
@@ -668,6 +670,8 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace);
 void ClearRegisteredItems( void );
 void RegisterItem( gitem_t *item );
 void SaveRegisteredItems( void );
+
+int G_ItemTeam( int entityNum );
 
 //
 // g_utils.c
@@ -1008,6 +1012,7 @@ void BotTestAAS(vec3_t origin);
 
 extern	level_locals_t	level;
 extern	gentity_t		g_entities[MAX_GENTITIES];
+
 
 #define	FOFS(x) ((size_t)&(((gentity_t *)0)->x))
 

@@ -1907,7 +1907,7 @@ void G_WriteStats( void ){
 	fileHandle_t f;
 	char		*name, *string;
 	char		*team;
-	int 		shots, hits, acc, dmg, kills;
+	int 		shots, hits, acc, dmg, kills, deathCount;
 	char		mapname[MAX_MAPNAME];
 	gclient_t	*cl;
 	char	userinfo[MAX_INFO_STRING];
@@ -1931,7 +1931,7 @@ void G_WriteStats( void ){
 
 	numStats = level.numConnectedClients;
 
-#define NUM_DATA_STATS 47
+#define NUM_DATA_STATS 56
 #define FIRST_DATA_STATS 1
 
 	trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
@@ -1984,7 +1984,7 @@ void G_WriteStats( void ){
 			acc = 0;
 		  }
 		  
-		  string = va("Score %4i     Accuracy %3i \n", cl->ps.persistant[PERS_SCORE], acc );
+		  string = va("Score %4i     Accuracy %3i     Frags %3i    Death %3i\n", cl->ps.persistant[PERS_SCORE], acc, cl->kills, cl->ps.persistant[PERS_KILLED] );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -2010,7 +2010,7 @@ void G_WriteStats( void ){
 		  len = strlen( "\n" );
 		  trap_FS_Write("\n", len, f);
 		  
-		  string = va("        Shots       Hits      Acc       Dmg    Kills\n");
+		  string = va("        Shots       Hits      Acc       Dmg    Kills    Death\n");
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -2018,11 +2018,12 @@ void G_WriteStats( void ){
 		  hits = 0;
 		  dmg = cl->accuracy[WP_GAUNTLET][2];
 		  kills = cl->accuracy[WP_GAUNTLET][3];
+		  deathCount = cl->accuracy[WP_GAUNTLET][4];
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("GAUNT                                  %4i      %3i\n", dmg, kills );
+		  string = va("GAUNT                                  %4i      %3i      %3i\n", dmg, kills, deathCount );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -2030,11 +2031,12 @@ void G_WriteStats( void ){
 		  hits = cl->accuracy[WP_MACHINEGUN][1];
 		  dmg = cl->accuracy[WP_MACHINEGUN][2];
 		  kills = cl->accuracy[WP_MACHINEGUN][3];
+		  deathCount = cl->accuracy[WP_MACHINEGUN][4];
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("MG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  string = va("MG      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -2043,11 +2045,12 @@ void G_WriteStats( void ){
 		  hits = cl->accuracy[WP_SHOTGUN][1];
 		  dmg = cl->accuracy[WP_SHOTGUN][2];
 		  kills = cl->accuracy[WP_SHOTGUN][3];
+		  deathCount = cl->accuracy[WP_SHOTGUN][4];
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("SG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  string = va("SG      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -2056,11 +2059,12 @@ void G_WriteStats( void ){
 		  hits = cl->accuracy[WP_GRENADE_LAUNCHER][1];
 		  dmg = cl->accuracy[WP_GRENADE_LAUNCHER][2];
 		  kills = cl->accuracy[WP_GRENADE_LAUNCHER][3];
+		  deathCount = cl->accuracy[WP_GRENADE_LAUNCHER][4];
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("GL      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  string = va("GL      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -2069,11 +2073,12 @@ void G_WriteStats( void ){
 		  hits = cl->accuracy[WP_ROCKET_LAUNCHER][1];
 		  dmg = cl->accuracy[WP_ROCKET_LAUNCHER][2];
 		  kills = cl->accuracy[WP_ROCKET_LAUNCHER][3];
+		  deathCount = cl->accuracy[WP_ROCKET_LAUNCHER][4];
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("RL      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  string = va("RL      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -2081,11 +2086,12 @@ void G_WriteStats( void ){
 		  hits = cl->accuracy[WP_LIGHTNING][1];
 		  dmg = cl->accuracy[WP_LIGHTNING][2];
 		  kills = cl->accuracy[WP_LIGHTNING][3];
+		  deathCount = cl->accuracy[WP_LIGHTNING][4];
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("LG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  string = va("LG      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -2093,11 +2099,12 @@ void G_WriteStats( void ){
 		  hits = cl->accuracy[WP_RAILGUN][1];
 		  dmg = cl->accuracy[WP_RAILGUN][2];
 		  kills = cl->accuracy[WP_RAILGUN][3];
+		  deathCount = cl->accuracy[WP_RAILGUN][4];
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("RG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  string = va("RG      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -2105,11 +2112,12 @@ void G_WriteStats( void ){
 		  hits = cl->accuracy[WP_PLASMAGUN][1];
 		  dmg = cl->accuracy[WP_PLASMAGUN][2];
 		  kills = cl->accuracy[WP_PLASMAGUN][3];
+		  deathCount = cl->accuracy[WP_PLASMAGUN][4];
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("PG      %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  string = va("PG      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
@@ -2117,11 +2125,12 @@ void G_WriteStats( void ){
 		  hits = cl->accuracy[WP_BFG][1];
 		  dmg = cl->accuracy[WP_BFG][2];
 		  kills = cl->accuracy[WP_BFG][3];
+		  deathCount = cl->accuracy[WP_BFG][4];
 		  if( shots > 0 )
 			  acc = 100.0f*((float)hits)/((float)shots);
 		  else
 			  acc = 0;
-		  string = va("BFG     %5i      %5i      %3i      %4i      %3i\n", shots, hits, acc, dmg, kills );
+		  string = va("BFG     %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  

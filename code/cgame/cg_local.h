@@ -309,6 +309,8 @@ typedef struct {
 	int			dmgdone;
 	int			dmgtaken;
 	int			specOnly;
+	int			deathCount;
+	int			frags;
 } score_t;
 
 // each client has an associated clientInfo_t

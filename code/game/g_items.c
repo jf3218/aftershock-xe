@@ -1266,9 +1266,9 @@ int G_FindNearestItemSpawn( gentity_t *ent ){
 		if( ( g_entities[count].item->giType == IT_ARMOR && g_entities[count].item->quantity >= 50 ) || ( g_entities[count].item->giType == IT_HEALTH && g_entities[count].item->quantity >= 100 )
 		  || g_entities[count].item->giType == IT_WEAPON || g_entities[count].item->giType == IT_POWERUP || g_entities[count].item->giType == IT_PERSISTANT_POWERUP || g_entities[count].item->giType == IT_HOLDABLE 
 		  || g_entities[count].item->giType == IT_TEAM ){
-			dist = ( ent->r.currentOrigin[0] - g_entities[count].s.origin[0] ) * ( ent->r.currentOrigin[0] - g_entities[count].s.origin[0] )
-			     + ( ent->r.currentOrigin[1] - g_entities[count].s.origin[1] ) * ( ent->r.currentOrigin[1] - g_entities[count].s.origin[1] )
-			     + ( ent->r.currentOrigin[2] - g_entities[count].s.origin[2] ) * ( ent->r.currentOrigin[2] - g_entities[count].s.origin[2] );
+			dist = ( ent->r.currentOrigin[0] - g_entities[count].r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - g_entities[count].r.currentOrigin[0] )
+			     + ( ent->r.currentOrigin[1] - g_entities[count].r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - g_entities[count].r.currentOrigin[1] )
+			     + ( ent->r.currentOrigin[2] - g_entities[count].r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - g_entities[count].r.currentOrigin[2] );
 			if( dist < mindist || mindist == -1 ){
 				mindist = dist;
 				minnumber = g_entities[count].s.number;
@@ -1278,5 +1278,68 @@ int G_FindNearestItemSpawn( gentity_t *ent ){
 	return minnumber;
 }
 
+/*
+================
+G_ItemTeam
+Returns on wich side the item is
+(-1 when mid or game is not ctf)
+================
+*/
 
+int G_ItemTeam( int entityNum ){
+	gentity_t *ent;
+	gentity_t *blue;
+	gentity_t *red;
+	int i;
+	float distRed, distBlue;
+	
+	//if( g_gametype.integer != GT_CTF )
+	//	return -1;
+	
+	ent = &g_entities[ entityNum ];
+	
+	for( i = 0; i < MAX_GENTITIES; i++ ){
+		if( !g_entities[ i ].inuse )
+			continue;
+		if( g_entities[i].s.eType != ET_ITEM )
+			continue;
+		if( g_entities[i].flags == FL_DROPPED_ITEM )
+			continue;
+		if( g_entities[i].item->giType != IT_TEAM )
+			continue;
+		if( g_entities[i].item->giTag == PW_REDFLAG /*&& !red*/ ){
+			G_Printf("Found RED %i\n", i);
+			red = &g_entities[ i ];
+		}
+		if( g_entities[i].item->giTag == PW_BLUEFLAG /*&& !blue*/ ){
+			G_Printf("Found BLUE %i\n", i);
+			blue = &g_entities[ i ];
+		}
+	}
+	
+	if(!red || !blue )
+		return -1;
+	
+	distRed = /*sqrt*/( ent->r.currentOrigin[0] - red->r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - red->r.currentOrigin[0] )
+		+ ( ent->r.currentOrigin[1] - red->r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - red->r.currentOrigin[1] )
+		+ ( ent->r.currentOrigin[2] - red->r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - red->r.currentOrigin[2] );
+		
+	distBlue = /*sqrt*/( ent->r.currentOrigin[0] - blue->r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - blue->r.currentOrigin[0] )
+		 + ( ent->r.currentOrigin[1] - blue->r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - blue->r.currentOrigin[1] )
+		 + ( ent->r.currentOrigin[2] - blue->r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - blue->r.currentOrigin[2] );
+		 
+	G_Printf("RED: %f,   BLUE: %f    Diff: %f\n", distRed, distBlue, distBlue - distRed );
+		 
+	if( ( distBlue - distRed ) > 20.0f ){
+		G_Printf("RED\n");
+		return TEAM_RED;
+	}
+	else if( ( distBlue - distRed ) < -20.0f ){
+		G_Printf("BLUE\n");
+		return TEAM_BLUE;
+	}
+	else
+		return -1;
+	
+}
 

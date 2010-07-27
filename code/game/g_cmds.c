@@ -69,7 +69,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 
 		if(g_gametype.integer == GT_LMS) {
 			Com_sprintf (entry, sizeof(entry),
-				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
+				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
 				cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
 				scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy, 
 				cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
@@ -82,11 +82,13 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 				cl->pers.livesLeft + (cl->isEliminated?0:1),
 				cl->dmgdone,
 				cl->dmgtaken,
-				cl->sess.specOnly);
+				cl->sess.specOnly,
+				cl->ps.persistant[PERS_KILLED],
+				cl->kills);
 		}
 		else {
 			Com_sprintf (entry, sizeof(entry),
-				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
+				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
 				cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
 				scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy, 
 				cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
@@ -99,7 +101,9 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 				cl->isEliminated,
 				cl->dmgdone,
 				cl->dmgtaken,
-				cl->sess.specOnly);
+				cl->sess.specOnly,
+				cl->ps.persistant[PERS_KILLED],
+				cl->kills);
 		}
 		j = strlen(entry);
 		if (stringlength + j > 1024)
@@ -166,63 +170,6 @@ qboolean G_ItemCount( int type, int quantity ){
 			count++;
 	}
 	return( count == 1 );
-}
-
-int G_ItemTeam( int entityNum ){
-	gentity_t *ent;
-	gentity_t *blue;
-	gentity_t *red;
-	int i;
-	float distRed, distBlue;
-	
-	//if( g_gametype.integer != GT_CTF )
-	//	return -1;
-	
-	ent = &g_entities[ entityNum ];
-	
-	for( i = 0; i < MAX_GENTITIES; i++ ){
-		if( !g_entities[ i ].inuse )
-			continue;
-		if( g_entities[i].s.eType != ET_ITEM )
-			continue;
-		if( g_entities[i].flags == FL_DROPPED_ITEM )
-			continue;
-		if( g_entities[i].item->giType != IT_TEAM )
-			continue;
-		if( g_entities[i].item->giTag == PW_REDFLAG /*&& !red*/ ){
-			G_Printf("Found RED %i\n", i);
-			red = &g_entities[ i ];
-		}
-		if( g_entities[i].item->giTag == PW_BLUEFLAG /*&& !blue*/ ){
-			G_Printf("Found BLUE %i\n", i);
-			blue = &g_entities[ i ];
-		}
-	}
-	
-	if(!red || !blue )
-		return -1;
-	
-	distRed = /*sqrt*/( ent->r.currentOrigin[0] - red->r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - red->r.currentOrigin[0] )
-		+ ( ent->r.currentOrigin[1] - red->r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - red->r.currentOrigin[1] )
-		+ ( ent->r.currentOrigin[2] - red->r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - red->r.currentOrigin[2] );
-		
-	distBlue = /*sqrt*/( ent->r.currentOrigin[0] - blue->r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - blue->r.currentOrigin[0] )
-		 + ( ent->r.currentOrigin[1] - blue->r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - blue->r.currentOrigin[1] )
-		 + ( ent->r.currentOrigin[2] - blue->r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - blue->r.currentOrigin[2] );
-		 
-	G_Printf("RED: %f,   BLUE: %f    Diff: %f\n", distRed, distBlue, distBlue - distRed );
-		 
-	if( ( distBlue - distRed ) > 20.0f ){
-		G_Printf("RED\n");
-		return TEAM_RED;
-	}
-	else if( ( distBlue - distRed ) < -20.0f ){
-		G_Printf("BLUE\n");
-		return TEAM_BLUE;
-	}
-	else
-		return -1;
-	
 }
 	
 /*
@@ -338,15 +285,15 @@ void G_SendStats( gentity_t *ent ) {
 		cl = &level.clients[level.sortedClients[i]];
 			
 		Com_sprintf (entry, sizeof(entry),
-			" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i], cl->accuracy[WP_GAUNTLET][2], cl->accuracy[WP_GAUNTLET][3], 
-									  cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1], cl->accuracy[WP_MACHINEGUN][2], cl->accuracy[WP_MACHINEGUN][3], 
-									  cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1], cl->accuracy[WP_SHOTGUN][2], cl->accuracy[WP_SHOTGUN][3],
-									  cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1], cl->accuracy[WP_GRENADE_LAUNCHER][2], cl->accuracy[WP_GRENADE_LAUNCHER][3],
-									  cl->accuracy[WP_ROCKET_LAUNCHER][0], cl->accuracy[WP_ROCKET_LAUNCHER][1], cl->accuracy[WP_ROCKET_LAUNCHER][2], cl->accuracy[WP_ROCKET_LAUNCHER][3],
-									  cl->accuracy[WP_LIGHTNING][0], cl->accuracy[WP_LIGHTNING][1], cl->accuracy[WP_LIGHTNING][2], cl->accuracy[WP_LIGHTNING][3],
-									  cl->accuracy[WP_RAILGUN][0], cl->accuracy[WP_RAILGUN][1], cl->accuracy[WP_RAILGUN][2], cl->accuracy[WP_RAILGUN][3],
-									  cl->accuracy[WP_PLASMAGUN][0], cl->accuracy[WP_PLASMAGUN][1], cl->accuracy[WP_PLASMAGUN][2], cl->accuracy[WP_PLASMAGUN][3],
-									  cl->accuracy[WP_BFG][0], cl->accuracy[WP_BFG][1], cl->accuracy[WP_BFG][2], cl->accuracy[WP_BFG][3],
+			" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i], cl->accuracy[WP_GAUNTLET][2], cl->accuracy[WP_GAUNTLET][3], cl->accuracy[WP_GAUNTLET][4], 
+									  cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1], cl->accuracy[WP_MACHINEGUN][2], cl->accuracy[WP_MACHINEGUN][3], cl->accuracy[WP_MACHINEGUN][4], 
+									  cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1], cl->accuracy[WP_SHOTGUN][2], cl->accuracy[WP_SHOTGUN][3], cl->accuracy[WP_SHOTGUN][4],
+									  cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1], cl->accuracy[WP_GRENADE_LAUNCHER][2], cl->accuracy[WP_GRENADE_LAUNCHER][3], cl->accuracy[WP_GRENADE_LAUNCHER][4],
+									  cl->accuracy[WP_ROCKET_LAUNCHER][0], cl->accuracy[WP_ROCKET_LAUNCHER][1], cl->accuracy[WP_ROCKET_LAUNCHER][2], cl->accuracy[WP_ROCKET_LAUNCHER][3], cl->accuracy[WP_ROCKET_LAUNCHER][4],
+									  cl->accuracy[WP_LIGHTNING][0], cl->accuracy[WP_LIGHTNING][1], cl->accuracy[WP_LIGHTNING][2], cl->accuracy[WP_LIGHTNING][3], cl->accuracy[WP_LIGHTNING][4],
+									  cl->accuracy[WP_RAILGUN][0], cl->accuracy[WP_RAILGUN][1], cl->accuracy[WP_RAILGUN][2], cl->accuracy[WP_RAILGUN][3], cl->accuracy[WP_RAILGUN][4],
+									  cl->accuracy[WP_PLASMAGUN][0], cl->accuracy[WP_PLASMAGUN][1], cl->accuracy[WP_PLASMAGUN][2], cl->accuracy[WP_PLASMAGUN][3], cl->accuracy[WP_PLASMAGUN][4],
+									  cl->accuracy[WP_BFG][0], cl->accuracy[WP_BFG][1], cl->accuracy[WP_BFG][2], cl->accuracy[WP_BFG][3], cl->accuracy[WP_BFG][4],
 									  cl->stats[STATS_HEALTH],
 									  cl->stats[STATS_ARMOR],
 									  cl->stats[STATS_YA],
@@ -361,7 +308,7 @@ void G_SendStats( gentity_t *ent ) {
 									  cl->rewards[REWARD_AIRROCKET]);
 		
 		j = strlen(entry);
-		if (stringlength + j > 1024)
+		if (stringlength + j > 2048)
 			break;
 		strcpy (string + stringlength, entry);
 		stringlength += j;
