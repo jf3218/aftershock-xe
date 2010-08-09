@@ -182,6 +182,13 @@ struct gentity_s {
 	gitem_t		*item;			// for bonus items
 };
 
+typedef struct gitemInfos_s gitemInfos_t;
+
+struct gitemInfos_s {
+	int 		team;
+	qboolean 	onlyOne;
+};
+
 
 typedef enum {
 	CON_DISCONNECTED,
@@ -1012,6 +1019,7 @@ void BotTestAAS(vec3_t origin);
 
 extern	level_locals_t	level;
 extern	gentity_t		g_entities[MAX_GENTITIES];
+extern  gitemInfos_t		g_itemInfos[MAX_GENTITIES];
 
 
 #define	FOFS(x) ((size_t)&(((gentity_t *)0)->x))

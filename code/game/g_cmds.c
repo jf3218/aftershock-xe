@@ -155,7 +155,7 @@ void G_SendLivingCount() {
 	trap_SendServerCommand( -1, va("livingCount%s", entry ));
 }
 
-qboolean G_ItemCount( int type, int quantity ){
+qboolean G_ItemCount( int type, int quantity, int tag ){
 	gentity_t *ent;
 	int i;
 	int count = 0;
@@ -166,7 +166,7 @@ qboolean G_ItemCount( int type, int quantity ){
 			continue;
 		if( ent->s.eType != ET_ITEM )
 			continue;
-		if( ( ent->item->giType == type ) && ( ent->item->quantity == quantity ) )
+		if( ( ent->item->giType == type ) && ( ent->item->quantity == quantity ) && ( ent->item->giTag == tag ) )
 			count++;
 	}
 	return( count == 1 );
@@ -199,7 +199,7 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
 	
 	G_Printf("type %i, quantity %i\n", type, quantity );
 	
-	if( G_ItemCount(type, quantity) )
+	if( G_ItemCount(type, quantity, g_entities[entityNum].item->giTag) )
 		nextItemEntityNum = -1;
 	
 	team = G_ItemTeam( entityNum );

@@ -37,6 +37,7 @@ typedef struct {
 
 gentity_t		g_entities[MAX_GENTITIES];
 gclient_t		g_clients[MAX_CLIENTS];
+gitemInfos_t		g_itemInfos[MAX_GENTITIES];
 
 vmCvar_t	g_gametype;
 vmCvar_t	g_dmflags;
@@ -693,6 +694,11 @@ void G_UpdateCvars( void ) {
 void G_SendAllItems( void ){
 	gentity_t *ent;
 	int i,j;
+	
+	for( i = 0; i < MAX_GENTITIES; i++ ){
+		if( g_entities[i].s.eType == ET_ITEM )
+			g_itemInfos[i].team = G_ItemTeam( i );
+	}
 	
 	//G_Printf("check\n");
 	if( g_gametype.integer == GT_CTF ){

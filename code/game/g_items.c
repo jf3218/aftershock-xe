@@ -1298,6 +1298,9 @@ int G_ItemTeam( int entityNum ){
 	
 	ent = &g_entities[ entityNum ];
 	
+	if( ent->s.eType != ET_ITEM )
+		return -1;
+	
 	for( i = 0; i < MAX_GENTITIES; i++ ){
 		if( !g_entities[ i ].inuse )
 			continue;
