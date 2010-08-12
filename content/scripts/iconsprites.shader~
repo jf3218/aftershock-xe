@@ -197,6 +197,24 @@ medal_rocketrail
 	}
 }
 
+medal_fullsg
+{
+	nopicmip
+	{
+		clampmap menu/medals/medal_fullsg.tga
+		blendFunc blend
+	}
+}
+
+medal_itemdenied
+{
+	nopicmip
+	{
+		clampmap menu/medals/medal_itemdenied.tga
+		blendFunc blend
+	}
+}
+
 icons/iconw_gauntlet
 {
 	nopicmip
@@ -610,7 +628,7 @@ gfx/2d/crosshaira
 	{
 		map gfx/2d/crosshair.tga          
 		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA                
-        rgbGen vertex
+		rgbGen identity
 	}
 }
 

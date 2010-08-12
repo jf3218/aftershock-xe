@@ -385,6 +385,7 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 	vec3_t		forward, right, up;
 	int			oldScore;
 	qboolean	hitClient = qfalse;
+	int 		hits=0;
 
 //unlagged - attack prediction #2
 	// use this for testing
@@ -411,13 +412,20 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 		VectorMA( origin, 8192 * 16, forward, end);
 		VectorMA (end, r, right, end);
 		VectorMA (end, u, up, end);
-		if( ShotgunPellet( origin, end, ent ) && !hitClient ) {
-			hitClient = qtrue;
-			ent->client->accuracy_hits++;
+		if( ShotgunPellet( origin, end, ent ) ) {
+			if( !hitClient ){
+				hitClient = qtrue;
+				ent->client->accuracy_hits++;
+			}
+			hits++;
 		}
 	}
 	if( hitClient )
 		ent->client->accuracy[WP_SHOTGUN][1]++;
+	if( hits == DEFAULT_SHOTGUN_COUNT ){
+		ent->client->rewards[REWARD_FULLSG]++;
+		RewardMessage( ent, REWARD_FULLSG, ent->client->rewards[REWARD_FULLSG] );
+	}
 
 //unlagged - backward reconciliation #2
 	// put them back

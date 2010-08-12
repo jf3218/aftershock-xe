@@ -1311,11 +1311,11 @@ int G_ItemTeam( int entityNum ){
 		if( g_entities[i].item->giType != IT_TEAM )
 			continue;
 		if( g_entities[i].item->giTag == PW_REDFLAG /*&& !red*/ ){
-			G_Printf("Found RED %i\n", i);
+			//G_Printf("Found RED %i\n", i);
 			red = &g_entities[ i ];
 		}
 		if( g_entities[i].item->giTag == PW_BLUEFLAG /*&& !blue*/ ){
-			G_Printf("Found BLUE %i\n", i);
+			//G_Printf("Found BLUE %i\n", i);
 			blue = &g_entities[ i ];
 		}
 	}
@@ -1331,18 +1331,48 @@ int G_ItemTeam( int entityNum ){
 		 + ( ent->r.currentOrigin[1] - blue->r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - blue->r.currentOrigin[1] )
 		 + ( ent->r.currentOrigin[2] - blue->r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - blue->r.currentOrigin[2] );
 		 
-	G_Printf("RED: %f,   BLUE: %f    Diff: %f\n", distRed, distBlue, distBlue - distRed );
+	//G_Printf("RED: %f,   BLUE: %f    Diff: %f\n", distRed, distBlue, distBlue - distRed );
 		 
 	if( ( distBlue - distRed ) > 20.0f ){
-		G_Printf("RED\n");
+		//G_Printf("RED\n");
 		return TEAM_RED;
 	}
 	else if( ( distBlue - distRed ) < -20.0f ){
-		G_Printf("BLUE\n");
+		//G_Printf("BLUE\n");
 		return TEAM_BLUE;
 	}
 	else
 		return -1;
 	
+}
+
+qboolean G_CheckDeniedReward( gentity_t *attacker, gentity_t *other ){
+	int dist = -1;
+	int i;
+	gentity_t *ent;
+	vec3_t delta;
+	for( i = 0; i < MAX_GENTITIES; i++ ){
+		ent = &g_entities[i];
+		if( !ent->inuse || ent->s.eType != ET_ITEM )
+			continue;
+		if( ent->s.eFlags & EF_NODRAW )
+			continue;
+		if( ent->item->giType != IT_ARMOR && ent->item->giType != IT_HEALTH && ent->item->giType != IT_POWERUP )
+			continue;
+		if( ent->item->quantity < 50 && ent->item->giType == IT_ARMOR )
+			continue;
+		if( ent->item->quantity < 100 && ent->item->giType == IT_HEALTH )
+			continue;
+		
+		VectorSubtract( ent->s.pos.trBase, other->client->ps.origin, delta );
+		dist = VectorNormalize( delta );
+		if ( dist < 192 ) {
+			attacker->client->rewards[REWARD_ITEMDENIED]++;
+			RewardMessage(attacker, REWARD_ITEMDENIED, attacker->client->rewards[REWARD_ITEMDENIED] );
+			break;
+		}
+		
+		
+	}
 }
 

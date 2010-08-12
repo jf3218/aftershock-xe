@@ -820,6 +820,12 @@ static void CG_ParseRewards( void ) {
 	else if( reward == REWARD_RLRG ){
 		pushReward(cgs.media.impressiveSound, cgs.media.medalRocketrail, rewardCount);
 	}
+	else if( reward == REWARD_FULLSG ){
+		pushReward(cgs.media.airrocketSound, cgs.media.medalFullsg, rewardCount);
+	}
+	else if( reward == REWARD_ITEMDENIED ){
+		pushReward(cgs.media.deniedSound, cgs.media.medalItemdenied, rewardCount);
+	}
 }	
 
 /*

@@ -197,6 +197,24 @@ medal_rocketrail
 	}
 }
 
+medal_fullsg
+{
+	nopicmip
+	{
+		clampmap menu/medals/medal_fullsg.tga
+		blendFunc blend
+	}
+}
+
+medal_itemdenied
+{
+	nopicmip
+	{
+		clampmap menu/medals/medal_itemdenied.tga
+		blendFunc blend
+	}
+}
+
 icons/iconw_gauntlet
 {
 	nopicmip
