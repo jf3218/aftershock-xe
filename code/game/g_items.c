@@ -1366,7 +1366,7 @@ qboolean G_CheckDeniedReward( gentity_t *attacker, gentity_t *other ){
 		
 		VectorSubtract( ent->s.pos.trBase, other->client->ps.origin, delta );
 		dist = VectorNormalize( delta );
-		if ( dist < 192 ) {
+		if ( dist < 128 ) {
 			attacker->client->rewards[REWARD_ITEMDENIED]++;
 			RewardMessage(attacker, REWARD_ITEMDENIED, attacker->client->rewards[REWARD_ITEMDENIED] );
 			break;

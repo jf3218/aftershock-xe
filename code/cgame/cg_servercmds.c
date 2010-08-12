@@ -809,6 +809,10 @@ CG_ParseRewards
 
 static void CG_ParseRewards( void ) {
 	int reward, rewardCount;
+	
+	if( !cg_newRewards.integer )
+		return;
+	
 	reward = atoi( CG_Argv(1) );
 	rewardCount = atoi( CG_Argv(2) );
 	if( reward == REWARD_AIRROCKET ){

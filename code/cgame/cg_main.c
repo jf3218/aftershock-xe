@@ -340,6 +340,8 @@ vmCvar_t	cg_lightningStyle;
 
 vmCvar_t	cg_hitMarks;
 
+vmCvar_t	cg_newRewards;
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -586,6 +588,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_lightningStyle, "cg_lightningStyle", "0", CVAR_ARCHIVE},
 	
 	{&cg_hitMarks, "cg_hitMarks", "1", CVAR_ARCHIVE},
+	{&cg_newRewards, "cg_newRewards", "1", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

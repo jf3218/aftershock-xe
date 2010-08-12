@@ -1472,6 +1472,8 @@ extern vmCvar_t			cg_lightningStyle;
 
 extern vmCvar_t			cg_hitMarks;
 
+extern vmCvar_t			cg_newRewards;
+
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
