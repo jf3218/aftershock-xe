@@ -700,6 +700,9 @@ void G_SendAllItems( void ){
 			g_itemInfos[i].team = G_ItemTeam( i );
 	}
 	
+	if( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
+		return;
+	
 	//G_Printf("check\n");
 	if( g_gametype.integer == GT_CTF ){
 		for( j = 0; j < 3; j++ ){
