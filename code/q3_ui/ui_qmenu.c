@@ -39,7 +39,6 @@ static qhandle_t	sliderButton_0;
 static qhandle_t	sliderButton_1;
 
 // Original colors
-/*
 vec4_t menu_text_color	    = {1.0f, 1.0f, 1.0f, 1.0f};
 vec4_t menu_dim_color       = {0.0f, 0.0f, 0.0f, 0.75f};
 vec4_t color_black	    = {0.00f, 0.00f, 0.00f, 1.00f};
@@ -58,9 +57,9 @@ vec4_t text_color_highlight = {1.00f, 1.00f, 0.00f, 1.00f};	// bright yellow
 vec4_t listbar_color        = {1.00f, 0.43f, 0.00f, 0.30f};	// transluscent orange
 vec4_t text_color_status    = {1.00f, 1.00f, 1.00f, 1.00f};	// bright white
 
-*/
+
 // NEW AND IMPLOVED colors
-vec4_t menu_text_color	    = {1.0f, 1.0f, 1.0f, 1.0f};
+/*vec4_t menu_text_color	    = {1.0f, 1.0f, 1.0f, 1.0f};
 vec4_t menu_dim_color       = {0.0f, 0.0f, 0.0f, 0.75f};
 vec4_t color_black	    = {0.00f, 0.00f, 0.00f, 1.00f};
 vec4_t color_white	    = {1.00f, 1.00f, 1.00f, 1.00f};
@@ -69,16 +68,16 @@ vec4_t color_blue	    = {0.00f, 0.00f, 1.00f, 1.00f};
 vec4_t color_lightOrange    = {0.30f, 0.45f, 0.58f, 1.00f };
 vec4_t color_orange	    = {0.30f, 0.45f, 0.58f, 1.00f};
 vec4_t color_red	    = {0.55f, 0.65f, 0.73f, 1.00f};
-vec4_t color_dim	    = {0.00f, 0.00f, 0.00f, 0.25f};
+vec4_t color_dim	    = {0.00f, 0.00f, 0.00f, 0.25f};*/
 
 // current color scheme
-vec4_t pulse_color          = {1.00f, 1.00f, 1.00f, 1.00f};
+/*vec4_t pulse_color          = {1.00f, 1.00f, 1.00f, 1.00f};
 vec4_t text_color_disabled  = {0.35f, 0.24f, 0.29f, 1.00f};	// light gray
 vec4_t text_color_normal    = {0.30f, 0.45f, 0.58f, 1.00f};	// light orange
 vec4_t text_color_highlight = {0.76f, 0.89f, 0.93f, 1.00f};	// bright yellow
 vec4_t listbar_color        = {0.13f, 0.26f, 0.38f, 0.30f};	// transluscent orange
 vec4_t text_color_status    = {1.00f, 1.00f, 1.00f, 1.00f};	// bright white
-
+*/
 // action widget
 static void	Action_Init( menuaction_s *a );
 static void	Action_Draw( menuaction_s *a );
@@ -1731,9 +1730,9 @@ void Menu_Cache( void )
 		// the blend effect turns to shit with the normal 
 		uis.menuBackShader	= trap_R_RegisterShaderNoMip( "menubackRagePro" );
 	} else {
-		uis.menuBackShader	= trap_R_RegisterShaderNoMip( "menuback_blueish" );
+		uis.menuBackShader	= trap_R_RegisterShaderNoMip( "menuback_aftershock" );
 	}
-	uis.menuBackNoLogoShader = trap_R_RegisterShaderNoMip( "menubacknologo_blueish" );
+	uis.menuBackNoLogoShader = trap_R_RegisterShaderNoMip( "menuback_aftershock" );
 
 	menu_in_sound	= trap_S_RegisterSound( "sound/misc/menu1.wav", qfalse );
 	menu_move_sound	= trap_S_RegisterSound( "sound/misc/menu2.wav", qfalse );

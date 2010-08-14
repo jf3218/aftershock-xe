@@ -43,7 +43,7 @@ MAIN MENU
 #define ID_EXIT					17
 
 #define MAIN_BANNER_MODEL				"models/mapobjects/banner/banner5.md3"
-#define MAIN_MENU_VERTICAL_SPACING		34
+#define MAIN_MENU_VERTICAL_SPACING		25
 
 
 typedef struct {
@@ -173,6 +173,7 @@ static void Main_MenuDraw( void ) {
 	float			adjust;
 	float			x, y, w, h;
 	vec4_t			color = {0.2, 0.2, 1.0, 1};
+	int 			i;
 
 	// setup the refdef
 
@@ -206,7 +207,7 @@ static void Main_MenuDraw( void ) {
 
 	// add the model
 
-	memset( &ent, 0, sizeof(ent) );
+	/*memset( &ent, 0, sizeof(ent) );
 
 	adjust = 5.0 * sin( (float)uis.realtime / 5000 );
 	VectorSet( angles, 0, 180 + adjust, 0 );
@@ -217,7 +218,7 @@ static void Main_MenuDraw( void ) {
 	ent.renderfx = RF_LIGHTING_ORIGIN | RF_NOSHADOW;
 	VectorCopy( ent.origin, ent.oldorigin );
 
-	trap_R_AddRefEntityToScene( &ent );
+	trap_R_AddRefEntityToScene( &ent );*/
 
 	trap_R_RenderScene( &refdef );
 	
@@ -230,17 +231,14 @@ static void Main_MenuDraw( void ) {
 		// standard menu drawing
 		Menu_Draw( &s_main.menu );		
 	}
-
-		UI_DrawProportionalString( 320, 372, "", UI_CENTER|UI_SMALLFONT, color );
-		UI_DrawString( 320, 400, "OpenArena(c) 2005-2009 OpenArena Team", UI_CENTER|UI_SMALLFONT, color );
-		UI_DrawString( 320, 414, "OpenArena comes with ABSOLUTELY NO WARRANTY; this is free software", UI_CENTER|UI_SMALLFONT, color );
-		UI_DrawString( 320, 428, "and you are welcome to redistribute it under certain conditions;", UI_CENTER|UI_SMALLFONT, color );
-		UI_DrawString( 320, 444, "read COPYING for details.", UI_CENTER|UI_SMALLFONT, color );
-                
-                //Draw version.
-                UI_DrawString( 640-40, 480-14, "^7oaUnofficial", UI_SMALLFONT, color );
-                if((int)trap_Cvar_VariableValue("protocol")!=71)
-                    UI_DrawString( 0, 480-14, va("^7Protocol: %i",(int)trap_Cvar_VariableValue("protocol")), UI_SMALLFONT, color);
+	
+		UI_DrawNamedPic(32, 26, 220, 30, "banner_aftershock" );
+		UI_DrawNamedPic(291, 127, 298, 253, "logo_aftershock" );
+		for( i = 0; i < 6; i++ ){
+			UI_DrawNamedPic( 60, 155 + i*25, 10, 15, "white_arrow_small_aftershock");
+		}
+		UI_DrawString( 320, 444, "afterShock(c) 2010 afterShock Team", UI_CENTER|UI_SMALLFONT, color_white );
+		
 }
 
 
@@ -280,10 +278,13 @@ so make sure that the attract loop server is down
 and that local cinematics are killed
 ===============
 */
+
+#define MENU_XPOS 90
+
 void UI_MainMenu( void ) {
 	int		y;
 	qboolean teamArena = qfalse;
-	int		style = UI_CENTER | UI_DROPSHADOW;
+	int		style =  UI_SMALLFONT;
 
 	trap_Cvar_Set( "sv_killserver", "1" );
 
@@ -314,48 +315,48 @@ void UI_MainMenu( void ) {
 	s_main.menu.wrapAround = qtrue;
 	s_main.menu.showlogo = qtrue;
 
-	y = 134;
+	y = 150;
 	s_main.singleplayer.generic.type		= MTYPE_PTEXT;
 	s_main.singleplayer.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_main.singleplayer.generic.x			= 320;
+	s_main.singleplayer.generic.x			= MENU_XPOS;
 	s_main.singleplayer.generic.y			= y;
 	s_main.singleplayer.generic.id			= ID_SINGLEPLAYER;
 	s_main.singleplayer.generic.callback	= Main_MenuEvent; 
 	s_main.singleplayer.string				= "SINGLE PLAYER";
-	s_main.singleplayer.color				= color_red;
+	s_main.singleplayer.color				= color_white;
 	s_main.singleplayer.style				= style;
 
 	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.multiplayer.generic.type			= MTYPE_PTEXT;
 	s_main.multiplayer.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_main.multiplayer.generic.x			= 320;
+	s_main.multiplayer.generic.x			= MENU_XPOS;
 	s_main.multiplayer.generic.y			= y;
 	s_main.multiplayer.generic.id			= ID_MULTIPLAYER;
 	s_main.multiplayer.generic.callback		= Main_MenuEvent; 
 	s_main.multiplayer.string				= "MULTIPLAYER";
-	s_main.multiplayer.color				= color_red;
+	s_main.multiplayer.color				= color_white;
 	s_main.multiplayer.style				= style;
 
 	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.setup.generic.type				= MTYPE_PTEXT;
 	s_main.setup.generic.flags				= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_main.setup.generic.x					= 320;
+	s_main.setup.generic.x					= MENU_XPOS;
 	s_main.setup.generic.y					= y;
 	s_main.setup.generic.id					= ID_SETUP;
 	s_main.setup.generic.callback			= Main_MenuEvent; 
 	s_main.setup.string						= "SETUP";
-	s_main.setup.color						= color_red;
+	s_main.setup.color						= color_white;
 	s_main.setup.style						= style;
 
 	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.demos.generic.type				= MTYPE_PTEXT;
 	s_main.demos.generic.flags				= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_main.demos.generic.x					= 320;
+	s_main.demos.generic.x					= MENU_XPOS;
 	s_main.demos.generic.y					= y;
 	s_main.demos.generic.id					= ID_DEMOS;
 	s_main.demos.generic.callback			= Main_MenuEvent; 
 	s_main.demos.string						= "DEMOS";
-	s_main.demos.color						= color_red;
+	s_main.demos.color						= color_white;
 	s_main.demos.style						= style;
 
 	/*y += MAIN_MENU_VERTICAL_SPACING;
@@ -372,15 +373,15 @@ void UI_MainMenu( void ) {
         y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.challenges.generic.type			= MTYPE_PTEXT;
 	s_main.challenges.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_main.challenges.generic.x				= 320;
+	s_main.challenges.generic.x				= MENU_XPOS;
 	s_main.challenges.generic.y				= y;
 	s_main.challenges.generic.id			= ID_CHALLENGES;
 	s_main.challenges.generic.callback		= Main_MenuEvent;
 	s_main.challenges.string				= "STATISTICS";
-	s_main.challenges.color					= color_red;
+	s_main.challenges.color					= color_white;
 	s_main.challenges.style					= style;
 
-	if (UI_TeamArenaExists()) {
+	/*if (UI_TeamArenaExists()) {
 		teamArena = qtrue;
 		y += MAIN_MENU_VERTICAL_SPACING;
 		s_main.teamArena.generic.type			= MTYPE_PTEXT;
@@ -392,28 +393,28 @@ void UI_MainMenu( void ) {
 		s_main.teamArena.string					= "MISSION PACK";
 		s_main.teamArena.color					= color_red;
 		s_main.teamArena.style					= style;
-	}
+	}*/
 
 	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.mods.generic.type			= MTYPE_PTEXT;
 	s_main.mods.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_main.mods.generic.x				= 320;
+	s_main.mods.generic.x				= MENU_XPOS;
 	s_main.mods.generic.y				= y;
 	s_main.mods.generic.id				= ID_MODS;
 	s_main.mods.generic.callback		= Main_MenuEvent; 
 	s_main.mods.string					= "MODS";
-	s_main.mods.color					= color_red;
+	s_main.mods.color					= color_white;
 	s_main.mods.style					= style;
 
 	y += MAIN_MENU_VERTICAL_SPACING;
 	s_main.exit.generic.type				= MTYPE_PTEXT;
 	s_main.exit.generic.flags				= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
-	s_main.exit.generic.x					= 320;
-	s_main.exit.generic.y					= y;
+	s_main.exit.generic.x					= 60;
+	s_main.exit.generic.y					= 435;
 	s_main.exit.generic.id					= ID_EXIT;
 	s_main.exit.generic.callback			= Main_MenuEvent; 
-	s_main.exit.string						= "EXIT";
-	s_main.exit.color						= color_red;
+	s_main.exit.string						= "QUIT";
+	s_main.exit.color						= color_white;
 	s_main.exit.style						= style;
 
 	Menu_AddItem( &s_main.menu,	&s_main.singleplayer );
@@ -422,9 +423,9 @@ void UI_MainMenu( void ) {
 	Menu_AddItem( &s_main.menu,	&s_main.demos );
 	//Menu_AddItem( &s_main.menu,	&s_main.cinematics );
         Menu_AddItem( &s_main.menu,	&s_main.challenges );
-	if (teamArena) {
+	/*if (teamArena) {
 		Menu_AddItem( &s_main.menu,	&s_main.teamArena );
-	}
+	}*/
 	Menu_AddItem( &s_main.menu,	&s_main.mods );
 	Menu_AddItem( &s_main.menu,	&s_main.exit );             
 
