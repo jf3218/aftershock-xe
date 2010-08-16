@@ -417,7 +417,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &disable_ammo_nails, "disable_ammo_nails", "1", 0, 0, qfalse},
 	{ &disable_holdable_kamikaze, "disable_holdable_kamikaze", "1", 0, 0, qfalse},
 	
-	{ &g_allowRespawnTimer, "g_allowRespawnTimer", "1", 0, 0, qfalse},
+	{ &g_allowRespawnTimer, "g_allowRespawnTimer", "1", CVAR_ARCHIVE, 0, qfalse},
 	{ &g_startWhenReady, "g_startWhenReady", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 	
 	{ &g_timeoutAllowed, "g_timeoutAllowed", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
@@ -695,13 +695,16 @@ void G_SendAllItems( void ){
 	gentity_t *ent;
 	int i,j;
 	
+	if( !g_allowRespawnTimer.integer )
+		return;
+	
+	if( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
+		return;
+	
 	for( i = 0; i < MAX_GENTITIES; i++ ){
 		if( g_entities[i].s.eType == ET_ITEM )
 			g_itemInfos[i].team = G_ItemTeam( i );
 	}
-	
-	if( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
-		return;
 	
 	//G_Printf("check\n");
 	if( g_gametype.integer == GT_CTF ){

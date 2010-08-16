@@ -1293,8 +1293,8 @@ int G_ItemTeam( int entityNum ){
 	int i;
 	float distRed, distBlue;
 	
-	//if( g_gametype.integer != GT_CTF )
-	//	return -1;
+	if( g_gametype.integer != GT_CTF )
+		return -1;
 	
 	ent = &g_entities[ entityNum ];
 	

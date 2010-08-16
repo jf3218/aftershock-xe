@@ -291,7 +291,7 @@ void CG_CheckChangedPredictableEvents( playerState_t *ps ) {
 pushReward
 ==================
 */
-static void pushReward(sfxHandle_t sfx, qhandle_t shader, int rewardCount) {
+void pushReward(sfxHandle_t sfx, qhandle_t shader, int rewardCount) {
 	if (cg.rewardStack < (MAX_REWARDSTACK-1)) {
 		cg.rewardStack++;
 		cg.rewardSound[cg.rewardStack] = sfx;

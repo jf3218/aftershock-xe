@@ -58,34 +58,7 @@ static int CG_ValidOrder(const char *p) {
 }
 #endif
 
-char	gameString[128];
-
-/*char *CG_ClearName( char *s ){
-	char output[64];
-	int len;
-	int i;
-	int count = 0;
-	
-	len = strlen( s );
-	while (s && *s && count < len) {
-		if ( Q_IsColorString(s) ) {
-			s += 2;
-			continue;
-		}else if( *s == '*' || *s == '/' ){
-			s++;
-		}
-		  else {
-			*output = *s;
-			s++;
-			count++;
-			output++;
-		}
-	}
-	*output = '\0';
-	output -= count;
-	s -= (len-1);
-	return output;
-}*/	
+char	gameString[128];	
 
 void CG_SetGameString( void ){
 	qtime_t	now;
@@ -152,10 +125,7 @@ void CG_SetGameString( void ){
 			playerName[count] = playerName[i];
 			count++;
 		}
-	}
-			
-		
-		
+	}	
 	
 	Com_sprintf(gameString, sizeof(gameString), "%04d-%02d-%02d/%04d%02d%02d%02d%02d%02d-%s-%s-%s", 
 		    1900 + now.tm_year,
@@ -678,7 +648,6 @@ static void CG_ParseReadyMask( void ) {
 					CG_CenterPrint( va("%s ^2is ready", cgs.clientinfo[ i ].name ), 120, BIGCHAR_WIDTH );
 				else
 					CG_CenterPrint( va("%s ^1is not ready", cgs.clientinfo[ i ].name ), 120, BIGCHAR_WIDTH );
-				//CG_Printf("Playername %i %s\n", i, cgs.clientinfo[ i ].name );
 			}
 		}
 		cg.readyMask = readyMask;
