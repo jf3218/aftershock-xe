@@ -343,6 +343,7 @@ vmCvar_t	cg_hitMarks;
 
 vmCvar_t	cg_newRewards;
 vmCvar_t	cg_drawLivingCount;
+vmCvar_t	cg_drawCenterprint;
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -592,6 +593,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_newRewards, "cg_newRewards", "1", CVAR_ARCHIVE},
 	
 	{&cg_drawLivingCount, "cg_drawLivingCount", "1", CVAR_ARCHIVE},
+	{&cg_drawLivingCount, "cg_drawCenterprint", "1", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

@@ -2506,6 +2506,9 @@ for a few moments
 void CG_CenterPrint( const char *str, int y, int charWidth ) {
 	char	*s;
 
+	if( !cg_drawCenterprint.integer )
+		return;
+	
 	Q_strncpyz( cg.centerPrint, str, sizeof(cg.centerPrint) );
 
 	cg.centerPrintTime = cg.time;

@@ -1475,6 +1475,7 @@ extern vmCvar_t			cg_hitMarks;
 
 extern vmCvar_t			cg_newRewards;
 extern vmCvar_t			cg_drawLivingCount;
+extern vmCvar_t			cg_drawCenterprint;
 
 
 //unlagged - cg_unlagged.c
