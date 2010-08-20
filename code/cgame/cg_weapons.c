@@ -1979,7 +1979,7 @@ void CG_DrawWeaponSelect( void ) {
 			CG_DrawWeaponBar5(count,bits, color);
 			break;
 		default:
-			CG_DrawWeaponBar0(count,bits, color);
+			//CG_DrawWeaponBar0(count,bits, color);
 			break;
 	}
 	trap_R_SetColor(NULL);

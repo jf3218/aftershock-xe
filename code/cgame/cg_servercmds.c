@@ -1653,8 +1653,18 @@ voiceChatList_t *CG_VoiceChatListForClient( int clientNum ) {
 }
 
 void CG_ParseLivingCount(){
-	cgs.redLivingCount = atoi( CG_Argv(1));
-	cgs.blueLivingCount = atoi( CG_Argv(2));
+	int newRed, newBlue;
+	
+	newRed = atoi( CG_Argv(1));
+	newBlue = atoi( CG_Argv(2));
+	
+	if( newRed == 1 && newRed != cgs.redLivingCount && cgs.clientinfo[cg.clientNum].team == TEAM_RED && !cgs.clientinfo[cg.clientNum].isDead )
+		CG_CenterPrint( va( "You are the last in your team" ), 100, SMALLCHAR_WIDTH );
+	if( newBlue == 1 && newBlue != cgs.blueLivingCount && cgs.clientinfo[cg.clientNum].team == TEAM_BLUE && !cgs.clientinfo[cg.clientNum].isDead )
+		CG_CenterPrint( va( "You are the last in your team" ), 100, SMALLCHAR_WIDTH );
+	
+	cgs.redLivingCount = newRed;
+	cgs.blueLivingCount = newBlue;
 }
 
 #define MAX_VOICECHATBUFFER		32
@@ -1897,7 +1907,7 @@ static void CG_ServerCommand( void ) {
 		return;
 	}
 	if ( !strcmp( cmd, "chat" ) ) {
-		if ( !cg_teamChatsOnly.integer ) {
+		if ( !cg_teamChatsOnly.integer && !cg_noChat.integer ) {
 			trap_S_StartLocalSound( cgs.media.talkSound, CHAN_LOCAL_SOUND );
 			Q_strncpyz( text, CG_Argv(1), MAX_SAY_TEXT );
 			CG_RemoveChatEscapeChar( text );
@@ -1908,11 +1918,13 @@ static void CG_ServerCommand( void ) {
 	}
 
 	if ( !strcmp( cmd, "tchat" ) ) {
-		trap_S_StartLocalSound( cgs.media.talkSound, CHAN_LOCAL_SOUND );
-		Q_strncpyz( text, CG_Argv(1), MAX_SAY_TEXT );
-		CG_RemoveChatEscapeChar( text );
-		CG_AddToTeamChat( text );
-		CG_Printf( "%s\n", text );
+		if( !cg_noChat.integer ){
+			trap_S_StartLocalSound( cgs.media.talkSound, CHAN_LOCAL_SOUND );
+			Q_strncpyz( text, CG_Argv(1), MAX_SAY_TEXT );
+			CG_RemoveChatEscapeChar( text );
+			CG_AddToTeamChat( text );
+			CG_Printf( "%s\n", text );
+		}
 		return;
 	}
 	if ( !strcmp( cmd, "vchat" ) ) {

@@ -1307,6 +1307,7 @@ extern	vmCvar_t		cg_predictItems;
 extern	vmCvar_t		cg_deferPlayers;
 extern	vmCvar_t		cg_drawFriend;
 extern	vmCvar_t		cg_teamChatsOnly;
+extern	vmCvar_t		cg_noChat;
 extern	vmCvar_t		cg_noVoiceChats;
 extern	vmCvar_t		cg_noVoiceText;
 extern  vmCvar_t		cg_scorePlum;
@@ -1473,6 +1474,7 @@ extern vmCvar_t			cg_lightningStyle;
 extern vmCvar_t			cg_hitMarks;
 
 extern vmCvar_t			cg_newRewards;
+extern vmCvar_t			cg_drawLivingCount;
 
 
 //unlagged - cg_unlagged.c

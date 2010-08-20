@@ -173,6 +173,7 @@ vmCvar_t	cg_drawTeamOverlay;
 vmCvar_t	cg_teamOverlayUserinfo;
 vmCvar_t	cg_drawFriend;
 vmCvar_t	cg_teamChatsOnly;
+vmCvar_t	cg_noChat;
 vmCvar_t	cg_noVoiceChats;
 vmCvar_t	cg_noVoiceText;
 vmCvar_t	cg_hudFiles;
@@ -341,7 +342,7 @@ vmCvar_t	cg_lightningStyle;
 vmCvar_t	cg_hitMarks;
 
 vmCvar_t	cg_newRewards;
-
+vmCvar_t	cg_drawLivingCount;
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -408,7 +409,6 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_thirdPerson, "cg_thirdPerson", "0", 0 },
 	{ &cg_teamChatTime, "cg_teamChatTime", "3000", CVAR_ARCHIVE  },
 	{ &cg_teamChatHeight, "cg_teamChatHeight", "5", CVAR_ARCHIVE  },
-	{ &cg_teamChatHeight, "cg_teamChatHeight", "5", CVAR_ARCHIVE},
 	{ &cg_chatTime, "cg_chatTime", "3000", CVAR_ARCHIVE},
 	{ &cg_chatHeight, "cg_chatHeight", "5", CVAR_ARCHIVE},
 	{ &cg_forceModel, "cg_forceModel", "0", CVAR_ARCHIVE  },
@@ -423,6 +423,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_stats, "cg_stats", "0", 0 },
 	{ &cg_drawFriend, "cg_drawFriend", "1", CVAR_ARCHIVE },
 	{ &cg_teamChatsOnly, "cg_teamChatsOnly", "0", CVAR_ARCHIVE },
+	{ &cg_noChat, "cg_noChat", "0", CVAR_ARCHIVE },
 	{ &cg_noVoiceChats, "cg_noVoiceChats", "0", CVAR_ARCHIVE },
 	{ &cg_noVoiceText, "cg_noVoiceText", "0", CVAR_ARCHIVE },
 	// the following variables are created in other parts of the system,
@@ -589,6 +590,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	
 	{&cg_hitMarks, "cg_hitMarks", "1", CVAR_ARCHIVE},
 	{&cg_newRewards, "cg_newRewards", "1", CVAR_ARCHIVE},
+	
+	{&cg_drawLivingCount, "cg_drawLivingCount", "1", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

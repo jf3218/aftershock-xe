@@ -1428,6 +1428,9 @@ static float CG_DrawLivingCount( float y ) {
 	int			x, w;
 	int			v;
 	vec4_t		color;
+	
+	if( !cg_drawLivingCount.integer )
+		return;
 
 
 	if( cgs.gametype != GT_ELIMINATION && cgs.gametype != GT_CTF_ELIMINATION )
