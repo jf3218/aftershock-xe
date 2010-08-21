@@ -2746,6 +2746,10 @@ int hexToBlue( char* hexin ){
 int hexToAlpha( char* hexin ){
 	char	color[4];
 	int out;
+	
+	if( !hexin[8] )
+		return 255;
+	
 	Com_sprintf (color, sizeof(color), "%c%c", hexin[8], hexin[9]);
 	out = CG_ParseHex(color);
 	if( out < 0 )
@@ -2761,7 +2765,7 @@ void CG_setRGBA( refEntity_t *inRef, char *instring ){
 		inRef->shaderRGBA[0] = (int)(g_color_table[ColorIndex(*(instring))][0]*255);
 		inRef->shaderRGBA[1] = (int)(g_color_table[ColorIndex(*(instring))][1]*255);
 		inRef->shaderRGBA[2] = (int)(g_color_table[ColorIndex(*(instring))][2]*255);
-		inRef->shaderRGBA[3] = (int)(g_color_table[ColorIndex(*(instring))][3]*255);
+		inRef->shaderRGBA[3] = 255;
 	}
 	else if( !strcmp( instring, "red" ) )
 		CG_setRGBA(inRef, "1");

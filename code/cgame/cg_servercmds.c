@@ -561,11 +561,15 @@ CG_ParseTimeout
 =================
 */
 static void CG_ParseTimeout( void ) {
+	qhandle_t sound;
 	cgs.timeout = qtrue;
 	cgs.timeoutTime = atoi( CG_Argv( 1 ) );
 	cgs.timeoutAdd = atoi( CG_Argv( 2 ) );
 	cgs.timeoutDelay = cgs.timeoutDelay + cgs.timeoutAdd;
-	CG_Printf( "Timeout for %f seconds", ((float)cgs.timeoutAdd)/1000.0f);
+	CG_Printf( "Timeout for %f seconds\n", ((float)cgs.timeoutAdd)/1000.0f);
+	
+	sound = trap_S_RegisterSound("sound/movers/doors/dr1_end.wav", qfalse );	
+	trap_S_StartLocalSound( sound, CHAN_LOCAL_SOUND );
 
 }
 

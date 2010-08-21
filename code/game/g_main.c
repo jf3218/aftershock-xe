@@ -1831,9 +1831,9 @@ qboolean ScoreIsTied( void ) {
         //Sago: In Elimination and Oneway Flag Capture teams must win by two points.
         if ( g_gametype.integer == GT_ELIMINATION || 
                 (g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer)) {
-            return (level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE] || 
+            return (level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE] /*|| 
                     level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE]+1 ||
-                    level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE]-1);
+                    level.teamScores[TEAM_RED] == level.teamScores[TEAM_BLUE]-1*/);
         }
 	
 	if ( g_gametype.integer >= GT_TEAM && g_ffa_gt!=1) {

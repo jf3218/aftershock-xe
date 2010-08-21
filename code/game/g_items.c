@@ -689,7 +689,7 @@ gentity_t *LaunchItemWeapon( gitem_t *item, gitem_t *oldItem, vec3_t origin, vec
 
 	dropped->flags = FL_DROPPED_ITEM;
 
-	trap_LinkEntity (dropped);
+	trap_LinkEntity(dropped);
 
 	return dropped;
 }

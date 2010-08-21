@@ -1660,7 +1660,9 @@ void ClientBegin( int clientNum ) {
             SendCustomVoteCommands(clientNum);
 	
 	SendReadymask();
-	Cmd_Timeout_f( ent );
+	
+	if( level.timeout )
+		Cmd_Timeout_f( ent );
 	
 	if( !( level.warmupTime < 0 ) )
 		trap_SendServerCommand( ent - g_entities, va("startOfGame"));
@@ -1712,6 +1714,7 @@ void ClientSpawn(gentity_t *ent) {
 	int		lastKiller;
 	int		lastTarget;
 	int		kills;
+	int		timeouts;
  
 
 	index = ent - g_entities;
@@ -1874,6 +1877,7 @@ void ClientSpawn(gentity_t *ent) {
 	}
 	
 	kills = client->kills;
+	timeouts = client->timeouts;
 	
 	ready = client->ready;
 	
@@ -1921,6 +1925,7 @@ void ClientSpawn(gentity_t *ent) {
 	}
 	
 	client->kills = kills;
+	client->timeouts = timeouts;
 	
 	client->ready = ready;
 	

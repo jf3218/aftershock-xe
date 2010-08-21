@@ -914,12 +914,20 @@ void Cmd_Timeout_f( gentity_t *player ) {
 	
 	if( !g_timeoutAllowed.integer )
 		return;
+	if( player->client->sess.sessionTeam == TEAM_SPECTATOR )
+		return;
+	if( !(player->client->timeouts < g_timeoutAllowed.integer) )
+		return;
 	
-	if( !level.timeout ){
+	if( level.timeout )
+		trap_SendServerCommand( player-g_entities, va("timeout %i %i", level.timeoutTime, level.timeoutAdd ) );
+	else{
 		level.timeout = qtrue;
 		level.timeoutTime = level.time;
 		level.timeoutAdd = g_timeoutTime.integer;
 		level.timeoutDelay += level.timeoutAdd;
+		
+		player->client->timeouts++;
 		
 		ent = &g_entities[0];
 		for (i=0 ; i<level.num_entities ; i++, ent++) {
@@ -930,7 +938,7 @@ void Cmd_Timeout_f( gentity_t *player ) {
 					ent->eventTime += level.timeoutAdd;
 			}
 		}
-		
+		trap_SendServerCommand(-1,va("screenPrint \"%s" S_COLOR_CYAN " called a timeout\"", player->client->pers.netname ) );
 		trap_SendServerCommand( -1, va("timeout %i %i", level.timeoutTime, level.timeoutAdd ) );
 	}
 }
@@ -2737,9 +2745,7 @@ void Cmd_DropWeapon_f( gentity_t *ent ){
 	weapon = ent->s.weapon;
 	item = BG_FindItemForWeapon( weapon );
 	if( ( ent->client->ps.stats[STAT_WEAPONS] & ( 1 << item->giTag ) ) && ( weapon != WP_GAUNTLET ) ) {
-		G_Printf("Droppedidroppedidu\n");
 		out = Drop_Item_Weapon( ent, item, 0 );
-		G_Printf("%i\n",out->item->lastDrop);
 	}
 }
 

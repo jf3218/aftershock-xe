@@ -452,10 +452,9 @@ struct gclient_s {
 	int			lastTarget;
 	
 	int			preservedScore[MAX_PERSISTANT];
-	
 	qboolean 		died;
-	
 	int			kills;
+	int 			timeouts;
 	
 };
 
