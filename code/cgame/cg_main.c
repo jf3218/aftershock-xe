@@ -541,25 +541,25 @@ static cvarTable_t cvarTable[] = { // bk001129
 
 	{&cg_blueteammodel, "cg_blueteammodel", "skelebot/pm", CVAR_ARCHIVE},
 	{&cg_redteammodel, "cg_redteammodel", "major/pm", CVAR_ARCHIVE},
-	{&cg_enemymodel, "cg_enemymodel", "skelebot/pm", CVAR_ARCHIVE},
-	{&cg_teammodel, "cg_teammodel", "sarge/pm", CVAR_ARCHIVE},
+	{&cg_enemymodel, "cg_enemymodel", "smarine/pm", CVAR_ARCHIVE},
+	{&cg_teammodel, "cg_teammodel", "major/pm", CVAR_ARCHIVE},
 	{&cg_forceteammodels, "cg_forceteammodels", "0", CVAR_ARCHIVE},
 
-	{&cg_enemyHeadColor, "cg_enemyHeadColor", "0x00FF00FF", CVAR_ARCHIVE},
-	{&cg_enemyTorsoColor, "cg_enemyTorsoColor", "0x00FF00FF", CVAR_ARCHIVE},
-	{&cg_enemyLegsColor, "cg_enemyLegsColor", "0x00FF00FF", CVAR_ARCHIVE},
+	{&cg_enemyHeadColor, "cg_enemyHeadColor", "yellow", CVAR_ARCHIVE},
+	{&cg_enemyTorsoColor, "cg_enemyTorsoColor", "yellow", CVAR_ARCHIVE},
+	{&cg_enemyLegsColor, "cg_enemyLegsColor", "yellow", CVAR_ARCHIVE},
 
-	{&cg_blueHeadColor, "cg_blueHeadColor", "0x0000FFFF", CVAR_ARCHIVE},
-	{&cg_blueTorsoColor, "cg_blueTorsoColor", "0x0000FFFF", CVAR_ARCHIVE},
-	{&cg_blueLegsColor, "cg_blueLegsColor", "0x0000FFFF", CVAR_ARCHIVE},
+	{&cg_blueHeadColor, "cg_blueHeadColor", "blue", CVAR_ARCHIVE},
+	{&cg_blueTorsoColor, "cg_blueTorsoColor", "blue", CVAR_ARCHIVE},
+	{&cg_blueLegsColor, "cg_blueLegsColor", "blue", CVAR_ARCHIVE},
 
-	{&cg_redHeadColor, "cg_redHeadColor", "0xFF0000FF", CVAR_ARCHIVE},
-	{&cg_redTorsoColor, "cg_redTorsoColor", "0xFF0000FF", CVAR_ARCHIVE},
-	{&cg_redLegsColor, "cg_redLegsColor", "0xFF0000FF", CVAR_ARCHIVE},
+	{&cg_redHeadColor, "cg_redHeadColor", "red", CVAR_ARCHIVE},
+	{&cg_redTorsoColor, "cg_redTorsoColor", "red", CVAR_ARCHIVE},
+	{&cg_redLegsColor, "cg_redLegsColor", "red", CVAR_ARCHIVE},
 
-	{&cg_teamHeadColor, "cg_teamHeadColor", "0xFFFFFFFF", CVAR_ARCHIVE},
-	{&cg_teamTorsoColor, "cg_teamTorsoColor", "0xFFFFFFFF", CVAR_ARCHIVE},
-	{&cg_teamLegsColor, "cg_teamLegsColor", "0xFFFFFFFF", CVAR_ARCHIVE},
+	{&cg_teamHeadColor, "cg_teamHeadColor", "white", CVAR_ARCHIVE},
+	{&cg_teamTorsoColor, "cg_teamTorsoColor", "white", CVAR_ARCHIVE},
+	{&cg_teamLegsColor, "cg_teamLegsColor", "white", CVAR_ARCHIVE},
 	
 	{&cg_deadBodyDarken, "cg_deadBodyDarken", "1", CVAR_ARCHIVE},
 	{&cg_deadBodyColor, "cg_deadBodyColor", "0x323232FF", CVAR_ARCHIVE},
@@ -1184,7 +1184,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.tracerShader = trap_R_RegisterShader( "gfx/misc/tracer" );
 	cgs.media.selectShader = trap_R_RegisterShader( "gfx/2d/select" );
 
-	cgs.media.grenadeSkinColor = trap_R_RegisterShader( "rocketProjectileColor" );
+	cgs.media.grenadeSkinColor = trap_R_RegisterShader( "grenadeProjectileColor" );
 
 	for (i = 0; i < NUM_CROSSHAIRS; i++ ) {
 		if (i < 10)

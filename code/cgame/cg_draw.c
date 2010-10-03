@@ -2738,6 +2738,7 @@ static void CG_DrawCrosshair(void)
 	float		x, y;
 	int			ca = 0; //only to get rid of the warning(not useful)
 	int 		currentWeapon;
+	vec4_t		color;
 	
 	currentWeapon = cg.predictedPlayerState.weapon;
 
@@ -2755,17 +2756,17 @@ static void CG_DrawCrosshair(void)
 
 	// set color based on health
 	if ( cg_crosshairHealth.integer ) {
-		vec4_t		hcolor;
+		//vec4_t		hcolor;
 
-		CG_ColorForHealth( hcolor );
-		trap_R_SetColor( hcolor );
+		CG_ColorForHealth( color );
+		//trap_R_SetColor( hcolor );
 	} else {
-                vec4_t         color;
+                //vec4_t         color;
                 color[0]=cg_crosshairColorRed.value;
                 color[1]=cg_crosshairColorGreen.value;
                 color[2]=cg_crosshairColorBlue.value;
                 color[3]=1.0f;
-		trap_R_SetColor( color );
+		//trap_R_SetColor( color );
 	}
 
 	if( cg_differentCrosshairs.integer == 1 ){
@@ -2829,6 +2830,10 @@ static void CG_DrawCrosshair(void)
 		ca = cg_drawCrosshair.integer;
 	}
 	
+	if( cgs.screenXScale > cgs.screenYScale ){
+		w = w * cgs.screenYScale / cgs.screenXScale;
+	}
+	
 	if( cg_crosshairPulse.integer ){
 		// pulse the size of the crosshair when picking up items
 		f = cg.time - cg.itemPickupBlendTime;
@@ -2838,7 +2843,6 @@ static void CG_DrawCrosshair(void)
 			h *= ( 1 + f );
 		}
 	}
-		
 
 	x = cg_crosshairX.integer;
 	y = cg_crosshairY.integer;
@@ -2847,14 +2851,18 @@ static void CG_DrawCrosshair(void)
 	if (ca < 0) {
 		ca = 0;
 	}
-	hShader = cgs.media.crosshairShader[ ca % NUM_CROSSHAIRS ];
+	hShader = cgs.media.crosshairShader[ (ca-1) % NUM_CROSSHAIRS ];
 
         if(!hShader)
-            hShader = cgs.media.crosshairShader[ ca % 10 ];
+            hShader = cgs.media.crosshairShader[ (ca-1) % 10 ];
 
+	trap_R_SetColor( color );
+	
 	trap_R_DrawStretchPic( x + cg.refdef.x + 0.5 * (cg.refdef.width - w), 
 		y + cg.refdef.y + 0.5 * (cg.refdef.height - h), 
 		w, h, 0, 0, 1, 1, hShader );
+		
+	trap_R_SetColor( NULL );
 }
 
 /*

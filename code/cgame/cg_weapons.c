@@ -2013,7 +2013,7 @@ void CG_DrawWeaponBar0(int count, int bits, float *color){
 		}
 		if( i != WP_GAUNTLET ) {
 			// draw weapon icon
-			if ( i == /*cg.weaponSelect*/ cg_entities[cg.snap->ps.clientNum].currentState.weapon ) {
+			if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
 				CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderLeft );
 			}
 
@@ -2066,7 +2066,7 @@ void CG_DrawWeaponBar1(int count, int bits, float *color){
 		}
 		if( i != WP_GAUNTLET ) {
 			// draw weapon icon
-			if ( i == /*cg.weaponSelect*/ cg_entities[cg.snap->ps.clientNum].currentState.weapon ) {
+			if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
 				CG_DrawPic( x, y, 30, 38, cgs.media.selectionShaderMid );
 			}
 
@@ -2117,7 +2117,7 @@ void CG_DrawWeaponBar2(int count, int bits, float *color){
 		}
 		if( i != WP_GAUNTLET ) {
 			// draw weapon icon
-			if ( i == /*cg.weaponSelect*/ cg_entities[cg.snap->ps.clientNum].currentState.weapon ) {
+			if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
 				CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderRight );
 			}
 
@@ -2161,7 +2161,7 @@ void CG_DrawWeaponBar3(int count, int bits, float *color){
 		if( cg_weapons[i].weaponIcon ){
 			if( i != WP_GAUNTLET ) {
 				// draw weapon icon
-				if ( i == /*cg.weaponSelect*/ cg_entities[cg.snap->ps.clientNum].currentState.weapon ) {
+				if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
 					CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderLeft );
 				}
 	
@@ -2204,7 +2204,7 @@ void CG_DrawWeaponBar4(int count, int bits, float *color){
                 if( cg_weapons[i].weaponIcon ){
 			if( i != WP_GAUNTLET ) {
 				// draw weapon icon
-				if ( i == /*cg.weaponSelect*/ cg_entities[cg.snap->ps.clientNum].currentState.weapon ) {
+				if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
 					CG_DrawPic( x, y, 30, 38, cgs.media.selectionShaderMid );
 				}
 	
@@ -2244,7 +2244,7 @@ void CG_DrawWeaponBar5(int count, int bits, float *color){
 		if( cg_weapons[i].weaponIcon ){
 			if( i != WP_GAUNTLET ) {
 				// draw weapon icon
-				if ( i == /*cg.weaponSelect*/ cg_entities[cg.snap->ps.clientNum].currentState.weapon ) {
+				if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
 					CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderRight );
 				}
 		

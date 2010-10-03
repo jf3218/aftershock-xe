@@ -7,4 +7,4 @@ zip zzz-oaUnofficial.pk3 -r icons/ vm/ sound/ models/ gfx/ scripts/ textures/ me
 cp zzz-oaUnofficial.pk3 ../
 cd ..
 cp zzz-oaUnofficial.pk3 ../oaUnofficial/oaUnofficial/
-
+cp zzz-oaUnofficial.pk3 ~/.openarena/oaUnofficial/
