@@ -355,7 +355,7 @@ typedef struct {
 static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_ignore, "cg_ignore", "0", 0 },	// used for debugging
 	{ &cg_autoswitch, "cg_autoswitch", "1", CVAR_ARCHIVE },
-	{ &cg_drawGun, "cg_drawGun", "1", CVAR_ARCHIVE },
+	{ &cg_drawGun, "cg_drawGun", "3", CVAR_ARCHIVE },
 	{ &cg_zoomFov, "cg_zoomfov", "22.5", CVAR_ARCHIVE },
 	{ &cg_fov, "cg_fov", "90", CVAR_ARCHIVE | CVAR_USERINFO },
 	{ &cg_viewsize, "cg_viewsize", "100", CVAR_ARCHIVE },
@@ -408,11 +408,11 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_thirdPersonRange, "cg_thirdPersonRange", "40", CVAR_CHEAT },
 	{ &cg_thirdPersonAngle, "cg_thirdPersonAngle", "0", CVAR_CHEAT },
 	{ &cg_thirdPerson, "cg_thirdPerson", "0", 0 },
-	{ &cg_teamChatTime, "cg_teamChatTime", "3000", CVAR_ARCHIVE  },
+	{ &cg_teamChatTime, "cg_teamChatTime", "5000", CVAR_ARCHIVE  },
 	{ &cg_teamChatHeight, "cg_teamChatHeight", "5", CVAR_ARCHIVE  },
-	{ &cg_chatTime, "cg_chatTime", "3000", CVAR_ARCHIVE},
+	{ &cg_chatTime, "cg_chatTime", "5000", CVAR_ARCHIVE},
 	{ &cg_chatHeight, "cg_chatHeight", "5", CVAR_ARCHIVE},
-	{ &cg_forceModel, "cg_forceModel", "0", CVAR_ARCHIVE  },
+	{ &cg_forceModel, "cg_forceModel", "1", CVAR_ARCHIVE  },
 	{ &cg_predictItems, "cg_predictItems", "1", CVAR_ARCHIVE },
 #ifdef MISSIONPACK
 	{ &cg_deferPlayers, "cg_deferPlayers", "0", CVAR_ARCHIVE },
