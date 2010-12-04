@@ -91,6 +91,7 @@ rocketThrust
 }
 rocketFlare
 {
+	nopicmip
 	deformVertexes autosprite
 	{
 		map textures/oafx/rocketflare.tga

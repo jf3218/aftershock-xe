@@ -38,7 +38,6 @@ lightningBoltNewNPM
 
 lightningBoltScroll
 {
-	nopicmip
 	cull disable
 	{
 		animmap 30 textures/oafx/lightningscroll.tga
@@ -48,6 +47,29 @@ lightningBoltScroll
 }
 
 lightningBoltScrollColor
+{
+	cull disable
+	{
+		animmap 30 textures/oafx/lightningscroll.tga
+		blendfunc add
+		tcMod scroll -2 0
+		rgbGen entity
+		alphaGen entity
+	}
+}
+
+lightningBoltScroll_nomip
+{
+	nopicmip
+	cull disable
+	{
+		animmap 30 textures/oafx/lightningscroll.tga
+		blendfunc add
+		tcMod scroll -2 0
+	}
+}
+
+lightningBoltScrollColor_nomip
 {
 	nopicmip
 	cull disable
@@ -64,7 +86,6 @@ lightningBoltScrollColor
 
 lightningBoltScrollThin
 {
-	nopicmip
 	cull disable
 	{
 		animmap 30 textures/oafx/lightningscrollthin.tga
@@ -74,6 +95,29 @@ lightningBoltScrollThin
 }
 
 lightningBoltScrollThinColor
+{
+	cull disable
+	{
+		animmap 30 textures/oafx/lightningscrollthin.tga
+		blendfunc add
+		tcMod scroll -2 0
+		rgbGen entity
+		alphaGen entity
+	}
+}
+
+lightningBoltScrollThin_nomip
+{
+	nopicmip
+	cull disable
+	{
+		animmap 30 textures/oafx/lightningscrollthin.tga
+		blendfunc add
+		tcMod scroll -2 0
+	}
+}
+
+lightningBoltScrollThinColor_nomip
 {
 	nopicmip
 	cull disable
@@ -90,7 +134,6 @@ lightningBoltScrollThinColor
 
 lightningBoltnew
 {
-	nopicmip
 	cull disable
 	{
 		animmap 30 textures/oafx/lbeam3.tga textures/oafx/lbeam4.tga textures/oafx/lbeam5.tga textures/oafx/lbeam6.tga textures/oafx/lbeam7.tga textures/oafx/lbeam8.tga textures/oafx/lbeam5.tga textures/oafx/lbeam7.tga 
@@ -100,6 +143,29 @@ lightningBoltnew
 }
 
 lightningBoltnewColor
+{
+	cull disable
+	{
+		animmap 30 textures/oafx/lbeam3.tga textures/oafx/lbeam4.tga textures/oafx/lbeam5.tga textures/oafx/lbeam6.tga textures/oafx/lbeam7.tga textures/oafx/lbeam8.tga textures/oafx/lbeam5.tga textures/oafx/lbeam7.tga 
+		blendfunc add
+		tcMod scroll -1 0
+		rgbGen entity
+		alphaGen entity
+	}
+}
+
+lightningBoltnew_nomip
+{
+	nopicmip
+	cull disable
+	{
+		animmap 30 textures/oafx/lbeam3.tga textures/oafx/lbeam4.tga textures/oafx/lbeam5.tga textures/oafx/lbeam6.tga textures/oafx/lbeam7.tga textures/oafx/lbeam8.tga textures/oafx/lbeam5.tga textures/oafx/lbeam7.tga 
+		blendfunc add
+		tcMod scroll -1 0
+	}
+}
+
+lightningBoltnewColor_nomip
 {
 	nopicmip
 	cull disable
@@ -116,7 +182,6 @@ lightningBoltnewColor
 
 lightningBoltSimple
 {
-	nopicmip
 	cull disable
 	{
 		animmap 30 textures/oafx/lightningsimple.tga
@@ -125,6 +190,27 @@ lightningBoltSimple
 }
 
 lightningBoltSimpleColor
+{
+	cull disable
+	{
+		animmap 30 textures/oafx/lightningsimple.tga
+		blendfunc add
+		rgbGen entity
+		alphaGen entity
+	}
+}
+
+lightningBoltSimple_nomip
+{
+	nopicmip
+	cull disable
+	{
+		animmap 30 textures/oafx/lightningsimple.tga
+		blendfunc add
+	}
+}
+
+lightningBoltSimpleColor_nomip
 {
 	nopicmip
 	cull disable

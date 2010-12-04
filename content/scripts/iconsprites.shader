@@ -498,6 +498,7 @@ gfx/2d/cursor
 
 sprites/balloon3
 {
+	nopicmip
 	{
 		map sprites/balloon4.tga
 		blendfunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
@@ -558,6 +559,30 @@ gfx/misc/tracer
 }
 
 bloodMark
+{		
+	polygonOffset
+	{
+		clampmap gfx/damage/blood_stain.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen identityLighting
+		alphaGen vertex
+	}
+}
+
+bloodTrail
+{
+        			
+	entityMergable		
+	{
+		//clampmap gfx/misc/blood.tga
+                clampmap gfx/damage/blood_spurt.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen		vertex
+		alphaGen	vertex
+	}
+}
+
+bloodMark_nomip
 {
 	nopicmip			
 	polygonOffset
@@ -569,7 +594,7 @@ bloodMark
 	}
 }
 
-bloodTrail
+bloodTrail_nomip
 {
         
 	nopicmip			

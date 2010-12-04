@@ -345,6 +345,10 @@ vmCvar_t	cg_newRewards;
 vmCvar_t	cg_drawLivingCount;
 vmCvar_t	cg_drawCenterprint;
 
+vmCvar_t	cg_nomip;
+
+vmCvar_t	cg_lightningExplosion;
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -594,6 +598,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	
 	{&cg_drawLivingCount, "cg_drawLivingCount", "1", CVAR_ARCHIVE},
 	{&cg_drawCenterprint, "cg_drawCenterprint", "1", CVAR_ARCHIVE},
+	{&cg_nomip, "cg_nomip", "0", CVAR_ARCHIVE},
+	{&cg_lightningExplosion, "cg_lightningExplosion", "0", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -1168,14 +1174,34 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.scoreboardScore = trap_R_RegisterShaderNoMip( "menu/tab/score.tga" );
 	cgs.media.scoreboardTime = trap_R_RegisterShaderNoMip( "menu/tab/time.tga" );
 
-	cgs.media.smokePuffShader = trap_R_RegisterShader( "smokePuff" );
-	cgs.media.smokePuffRageProShader = trap_R_RegisterShader( "smokePuffRagePro" );
-	cgs.media.shotgunSmokePuffShader = trap_R_RegisterShader( "shotgunSmokePuff" );
+	if( cg_nomip.integer & 256 ){
+		cgs.media.smokePuffShader = trap_R_RegisterShader( "smokePuff_nomip" );
+		cgs.media.smokePuffRageProShader = trap_R_RegisterShader( "smokePuffRagePro_nomip" );
+		cgs.media.shotgunSmokePuffShader = trap_R_RegisterShader( "shotgunSmokePuff_nomip" );
+	}
+	else{
+		cgs.media.smokePuffShader = trap_R_RegisterShader( "smokePuff" );
+		cgs.media.smokePuffRageProShader = trap_R_RegisterShader( "smokePuffRagePro" );
+		cgs.media.shotgunSmokePuffShader = trap_R_RegisterShader( "shotgunSmokePuff" );
+	}
+	
 	cgs.media.nailPuffShader = trap_R_RegisterShader( "nailtrail" );
 	cgs.media.blueProxMine = trap_R_RegisterModel( "models/weaphits/proxmineb.md3" );
-	cgs.media.plasmaBallShader = trap_R_RegisterShader( "sprites/plasma1" );
-	cgs.media.plasmaBallShaderColor = trap_R_RegisterShader( "sprites/plasma1Color" );
-	cgs.media.bloodTrailShader = trap_R_RegisterShader( "bloodTrail" );
+	
+	if( cg_nomip.integer & 2 ){
+		cgs.media.plasmaBallShader = trap_R_RegisterShader( "sprites/plasma1_nomip" );
+		cgs.media.plasmaBallShaderColor = trap_R_RegisterShader( "sprites/plasma1Color_nomip" );
+	}
+	else{
+		cgs.media.plasmaBallShader = trap_R_RegisterShader( "sprites/plasma1" );
+		cgs.media.plasmaBallShaderColor = trap_R_RegisterShader( "sprites/plasma1Color" );
+	}
+	
+	if( cg_nomip.integer & 256 )
+		cgs.media.bloodTrailShader = trap_R_RegisterShader( "bloodTrail_nomip" );
+	else
+		cgs.media.bloodTrailShader = trap_R_RegisterShader( "bloodTrail" );
+	
 	cgs.media.lagometerShader = trap_R_RegisterShader("lagometer" );
 	cgs.media.connectionShader = trap_R_RegisterShader( "disconnected" );
 
@@ -1194,10 +1220,10 @@ static void CG_RegisterGraphics( void ) {
  	}
 
 	cgs.media.backTileShader = trap_R_RegisterShader( "gfx/2d/backtile" );
-	cgs.media.noammoShader = trap_R_RegisterShader( "icons/noammo" );
-        cgs.media.selectionShaderLeft = trap_R_RegisterShader( "icons/selectionMarkerLeft" );
-	cgs.media.selectionShaderMid = trap_R_RegisterShader( "icons/selectionMarkerMid" );
-	cgs.media.selectionShaderRight = trap_R_RegisterShader( "icons/selectionMarkerRight" );
+	cgs.media.noammoShader = trap_R_RegisterShaderNoMip( "icons/noammo" );
+        cgs.media.selectionShaderLeft = trap_R_RegisterShaderNoMip( "icons/selectionMarkerLeft" );
+	cgs.media.selectionShaderMid = trap_R_RegisterShaderNoMip( "icons/selectionMarkerMid" );
+	cgs.media.selectionShaderRight = trap_R_RegisterShaderNoMip( "icons/selectionMarkerRight" );
 
 	// powerup shaders
 	cgs.media.quadShader = trap_R_RegisterShader("powerups/quad" );
@@ -1312,10 +1338,13 @@ static void CG_RegisterGraphics( void ) {
 
 	cgs.media.smoke2 = trap_R_RegisterModel( "models/weapons2/shells/s_shell.md3" );
 
-	cgs.media.balloonShader = trap_R_RegisterShader( "sprites/balloon3" );
+	cgs.media.balloonShader = trap_R_RegisterShaderNoMip( "sprites/balloon3" );
 
-	cgs.media.bloodExplosionShader = trap_R_RegisterShader( "bloodExplosion" );
-
+	if( cg_nomip.integer & 256 )
+		cgs.media.bloodExplosionShader = trap_R_RegisterShader( "bloodExplosion_nomip" );
+	else
+		cgs.media.bloodExplosionShader = trap_R_RegisterShader( "bloodExplosion" );
+	
 	cgs.media.bulletFlashModel = trap_R_RegisterModel("models/weaphits/bullet.md3");
 	cgs.media.ringFlashModel = trap_R_RegisterModel("models/weaphits/ring02.md3");
 	cgs.media.dishFlashModel = trap_R_RegisterModel("models/weaphits/boom01.md3");
@@ -1367,13 +1396,34 @@ static void CG_RegisterGraphics( void ) {
 	}
 
 	// wall marks
-	cgs.media.bulletMarkShader = trap_R_RegisterShader( "gfx/damage/bullet_mrk" );
-	cgs.media.burnMarkShader = trap_R_RegisterShader( "gfx/damage/burn_med_mrk" );
-	cgs.media.holeMarkShader = trap_R_RegisterShader( "gfx/damage/hole_lg_mrk" );
-	cgs.media.energyMarkShader = trap_R_RegisterShader( "gfx/damage/plasma_mrk" );
+	if( cg_nomip.integer & 16 )
+		cgs.media.bulletMarkShader = trap_R_RegisterShader( "gfx/damage/bullet_mrk_nomip" );
+	else
+		cgs.media.bulletMarkShader = trap_R_RegisterShader( "gfx/damage/bullet_mrk" );
+	
+	if( cg_nomip.integer & 4 || cg_nomip.integer & 8 )
+		cgs.media.burnMarkShader = trap_R_RegisterShader( "gfx/damage/burn_med_mrk_nomip" );
+	else
+		cgs.media.burnMarkShader = trap_R_RegisterShader( "gfx/damage/burn_med_mrk" );	
+	
+	if( cg_nomip.integer & 1 )
+		cgs.media.holeMarkShader = trap_R_RegisterShader( "gfx/damage/hole_lg_mrk_nomip" );
+	else
+		cgs.media.holeMarkShader = trap_R_RegisterShader( "gfx/damage/hole_lg_mrk" );
+	
+	if( cg_nomip.integer & 2 )
+		cgs.media.energyMarkShader = trap_R_RegisterShader( "gfx/damage/plasma_mrk_nomip" );
+	else
+		cgs.media.energyMarkShader = trap_R_RegisterShader( "gfx/damage/plasma_mrk" );
+	
 	cgs.media.shadowMarkShader = trap_R_RegisterShader( "markShadow" );
 	cgs.media.wakeMarkShader = trap_R_RegisterShader( "wake" );
-	cgs.media.bloodMarkShader = trap_R_RegisterShader( "bloodMark" );
+	
+	if( cg_nomip.integer & 256 )
+		cgs.media.bloodMarkShader = trap_R_RegisterShader( "bloodMark_nomip" );
+	else
+		cgs.media.bloodMarkShader = trap_R_RegisterShader( "bloodMark" );
+		
 
 	// register the inline models
 	cgs.numInlineModels = trap_CM_NumInlineModels();

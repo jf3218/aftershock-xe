@@ -1659,6 +1659,9 @@ voiceChatList_t *CG_VoiceChatListForClient( int clientNum ) {
 void CG_ParseLivingCount(){
 	int newRed, newBlue;
 	
+	if( cg.warmup < 0 )
+		return;
+	
 	newRed = atoi( CG_Argv(1));
 	newBlue = atoi( CG_Argv(2));
 	

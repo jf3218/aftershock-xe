@@ -591,6 +591,7 @@ typedef struct {
     int		timeoutAdd;
     int		timeoutDelay;
     qboolean    endgameSend;
+    int		timeComplete;
     
 } level_locals_t;
 
@@ -1191,6 +1192,7 @@ extern vmCvar_t     disable_holdable_kamikaze;
 
 extern vmCvar_t	    g_allowRespawnTimer;
 extern vmCvar_t	    g_startWhenReady;
+extern vmCvar_t	    g_autoReady;
 
 extern vmCvar_t	    g_timeoutAllowed;
 extern vmCvar_t	    g_timeoutTime;

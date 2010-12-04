@@ -202,6 +202,7 @@ vmCvar_t     disable_holdable_kamikaze;
 vmCvar_t     g_allowRespawnTimer;
 
 vmCvar_t     g_startWhenReady;
+vmCvar_t     g_autoReady;
 
 vmCvar_t     g_timeoutAllowed;
 vmCvar_t     g_timeoutTime;
@@ -419,6 +420,7 @@ static cvarTable_t		gameCvarTable[] = {
 	
 	{ &g_allowRespawnTimer, "g_allowRespawnTimer", "1", CVAR_ARCHIVE, 0, qfalse},
 	{ &g_startWhenReady, "g_startWhenReady", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
+		{ &g_autoReady, "g_autoReady", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 	
 	{ &g_timeoutAllowed, "g_timeoutAllowed", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 	{ &g_timeoutTime, "g_timeoutTime", "60", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
@@ -776,6 +778,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	
 	level.time = levelTime;
 	level.startTime = levelTime;
+	level.timeComplete = levelTime;
 	
 	level.timeoutAdd = 0;
 	level.timeoutDelay = 0;
@@ -2272,13 +2275,13 @@ void CheckExitRules( void ) {
 	if ( (g_gametype.integer >= GT_CTF && g_ffa_gt<1) && g_capturelimit.integer ) {
 
 		if ( level.teamScores[TEAM_RED] >= g_capturelimit.integer ) {
-			trap_SendServerCommand( -1, "print \"Red hit the capturelimit.\n\"" );
+			trap_SendServerCommand( -1, "print \"Red hit the scorelimit.\n\"" );
 			LogExit( "Capturelimit hit." );
 			return;
 		}
 
 		if ( level.teamScores[TEAM_BLUE] >= g_capturelimit.integer ) {
-			trap_SendServerCommand( -1, "print \"Blue hit the capturelimit.\n\"" );
+			trap_SendServerCommand( -1, "print \"Blue hit the scorelimit.\n\"" );
 			LogExit( "Capturelimit hit." );
 			return;
 		}
@@ -2800,6 +2803,7 @@ void CheckTournament( void ) {
 
 		// pull in a spectator if needed
 		if ( level.numPlayingClients < 2 ) {
+			level.timeComplete = level.time;
 			AddTournamentPlayer();
 		}
 
@@ -2829,7 +2833,7 @@ void CheckTournament( void ) {
 				if( ( g_startWhenReady.integer && 
 				  ( g_entities[level.sortedClients[0]].client->ready || ( g_entities[level.sortedClients[0]].r.svFlags & SVF_BOT ) ) && 
 				  ( g_entities[level.sortedClients[1]].client->ready || ( g_entities[level.sortedClients[1]].r.svFlags & SVF_BOT ) ) ) || 
-				  !g_startWhenReady.integer || !g_doWarmup.integer ){
+				  !g_startWhenReady.integer || !g_doWarmup.integer || ( g_autoReady.integer > 0 && g_autoReady.integer*1000 < ( level.time - level.timeComplete ) ) ){
 					// fudge by -1 to account for extra delays
 					if ( g_warmup.integer > 1 ) {
 						level.warmupTime = level.time + ( g_warmup.integer - 1 ) * 1000;
@@ -2863,9 +2867,11 @@ void CheckTournament( void ) {
 
 			if (counts[TEAM_RED] < 1 || counts[TEAM_BLUE] < 1) {
 				notEnough = qtrue;
+				level.timeComplete = level.time;
 			}
 		} else if ( level.numPlayingClients < 2 ) {
 			notEnough = qtrue;
+			level.timeComplete = level.time;
 		}
 		
 		if( g_startWhenReady.integer ){
@@ -2875,9 +2881,9 @@ void CheckTournament( void ) {
 			}
 		}
 		
-		if( g_doWarmup.integer && g_startWhenReady.integer == 1 && ( clientsReady < level.numPlayingClients/2 + 1 ) )
+		if( g_doWarmup.integer && g_startWhenReady.integer == 1 && ( clientsReady < level.numPlayingClients/2 + 1 ) && !( g_autoReady.integer > 0 && g_autoReady.integer*1000 < ( level.time - level.timeComplete ) ) )
 			notEnough = qtrue;
-		if( g_doWarmup.integer && g_startWhenReady.integer == 2 && ( clientsReady < level.numPlayingClients ) )
+		if( g_doWarmup.integer && g_startWhenReady.integer == 2 && ( clientsReady < level.numPlayingClients ) && !( g_autoReady.integer > 0 && g_autoReady.integer*1000 < ( level.time - level.timeComplete ) ) )
 			notEnough = qtrue;
 		
 

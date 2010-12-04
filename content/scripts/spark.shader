@@ -1,5 +1,6 @@
 spark
 {
+	nopicmip
 	cull none
 	entityMergable
 	{
@@ -11,7 +12,8 @@ spark
 }
 
 plasmaSpark
-{
+{	
+	nopicmip
 	cull none
 	entityMergable
 	{

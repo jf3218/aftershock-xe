@@ -871,16 +871,29 @@ void CG_RegisterWeapon( int weaponNum ) {
 
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/lightning/lg_fire.wav", qfalse );
 		
-		cgs.media.lightningShader[0] = trap_R_RegisterShaderNoMip( "lightningBoltScroll");
-		cgs.media.lightningShaderColor[0] = trap_R_RegisterShaderNoMip( "lightningBoltScrollColor");
-		cgs.media.lightningShader[1] = trap_R_RegisterShaderNoMip( "lightningBoltScrollThin");
-		cgs.media.lightningShaderColor[1] = trap_R_RegisterShaderNoMip( "lightningBoltScrollThinColor");
-		cgs.media.lightningShader[2] = trap_R_RegisterShaderNoMip( "lightningBoltnew");
-		cgs.media.lightningShaderColor[2] = trap_R_RegisterShaderNoMip( "lightningBoltnewColor");
-		cgs.media.lightningShader[3] = trap_R_RegisterShaderNoMip( "lightningBoltSimple");
-		cgs.media.lightningShaderColor[3] = trap_R_RegisterShaderNoMip( "lightningBoltSimpleColor");
-		
+		if( cg_nomip.integer & 1 ){
+			cgs.media.lightningShader[0] = trap_R_RegisterShaderNoMip( "lightningBoltScroll_nomip");
+			cgs.media.lightningShaderColor[0] = trap_R_RegisterShaderNoMip( "lightningBoltScrollColor_nomip");
+			cgs.media.lightningShader[1] = trap_R_RegisterShaderNoMip( "lightningBoltScrollThin_nomip");
+			cgs.media.lightningShaderColor[1] = trap_R_RegisterShaderNoMip( "lightningBoltScrollThinColor_nomip");
+			cgs.media.lightningShader[2] = trap_R_RegisterShaderNoMip( "lightningBoltnew_nomip");
+			cgs.media.lightningShaderColor[2] = trap_R_RegisterShaderNoMip( "lightningBoltnewColor_nomip");
+			cgs.media.lightningShader[3] = trap_R_RegisterShaderNoMip( "lightningBoltSimple_nomip");
+			cgs.media.lightningShaderColor[3] = trap_R_RegisterShaderNoMip( "lightningBoltSimpleColor_nomip");
+		}
+		else{
+			cgs.media.lightningShader[0] = trap_R_RegisterShaderNoMip( "lightningBoltScroll");
+			cgs.media.lightningShaderColor[0] = trap_R_RegisterShaderNoMip( "lightningBoltScrollColor");
+			cgs.media.lightningShader[1] = trap_R_RegisterShaderNoMip( "lightningBoltScrollThin");
+			cgs.media.lightningShaderColor[1] = trap_R_RegisterShaderNoMip( "lightningBoltScrollThinColor");
+			cgs.media.lightningShader[2] = trap_R_RegisterShaderNoMip( "lightningBoltnew");
+			cgs.media.lightningShaderColor[2] = trap_R_RegisterShaderNoMip( "lightningBoltnewColor");
+			cgs.media.lightningShader[3] = trap_R_RegisterShaderNoMip( "lightningBoltSimple");
+			cgs.media.lightningShaderColor[3] = trap_R_RegisterShaderNoMip( "lightningBoltSimpleColor");
+		}
 		cgs.media.lightningExplosionModel = trap_R_RegisterModel( "models/weaphits/crackle.md3" );
+		cgs.media.lightningExplosionNomip = trap_R_RegisterShaderNoMip( "LightnnFlash_nomip" );
+		
 		cgs.media.sfx_lghit1 = trap_S_RegisterSound( "sound/weapons/lightning/lg_hit.wav", qfalse );
 		cgs.media.sfx_lghit2 = trap_S_RegisterSound( "sound/weapons/lightning/lg_hit2.wav", qfalse );
 		cgs.media.sfx_lghit3 = trap_S_RegisterSound( "sound/weapons/lightning/lg_hit3.wav", qfalse );
@@ -909,7 +922,10 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[2] = trap_S_RegisterSound( "sound/weapons/vulcan/vulcanf3b.wav", qfalse );
 		weaponInfo->flashSound[3] = trap_S_RegisterSound( "sound/weapons/vulcan/vulcanf4b.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_MachineGunEjectBrass;
-		cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion" );
+		if( cg_nomip.integer & 16 )
+			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion_nomip" );
+		else
+			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion" );
 		break;
 //#endif
 
@@ -920,7 +936,10 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[2] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf3b.wav", qfalse );
 		weaponInfo->flashSound[3] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf4b.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_MachineGunEjectBrass;
-		cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion" );
+		if( cg_nomip.integer & 16 )
+			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion_nomip" );
+		else
+			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion" );
 		break;
 
 	case WP_SHOTGUN:
@@ -941,7 +960,10 @@ void CG_RegisterWeapon( int weaponNum ) {
 		MAKERGB( weaponInfo->flashDlightColor, 1, 0.75f, 0 );
 
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/rocket/rocklf1a.wav", qfalse );
-		cgs.media.rocketExplosionShader = trap_R_RegisterShader( "rocketExplosion" );
+		if( cg_nomip.integer & 4 )
+			cgs.media.rocketExplosionShader = trap_R_RegisterShader( "rocketExplosion_nomip" );
+		else
+			cgs.media.rocketExplosionShader = trap_R_RegisterShader( "rocketExplosion" );
 		break;
 
 //#ifdef MISSIONPACK
@@ -963,7 +985,10 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->trailRadius = 32;
 		MAKERGB( weaponInfo->flashDlightColor, 1, 0.70f, 0 );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/grenade/grenlf1a.wav", qfalse );
-		cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "grenadeExplosion" );
+		if( cg_nomip.integer & 8 )
+			cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "grenadeExplosion_nomip" );
+		else
+			cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "grenadeExplosion" );
 		break;
 
 //#ifdef MISSIONPACK
@@ -985,24 +1010,47 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->missileSound = trap_S_RegisterSound( "sound/weapons/plasma/lasfly.wav", qfalse );
 		MAKERGB( weaponInfo->flashDlightColor, 0.6f, 0.6f, 1.0f );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/plasma/hyprbf1a.wav", qfalse );
-		cgs.media.plasmaExplosionShader = trap_R_RegisterShader( "plasmaExplosion" );
-		cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc" );
+		
+		if( cg_nomip.integer & 2 ){
+			cgs.media.plasmaExplosionShader = trap_R_RegisterShader( "plasmaExplosion_nomip" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc_nomip" );
+		}
+		else{
+			cgs.media.plasmaExplosionShader = trap_R_RegisterShader( "plasmaExplosion" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc" );
+		}
+		
 		break;
 
 	case WP_RAILGUN:
 		weaponInfo->readySound = trap_S_RegisterSound( "sound/weapons/railgun/rg_hum.wav", qfalse );
 		MAKERGB( weaponInfo->flashDlightColor, 1, 0.5f, 0 );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/railgun/railgf1a.wav", qfalse );
-		cgs.media.railExplosionShader = trap_R_RegisterShader( "railExplosion" );
-		cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc" );
-		cgs.media.railCoreShader = trap_R_RegisterShader( "railCore" );
+		
+		if( cg_nomip.integer & 32 ){
+			cgs.media.railExplosionShader = trap_R_RegisterShader( "railExplosion_nomip" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc_nomip" );
+			cgs.media.railCoreShader = trap_R_RegisterShader( "railCore_nomip" );
+		}
+		else{
+			cgs.media.railExplosionShader = trap_R_RegisterShader( "railExplosion" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc" );
+			cgs.media.railCoreShader = trap_R_RegisterShader( "railCore" );
+		}
+		
+
 		break;
 
 	case WP_BFG:
 		weaponInfo->readySound = trap_S_RegisterSound( "sound/weapons/bfg/bfg_hum.wav", qfalse );
 		MAKERGB( weaponInfo->flashDlightColor, 1, 0.7f, 1 );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/bfg/bfg_fire.wav", qfalse );
-		cgs.media.bfgExplosionShader = trap_R_RegisterShader( "bfgExplosion" );
+		
+		if( cg_nomip.integer & 64 )
+			cgs.media.bfgExplosionShader = trap_R_RegisterShader( "bfgExplosion_nomip" );
+		else
+			cgs.media.bfgExplosionShader = trap_R_RegisterShader( "bfgExplosion" );
+		
 		weaponInfo->missileModel = trap_R_RegisterModel( "models/weaphits/bfg.md3" );
 		weaponInfo->missileSound = trap_S_RegisterSound( "sound/weapons/rocket/rockfly.wav", qfalse );
 		break;
@@ -1472,7 +1520,10 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 
 		memset( &beam, 0, sizeof( beam ) );
 		beam.hModel = cgs.media.lightningExplosionModel;
-
+		
+		/*if( cg_nomip.integer & 1 )
+			beam.customShader = cgs.media.lightningExplosionNomip;*/
+		
 		VectorMA( trace.endpos, -16, dir, beam.origin );
 
 		// make a random orientation
@@ -1480,7 +1531,8 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 		angles[1] = rand() % 360;
 		angles[2] = rand() % 360;
 		AnglesToAxis( angles, beam.axis );
-		trap_R_AddRefEntityToScene( &beam );
+		if( cg_lightningExplosion.integer )
+			trap_R_AddRefEntityToScene( &beam );
 		CG_ExplosionParticles(WP_LIGHTNING, beam.origin, NULL, NULL);
 	}
 }
@@ -2013,7 +2065,8 @@ void CG_DrawWeaponBar0(int count, int bits, float *color){
 		}
 		if( i != WP_GAUNTLET ) {
 			// draw weapon icon
-			if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
+			
+			if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 				CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderLeft );
 			}
 
@@ -2066,7 +2119,7 @@ void CG_DrawWeaponBar1(int count, int bits, float *color){
 		}
 		if( i != WP_GAUNTLET ) {
 			// draw weapon icon
-			if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
+			if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 				CG_DrawPic( x, y, 30, 38, cgs.media.selectionShaderMid );
 			}
 
@@ -2117,7 +2170,7 @@ void CG_DrawWeaponBar2(int count, int bits, float *color){
 		}
 		if( i != WP_GAUNTLET ) {
 			// draw weapon icon
-			if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
+			if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 				CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderRight );
 			}
 
@@ -2161,7 +2214,7 @@ void CG_DrawWeaponBar3(int count, int bits, float *color){
 		if( cg_weapons[i].weaponIcon ){
 			if( i != WP_GAUNTLET ) {
 				// draw weapon icon
-				if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
+				if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 					CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderLeft );
 				}
 	
@@ -2204,7 +2257,7 @@ void CG_DrawWeaponBar4(int count, int bits, float *color){
                 if( cg_weapons[i].weaponIcon ){
 			if( i != WP_GAUNTLET ) {
 				// draw weapon icon
-				if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
+				if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 					CG_DrawPic( x, y, 30, 38, cgs.media.selectionShaderMid );
 				}
 	
@@ -2244,7 +2297,7 @@ void CG_DrawWeaponBar5(int count, int bits, float *color){
 		if( cg_weapons[i].weaponIcon ){
 			if( i != WP_GAUNTLET ) {
 				// draw weapon icon
-				if ( i == cg.weaponSelect /*cg_entities[cg.snap->ps.clientNum].currentState.weapon*/ ) {
+				if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 					CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderRight );
 				}
 		

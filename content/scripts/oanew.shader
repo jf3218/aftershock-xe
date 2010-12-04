@@ -78,6 +78,23 @@ lowLightnnFlash
 
 LightnnFlash
 {
+	nopicmip
+	cull disable
+	{
+		animmap 20 models/weapons2/lightning/muzzle1.tga models/weapons2/lightning/muzzle2.tga models/weapons2/lightning/muzzle3.tga 
+		blendfunc gl_one gl_src_alpha
+		rgbGen wave inversesawtooth 0 1 0 20 
+	}
+	{
+		animmap 20 models/weapons2/lightning/muzzle2.tga models/weapons2/lightning/muzzle3.tga models/weapons2/lightning/muzzle1.tga 
+		blendfunc gl_one gl_src_alpha
+		rgbGen wave sawtooth 0 1 0 20 
+	}
+}
+
+LightnnFlash_nomip
+{	
+	nopicmip
 	cull disable
 	{
 		animmap 20 models/weapons2/lightning/muzzle1.tga models/weapons2/lightning/muzzle2.tga models/weapons2/lightning/muzzle3.tga 
@@ -579,7 +596,89 @@ shotgunSmokePuff
 	}
 }
 
+smokePuff_nomip
+{
+	nopicmip
+	cull disable
+	{
+		clampmap gfx/misc/smokepuff3.tga
+		blendfunc blend
+		tcMod rotate -55
+		rgbGen entity
+		alphaGen Vertex
+	}
+}
+
+smokePuffRagePro_nomip
+{
+	nopicmip
+	cull disable
+	{
+		map gfx/misc/smokepuffragepro.tga
+		blendfunc blend
+		alphaGen Vertex
+	}
+}
+
+hasteSmokePuff_nomip
+{
+	nopicmip
+	cull disable
+	{
+		map gfx/misc/hastesmoke.tga
+		blendfunc blend
+		tcMod rotate 64
+		alphaGen Vertex
+	}
+}
+
+shotgunSmokePuff_nomip
+{
+	nopicmip
+	cull disable
+	{
+		clampmap gfx/misc/smokepuff3.tga
+		blendfunc blend
+		tcMod rotate -45
+		alphaGen entity
+	}
+}
+
 sprites/plasma1
+{
+	{
+		clampmap sprites/plasmaa.tga
+		blendfunc gl_src_alpha gl_one
+		tcMod rotate -145
+		alphaGen entity
+	}
+	{
+		clampmap sprites/plasmaa.tga
+		blendfunc gl_src_alpha gl_one
+		tcMod rotate 177
+		alphaGen entity
+	}
+}
+
+sprites/plasma1Color
+{
+	{
+		clampmap sprites/plasmaa.tga
+		blendfunc gl_src_alpha gl_one
+		tcMod rotate -145
+		alphaGen entity
+		rgbGen entity
+	}
+	{
+		clampmap sprites/plasmaa.tga
+		blendfunc gl_src_alpha gl_one
+		tcMod rotate 177
+		alphaGen entity
+		rgbGen entity
+	}
+}
+
+sprites/plasma1_nomip
 {
 	nopicmip
 	{
@@ -596,7 +695,7 @@ sprites/plasma1
 	}
 }
 
-sprites/plasma1Color
+sprites/plasma1Color_nomip
 {
 	nopicmip
 	{

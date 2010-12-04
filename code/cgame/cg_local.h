@@ -843,6 +843,7 @@ typedef struct {
 	qhandle_t	ringFlashModel;
 	qhandle_t	dishFlashModel;
 	qhandle_t	lightningExplosionModel;
+	qhandle_t	lightningExplosionNomip;
 
 	// weapon effect shaders
 	qhandle_t	railExplosionShader;
@@ -1476,6 +1477,9 @@ extern vmCvar_t			cg_hitMarks;
 extern vmCvar_t			cg_newRewards;
 extern vmCvar_t			cg_drawLivingCount;
 extern vmCvar_t			cg_drawCenterprint;
+
+extern vmCvar_t			cg_nomip;
+extern vmCvar_t			cg_lightningExplosion;
 
 
 //unlagged - cg_unlagged.c
