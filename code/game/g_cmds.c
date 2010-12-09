@@ -896,7 +896,7 @@ void Cmd_Kill_f( gentity_t *ent ) {
 	}
 	ent->flags &= ~FL_GODMODE;
 	ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
-        if(ent->client->lastSentFlying>-1)
+        if(ent->client->lastSentFlying>-1 && g_awardpushing.integer )
             //If player is in the air because of knockback we give credit to the person who sent it flying
             player_die (ent, ent, &g_entities[ent->client->lastSentFlying], 100000, MOD_FALLING);
         else
@@ -1095,17 +1095,17 @@ void SetTeam( gentity_t *ent, char *s ) {
     if ( !force ) {
         if ( team == TEAM_RED && level.RedTeamLocked ) {
             trap_SendServerCommand( ent->client->ps.clientNum,
-            "cp \"The Red Team has been locked by the Admin! \n\"" );
+            "cp \"The Red Team has been locked! \n\"" );
             return;    
         }
         if ( team == TEAM_BLUE && level.BlueTeamLocked ) {
             trap_SendServerCommand( ent->client->ps.clientNum,
-            "cp \"The Blue Team has been locked by the Admin! \n\"" );
+            "cp \"The Blue Team has been locked! \n\"" );
             return;
         }
         if ( team == TEAM_FREE && level.FFALocked ) {
             trap_SendServerCommand( ent->client->ps.clientNum,
-            "cp \"This Deathmatch has been locked by the Admin! \n\"" );
+            "cp \"This Deathmatch has been locked! \n\"" );
         }
     }
 	//
@@ -2777,6 +2777,35 @@ void Cmd_Drop_f( gentity_t *ent ){
 		Cmd_DropWeapon_f( ent );
 	
 }
+
+void Cmd_Lock_f( gentity_t *ent ){
+	
+	if( g_teamLock.integer != 1 )
+		return;
+  
+	if( ent->client->ps.persistant[PERS_TEAM] == TEAM_RED ){
+		level.RedTeamLocked = qtrue;
+	}
+	if( ent->client->ps.persistant[PERS_TEAM] == TEAM_BLUE ){
+		level.BlueTeamLocked = qtrue;
+	}
+	
+}
+
+void Cmd_Unlock_f( gentity_t *ent ){
+	
+	if( g_teamLock.integer != 1 )
+		return;
+  
+	if( ent->client->ps.persistant[PERS_TEAM] == TEAM_RED ){
+		level.RedTeamLocked = qfalse;
+	}
+	if( ent->client->ps.persistant[PERS_TEAM] == TEAM_BLUE ){
+		level.BlueTeamLocked = qfalse;
+	}
+	
+}
+
 	
 
 //KK-OAX This is the table that ClientCommands runs the console entry against. 
@@ -2840,6 +2869,8 @@ commands_t cmds[ ] =
   { "dropweapon", 0, Cmd_DropWeapon_f },
   { "dropflag", 0, Cmd_DropFlag_f },
   { "drop", 0, Cmd_Drop_f },
+  { "lock", 0, Cmd_Lock_f },
+  { "unlock", 0, Cmd_Unlock_f },
   
 };
 

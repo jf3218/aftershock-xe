@@ -1106,7 +1106,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
         
         //Sago: See if the client was sent flying
         //Check if damage is by somebody who is not a player!
-        if( (!attacker || attacker->s.eType != ET_PLAYER) && client->lastSentFlying>-1 && ( mod==MOD_FALLING || mod==MOD_LAVA || mod==MOD_SLIME || mod==MOD_TRIGGER_HURT || mod==MOD_SUICIDE) )  {
+        if( (!attacker || attacker->s.eType != ET_PLAYER) && client->lastSentFlying>-1 && g_awardpushing.integer && ( mod==MOD_FALLING || mod==MOD_LAVA || mod==MOD_SLIME || mod==MOD_TRIGGER_HURT || mod==MOD_SUICIDE) )  {
             if( client->lastSentFlyingTime+5000<level.time) {
                 client->lastSentFlying = -1; //More than 5 seconds, not a kill!
             } else {
@@ -1194,7 +1194,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
 		}
                 //Remeber the last person to hurt the player
-                if( !g_awardpushing.integer || targ==attacker || OnSameTeam (targ, attacker)) {
+                if( /*!g_awardpushing.integer ||*/ targ==attacker || OnSameTeam (targ, attacker)) {
                     targ->client->lastSentFlying = -1;
                 } else {
 	/*if ( pm->waterlevel <= 1 ) {
@@ -1206,6 +1206,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			}
 		}
 	}*/
+		    targ->client->lastSentFlyingSave = targ->client->lastSentFlying;
                     targ->client->lastSentFlying = attacker->s.number;
                     targ->client->lastSentFlyingTime = level.time;
                 }
@@ -1329,21 +1330,12 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 					attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 				}
 			}
-
-			if( mod == MOD_ROCKET ){
-				attacker->client->lastRocketTime = level.time;
-				if( level.time - attacker->client->lastRailTime < 300 ){
+			
+			if( ( targ->client->lastGroundTime != 0 ) && mod == MOD_RAILGUN && 
+				( targ->client->lastSentFlyingSave == attacker->s.number ) && 
+				( ( targ->client->lasthurt_mod == MOD_ROCKET ) || ( targ->client->lasthurt_mod == MOD_ROCKET_SPLASH ) ) ){
 					attacker->client->rewards[REWARD_RLRG]++;
 					RewardMessage(attacker, REWARD_RLRG, attacker->client->rewards[REWARD_RLRG]);
-				}
-			}
-
-			if( mod == MOD_RAILGUN ){
-				attacker->client->lastRailTime = level.time;
-				if( level.time - attacker->client->lastRocketTime < 300 ){
-					attacker->client->rewards[REWARD_RLRG]++;
-					RewardMessage(attacker, REWARD_RLRG, attacker->client->rewards[REWARD_RLRG]);
-				}
 			}
 		}
 		attacker->client->ps.persistant[PERS_ATTACKEE_ARMOR] = (targ->health<<8)|(client->ps.stats[STAT_ARMOR]);
@@ -1392,7 +1384,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	if ( client ) {
 		if ( attacker ) {
 			client->ps.persistant[PERS_ATTACKER] = attacker->s.number;
-                } else if(client->lastSentFlying) {
+                } else if(client->lastSentFlying && g_awardpushing.integer ) {
                         client->ps.persistant[PERS_ATTACKER] = client->lastSentFlying;
                 } else {
 			client->ps.persistant[PERS_ATTACKER] = ENTITYNUM_WORLD;

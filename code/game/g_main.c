@@ -214,6 +214,8 @@ vmCvar_t     g_itemDrop;
 vmCvar_t     g_writeStats;
 vmCvar_t     g_statsPath;
 
+vmCvar_t     g_teamLock;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -431,6 +433,8 @@ static cvarTable_t		gameCvarTable[] = {
 	
 	{ &g_writeStats, "g_writeStats", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_statsPath, "g_statsPath", "serverstats", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
+	
+	{ &g_teamLock, "g_teamLock", "0", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 
 };
 
@@ -3145,6 +3149,15 @@ void G_RunFrame( int levelTime ) {
         if( !g_elimination_ctf_oneway.integer && (g_elimflags.integer & EF_ONEWAY) ) {
             trap_Cvar_Set("elimflags",va("%i",g_elimflags.integer&(~EF_ONEWAY) ) );
         }
+        
+        if( level.RedTeamLocked && ( TeamCount( -1, TEAM_RED ) == 0 ) ){
+		level.RedTeamLocked = qfalse;
+	}
+	
+	if( level.BlueTeamLocked && ( TeamCount( -1, TEAM_BLUE ) == 0 ) ){
+		level.BlueTeamLocked = qfalse;
+	}
+	
 
 	//
 	// go through all allocated objects

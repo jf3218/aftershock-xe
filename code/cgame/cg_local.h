@@ -531,6 +531,8 @@ typedef struct {
 
 	// input state sent to server
 	int			weaponSelect;
+	#define WEAPON_COUNT 9
+	int			nextweapons[WEAPON_COUNT];
 	int			lastweapon;
 
 	// auto rotating items
@@ -1481,6 +1483,9 @@ extern vmCvar_t			cg_drawCenterprint;
 extern vmCvar_t			cg_nomip;
 extern vmCvar_t			cg_lightningExplosion;
 
+extern vmCvar_t			cg_noAmmoChange;
+extern vmCvar_t			cg_lgHitSfx;
+
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
@@ -1517,6 +1522,8 @@ void SnapVectorTowards( vec3_t v, vec3_t to );
 
 //void CG_FairCvars();
 void CG_oaUnofficialCvars( void );
+
+void CG_ForceModelChange( void );
 
 //
 // cg_view.c
@@ -1615,7 +1622,9 @@ void CG_ResetPlayerEntity( centity_t *cent );
 void CG_AddRefEntityWithPowerups( refEntity_t *ent, entityState_t *state, int team );
 void CG_NewClientInfo( int clientNum );
 sfxHandle_t	CG_CustomSound( int clientNum, const char *soundName );
-
+int  hexToRed( char* hexin );
+int  hexToGreen( char* hexin );
+int  hexToBlue( char* hexin );
 //
 // cg_predict.c
 //
@@ -1679,6 +1688,8 @@ void CG_DrawWeaponBar2(int count, int bits, float *color);
 void CG_DrawWeaponBar3(int count, int bits, float *color);
 void CG_DrawWeaponBar4(int count, int bits, float *color);
 void CG_DrawWeaponBar5(int count, int bits, float *color);
+
+qboolean CG_DrawAccboard( void );
 
 
 void CG_OutOfAmmoChange( void );	// should this be in pmove?

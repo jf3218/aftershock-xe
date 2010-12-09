@@ -62,12 +62,12 @@ char	gameString[128];
 
 void CG_SetGameString( void ){
 	qtime_t	now;
-	char		*p;
 	char		*mapname;
 	char		*buf;
 	char		playerName[128];
 	clientInfo_t	*ci1, *ci2;
 	int 		i, count;
+	
 	char *gameNames[] = {
 	  "FFA",
 	  "1v1",

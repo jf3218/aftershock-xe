@@ -1384,6 +1384,7 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 	vec3_t   muzzlePoint, endPoint;
 	int	style;
 	clientInfo_t *local, *other;
+	qhandle_t		mark;
   	local = &cgs.clientinfo[cg.clientNum];
 	other = &cgs.clientinfo[cent->currentState.number];
 
@@ -2386,6 +2387,9 @@ void CG_NextWeapon_f( void ) {
 	if ( i == MAX_WEAPONS ) {
 		cg.weaponSelect = original;
 	}
+	
+	for( i = 0 ; i < WEAPON_COUNT; i++ )
+		cg.nextweapons[i] = 0;
 }
 
 /*
@@ -2437,6 +2441,9 @@ void CG_PrevWeapon_f( void ) {
 	if ( i == MAX_WEAPONS ) {
 		cg.weaponSelect = original;
 	}
+	
+	for( i = 0 ; i < WEAPON_COUNT; i++ )
+		cg.nextweapons[i] = 0;
 }
 
 /*
@@ -2446,6 +2453,8 @@ CG_Weapon_f
 */
 void CG_Weapon_f( void ) {
 	int		num;
+	int		i;
+	qboolean	weaponFound = qfalse;
 
 	if ( !cg.snap ) {
 		return;
@@ -2454,6 +2463,30 @@ void CG_Weapon_f( void ) {
 		return;
 	}
 
+	for( i = 0; i < WEAPON_COUNT; i++ ){
+		cg.nextweapons[i] = atoi( CG_Argv( i + 1 ) );
+		if( !weaponFound ){
+			num = cg.nextweapons[i];
+			
+			if ( num < 1 || num > MAX_WEAPONS-1 ) {
+				continue;
+			}
+			if( cg_noAmmoChange.integer ){
+				if ( ! ( cg.snap->ps.stats[STAT_WEAPONS] & ( 1 << num ) ) )
+					continue;
+			}
+			else{
+				if( !CG_WeaponSelectable( num ) )
+					continue;
+			}
+			
+			cg.weaponSelectTime = cg.time;
+			cg.weaponSelect = num;
+			weaponFound = qtrue;
+		}
+	}
+	
+	/*
 	num = atoi( CG_Argv( 1 ) );
 
 	if ( num < 1 || num > MAX_WEAPONS-1 ) {
@@ -2466,7 +2499,7 @@ void CG_Weapon_f( void ) {
 		return;		// don't have the weapon
 	}
 
-	cg.weaponSelect = num;
+	cg.weaponSelect = num;*/
 	
 }
 
@@ -2479,9 +2512,16 @@ The current weapon has just run out of ammo
 */
 void CG_OutOfAmmoChange( void ) {
 	int		i;
-
+	
 	cg.weaponSelectTime = cg.time;
-
+	
+	for( i = 0; i < WEAPON_COUNT; i++ ){
+		if ( CG_WeaponSelectable( cg.nextweapons[i] ) && cg.nextweapons[i] != WP_GRAPPLING_HOOK ) {
+			cg.weaponSelect = cg.nextweapons[i];
+			return;
+		}
+	}
+	
 	for ( i = MAX_WEAPONS-1 ; i > 0 ; i-- ) {
 		if ( CG_WeaponSelectable( i ) && i != WP_GRAPPLING_HOOK ) {
 			cg.weaponSelect = i;
@@ -2662,13 +2702,15 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 #endif
 	case WP_LIGHTNING:
 		// no explosion at LG impact, it is added with the beam
-		r = rand() & 3;
-		if ( r < 2 ) {
-			sfx = cgs.media.sfx_lghit2;
-		} else if ( r == 2 ) {
-			sfx = cgs.media.sfx_lghit1;
-		} else {
-			sfx = cgs.media.sfx_lghit3;
+		if( cg_lgHitSfx.integer ){
+			r = rand() & 3;
+			if ( r < 2 ) {
+				sfx = cgs.media.sfx_lghit2;
+			} else if ( r == 2 ) {
+				sfx = cgs.media.sfx_lghit1;
+			} else {
+				sfx = cgs.media.sfx_lghit3;
+			}
 		}
 		mark = cgs.media.holeMarkShader;
 		radius = 12;
@@ -2726,6 +2768,10 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		sfx = cgs.media.sfx_plasmaexp;
 		mark = cgs.media.energyMarkShader;
 		radius = 16;
+		/*light = 100;		//maybe later some light
+		lightColor[0] = 0.5;
+		lightColor[1] = 0.75;
+		lightColor[2] = 1.0;*/
 		break;
 	case WP_BFG:
 		mod = cgs.media.dishFlashModel;

@@ -405,6 +405,7 @@ struct gclient_s {
         
         int lastSentFlying;                             //The last client that sent the player flying
         int lastSentFlyingTime;                         //So we can time out
+        int lastSentFlyingSave;
 
 	int lastGroundTime;
         
@@ -1203,6 +1204,8 @@ extern vmCvar_t	    g_itemDrop;
 
 extern vmCvar_t	    g_writeStats;
 extern vmCvar_t	    g_statsPath;
+
+extern vmCvar_t	    g_teamLock;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

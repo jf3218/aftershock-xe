@@ -348,6 +348,8 @@ vmCvar_t	cg_drawCenterprint;
 vmCvar_t	cg_nomip;
 
 vmCvar_t	cg_lightningExplosion;
+vmCvar_t	cg_noAmmoChange;
+vmCvar_t	cg_lgHitSfx;
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -600,6 +602,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_drawCenterprint, "cg_drawCenterprint", "1", CVAR_ARCHIVE},
 	{&cg_nomip, "cg_nomip", "0", CVAR_ARCHIVE},
 	{&cg_lightningExplosion, "cg_lightningExplosion", "0", CVAR_ARCHIVE},
+	{&cg_noAmmoChange, "cg_noAmmoChange", "1", CVAR_ARCHIVE},
+	{&cg_lgHitSfx, "cg_lgHitSfx", "1", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -641,7 +645,7 @@ void CG_RegisterCvars( void ) {
 CG_ForceModelChange
 ===================
 */
-static void CG_ForceModelChange( void ) {
+void CG_ForceModelChange( void ) {
 	int		i;
 
 	for (i=0 ; i<MAX_CLIENTS ; i++) {
