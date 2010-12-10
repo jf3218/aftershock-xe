@@ -685,6 +685,9 @@ typedef struct {
 	int		readyMask;
 	char	*gameString;
 	int	demoStarted;
+	
+	int	lastHitTime;
+	int	lastHitDamage;
 
 } cg_t;
 
@@ -1485,6 +1488,7 @@ extern vmCvar_t			cg_lightningExplosion;
 
 extern vmCvar_t			cg_noAmmoChange;
 extern vmCvar_t			cg_lgHitSfx;
+extern vmCvar_t			cg_crosshairHitColor;
 
 
 //unlagged - cg_unlagged.c

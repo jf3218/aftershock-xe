@@ -2753,19 +2753,30 @@ static void CG_DrawCrosshair(void)
 		return;
 	}
 
+	if( cg_crosshairHitColor.integer ){
+		if( cg.time - cg.lastHitTime < 500 ){
+			color[0] = 1.0f;
+			color[1] = 1.0f-cg.lastHitDamage/100.0f;
+			if( color[1] < 0.0f )
+				color[1] = 0.0f;
+			color[2] = 0.0f;
+			color[3] = 1.0f;
+		}
+		else{
+			color[0] = 1.0f;
+			color[1] = 1.0f;
+			color[2] = 1.0f;
+			color[3] = 1.0f;
+		}
+	}
 	// set color based on health
-	if ( cg_crosshairHealth.integer ) {
-		//vec4_t		hcolor;
-
+	else if ( cg_crosshairHealth.integer ) {
 		CG_ColorForHealth( color );
-		//trap_R_SetColor( hcolor );
 	} else {
-                //vec4_t         color;
                 color[0]=cg_crosshairColorRed.value;
                 color[1]=cg_crosshairColorGreen.value;
                 color[2]=cg_crosshairColorBlue.value;
                 color[3]=1.0f;
-		//trap_R_SetColor( color );
 	}
 
 	if( cg_differentCrosshairs.integer == 1 ){
@@ -2833,11 +2844,21 @@ static void CG_DrawCrosshair(void)
 		w = w * cgs.screenYScale / cgs.screenXScale;
 	}
 	
-	if( cg_crosshairPulse.integer ){
+	if( cg_crosshairPulse.integer == 1 ){
 		// pulse the size of the crosshair when picking up items
 		f = cg.time - cg.itemPickupBlendTime;
 		if ( f > 0 && f < ITEM_BLOB_TIME ) {
 			f /= ITEM_BLOB_TIME;
+			w *= ( 1 + f );
+			h *= ( 1 + f );
+		}
+	}
+	
+	if( cg_crosshairPulse.integer == 2 ){
+		f = cg.time - cg.lastHitTime;
+		if ( f > 0 && f < ITEM_BLOB_TIME ) {
+			f = f/(ITEM_BLOB_TIME);
+			f = cg.lastHitDamage*(1 - f)/50;
 			w *= ( 1 + f );
 			h *= ( 1 + f );
 		}

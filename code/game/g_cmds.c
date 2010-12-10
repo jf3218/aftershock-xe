@@ -285,7 +285,7 @@ void G_SendStats( gentity_t *ent ) {
 		cl = &level.clients[level.sortedClients[i]];
 			
 		Com_sprintf (entry, sizeof(entry),
-			" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i], cl->accuracy[WP_GAUNTLET][2], cl->accuracy[WP_GAUNTLET][3], cl->accuracy[WP_GAUNTLET][4], 
+			" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i", level.sortedClients[i], cl->accuracy[WP_GAUNTLET][2], cl->accuracy[WP_GAUNTLET][3], cl->accuracy[WP_GAUNTLET][4], 
 									  cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1], cl->accuracy[WP_MACHINEGUN][2], cl->accuracy[WP_MACHINEGUN][3], cl->accuracy[WP_MACHINEGUN][4], 
 									  cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1], cl->accuracy[WP_SHOTGUN][2], cl->accuracy[WP_SHOTGUN][3], cl->accuracy[WP_SHOTGUN][4],
 									  cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1], cl->accuracy[WP_GRENADE_LAUNCHER][2], cl->accuracy[WP_GRENADE_LAUNCHER][3], cl->accuracy[WP_GRENADE_LAUNCHER][4],
@@ -305,7 +305,10 @@ void G_SendStats( gentity_t *ent ) {
 									  cl->ps.persistant[PERS_DEFEND_COUNT],
 									  cl->ps.persistant[PERS_CAPTURES],
 									  cl->rewards[REWARD_AIRGRENADE],
-									  cl->rewards[REWARD_AIRROCKET]);
+									  cl->rewards[REWARD_AIRROCKET],
+									  cl->rewards[REWARD_FULLSG],
+									  cl->rewards[REWARD_RLRG],
+									  cl->rewards[REWARD_ITEMDENIED]);
 		
 		j = strlen(entry);
 		if (stringlength + j > 2048)

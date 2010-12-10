@@ -301,7 +301,7 @@ static void CG_ParseStatistics( void ) {
 		numStats = MAX_CLIENTS;
 	}
 
-#define NUM_DATA_STATS 56
+#define NUM_DATA_STATS 59
 #define FIRST_DATA_STATS 1
 #define NUM_WEAPONDATA_STATS 5
 
@@ -371,9 +371,10 @@ static void CG_ParseStatistics( void ) {
 			  len = strlen( string );
 			  trap_FS_Write(string, len, f);
 		  //}
-		  string = va("Impressive   %3i   Excellent   %3i   Airgrenade   %3i   Airrocket   %3i\n", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 50 )),
+		  string = va("Impressive   %3i   Excellent   %3i   Airgrenade   %3i   Airrocket   %3i   FullSG   %3i   RocketRail   %3i   Item Denied   %3i\n", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 50 )),
 			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 51 )),
-			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 55 )), atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 56 )));
+			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 55 )), atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 56 )), 
+			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 57 )),atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 58 )),atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 59 )));
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  

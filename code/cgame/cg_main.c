@@ -350,6 +350,7 @@ vmCvar_t	cg_nomip;
 vmCvar_t	cg_lightningExplosion;
 vmCvar_t	cg_noAmmoChange;
 vmCvar_t	cg_lgHitSfx;
+vmCvar_t	cg_crosshairHitColor;
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -604,6 +605,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_lightningExplosion, "cg_lightningExplosion", "0", CVAR_ARCHIVE},
 	{&cg_noAmmoChange, "cg_noAmmoChange", "1", CVAR_ARCHIVE},
 	{&cg_lgHitSfx, "cg_lgHitSfx", "1", CVAR_ARCHIVE},
+	{&cg_crosshairHitColor, "cg_crosshairHitColor", "0", CVAR_ARCHIVE},
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

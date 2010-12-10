@@ -328,6 +328,9 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 			trap_S_StartLocalSound( cgs.media.hitSound2, CHAN_LOCAL_SOUND );
 		}
 #else
+		cg.lastHitTime = cg.time;
+		cg.lastHitDamage = ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] );
+
 		if( cg_hitBeep.integer == 1 )
 			trap_S_StartLocalSound( cgs.media.hitSound2, CHAN_LOCAL_SOUND );
 

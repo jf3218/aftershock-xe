@@ -2012,9 +2012,10 @@ void G_WriteStats( void ){
 			  len = strlen( string );
 			  trap_FS_Write(string, len, f);
 		  //}
-		  string = va("Impressive   %3i   Excellent   %3i   Airgrenade   %3i   Airrocket   %3i\n", cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
+		  string = va("Impressive   %3i   Excellent   %3i   Airgrenade   %3i   Airrocket   %3i   FullSG   %3i   RocketRail   %3i   Item Denied   %3i\n", cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
 			      cl->ps.persistant[PERS_EXCELLENT_COUNT],
-			      cl->rewards[REWARD_AIRGRENADE], cl->rewards[REWARD_AIRROCKET]);
+			      cl->rewards[REWARD_AIRGRENADE], cl->rewards[REWARD_AIRROCKET],
+			      cl->rewards[REWARD_FULLSG],cl->rewards[REWARD_RLRG],cl->rewards[REWARD_ITEMDENIED]);
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
