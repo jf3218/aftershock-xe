@@ -1659,17 +1659,24 @@ voiceChatList_t *CG_VoiceChatListForClient( int clientNum ) {
 
 void CG_ParseLivingCount(){
 	int newRed, newBlue;
+	int countRed, countBlue;
 	
 	if( cg.warmup < 0 )
 		return;
 	
 	newRed = atoi( CG_Argv(1));
 	newBlue = atoi( CG_Argv(2));
+	countRed = atoi( CG_Argv(3));
+	countBlue = atoi( CG_Argv(4));
 	
-	if( newRed == 1 && newRed != cgs.redLivingCount && cgs.clientinfo[cg.clientNum].team == TEAM_RED && !cgs.clientinfo[cg.clientNum].isDead )
-		CG_CenterPrint( va( "You are the last in your team" ), 100, SMALLCHAR_WIDTH );
-	if( newBlue == 1 && newBlue != cgs.blueLivingCount && cgs.clientinfo[cg.clientNum].team == TEAM_BLUE && !cgs.clientinfo[cg.clientNum].isDead )
-		CG_CenterPrint( va( "You are the last in your team" ), 100, SMALLCHAR_WIDTH );
+	if( newRed == 1 && newRed != cgs.redLivingCount && cgs.clientinfo[cg.clientNum].team == TEAM_RED && !cgs.clientinfo[cg.clientNum].isDead ){
+		if( countRed != 1 )
+			CG_CenterPrint( va( "You are the last in your team" ), 100, SMALLCHAR_WIDTH );
+	}
+	if( newBlue == 1 && newBlue != cgs.blueLivingCount && cgs.clientinfo[cg.clientNum].team == TEAM_BLUE && !cgs.clientinfo[cg.clientNum].isDead ){
+		if( countBlue != 1 )
+			CG_CenterPrint( va( "You are the last in your team" ), 100, SMALLCHAR_WIDTH );
+	}
 	
 	cgs.redLivingCount = newRed;
 	cgs.blueLivingCount = newBlue;

@@ -150,7 +150,7 @@ void G_SendLivingCount() {
 	char		entry[128];
 
 	Com_sprintf (entry, sizeof(entry),
-				" %i %i ", TeamLivingCount( -1, TEAM_RED ), TeamLivingCount( -1, TEAM_BLUE ) ); 
+				" %i %i %i %i ", TeamLivingCount( -1, TEAM_RED ), TeamLivingCount( -1, TEAM_BLUE ), TeamCount( -1, TEAM_RED ), TeamCount( -1, TEAM_BLUE ) ); 
 
 	trap_SendServerCommand( -1, va("livingCount%s", entry ));
 }

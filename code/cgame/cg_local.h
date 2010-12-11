@@ -1069,6 +1069,8 @@ typedef struct {
 	
 	qhandle_t	blueMarker;
 	qhandle_t	redMarker;
+	
+	qhandle_t	accBackground;
 
 } cgMedia_t;
 

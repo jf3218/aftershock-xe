@@ -1386,6 +1386,8 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.medalItemdenied = trap_R_RegisterShaderNoMip( "medal_itemdenied" );
 	cgs.media.medalCapture = trap_R_RegisterShaderNoMip( "medal_capture" );
 	cgs.media.medalRocketrail = trap_R_RegisterShaderNoMip( "medal_rocketrail" );
+	
+	cgs.media.accBackground = trap_R_RegisterShaderNoMip( "acc_background" );
 
 
 	memset( cg_items, 0, sizeof( cg_items ) );

@@ -2552,8 +2552,10 @@ qboolean CG_DrawAccboard( void ) {
 			i++;
 	}
 
-	CG_DrawTeamBackground( ACCBOARD_XPOS, ACCBOARD_YPOS, ACCBOARD_WIDTH, 20*(i + 1), 0.33f, TEAM_BLUE );
+	//CG_DrawTeamBackground( ACCBOARD_XPOS, ACCBOARD_YPOS, ACCBOARD_WIDTH, 20*(i + 1), 0.33f, TEAM_BLUE );
 
+	CG_DrawPic( ACCBOARD_XPOS, ACCBOARD_YPOS, ACCBOARD_WIDTH, 20*(i + 1), cgs.media.accBackground );
+	
 	i = 0;
 
 	for( counter = 0 ; counter < 8 ; counter++ ){

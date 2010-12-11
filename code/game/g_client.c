@@ -1622,9 +1622,14 @@ void ClientBegin( int clientNum ) {
             PlayerStore_restore(Info_ValueForKey(userinfo,"cl_guid"),&(client->ps));
 	client->ps.eFlags = flags;
 
+	if( ( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ) && ( client->sess.sessionTeam == TEAM_SPECTATOR ) ){
+			client->sess.spectatorState = SPECTATOR_FREE;
+			client->sess.spectatorClient = 0;
+	}
+	
 	// locate ent at a spawn point
 	ClientSpawn( ent );
-
+		
 	if( ( client->sess.sessionTeam != TEAM_SPECTATOR ) &&
 		( ( !( client->isEliminated ) /*&&
 		( ( !client->ps.pm_type ) == PM_SPECTATOR ) */ ) || //Sago: Yes, it made no sense 
