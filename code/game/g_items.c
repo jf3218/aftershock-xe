@@ -233,9 +233,9 @@ int Pickup_Ammo (gentity_t *ent, gentity_t *other)
 int Pickup_Weapon (gentity_t *ent, gentity_t *other) {
 	int		quantity;
 	
-	/*if( ent->item->lastDrop )
-		quantity = ent->item->quantity;
-	else */
+	if( ent->dropTime )
+		quantity = ent->ammoCount;
+	else 
 	if ( ent->count < 0 ) {
 		quantity = 0; // None for you, sir!
 	} else {
@@ -469,10 +469,12 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace) {
 	
 	/*G_Printf( "%i   vs   %i\n", ent->item->lastDrop, level.time);
 	*/
-	if( ent->item->lastDrop + 500 > level.time ){
-		G_Printf( "%i   vs   %i\n", ent->item->lastDrop, level.time);
+	if( ent->item->giType == IT_WEAPON && ent->dropTime + 500 > level.time ){
+		//G_Printf( "%i   vs   %i\n", ent->dropTime, level.time);
 		return;
 	}
+	else if( ent->item->lastDrop + 500 > level.time )
+		return;
 	
 
 	G_LogPrintf( "Item: %i %s\n", other->s.number, ent->item->classname );
@@ -655,13 +657,13 @@ LaunchItem
 Spawns an item and tosses it forward
 ================
 */
-gentity_t *LaunchItemWeapon( gitem_t *item, gitem_t *oldItem, vec3_t origin, vec3_t velocity ) {
+gentity_t *LaunchItemWeapon( gitem_t *item, vec3_t origin, vec3_t velocity, int ammoCount, int dropTime ) {
 	gentity_t	*dropped;
 
 	dropped = G_Spawn();
 
 	dropped->s.eType = ET_ITEM;
-	dropped->s.modelindex = oldItem - bg_itemlist;	// store item number in modelindex
+	dropped->s.modelindex = item - bg_itemlist;	// store item number in modelindex
 	dropped->s.modelindex2 = 1; // This is non-zero is it's a dropped item
 
 	dropped->classname = item->classname;
@@ -678,16 +680,14 @@ gentity_t *LaunchItemWeapon( gitem_t *item, gitem_t *oldItem, vec3_t origin, vec
 	VectorCopy( velocity, dropped->s.pos.trDelta );
 
 	dropped->s.eFlags |= EF_BOUNCE_HALF;
-	if ((g_gametype.integer == GT_CTF || g_gametype.integer == GT_1FCTF || g_gametype.integer == GT_CTF_ELIMINATION || g_gametype.integer == GT_DOUBLE_D)			&& item->giType == IT_TEAM) { // Special case for CTF flags
-		dropped->think = Team_DroppedFlagThink;
-		dropped->nextthink = level.time + 30000;
-		Team_CheckDroppedItem( dropped );
-	} else { // auto-remove after 30 seconds
-		dropped->think = G_FreeEntity;
-		dropped->nextthink = level.time + 30000;
-	}
+	
+	dropped->think = G_FreeEntity;
+	dropped->nextthink = level.time + 30000;
 
 	dropped->flags = FL_DROPPED_ITEM;
+	
+	dropped->dropTime = dropTime;
+	dropped->ammoCount = ammoCount;
 
 	trap_LinkEntity(dropped);
 
@@ -720,7 +720,8 @@ gentity_t *Drop_Item_Weapon( gentity_t *ent, gitem_t *item, float angle ) {
 	vec3_t	velocity;
 	vec3_t	angles;
 	vec3_t position;
-	gitem_t	newItem;
+	int 	ammoCount;
+	int	dropTime;
 
 	VectorCopy( ent->s.apos.trBase, angles );
 	angles[YAW] += angle;
@@ -734,15 +735,14 @@ gentity_t *Drop_Item_Weapon( gentity_t *ent, gitem_t *item, float angle ) {
 	VectorScale( velocity, 150, velocity );
 	velocity[2] += 200 + crandom() * 50;
 	
-	newItem = *item;
-	newItem.quantity = ent->client->ps.ammo[ent->s.weapon];
+	ammoCount = ent->client->ps.ammo[ent->s.weapon];
+	
 	ent->client->ps.ammo[ent->s.weapon] = 0;
 	ent->client->ps.stats[STAT_WEAPONS] &= ~( 1 << item->giTag );
-	newItem.lastDrop = level.time;
 	
-	G_Printf("%i\n", newItem.lastDrop );
+	dropTime = level.time;
 	
-	return LaunchItemWeapon( &newItem, item, position, velocity );
+	return LaunchItemWeapon( item, position, velocity, ammoCount, dropTime );
 }
 
 gentity_t *Drop_Item_Flag( gentity_t *ent, gitem_t *item, float angle ) {
@@ -1010,10 +1010,10 @@ void RegisterItem( gitem_t *item ) {
 	if ( !item ) {
 		G_Error( "RegisterItem: NULL" );
 	}
-	
+#ifndef MISSIONPACK
 	if ( item->giType == IT_WEAPON && ( item->giTag == WP_NAILGUN || item->giTag == WP_CHAINGUN || item->giTag == WP_PROX_LAUNCHER ) )
 		return;
-
+#endif
 	itemRegistered[ item - bg_itemlist ] = qtrue;
 }
 

@@ -296,7 +296,7 @@ static void CG_TouchItem( centity_t *cent ) {
 
 	// Special case for flags.  
 	// We don't predict touching our own flag
-#if 1 //MISSIONPACK
+#ifdef MISSIONPACK
 	if( cgs.gametype == GT_1FCTF ) {
 		if( item->giTag != PW_NEUTRALFLAG ) {
 			return;

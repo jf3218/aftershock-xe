@@ -3289,7 +3289,7 @@ static void CG_DrawAmmoWarning( void ) {
 }
 
 
-//#ifdef MISSIONPACK
+#ifdef MISSIONPACK
 /*
 =================
 CG_DrawProxWarning
@@ -3327,7 +3327,7 @@ static void CG_DrawProxWarning( void ) {
 	w = CG_DrawStrlen( s ) * BIGCHAR_WIDTH;
 	CG_DrawBigStringColor( 320 - w / 2, 64 + BIGCHAR_HEIGHT, s, g_color_table[ColorIndex(COLOR_RED)] );
 }
-//#endif
+#endif
 
 
 /*
@@ -3609,8 +3609,9 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 #endif
 
 			CG_DrawAmmoWarning();
-
+#ifdef MISSIONPACK
 			CG_DrawProxWarning();
+#endif
 			if(stereoFrame == STEREO_CENTER)
 				CG_DrawCrosshair();
 			CG_DrawCrosshairNames();

@@ -117,10 +117,11 @@ vmCvar_t	g_elimination_rocket;
 vmCvar_t	g_elimination_railgun;
 vmCvar_t	g_elimination_lightning;
 vmCvar_t	g_elimination_plasmagun;
+#ifdef MISSIONPACK
 vmCvar_t	g_elimination_chain;
 vmCvar_t	g_elimination_mine;
 vmCvar_t	g_elimination_nail;
-
+#endif
 vmCvar_t        g_elimination_lockspectator;
 
 vmCvar_t	g_rockets;
@@ -186,6 +187,8 @@ vmCvar_t        g_maxNameChanges;
 
 vmCvar_t        g_newItemHeight;
 
+#ifndef MISSIONPACK
+
 vmCvar_t     disable_weapon_grapplinghook;
 vmCvar_t     disable_weapon_nailgun;
 vmCvar_t     disable_weapon_prox_launcher;
@@ -198,6 +201,8 @@ vmCvar_t     disable_ammo_belt;
 vmCvar_t     disable_ammo_mines;
 vmCvar_t     disable_ammo_nails;
 vmCvar_t     disable_holdable_kamikaze;
+
+#endif
 
 vmCvar_t     g_allowRespawnTimer;
 
@@ -343,10 +348,11 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_elimination_railgun, "elimination_railgun", "20", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 	{ &g_elimination_lightning, "elimination_lightning", "200", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 	{ &g_elimination_plasmagun, "elimination_plasmagun", "150", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
+#ifdef MISSIONPACK
 	{ &g_elimination_chain, "elimination_chain", "0", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 	{ &g_elimination_mine, "elimination_mine", "0", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 	{ &g_elimination_nail, "elimination_nail", "0", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
-
+#endif
 	{ &g_elimination_ctf_oneway, "elimination_ctf_oneway", "0", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 
         { &g_elimination_lockspectator, "elimination_lockspectator", "2", CVAR_NORESTART, 0, qtrue },
@@ -407,6 +413,8 @@ static cvarTable_t		gameCvarTable[] = {
 	
 	{ &g_newItemHeight, "g_newItemHeight", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 
+#ifndef MISSIONPACK
+
 	{ &disable_weapon_grapplinghook, "disable_weapon_grapplinghook", "1", 0, 0, qfalse},
 	{ &disable_weapon_nailgun, "disable_weapon_nailgun", "1", 0, 0, qfalse},
 	{ &disable_weapon_prox_launcher, "disable_weapon_prox_launcher", "1", 0, 0, qfalse},
@@ -420,7 +428,9 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &disable_ammo_nails, "disable_ammo_nails", "1", 0, 0, qfalse},
 	{ &disable_holdable_kamikaze, "disable_holdable_kamikaze", "1", 0, 0, qfalse},
 	
-	{ &g_allowRespawnTimer, "g_allowRespawnTimer", "1", CVAR_ARCHIVE, 0, qfalse},
+#endif
+	
+	{ &g_allowRespawnTimer, "g_allowRespawnTimer", "0", CVAR_ARCHIVE, 0, qfalse},
 	{ &g_startWhenReady, "g_startWhenReady", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 		{ &g_autoReady, "g_autoReady", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 	
@@ -3159,6 +3169,22 @@ void G_RunFrame( int levelTime ) {
 		level.BlueTeamLocked = qfalse;
 	}
 	
+	if( ( level.warmupTime == 0 ) && ( level.time - level.startTime > 2000 ) && !level.intermissionQueued ){
+		//G_Printf("%i \n", g_gametype.integer );
+		//G_Printf("%i %i %i\n", level.numPlayingClients, TeamCount( -1, TEAM_RED ), TeamCount( -1, TEAM_BLUE ) );
+		if ( ( level.numPlayingClients < 2 ) && ( g_gametype.integer < GT_TEAM ) ) {
+			LogExit("opponent left");
+		}
+		
+		if( ( g_gametype.integer >= GT_TEAM ) && ( TeamCount( -1, TEAM_RED ) == 0 ) ){
+		//	G_Printf("red");
+			LogExit("Red team left");
+		}
+		else if( ( g_gametype.integer >= GT_TEAM ) && ( TeamCount( -1, TEAM_BLUE ) == 0 ) ){
+		//	G_Printf("blue");
+			LogExit("Blue team left");
+		}
+	}	
 
 	//
 	// go through all allocated objects

@@ -58,6 +58,7 @@ void Team_InitGame( void ) {
 	switch( g_gametype.integer ) {
 	case GT_CTF:
 	case GT_CTF_ELIMINATION:
+#ifdef MISSIONPACK
 	case GT_DOUBLE_D:
 		teamgame.redStatus = -1; // Invalid to force update
 		Team_SetFlagStatus( TEAM_RED, FLAG_ATBASE );
@@ -73,6 +74,7 @@ void Team_InitGame( void ) {
 		teamgame.flagStatus = -1; // Invalid to force update
 		Team_SetFlagStatus( TEAM_FREE, FLAG_ATBASE );
 		break;
+#endif
 	default:
 		break;
 	}
@@ -165,6 +167,8 @@ AddTeamScore
 void AddTeamScore(vec3_t origin, int team, int score) {
 	gentity_t	*te;
 
+	if( level.warmupTime )
+		return;
 
 	if ( g_gametype.integer != GT_DOMINATION ) {
 		te = G_TempEntity(origin, EV_GLOBAL_TEAM_SOUND );
@@ -266,6 +270,7 @@ void Team_SetFlagStatus( int team, flagStatus_t status ) {
 			st[1] = ctfFlagStatusRemap[teamgame.blueStatus];
 			st[2] = 0;
 		}
+#ifdef MISSIONPACK
 		else if (g_gametype.integer == GT_DOUBLE_D) {
 			st[0] = oneFlagStatusRemap[teamgame.redStatus];
 			st[1] = oneFlagStatusRemap[teamgame.blueStatus];
@@ -275,6 +280,7 @@ void Team_SetFlagStatus( int team, flagStatus_t status ) {
 			st[0] = oneFlagStatusRemap[teamgame.flagStatus];
 			st[1] = 0;
 		}
+#endif
 
 		trap_SetConfigstring( CS_FLAGSTATUS, st );
 	}
@@ -386,16 +392,19 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		flag_pw = PW_BLUEFLAG;
 		enemy_flag_pw = PW_REDFLAG;
 	}
-
+#ifdef MISSIONPACK
 	if (g_gametype.integer == GT_1FCTF) {
 		enemy_flag_pw = PW_NEUTRALFLAG;
 	} 
+#endif
 
+#ifdef MISSIONPACK
 	// did the attacker frag the flag carrier?
 	tokens = 0;
 	if( g_gametype.integer == GT_HARVESTER ) {
 		tokens = targ->client->ps.generic1;
 	}
+#endif
 	if (targ->client->ps.powerups[enemy_flag_pw]) {
 		attacker->client->pers.teamState.lastfraggedcarrier = level.time;
 		AddScore(attacker, targ->r.currentOrigin, CTF_FRAG_CARRIER_BONUS);
@@ -482,7 +491,7 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 
 		return;
 	}
-
+#ifdef MISSIONPACK
 //We place the Double Domination bonus test here! This appears to be the best place to place them.
 	if ( g_gametype.integer == GT_DOUBLE_D ) {
 		if(attacker->client->sess.sessionTeam == level.pointStatusA ) { //Attack must defend point A
@@ -558,6 +567,7 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 		} //Defend point B
 	return; //In double Domination we shall not go on, or we would test for team bases that we don't use
 	}
+#endif
 
 	// flag and flag carrier area defense bonuses
 

@@ -138,6 +138,48 @@ static void CG_AccUp_f( void ) {
 	}
 }
 
+/*
+==================
+ConcatArgs
+==================
+*/
+char	*ConcatArgs( int start ) {
+	int		i, c, tlen;
+	static char	line[MAX_STRING_CHARS];
+	int		len;
+	char	arg[MAX_STRING_CHARS];
+
+	len = 0;
+	c = trap_Argc();
+	for ( i = start ; i < c ; i++ ) {
+		trap_Argv( i, arg, sizeof( arg ) );
+		tlen = strlen( arg );
+		if ( len + tlen >= MAX_STRING_CHARS - 1 ) {
+			break;
+		}
+		memcpy( line + len, arg, tlen );
+		len += tlen;
+		if ( i != c - 1 ) {
+			line[len] = ' ';
+			len++;
+		}
+	}
+
+	line[len] = 0;
+
+	return line;
+}
+
+static void CG_Echo_f( void ) {
+	char* string;
+	int i;
+
+	string = ConcatArgs(1);
+	
+	CG_AddToChat( string );
+	CG_Printf( string );
+}
+
 #ifdef MISSIONPACK
 extern menuDef_t *menuScoreboard;
 void Menu_Reset( void );			// FIXME: add to right include file
@@ -526,6 +568,7 @@ static consoleCommand_t	commands[] = {
 	{ "loaddeferred", CG_LoadDeferredPlayers },	
 	{ "+acc", CG_AccDown_f },
 	{ "-acc", CG_AccUp_f },
+	{ "secho", CG_Echo_f },
 
 };
 

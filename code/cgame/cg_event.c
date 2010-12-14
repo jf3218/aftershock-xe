@@ -344,6 +344,7 @@ static void CG_Obituary( entityState_t *ent ) {
 			message = "was blasted by";
 			message2 = "'s BFG";
 			break;
+#ifdef MISSIONPACK
 		case MOD_NAIL:
 			icon1 = cg_weapons[WP_NAILGUN].weaponIcon;
 			message = "was nailed by";
@@ -358,6 +359,7 @@ static void CG_Obituary( entityState_t *ent ) {
 			message = "was too close to";
 			message2 = "'s Prox Mine";
 			break;
+#endif
 		case MOD_KAMIKAZE:
 			icon1 = cgs.media.skull;
 			message = "falls to";
@@ -489,7 +491,7 @@ static void CG_UseItem( centity_t *cent ) {
 		trap_S_StartSound (NULL, es->number, CHAN_BODY, cgs.media.medkitSound );
 		break;
 
-//#ifdef MISSIONPACK
+#ifdef MISSIONPACK
 	case HI_KAMIKAZE:
 		break;
 
@@ -498,7 +500,7 @@ static void CG_UseItem( centity_t *cent ) {
 	case HI_INVULNERABILITY:
 		trap_S_StartSound (NULL, es->number, CHAN_BODY, cgs.media.useInvulnerabilitySound );
 		break;
-//#endif
+#endif
 	}
 
 }
@@ -1170,19 +1172,19 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 					}
 					else {
 					if (cgs.clientinfo[cg.clientNum].team == TEAM_BLUE) {
-//#ifdef MISSIONPACK
+#ifdef MISSIONPACK
 							if (cgs.gametype == GT_1FCTF) 
 								CG_AddBufferedSound( cgs.media.yourTeamTookTheFlagSound );
 							else
-//#endif
+#endif
 						 	CG_AddBufferedSound( cgs.media.enemyTookYourFlagSound );
 						}
 						else if (cgs.clientinfo[cg.clientNum].team == TEAM_RED) {
-//#ifdef MISSIONPACK
+#ifdef MISSIONPACK
 							if (cgs.gametype == GT_1FCTF)
 								CG_AddBufferedSound( cgs.media.enemyTookTheFlagSound );
 							else
-//#endif
+#endif
  							CG_AddBufferedSound( cgs.media.yourTeamTookEnemyFlagSound );
 						}
 					}
@@ -1193,19 +1195,19 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 					}
 					else {
 						if (cgs.clientinfo[cg.clientNum].team == TEAM_RED) {
-//#ifdef MISSIONPACK
+#ifdef MISSIONPACK
 							if (cgs.gametype == GT_1FCTF)
 								CG_AddBufferedSound( cgs.media.yourTeamTookTheFlagSound );
 							else
-//#endif
+#endif
 							CG_AddBufferedSound( cgs.media.enemyTookYourFlagSound );
 						}
 						else if (cgs.clientinfo[cg.clientNum].team == TEAM_BLUE) {
-//#ifdef MISSIONPACK
+#ifdef MISSIONPACK
 							if (cgs.gametype == GT_1FCTF)
 								CG_AddBufferedSound( cgs.media.enemyTookTheFlagSound );
 							else
-//#endif
+#endif
 							CG_AddBufferedSound( cgs.media.yourTeamTookEnemyFlagSound );
 						}
 					}

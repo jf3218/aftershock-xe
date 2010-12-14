@@ -486,7 +486,12 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 	}
 	if( bg_itemlist[client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_AMMOREGEN ) {
 		int w, max, inc, t, i;
-    int weapList[]={WP_MACHINEGUN,WP_SHOTGUN,WP_GRENADE_LAUNCHER,WP_ROCKET_LAUNCHER,WP_LIGHTNING,WP_RAILGUN,WP_PLASMAGUN,WP_BFG,WP_NAILGUN,WP_PROX_LAUNCHER,WP_CHAINGUN};
+    int weapList[]={WP_MACHINEGUN,WP_SHOTGUN,WP_GRENADE_LAUNCHER,WP_ROCKET_LAUNCHER,WP_LIGHTNING,WP_RAILGUN,WP_PLASMAGUN,WP_BFG
+#ifdef MISSIONPACK
+	,WP_NAILGUN,WP_PROX_LAUNCHER,WP_CHAINGUN};
+#else
+	};
+#endif
     int weapCount = sizeof(weapList) / sizeof(int);
 		//
     for (i = 0; i < weapCount; i++) {
@@ -501,9 +506,11 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 			  case WP_RAILGUN: max = 10; inc = 1; t = 1750; break;
 			  case WP_PLASMAGUN: max = 50; inc = 5; t = 1500; break;
 			  case WP_BFG: max = 10; inc = 1; t = 4000; break;
+#ifdef MISSIONPACK
 			  case WP_NAILGUN: max = 10; inc = 1; t = 1250; break;
 			  case WP_PROX_LAUNCHER: max = 5; inc = 1; t = 2000; break;
 			  case WP_CHAINGUN: max = 100; inc = 5; t = 1000; break;
+#endif
 			  default: max = 0; inc = 0; t = 1000; break;
 		  }
 		  client->ammoTimes[w] += msec;

@@ -233,6 +233,7 @@ void CG_PredictWeaponEffects( centity_t *cent ) {
 			//Com_Printf( "Predicted bullet\n" );
 		}
 	}
+#ifdef MISSIONPACK
         // was it a chaingun attack?
 	else if ( ent->weapon == WP_CHAINGUN ) {
 		// do we have it on for the machinegun?
@@ -277,6 +278,7 @@ void CG_PredictWeaponEffects( centity_t *cent ) {
 			//Com_Printf( "Predicted bullet\n" );
 		}
 	}
+#endif
 }
 
 /*

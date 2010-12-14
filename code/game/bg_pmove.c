@@ -1688,6 +1688,7 @@ static void PM_Weapon( void ) {
 	case WP_GRAPPLING_HOOK:
 		addTime = 400;
 		break;
+#ifdef MISSIONACK
 	case WP_NAILGUN:
 		addTime = 1000;
 		break;
@@ -1697,6 +1698,7 @@ static void PM_Weapon( void ) {
 	case WP_CHAINGUN:
 		addTime = 30;
 		break;
+#endif
 	}
 
 	if( bg_itemlist[pm->ps->stats[STAT_PERSISTANT_POWERUP]].giTag == PW_SCOUT ) {

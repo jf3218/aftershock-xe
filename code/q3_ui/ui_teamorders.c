@@ -355,18 +355,26 @@ static void UI_TeamOrdersMenu_ListEvent( void *ptr, int event ) {
 		if( teamOrdersMenuInfo.gametype == GT_CTF || teamOrdersMenuInfo.gametype == GT_CTF_ELIMINATION ) {
 			UI_TeamOrdersMenu_SetList( ID_LIST_CTF_ORDERS );
 		}
+#ifdef MISSIONPACK
                 if( teamOrdersMenuInfo.gametype == GT_1FCTF ) {
 			UI_TeamOrdersMenu_SetList( ID_LIST_CTF1F_ORDERS );
 		}
                 if( teamOrdersMenuInfo.gametype == GT_OBELISK || teamOrdersMenuInfo.gametype == GT_HARVESTER ) {
 			UI_TeamOrdersMenu_SetList( ID_LIST_BASE_ORDERS );
 		}
-		if( teamOrdersMenuInfo.gametype == GT_TEAM || teamOrdersMenuInfo.gametype == GT_ELIMINATION || teamOrdersMenuInfo.gametype == GT_DOMINATION ) {
+#endif
+		if( teamOrdersMenuInfo.gametype == GT_TEAM || teamOrdersMenuInfo.gametype == GT_ELIMINATION 
+#ifdef MISSIONPACK
+			|| teamOrdersMenuInfo.gametype == GT_DOMINATION
+#endif			
+			) {
 			UI_TeamOrdersMenu_SetList( ID_LIST_TEAM_ORDERS );
 		}
+#ifdef MISSIONPACK
 		if( teamOrdersMenuInfo.gametype == GT_DOUBLE_D ) {
 			UI_TeamOrdersMenu_SetList( ID_LIST_DD_ORDERS );
 		}
+#endif
 
 		return;
 	}
@@ -374,18 +382,22 @@ static void UI_TeamOrdersMenu_ListEvent( void *ptr, int event ) {
 	if( id == ID_LIST_CTF_ORDERS ) {
 		Com_sprintf( message, sizeof(message), ctfMessages[selection], teamOrdersMenuInfo.botNames[teamOrdersMenuInfo.selectedBot] );
 	}
+#ifdef MISSIONPACK
         if( id == ID_LIST_CTF1F_ORDERS ) {
 		Com_sprintf( message, sizeof(message), ctf1fMessages[selection], teamOrdersMenuInfo.botNames[teamOrdersMenuInfo.selectedBot] );
 	}
+#endif
         if( id == ID_LIST_BASE_ORDERS ) {
 		Com_sprintf( message, sizeof(message), baseMessages[selection], teamOrdersMenuInfo.botNames[teamOrdersMenuInfo.selectedBot] );
 	}
 	if( id == ID_LIST_TEAM_ORDERS ) {
 		Com_sprintf( message, sizeof(message), teamMessages[selection], teamOrdersMenuInfo.botNames[teamOrdersMenuInfo.selectedBot] );
 	}
+#ifdef MISSIONPACK
 	if( id == ID_LIST_DD_ORDERS ) {
 		Com_sprintf( message, sizeof(message), ddMessages[selection], teamOrdersMenuInfo.botNames[teamOrdersMenuInfo.selectedBot] );
 	}
+#endif
 
 	trap_Cmd_ExecuteText( EXEC_APPEND, va( "say_team \"%s\"\n", message ) );
 	UI_PopMenu();

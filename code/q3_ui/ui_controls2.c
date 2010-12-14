@@ -556,7 +556,7 @@ static void Controls_UpdateModel( int anim ) {
 	case ANIM_WEAPON10:
 		s_controls.playerWeapon = WP_GRAPPLING_HOOK;
 		break;
-                
+#ifdef MISSIONPACK             
         case ANIM_WEAPON11:
 		s_controls.playerWeapon = WP_NAILGUN;
 		break;
@@ -568,7 +568,7 @@ static void Controls_UpdateModel( int anim ) {
         case ANIM_WEAPON13:
 		s_controls.playerWeapon = WP_CHAINGUN;
 		break;
-
+#endif
 	case ANIM_ATTACK:
 		s_controls.playerTorso = TORSO_ATTACK;
 		break;
