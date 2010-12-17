@@ -2769,7 +2769,7 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		radius = 24;
 		break;
 	case WP_PLASMAGUN:
-		mod = cgs.media.ringFlashModel;
+		mod = cgs.media.plasmaExplosionModel;
 		shader = cgs.media.plasmaExplosionShader;
 		sfx = cgs.media.sfx_plasmaexp;
 		mark = cgs.media.energyMarkShader;

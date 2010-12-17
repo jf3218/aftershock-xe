@@ -1162,7 +1162,10 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 	if( client->ps.groundEntityNum != ENTITYNUM_NONE ){
 		client->lastGroundTime = 0;
+		client->lastSentFlying = -1;
+		client->lastSentFlyingSave = -1;
 	}
+	
         
 	// perform once-a-second actions
 	ClientTimerActions( ent, msec );

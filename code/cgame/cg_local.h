@@ -847,6 +847,7 @@ typedef struct {
 	qhandle_t	bulletFlashModel;
 	qhandle_t	ringFlashModel;
 	qhandle_t	dishFlashModel;
+	qhandle_t	plasmaExplosionModel;
 	qhandle_t	lightningExplosionModel;
 	qhandle_t	lightningExplosionNomip;
 

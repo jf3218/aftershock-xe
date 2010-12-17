@@ -155,20 +155,11 @@ bfgExplosion_nomip
 plasmaExplosion
 {
 	cull disable
-	deformVertexes wave 1 sin 0 1 0 2 
+
 	{
-		clampmap models/weaphits/plasring.tga
+		clampmap sprites/plasmaExplosion.tga
 		blendfunc add
-		rgbGen wave inversesawtooth 0 1 0 1.6 
-//		tcMod stretch sawtooth 0 4.3 0 1.4 
-		tcMod rotate -37
-	}
-	{
-		clampmap models/weaphits/plasring.tga
-		blendfunc add
-		rgbGen wave inversesawtooth 0 1 0 1.6 
-//		tcMod stretch sawtooth 0 4.5 0 1.4 
-		tcMod rotate 66
+		tcMod rotate -720
 	}
 }
 
@@ -176,20 +167,11 @@ plasmaExplosion_nomip
 {
 	nopicmip
 	cull disable
-	deformVertexes wave 1 sin 0 1 0 2 
+
 	{
-		clampmap models/weaphits/plasring.tga
+		clampmap sprites/plasmaExplosion.tga
 		blendfunc add
-		rgbGen wave inversesawtooth 0 1 0 1.6 
-//		tcMod stretch sawtooth 0 4.3 0 1.4 
-		tcMod rotate -37
-	}
-	{
-		clampmap models/weaphits/plasring.tga
-		blendfunc add
-		rgbGen wave inversesawtooth 0 1 0 1.6 
-//		tcMod stretch sawtooth 0 4.5 0 1.4 
-		tcMod rotate 66
+		tcMod rotate -720
 	}
 }
 

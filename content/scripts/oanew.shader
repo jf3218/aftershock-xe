@@ -649,13 +649,7 @@ sprites/plasma1
 	{
 		clampmap sprites/plasmaa.tga
 		blendfunc gl_src_alpha gl_one
-		tcMod rotate -145
-		alphaGen entity
-	}
-	{
-		clampmap sprites/plasmaa.tga
-		blendfunc gl_src_alpha gl_one
-		tcMod rotate 177
+		tcMod rotate 720
 		alphaGen entity
 	}
 }
@@ -665,14 +659,7 @@ sprites/plasma1Color
 	{
 		clampmap sprites/plasmaa.tga
 		blendfunc gl_src_alpha gl_one
-		tcMod rotate -145
-		alphaGen entity
-		rgbGen entity
-	}
-	{
-		clampmap sprites/plasmaa.tga
-		blendfunc gl_src_alpha gl_one
-		tcMod rotate 177
+		tcMod rotate 720
 		alphaGen entity
 		rgbGen entity
 	}
@@ -684,13 +671,7 @@ sprites/plasma1_nomip
 	{
 		clampmap sprites/plasmaa.tga
 		blendfunc gl_src_alpha gl_one
-		tcMod rotate -145
-		alphaGen entity
-	}
-	{
-		clampmap sprites/plasmaa.tga
-		blendfunc gl_src_alpha gl_one
-		tcMod rotate 177
+		tcMod rotate 720
 		alphaGen entity
 	}
 }
@@ -701,14 +682,7 @@ sprites/plasma1Color_nomip
 	{
 		clampmap sprites/plasmaa.tga
 		blendfunc gl_src_alpha gl_one
-		tcMod rotate -145
-		alphaGen entity
-		rgbGen entity
-	}
-	{
-		clampmap sprites/plasmaa.tga
-		blendfunc gl_src_alpha gl_one
-		tcMod rotate 177
+		tcMod rotate 720
 		alphaGen entity
 		rgbGen entity
 	}

@@ -1967,7 +1967,7 @@ void G_WriteStats( void ){
 
 	trap_FS_FOpenFile(va("%s/%s.txt", g_statsPath.string,gameString), &f, FS_WRITE);
 	
-	string = va("Gametype:   %4s    %s\n", gameNames[g_gametype.integer], mapname );
+	string = va("Gametype:   %4s    %s    Rockets:   %i   Instantgib:    %i\n", gameNames[g_gametype.integer], mapname, g_rockets.integer, g_instantgib.integer );
 	len = strlen( string );
 	trap_FS_Write(string, len, f);
 	
