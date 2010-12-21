@@ -262,6 +262,92 @@ static void CG_ParseScores( void ) {
 
 }
 
+typedef enum 
+{
+	STATS_CLIENTNUM,
+	
+	STATS_GAUNT_DMG,
+	STATS_GAUNT_KILLS,
+	STATS_GAUNT_DEATH,
+	
+	STATS_MG_SHOTS,
+	STATS_MG_HITS,
+	STATS_MG_DMG,
+	STATS_MG_KILLS,
+	STATS_MG_DEATH,
+	
+	STATS_SG_SHOTS,
+	STATS_SG_HITS,
+	STATS_SG_DMG,
+	STATS_SG_KILLS,
+	STATS_SG_DEATH,
+	
+	STATS_GL_SHOTS,
+	STATS_GL_HITS,
+	STATS_GL_DMG,
+	STATS_GL_KILLS,
+	STATS_GL_DEATH,
+	
+	STATS_RL_SHOTS,
+	STATS_RL_HITS,
+	STATS_RL_DMG,
+	STATS_RL_KILLS,
+	STATS_RL_DEATH,
+	
+	STATS_LG_SHOTS,
+	STATS_LG_HITS,
+	STATS_LG_DMG,
+	STATS_LG_KILLS,
+	STATS_LG_DEATH,
+	
+	STATS_RG_SHOTS,
+	STATS_RG_HITS,
+	STATS_RG_DMG,
+	STATS_RG_KILLS,
+	STATS_RG_DEATH,
+	
+	STATS_PG_SHOTS,
+	STATS_PG_HITS,
+	STATS_PG_DMG,
+	STATS_PG_KILLS,
+	STATS_PG_DEATH,
+	
+	STATS_BFG_SHOTS,
+	STATS_BFG_HITS,
+	STATS_BFG_DMG,
+	STATS_BFG_KILLS,
+	STATS_BFG_DEATH,
+	
+	STATS_HEALTH_COUNT,
+	STATS_ARMOR_COUNT,
+	STATS_YA_COUNT,
+	STATS_RA_COUNT,
+	STATS_MH_COUNT,
+	
+	STATS_IMPESSIVE,
+	STATS_EXCELLENT,
+	STATS_ASSIST,
+	STATS_DEFEND,
+	STATS_CAPTURE,
+	
+	STATS_AIRGRENADE,
+	STATS_AIRROCKET,
+	STATS_FULLSG,
+	STATS_RLRG,
+	STATS_ITEMDENIED,
+	STATISTIC_MAX
+} statistic_t;
+	
+	
+static float accuracy(int shots, int hits){
+	float acc;
+	if( shots > 0 )
+		acc = 100.0f*((float)hits)/((float)shots);
+	else
+		acc = 0;
+	return acc;
+}
+
 /*
 =================
 CG_ParseStatistics
@@ -280,6 +366,8 @@ static void CG_ParseStatistics( void ) {
 	int 		shots, hits, acc, dmg, kills, deathCount;
 	char		*mapname;
 	char		*buf;
+	int		clientStats[MAX_CLIENTS][STATISTIC_MAX];
+	
 	char *gameNames[] = {
 	  "FFA",
 	  "1v1",
@@ -310,210 +398,170 @@ static void CG_ParseStatistics( void ) {
 	buf = strstr( mapname, ".bsp");
 	buf[0] = '\0';
 
-	trap_FS_FOpenFile(va("stats/%s.txt", gameString), &f, FS_WRITE);
-	//CG_Printf( "%s \n", cg.gameString );
+	trap_FS_FOpenFile(va("stats/%s.html", gameString), &f, FS_WRITE);
 	
-	string = va("Gametype:   %4s    %s\n", gameNames[cgs.gametype], mapname );
+	string = va("<html>\n<title> %s </title>\n<body>\n", gameString);
+	len = strlen( string );
+	trap_FS_Write(string, len, f);
+	
+	string = va("<h3 align=center> %s on %s</h3>\n", gameNames[cgs.gametype], mapname );
+	len = strlen( string );
+	trap_FS_Write(string, len, f);
+	
+	
+	if( cg_autoaction.integer & 2 ){
+		string = va("<p align=center><a href=\"../../screenshots/%s.jpg\"><img src=\"../../screenshots/%s.jpg\" width=\"480\"></a></p>", gameString, gameString );
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+	}
+	
+	string = va("<p align=center> <b>Gametype</b>:   %s<br><b>Map</b>:    %s<br>\n", gameNames[cgs.gametype], mapname );
 	len = strlen( string );
 	trap_FS_Write(string, len, f);
 	
 	if( cgs.gametype >= GT_TEAM ){
-		string = va("Red:   %2i     Blue:   %2i \n \n \n \n", cgs.scores1, cgs.scores2);
+		string = va("<b><font color=red>Red</font></b>:   %i     <b><font color=blue>Blue</font></b> :   %i</p><br>", cgs.scores1, cgs.scores2);
 		len = strlen( string );
 		trap_FS_Write(string, len, f);
 	}
 	else{
-		string = va("\n \n \n \n"/*, cgs.scores1, cgs.scores2*/);
+		string = va("</p><br>");
 		len = strlen( string );
 		trap_FS_Write(string, len, f);
 	}
 	
-	string = va("---------------------------------------\n\n\n" );
-	len = strlen( string );
-	trap_FS_Write(string, len, f);
 
 	for ( i = 0 ; i < numStats ; i++ ) {
+		
+		for( j = 0; j < STATISTIC_MAX; j++ ){
+			clientStats[i][j] = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 1 + j ));
+		}
+	}
+	
+	for( i = 0; i < numStats; i++ ){
+		
+		string = va("<hr>");
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		clientnum = clientStats[i][STATS_CLIENTNUM];
 		  
-		  clientnum = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 1 ));
-		  
-		  for ( j = 0 ; j < cg.numScores ; j++ ) {
+		for ( j = 0 ; j < cg.numScores ; j++ ) {
 			if( clientnum == cg.scores[j].client ){
 				scorenum = j;
 				score = &cg.scores[j];
 			}
 		  }
-			  
+		  	  
 		  ci = &cgs.clientinfo[clientnum];
-		  
 		  name = ci->name;
 		  
 		  if( ci->team == TEAM_FREE )
-			  team = "Free";
+			  team = "<font color=green>Free</font>";
 		  else if( ci->team == TEAM_BLUE )
-			  team = "Blue";
+			  team = "<font color=blue>Blue</font>";
 		  else if( ci->team == TEAM_RED )
-			  team = "Red";
+			  team = "<font color=red>Red</font>";
 		  else if( ci->team == TEAM_SPECTATOR )
-			  team = "Spectator";
+			  team = "<font color=grey>Spectator</font>";
 		  
 		  
-		  string = va("name:%20s     Team:%10s     Time:%3i     Handicap:%3i \n\n", name, team, score->time, ci->handicap );
+		  string = va("<p align=center> <b>Name</b>:%s     <b>Team</b>:%s     <b>Time</b>:%i     <b>Handicap</b>:%i <br> ", name, team, score->time, ci->handicap );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
 		  
-		  string = va("Score %4i     Accuracy %3i     Frags %3i    Death %3i\n", score->score, score->accuracy, score->frags, score->deathCount );
+		  string = va("<b>Score</b>: %i     <b>Accuracy</b>: %i     <b>Frags</b>: %i    <b>Death</b>: %i</p><br>", score->score, score->accuracy, score->frags, score->deathCount );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
-		  //if( cgs.gametype == GT_ELIMINATION ) {
-			  string = va("Damage done %4i     Damage taken %4i \n", score->dmgdone, score->dmgtaken );
-			  len = strlen( string );
-			  trap_FS_Write(string, len, f);
-		  //}
-		  string = va("Impressive   %3i   Excellent   %3i   Airgrenade   %3i   Airrocket   %3i   FullSG   %3i   RocketRail   %3i   Item Denied   %3i\n", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 50 )),
-			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 51 )),
-			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 55 )), atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 56 )), 
-			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 57 )),atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 58 )),atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 59 )));
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  if( cgs.gametype == GT_CTF ) {
-		  string = va("Assist       %3i   Defend      %3i   Capture      %3i\n", atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 52 )),
-			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 53 )),
-			      atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 54 )));
-			      len = strlen( string );
-			      trap_FS_Write(string, len, f);
-		  }
-		  
-		  len = strlen( "\n" );
-		  trap_FS_Write("\n", len, f);
-		  
-		  string = va("        Shots       Hits      Acc       Dmg    Kills    Death\n");
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  shots = 0;
-		  hits = 0;
-		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 2 ));
-		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 3 ));
-		  deathCount = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 ));
-		  if( shots > 0 )
-			  acc = 100.0f*((float)hits)/((float)shots);
-		  else
-			  acc = 0;
-		  string = va("GAUNT                                  %4i      %3i      %3i\n", dmg, kills, deathCount );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 0*NUM_WEAPONDATA_STATS + 1 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 0*NUM_WEAPONDATA_STATS + 2 ));
-		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 0*NUM_WEAPONDATA_STATS + 3 ));
-		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 0*NUM_WEAPONDATA_STATS + 4 ));
-		  deathCount = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 0*NUM_WEAPONDATA_STATS + 5 ));
-		  if( shots > 0 )
-			  acc = 100.0f*((float)hits)/((float)shots);
-		  else
-			  acc = 0;
-		  string = va("MG      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 1*NUM_WEAPONDATA_STATS + 1 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 1*NUM_WEAPONDATA_STATS + 2 ));
-		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 1*NUM_WEAPONDATA_STATS + 3 ));
-		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 1*NUM_WEAPONDATA_STATS + 4 ));
-		  deathCount = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 1*NUM_WEAPONDATA_STATS + 5 ));
-		  if( shots > 0 )
-			  acc = 100.0f*((float)hits)/((float)shots);
-		  else
-			  acc = 0;
-		  string = va("SG      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 2*NUM_WEAPONDATA_STATS + 1 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 2*NUM_WEAPONDATA_STATS + 2 ));
-		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 2*NUM_WEAPONDATA_STATS + 3 ));
-		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 2*NUM_WEAPONDATA_STATS + 4 ));
-		  deathCount = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 2*NUM_WEAPONDATA_STATS + 5 ));
-		  if( shots > 0 )
-			  acc = 100.0f*((float)hits)/((float)shots);
-		  else
-			  acc = 0;
-		  string = va("GL      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 3*NUM_WEAPONDATA_STATS + 1 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 3*NUM_WEAPONDATA_STATS + 2 ));
-		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 3*NUM_WEAPONDATA_STATS + 3 ));
-		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 3*NUM_WEAPONDATA_STATS + 4 ));
-		  deathCount = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 3*NUM_WEAPONDATA_STATS + 5 ));
-		  if( shots > 0 )
-			  acc = 100.0f*((float)hits)/((float)shots);
-		  else
-			  acc = 0;
-		  string = va("RL      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 4*NUM_WEAPONDATA_STATS + 1 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 4*NUM_WEAPONDATA_STATS + 2 ));
-		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 4*NUM_WEAPONDATA_STATS + 3 ));
-		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 4*NUM_WEAPONDATA_STATS + 4 ));
-		  deathCount = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 4*NUM_WEAPONDATA_STATS + 5 ));
-		  if( shots > 0 )
-			  acc = 100.0f*((float)hits)/((float)shots);
-		  else
-			  acc = 0;
-		  string = va("LG      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 5*NUM_WEAPONDATA_STATS + 1 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 5*NUM_WEAPONDATA_STATS + 2 ));
-		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 5*NUM_WEAPONDATA_STATS + 3 ));
-		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 5*NUM_WEAPONDATA_STATS + 4 ));
-		  deathCount = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 5*NUM_WEAPONDATA_STATS + 5 ));
-		  if( shots > 0 )
-			  acc = 100.0f*((float)hits)/((float)shots);
-		  else
-			  acc = 0;
-		  string = va("RG      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 6*NUM_WEAPONDATA_STATS + 1 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 6*NUM_WEAPONDATA_STATS + 2 ));
-		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 6*NUM_WEAPONDATA_STATS + 3 ));
-		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 6*NUM_WEAPONDATA_STATS + 4 ));
-		  deathCount = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 6*NUM_WEAPONDATA_STATS + 5 ));
-		  if( shots > 0 )
-			  acc = 100.0f*((float)hits)/((float)shots);
-		  else
-			  acc = 0;
-		  string = va("PG      %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 7*NUM_WEAPONDATA_STATS + 1 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 7*NUM_WEAPONDATA_STATS + 2 ));
-		  dmg = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 7*NUM_WEAPONDATA_STATS + 3 ));
-		  kills = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 7*NUM_WEAPONDATA_STATS + 4 ));
-		  deathCount = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 4 + 7*NUM_WEAPONDATA_STATS + 5 ));
-		  if( shots > 0 )
-			  acc = 100.0f*((float)hits)/((float)shots);
-		  else
-			  acc = 0;
-		  string = va("BFG     %5i      %5i      %3i      %4i      %3i      %3i\n", shots, hits, acc, dmg, kills, deathCount );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  
+
+		string = va("<p align=center><font color=green><b>Damage done</b>: %i</font>     <font color=red><b>Damage taken</b>: %i</font></p> \n", score->dmgdone, score->dmgtaken );
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<p align=center><table border=\"1\"><tr><td>Impressive</td> <td>Excellent</td> <td>Airgrenade</td> <td>Airrocket</td> <td>FullSG</td> <td>RocketRail</td> <td>Item Denied</td>");
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		if( cgs.gametype == GT_CTF || cgs.gametype == GT_CTF_ELIMINATION ){
+			string = va(" <td>Assist</td> <td>Defend</td> <td>Capture</td>");
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+		}
+		
+		string = va("</tr><br>");
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<tr><td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td>", clientStats[i][STATS_IMPESSIVE], clientStats[i][STATS_EXCELLENT], 
+			    clientStats[i][STATS_AIRGRENADE], clientStats[i][STATS_AIRROCKET], clientStats[i][STATS_FULLSG], clientStats[i][STATS_RLRG], clientStats[i][STATS_ITEMDENIED] );
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		if( cgs.gametype == GT_CTF || cgs.gametype == GT_CTF_ELIMINATION ){
+			string = va(" <td>%i</td> <td>%i</td> <td>%i</td>", clientStats[i][STATS_ASSIST], clientStats[i][STATS_DEFEND], clientStats[i][STATS_CAPTURE]);
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+		}
+		
+		string = va("</tr></table></p><br>");
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<p align=center><table border=\"1\"><tr><td></td> <td>Shots</td> <td>Hits</td> <td>Accuracy</td> <td>Damage done</td> <td>Kills</td> <td>Death</td></tr>");
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<tr><td>Gauntlet</td> <td></td> <td></td> <td></td> <td>%i</td> <td>%i</td> <td>%i</td></tr>", clientStats[i][STATS_GAUNT_DMG], clientStats[i][STATS_GAUNT_KILLS], clientStats[i][STATS_GAUNT_DEATH]);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<tr><td>MG</td> <td>%i</td> <td>%i</td> <td>%.1f</td> <td>%i</td> <td>%i</td> <td>%i</td></tr>", clientStats[i][STATS_MG_SHOTS], clientStats[i][STATS_MG_HITS], accuracy(clientStats[i][STATS_MG_SHOTS], clientStats[i][STATS_MG_HITS]),
+			    clientStats[i][STATS_MG_DMG], clientStats[i][STATS_MG_KILLS], clientStats[i][STATS_MG_DEATH]);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<tr><td>SG</td> <td>%i</td> <td>%i</td> <td>%.1f</td> <td>%i</td> <td>%i</td> <td>%i</td></tr>", clientStats[i][STATS_SG_SHOTS], clientStats[i][STATS_SG_HITS], accuracy(clientStats[i][STATS_SG_SHOTS], clientStats[i][STATS_SG_HITS]),
+			    clientStats[i][STATS_SG_DMG], clientStats[i][STATS_SG_KILLS], clientStats[i][STATS_SG_DEATH]);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<tr><td>GL</td> <td>%i</td> <td>%i</td> <td>%.1f</td> <td>%i</td> <td>%i</td> <td>%i</td></tr>", clientStats[i][STATS_GL_SHOTS], clientStats[i][STATS_GL_HITS], accuracy(clientStats[i][STATS_GL_SHOTS], clientStats[i][STATS_GL_HITS]),
+			    clientStats[i][STATS_GL_DMG], clientStats[i][STATS_GL_KILLS], clientStats[i][STATS_GL_DEATH]);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<tr><td>RL</td> <td>%i</td> <td>%i</td> <td>%.1f</td> <td>%i</td> <td>%i</td> <td>%i</td></tr>", clientStats[i][STATS_RL_SHOTS], clientStats[i][STATS_RL_HITS], accuracy(clientStats[i][STATS_RL_SHOTS], clientStats[i][STATS_RL_HITS]),
+			    clientStats[i][STATS_RL_DMG], clientStats[i][STATS_RL_KILLS], clientStats[i][STATS_RL_DEATH]);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<tr><td>LG</td> <td>%i</td> <td>%i</td> <td>%.1f</td> <td>%i</td> <td>%i</td> <td>%i</td></tr>", clientStats[i][STATS_LG_SHOTS], clientStats[i][STATS_LG_HITS], accuracy(clientStats[i][STATS_LG_SHOTS], clientStats[i][STATS_LG_HITS]),
+			    clientStats[i][STATS_LG_DMG], clientStats[i][STATS_LG_KILLS], clientStats[i][STATS_LG_DEATH]);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<tr><td>RG</td> <td>%i</td> <td>%i</td> <td>%.1f</td> <td>%i</td> <td>%i</td> <td>%i</td></tr>", clientStats[i][STATS_RG_SHOTS], clientStats[i][STATS_RG_HITS], accuracy(clientStats[i][STATS_RG_SHOTS], clientStats[i][STATS_RG_HITS]),
+			    clientStats[i][STATS_RG_DMG], clientStats[i][STATS_RG_KILLS], clientStats[i][STATS_RG_DEATH]);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<tr><td>PG</td> <td>%i</td> <td>%i</td> <td>%.1f</td> <td>%i</td> <td>%i</td> <td>%i</td></tr>", clientStats[i][STATS_PG_SHOTS], clientStats[i][STATS_PG_HITS], accuracy(clientStats[i][STATS_PG_SHOTS], clientStats[i][STATS_PG_HITS]),
+			    clientStats[i][STATS_PG_DMG], clientStats[i][STATS_PG_KILLS], clientStats[i][STATS_PG_DEATH]);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<tr><td>BFG</td> <td>%i</td> <td>%i</td> <td>%.1f</td> <td>%i</td> <td>%i</td> <td>%i</td></tr>", clientStats[i][STATS_BFG_SHOTS], clientStats[i][STATS_BFG_HITS], accuracy(clientStats[i][STATS_BFG_SHOTS], clientStats[i][STATS_BFG_HITS]),
+			    clientStats[i][STATS_BFG_DMG], clientStats[i][STATS_BFG_KILLS], clientStats[i][STATS_BFG_DEATH]);
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("</table></p>");
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		/*  
 		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 46 ));
 		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 47 ));
 		  acc = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 48 ));
@@ -531,9 +579,14 @@ static void CG_ParseStatistics( void ) {
 		  
 		  string = va("---------------------------------------\n\n\n" );
 		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
+		  trap_FS_Write(string, len, f);*/
 		  
 	}
+	
+	string = va("</body></html>");
+	len = strlen( string );
+	trap_FS_Write(string, len, f);
+	
 	trap_FS_FCloseFile(f);
 	
 

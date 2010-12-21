@@ -839,6 +839,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	level.maxclients = g_maxclients.integer;
 	memset( g_clients, 0, MAX_CLIENTS * sizeof(g_clients[0]) );
 	level.clients = g_clients;
+	
+	memset( g_itemInfos, 0, MAX_GENTITIES * sizeof(g_itemInfos[0]));
+	level.itemInfo = g_itemInfos;
 
 	// set client fields on player ents
 	for ( i=0 ; i<level.maxclients ; i++ ) {

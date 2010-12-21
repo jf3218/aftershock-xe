@@ -1331,7 +1331,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 				}
 			}
 			
-			if( ( targ->client->lastGroundTime != 0 ) && mod == MOD_RAILGUN && 
+			if( ( targ->client->ps.groundEntityNum == ENTITYNUM_NONE ) && mod == MOD_RAILGUN && 
 				( targ->client->lastSentFlyingSave == attacker->s.number ) && 
 				( ( targ->client->lasthurt_mod == MOD_ROCKET ) || ( targ->client->lasthurt_mod == MOD_ROCKET_SPLASH ) ) ){
 					attacker->client->rewards[REWARD_RLRG]++;
