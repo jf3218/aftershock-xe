@@ -30,8 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifdef GAME
 # define  POOLSIZE ( 1024 * 1024 )
 #else
-//# define  POOLSIZE ( 256 * 1024 )
-#define POOLSIZE	( 1024 * 1024)
+# define  POOLSIZE ( 256 * 1024 )
+//#define POOLSIZE	( 1024 * 1024)
 #endif
 
 #define  FREEMEMCOOKIE  ((int)0xDEADBE3F)  // Any unlikely to be used value
