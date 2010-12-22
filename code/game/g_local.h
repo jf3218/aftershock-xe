@@ -629,6 +629,17 @@ char *ConcatArgs( int start );  //KK-OAX This declaration moved from g_svccmds.c
 void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ); 
 void RewardMessage(gentity_t *ent, int reward, int rewardCount);
 
+void G_SendAllItems( void );
+void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum );
+
+void G_SendEndGame( void );
+void G_SendStartGame( void );
+void SendReadymask( void );
+void Cmd_Timeout_f( gentity_t *player );
+void G_Timein( void );
+void G_SendLivingCount( void );
+
+
 // KK-OAX Added these in a seperate file to keep g_cmds.c familiar. 
 // g_cmds_ext.c
 //
@@ -684,6 +695,10 @@ void RegisterItem( gitem_t *item );
 void SaveRegisteredItems( void );
 
 int G_ItemTeam( int entityNum );
+int G_FindNearestItem( gentity_t *ent );
+int G_FindNearestItemSpawn( gentity_t *ent );
+
+qboolean G_CheckDeniedReward( gentity_t *attacker, gentity_t *other );
 
 //
 // g_utils.c
@@ -915,6 +930,8 @@ qboolean CheckObeliskAttack( gentity_t *obelisk, gentity_t *attacker );
 void ShuffleTeams(void);
 //KK-OAX Added for Command Handling Changes (r24)
 team_t G_TeamFromString( char *str );
+qboolean Team_GetDeathLocationMsg(gentity_t *ent, char *loc, int loclen);
+int G_FindNearestTeammate( gentity_t *ent );
 
 //KK-OAX Removed these in Code in favor of bg_alloc.c from Tremulous
 // g_mem.c

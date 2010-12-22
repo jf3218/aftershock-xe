@@ -1388,7 +1388,6 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 	vec3_t   muzzlePoint, endPoint;
 	int	style;
 	clientInfo_t *local, *other;
-	qhandle_t		mark;
   	local = &cgs.clientinfo[cg.clientNum];
 	other = &cgs.clientinfo[cent->currentState.number];
 
@@ -2542,7 +2541,7 @@ void CG_OutOfAmmoChange( void ) {
 #define ACCITEM_SIZE 16
 
 qboolean CG_DrawAccboard( void ) {
-	int counter, weaponNum, i;
+	int counter, i;
 	
 	i = 0;
 
@@ -2674,8 +2673,6 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 	qboolean		alphaFade;
 	qboolean		isSprite;
 	int				duration;
-	vec3_t			sprOrg;
-	vec3_t			sprVel;
 
 	mark = 0;
 	radius = 32;

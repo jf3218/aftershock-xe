@@ -210,7 +210,8 @@ typedef struct
 	int	bottom;
 	menuframework_s *parent;
 	int menuPosition;
-	unsigned flags;
+	//unsigned flags;
+	int flags;
 
 	void (*callback)( void *self, int event );
 	void (*statusbar)( void *self );

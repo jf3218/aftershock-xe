@@ -1288,8 +1288,8 @@ Returns on wich side the item is
 
 int G_ItemTeam( int entityNum ){
 	gentity_t *ent;
-	gentity_t *blue;
-	gentity_t *red;
+	int blue = -1;
+	int red = -1;
 	int i;
 	float distRed, distBlue;
 	
@@ -1312,24 +1312,24 @@ int G_ItemTeam( int entityNum ){
 			continue;
 		if( g_entities[i].item->giTag == PW_REDFLAG /*&& !red*/ ){
 			//G_Printf("Found RED %i\n", i);
-			red = &g_entities[ i ];
+			red =  i;
 		}
 		if( g_entities[i].item->giTag == PW_BLUEFLAG /*&& !blue*/ ){
 			//G_Printf("Found BLUE %i\n", i);
-			blue = &g_entities[ i ];
+			blue = i;
 		}
 	}
 	
-	if(!red || !blue )
+	if( ( red == -1 ) || ( blue == -1 ) )
 		return -1;
 	
-	distRed = /*sqrt*/( ent->r.currentOrigin[0] - red->r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - red->r.currentOrigin[0] )
-		+ ( ent->r.currentOrigin[1] - red->r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - red->r.currentOrigin[1] )
-		+ ( ent->r.currentOrigin[2] - red->r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - red->r.currentOrigin[2] );
+	distRed = /*sqrt*/( ent->r.currentOrigin[0] - g_entities[red].r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - g_entities[red].r.currentOrigin[0] )
+		+ ( ent->r.currentOrigin[1] - g_entities[red].r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - g_entities[red].r.currentOrigin[1] )
+		+ ( ent->r.currentOrigin[2] - g_entities[red].r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - g_entities[red].r.currentOrigin[2] );
 		
-	distBlue = /*sqrt*/( ent->r.currentOrigin[0] - blue->r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - blue->r.currentOrigin[0] )
-		 + ( ent->r.currentOrigin[1] - blue->r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - blue->r.currentOrigin[1] )
-		 + ( ent->r.currentOrigin[2] - blue->r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - blue->r.currentOrigin[2] );
+	distBlue = /*sqrt*/( ent->r.currentOrigin[0] - g_entities[blue].r.currentOrigin[0] ) * ( ent->r.currentOrigin[0] - g_entities[blue].r.currentOrigin[0] )
+		 + ( ent->r.currentOrigin[1] - g_entities[blue].r.currentOrigin[1] ) * ( ent->r.currentOrigin[1] - g_entities[blue].r.currentOrigin[1] )
+		 + ( ent->r.currentOrigin[2] - g_entities[blue].r.currentOrigin[2] ) * ( ent->r.currentOrigin[2] - g_entities[blue].r.currentOrigin[2] );
 		 
 	//G_Printf("RED: %f,   BLUE: %f    Diff: %f\n", distRed, distBlue, distBlue - distRed );
 		 
@@ -1369,10 +1369,12 @@ qboolean G_CheckDeniedReward( gentity_t *attacker, gentity_t *other ){
 		if ( dist < 128 ) {
 			attacker->client->rewards[REWARD_ITEMDENIED]++;
 			RewardMessage(attacker, REWARD_ITEMDENIED, attacker->client->rewards[REWARD_ITEMDENIED] );
-			break;
+			return qtrue;
+			//break;
 		}
 		
 		
 	}
+	return qfalse;
 }
 

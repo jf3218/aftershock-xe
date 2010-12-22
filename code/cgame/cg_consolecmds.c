@@ -172,7 +172,6 @@ char	*ConcatArgs( int start ) {
 
 static void CG_Echo_f( void ) {
 	char* string;
-	int i;
 
 	string = ConcatArgs(1);
 	

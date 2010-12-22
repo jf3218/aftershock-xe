@@ -96,6 +96,7 @@ static const char *ctf1fOrders[] = {
 	"I Relinquish Command",
 	NULL
 };
+#ifdef MISSIONPACK
 static const char *ctf1fMessages[] = {
 	"i am the leader",
 	"%s defend the base",
@@ -106,6 +107,7 @@ static const char *ctf1fMessages[] = {
 	"i stop being the leader",
 	NULL
 };
+#endif
 
 #define NUM_BASE_ORDERS		7
 static const char *baseOrders[] = {
@@ -161,6 +163,7 @@ static const char *ddOrders[] = {
 	"I Relinquish Command",
 	NULL
 };
+#ifdef MISSIONPACK
 static const char *ddMessages[] = {
 	"i am the leader",
 	"%s follow me",
@@ -172,7 +175,7 @@ static const char *ddMessages[] = {
 	"i stop being the leader",
 	NULL
 };
-
+#endif
 /*
 ===============
 UI_TeamOrdersMenu_BackEvent

@@ -1688,7 +1688,9 @@ Append information about this game to the log file
 void LogExit( const char *string ) {
 	int				i, numSorted;
 	gclient_t		*cl;
+#ifdef MISSIONPACK
 	qboolean won = qtrue;
+#endif
 	G_LogPrintf( "Exit: %s\n", string );
 
 	level.intermissionQueued = level.time;
@@ -1900,7 +1902,7 @@ void G_SetGameString( void ){
 		Com_sprintf(playerName, sizeof(playerName),"-%sVS%s", level.clients[level.sortedClients[0]].pers.netname, level.clients[level.sortedClients[1]].pers.netname);
 	}
 	else{
-		Com_sprintf(playerName, sizeof(playerName),"");
+		Com_sprintf(playerName, sizeof(playerName),"-");
 	}
 	count = 0;
 	for( i = 0; i < 128 ; i++ ){
@@ -1942,7 +1944,6 @@ void G_WriteStats( void ){
 	int 		shots, hits, acc, dmg, kills, deathCount;
 	char		mapname[MAX_MAPNAME];
 	gclient_t	*cl;
-	char	userinfo[MAX_INFO_STRING];
 	char *gameNames[] = {
 	  "FFA",
 	  "1v1",
@@ -2001,7 +2002,7 @@ void G_WriteStats( void ){
 			  team = "Blue";
 		  else if( cl->sess.sessionTeam == TEAM_RED )
 			  team = "Red";
-		  else if( cl->sess.sessionTeam == TEAM_SPECTATOR )
+		  else //if( cl->sess.sessionTeam == TEAM_SPECTATOR )
 			  team = "Spectator";
 		  
 		  
@@ -2366,7 +2367,7 @@ void StartEliminationRound(void) {
 //things to do at end of round:
 void EndEliminationRound(void)
 {
-	int i,j;
+	//int i,j;
 	
 	DisableWeapons();
 	level.roundNumber++;
@@ -2391,7 +2392,7 @@ void EndEliminationRound(void)
 //Things to do if we don't want to move the roundNumber
 void RestartEliminationRound(void) {
 	
-	int i,j;
+	//int i,j;
 	
 	DisableWeapons();
 	level.roundNumberStarted = level.roundNumber-1;

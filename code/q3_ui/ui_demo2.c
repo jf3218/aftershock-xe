@@ -168,7 +168,7 @@ static void meowdrawdemo( void ) {
     Menu_Draw(&s_demos.menu);
 }
 
-static int QDECL UI_Demo_SortCompare( const void *arg1, const void *arg2 ){
+/*static int QDECL UI_Demo_SortCompare( const void *arg1, const void *arg2 ){
 	int num1, num2;
 	const char *a, *b;
 	
@@ -182,7 +182,7 @@ static int QDECL UI_Demo_SortCompare( const void *arg1, const void *arg2 ){
 	
 	
 	return Q_stricmp(a,b);
-}
+}*/
 
 /*
 ===============
@@ -194,7 +194,7 @@ static void Demos_MenuInit( qboolean firstStart ) {
 	int		len;
 	char	*demoname, extension[16];
 	char	folder[128];
-	const char	*buffer;
+	//const char	*buffer;
 	
 	if( firstStart ){
 		currentFolder = NULL;

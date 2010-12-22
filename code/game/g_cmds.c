@@ -146,7 +146,7 @@ G_SendLivingCount
 
 ==================
 */
-void G_SendLivingCount() {
+void G_SendLivingCount( void ) {
 	char		entry[128];
 
 	Com_sprintf (entry, sizeof(entry),
@@ -1436,13 +1436,12 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 	char		text[MAX_SAY_TEXT];
 	char		location[64];
 	trace_t		tr;
-	vec3_t		start, end, forward, right, up, muzzle;
+	vec3_t		end, forward, right, up, muzzle;
 	int		count;
 	int 		enemies;
 	qboolean	powerup;
 	char	userinfo[MAX_INFO_STRING];
 	float		fov;
-	float		x, y, z;
 	vec3_t		angles;
 	vec3_t		dist;
 
@@ -2753,7 +2752,6 @@ void Cmd_DropWeapon_f( gentity_t *ent ){
 }
 
 void Cmd_DropFlag_f( gentity_t *other ){
-	gitem_t		*item;
 	
 	if( !( g_itemDrop.integer & 1 ) )
 		return;

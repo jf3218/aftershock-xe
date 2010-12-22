@@ -167,12 +167,12 @@ TTimo: this function is common to the main menu and errorMessage menu
 
 static void Main_MenuDraw( void ) {
 	refdef_t		refdef;
-	refEntity_t		ent;
+	//refEntity_t		ent;
 	vec3_t			origin;
-	vec3_t			angles;
+	//vec3_t			angles;
 	float			adjust;
 	float			x, y, w, h;
-	vec4_t			color = {0.2, 0.2, 1.0, 1};
+	//vec4_t			color = {0.2, 0.2, 1.0, 1};
 	int 			i;
 
 	// setup the refdef
@@ -247,7 +247,7 @@ static void Main_MenuDraw( void ) {
 UI_TeamArenaExists
 ===============
 */
-static qboolean UI_TeamArenaExists( void ) {
+/*static qboolean UI_TeamArenaExists( void ) {
 	int		numdirs;
 	char	dirlist[2048];
 	char	*dirptr;
@@ -266,7 +266,7 @@ static qboolean UI_TeamArenaExists( void ) {
     dirptr += dirlen + strlen(descptr) + 1;
 	}
 	return qfalse;
-}
+}*/
 
 
 /*
@@ -283,7 +283,7 @@ and that local cinematics are killed
 
 void UI_MainMenu( void ) {
 	int		y;
-	qboolean teamArena = qfalse;
+	//qboolean teamArena = qfalse;
 	int		style =  UI_SMALLFONT;
 
 	trap_Cvar_Set( "sv_killserver", "1" );

@@ -361,9 +361,8 @@ static void CG_ParseStatistics( void ) {
 	char		*team;
 	clientInfo_t    *ci;
 	int 		scorenum;
-	score_t		*score;
+	score_t		*score = &cg.scores[0];
 	int		clientnum;
-	int 		shots, hits, acc, dmg, kills, deathCount;
 	char		*mapname;
 	char		*buf;
 	int		clientStats[MAX_CLIENTS][STATISTIC_MAX];
@@ -450,6 +449,7 @@ static void CG_ParseStatistics( void ) {
 			if( clientnum == cg.scores[j].client ){
 				scorenum = j;
 				score = &cg.scores[j];
+				break;
 			}
 		  }
 		  	  
@@ -462,7 +462,7 @@ static void CG_ParseStatistics( void ) {
 			  team = "<font color=blue>Blue</font>";
 		  else if( ci->team == TEAM_RED )
 			  team = "<font color=red>Red</font>";
-		  else if( ci->team == TEAM_SPECTATOR )
+		  else //if( ci->team == TEAM_SPECTATOR )
 			  team = "<font color=grey>Spectator</font>";
 		  
 		  
@@ -477,6 +477,10 @@ static void CG_ParseStatistics( void ) {
 		  
 
 		string = va("<p align=center><font color=green><b>Damage done</b>: %i</font>     <font color=red><b>Damage taken</b>: %i</font></p> \n", score->dmgdone, score->dmgtaken );
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<p align=center> <b>Rewards</b>: </p>\n");
 		len = strlen( string );
 		trap_FS_Write(string, len, f);
 		
@@ -506,6 +510,10 @@ static void CG_ParseStatistics( void ) {
 		}
 		
 		string = va("</tr></table></p><br>");
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("<p align=center> <b>Accuracy</b>: </p>\n");
 		len = strlen( string );
 		trap_FS_Write(string, len, f);
 		
@@ -561,26 +569,26 @@ static void CG_ParseStatistics( void ) {
 		len = strlen( string );
 		trap_FS_Write(string, len, f);
 		
-		/*  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 46 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 47 ));
-		  acc = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 48 ));
-		  string = va("Armor   %5i         %2iYA     %2iRA\n", shots, hits, acc );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  shots = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 45 ));
-		  hits = atoi( CG_Argv( i * NUM_DATA_STATS + FIRST_DATA_STATS + 49 ));
-		  string = va("Health  %5i         %2iMH\n", shots, hits );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);
-		  
-		  
-		  
-		  string = va("---------------------------------------\n\n\n" );
-		  len = strlen( string );
-		  trap_FS_Write(string, len, f);*/
-		  
+		if( cgs.gametype != GT_ELIMINATION && cgs.gametype != GT_CTF_ELIMINATION ){
+		
+			string = va("<p align=center> <b>Item stats</b>: </p>\n");
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+			
+			string = va("<p align=center><table border=\"1\"><tr><td>Health</td> <td>Armor</td> <td>Mega health</td> <td>Yellow armor</td> <td>Red armor</td></tr>");
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+			
+			string = va("<tr><td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td></tr>", clientStats[i][STATS_HEALTH_COUNT], clientStats[i][STATS_ARMOR_COUNT],
+			    clientStats[i][STATS_MH_COUNT], clientStats[i][STATS_YA_COUNT], clientStats[i][STATS_RA_COUNT]);
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+			
+			string = va("</table></p>");
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+		
+		}  
 	}
 	
 	string = va("</body></html>");
@@ -1250,7 +1258,7 @@ CG_AddToChat
 
 =======================
 */
-static void CG_AddToChat(const char *str)
+void CG_AddToChat(const char *str)
 {
   int len;
   char *p, *ls;
@@ -1710,7 +1718,7 @@ voiceChatList_t *CG_VoiceChatListForClient( int clientNum ) {
 	return &voiceChatLists[0];
 }
 
-void CG_ParseLivingCount(){
+void CG_ParseLivingCount( void ){
 	int newRed, newBlue;
 	int countRed, countBlue;
 	
