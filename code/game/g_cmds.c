@@ -184,6 +184,8 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
 	int		i;
 	int team;
 	
+	//G_Printf("entityNum %i, type %i, quantity %i, respawnTime %i, nextItemEntityNum %i\n", entityNum, type, quantity, respawnTime, nextItemEntityNum);
+	
 	if ( level.warmupTime ) {
 		return;
 	}

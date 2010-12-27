@@ -1493,6 +1493,8 @@ extern vmCvar_t			cg_noAmmoChange;
 extern vmCvar_t			cg_lgHitSfx;
 extern vmCvar_t			cg_crosshairHitColor;
 
+extern vmCvar_t			cg_itemFX;
+
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

@@ -527,6 +527,8 @@ weapon_railgun_fire
 =================
 */
 #define	MAX_RAIL_HITS	4
+#define RAIL_DMG_NORMAL	100
+#define RAIL_DMG_REDUCED 80
 void weapon_railgun_fire (gentity_t *ent) {
 	vec3_t		end;
 	vec3_t impactpoint, bouncedir;
@@ -540,7 +542,12 @@ void weapon_railgun_fire (gentity_t *ent) {
 	int			passent;
 	gentity_t	*unlinkedEntities[MAX_RAIL_HITS];
 
-	damage = 100 * s_quadFactor;
+	
+	if( g_reduceRailDamage.integer )
+		damage = RAIL_DMG_REDUCED * s_quadFactor;
+	else
+		damage = RAIL_DMG_NORMAL * s_quadFactor;
+		
 	if(g_instantgib.integer)
 		damage = 800;
 

@@ -221,6 +221,8 @@ vmCvar_t     g_statsPath;
 
 vmCvar_t     g_teamLock;
 
+vmCvar_t     g_reduceRailDamage;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -446,6 +448,7 @@ static cvarTable_t		gameCvarTable[] = {
 	
 	{ &g_teamLock, "g_teamLock", "0", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 
+	{ &g_reduceRailDamage, "g_reduceRailDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing
@@ -717,10 +720,10 @@ void G_SendAllItems( void ){
 	if( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
 		return;
 	
-	for( i = 0; i < MAX_GENTITIES; i++ ){
+	/*for( i = 0; i < MAX_GENTITIES; i++ ){
 		if( g_entities[i].s.eType == ET_ITEM )
 			g_itemInfos[i].team = G_ItemTeam( i );
-	}
+	}*/
 	
 	//G_Printf("check\n");
 	if( g_gametype.integer == GT_CTF ){
