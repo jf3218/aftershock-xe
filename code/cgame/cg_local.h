@@ -1495,6 +1495,9 @@ extern vmCvar_t			cg_crosshairHitColor;
 
 extern vmCvar_t			cg_itemFX;
 
+extern vmCvar_t			aftershock_login;
+extern vmCvar_t			aftershock_password;
+
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

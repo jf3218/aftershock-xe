@@ -1062,7 +1062,23 @@ static void ClientCleanName(const char *in, char *out, int outSize)
         Q_strncpyz(out, "UnnamedPlayer", outSize );
 }
 
-
+int G_CheckAftershockAccount( char* name, char* pw ){
+	//Name not in database
+	{
+		G_Printf("Not registered\n");
+		return -1;
+	}
+	
+	//wrong password
+	{
+		G_Printf("Wrong password\n");
+		return -1;
+	}
+	//Found in database
+	{
+		return 1;//ID
+	}
+}
 
 /*
 ===========
@@ -1092,6 +1108,9 @@ void ClientUserinfoChanged( int clientNum ) {
 	char	redTeam[MAX_INFO_STRING];
 	char	blueTeam[MAX_INFO_STRING];
 	char	userinfo[MAX_INFO_STRING];
+	char*	aftershock_name;
+	char*	aftershock_pw;
+	int	i;
 
 	ent = g_entities + clientNum;
 	client = ent->client;
@@ -1129,6 +1148,15 @@ void ClientUserinfoChanged( int clientNum ) {
 	// see if the player is nudging his shots
 	s = Info_ValueForKey( userinfo, "cg_cmdTimeNudge" );
 	client->pers.cmdTimeNudge = atoi( s );
+	
+	aftershock_name = Info_ValueForKey( userinfo, "aftershock_login" );
+	aftershock_pw = Info_ValueForKey( userinfo, "aftershock_password" );
+
+	
+	client->clientId = G_CheckAftershockAccount( aftershock_name, aftershock_pw );
+	
+	
+	
 
 	// see if the player wants to debug the backward reconciliation
 	/*s = Info_ValueForKey( userinfo, "cg_debugDelag" );

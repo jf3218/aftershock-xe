@@ -460,6 +460,8 @@ struct gclient_s {
 	int			kills;
 	int 			timeouts;
 	
+	int			clientId;
+	
 };
 
 
