@@ -1420,7 +1420,7 @@ static void G_SayTo( gentity_t *ent, gentity_t *other, int mode, int color, cons
         if ((ent->r.svFlags & SVF_BOT) && trap_Cvar_VariableValue( "bot_nochat" )>1) return;
 
 	// no chatting to players in tournements
-	if ( (g_gametype.integer == GT_TOURNAMENT )
+	if ( (g_gametype.integer == GT_TOURNAMENT && !level.warmupTime )
 		&& other->client->sess.sessionTeam == TEAM_FREE
 		&& ent->client->sess.sessionTeam != TEAM_FREE ) {
 		return;
@@ -2163,6 +2163,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 	int		i;
 	char	arg1[MAX_STRING_TOKENS];
 	char	arg2[MAX_STRING_TOKENS];
+	char	arg3[MAX_STRING_TOKENS];
         char    buffer[256];
 
 	if ( !g_allowVote.integer ) {
@@ -2186,7 +2187,8 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 	// make sure it is a valid command to vote on
 	trap_Argv( 1, arg1, sizeof( arg1 ) );
 	trap_Argv( 2, arg2, sizeof( arg2 ) );
-
+	trap_Argv( 3, arg3, sizeof( arg3 ) );
+	
 	// check for command separators in arg2
 	for( c = arg2; *c; ++c) {
 		switch(*c) {
@@ -2300,14 +2302,35 @@ void Cmd_CallVote_f( gentity_t *ent ) {
                     trap_SendServerCommand( ent-g_entities, "print \"Gametype is not available.\n\"" );
                     return;
                 }
-
-                trap_Cvar_VariableStringBuffer( "nextmap", s, sizeof(s) );
+                
+		if( trap_Argc() >= 3 )
+		
+		trap_Cvar_VariableStringBuffer( "nextmap", s, sizeof(s) );
+		
+		if(!allowedMap(arg3)){
+                    trap_SendServerCommand( ent-g_entities, "print \"Map is not available.\n\"" );
+                    return;
+                }
+		
+		
 		if (*s) {
-                    Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %d; map_restart; set nextmap \"%s\"", arg1, i,s );
-                    Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change gametype to: %s?", gameNames[i] );
+			if( trap_Argc() >= 3 ){
+				Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %d; map %s; set nextmap \"%s\"", arg1, i,arg3,s );
+				Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change gametype to: %s   Map: %s?", gameNames[i], arg3 );
+			}
+			else{
+				Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %d; map_restart; set nextmap \"%s\"", arg1, i,s );
+				Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change gametype to: %s?", gameNames[i] );
+			}
                 } else {
-                    Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %d; mao_restart", arg1, i );
-                    Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change gametype to: %s?", gameNames[i] );
+			if( trap_Argc() >= 3 ){
+				Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %d; map", arg1, i, arg3);
+				Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change gametype to: %s   Map: %s?", gameNames[i], arg3 );
+			}
+			else{
+				Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %d; map_restart", arg1, i );
+				Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change gametype to: %s?", gameNames[i] );
+			}
                 }
 	} else if ( !Q_stricmp( arg1, "map" ) ) {
 		// special case for map changes, we want to reset the nextmap setting

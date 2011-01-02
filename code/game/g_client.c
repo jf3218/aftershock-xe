@@ -1065,13 +1065,13 @@ static void ClientCleanName(const char *in, char *out, int outSize)
 int G_CheckAftershockAccount( char* name, char* pw ){
 	//Name not in database
 	{
-		G_Printf("Not registered\n");
+		//G_Printf("Not registered\n");
 		return -1;
 	}
 	
 	//wrong password
 	{
-		G_Printf("Wrong password\n");
+		//G_Printf("Wrong password\n");
 		return -1;
 	}
 	//Found in database

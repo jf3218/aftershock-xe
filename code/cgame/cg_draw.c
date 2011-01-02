@@ -3595,6 +3595,13 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 			CG_DrawCrosshair();
 
 		CG_DrawCrosshairNames();
+		
+		if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
+#ifndef MISSIONPACK
+			CG_DrawTeamInfo();
+#endif
+		}
+		
 	} else {
 		// don't draw any status if dead or the scoreboard is being explicitly shown
 		if ( !cg.showScores && cg.snap->ps.stats[STAT_HEALTH] > 0 ) {
