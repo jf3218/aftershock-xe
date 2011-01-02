@@ -636,7 +636,7 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
 
 void G_SendEndGame( void );
 void G_SendStartGame( void );
-void SendReadymask( void );
+void SendReadymask( int clientnum );
 void Cmd_Timeout_f( gentity_t *player );
 void G_Timein( void );
 void G_SendLivingCount( void );

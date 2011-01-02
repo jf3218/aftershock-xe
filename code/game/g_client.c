@@ -1692,7 +1692,7 @@ void ClientBegin( int clientNum ) {
         if(strlen(custom_vote_info))
             SendCustomVoteCommands(clientNum);
 	
-	SendReadymask();
+	SendReadymask( ent-g_entities );
 	
 	if( level.timeout )
 		Cmd_Timeout_f( ent );
@@ -2315,7 +2315,7 @@ void ClientDisconnect( int clientNum ) {
 		BotAIShutdownClient( clientNum, qfalse );
 	}
 	
-	SendReadymask();
+	SendReadymask( -1 );
 	
 	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
 		G_SendLivingCount();

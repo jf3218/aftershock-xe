@@ -481,7 +481,7 @@ SendReadymask
 ==================
 */
 
-void SendReadymask( void ) {
+void SendReadymask( int clientnum ) {
 	int			ready, notReady, playerCount;
 	int			i;
 	gclient_t	*cl;
@@ -489,6 +489,10 @@ void SendReadymask( void ) {
 	int			readyMask;
 	char		entry[16];
   
+	if ( !level.warmupTime ) {
+		return;
+	}
+	
 	// see which players are ready
 	ready = 0;
 	notReady = 0;
@@ -514,13 +518,14 @@ void SendReadymask( void ) {
 	level.readyMask = readyMask;
 	Com_sprintf (entry, sizeof(entry), " %i ", readyMask);
 				
-	for (i = 0; i < MAX_CLIENTS; i++) {
+	/*for (i = 0; i < MAX_CLIENTS; i++) {
 		ent = &g_entities[i];
 		if ( ( ent->inuse ) ) {
 
 		      trap_SendServerCommand( ent-g_entities, va("readyMask%s", entry ));
 		}
-	}
+	}*/
+	trap_SendServerCommand( clientnum, va("readyMask%s", entry ));
 }
 
 /*
@@ -965,7 +970,7 @@ void Cmd_Ready_f( gentity_t *ent ) {
 	else
 		ent->client->ready = qtrue;
 	
-	SendReadymask();
+	SendReadymask( -1 );
 }
 
 /*

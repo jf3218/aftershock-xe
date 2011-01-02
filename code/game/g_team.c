@@ -2186,49 +2186,114 @@ qboolean CheckObeliskAttack( gentity_t *obelisk, gentity_t *attacker ) {
 }
 
 /*
+=============
+SortPlayers
+
+=============
+*/
+int QDECL SortPlayers( const void *a, const void *b ) {
+	gclient_t	*ca, *cb;
+
+	ca = &level.clients[*(int *)a];
+	cb = &level.clients[*(int *)b];
+
+	// sort special clients last
+	if ( ca->sess.spectatorState == SPECTATOR_SCOREBOARD || ca->sess.spectatorClient < 0 ) {
+		return 1;
+	}
+	if ( cb->sess.spectatorState == SPECTATOR_SCOREBOARD || cb->sess.spectatorClient < 0  ) {
+		return -1;
+	}
+
+	// then connecting clients
+	if ( ca->pers.connected == CON_CONNECTING ) {
+		return 1;
+	}
+	if ( cb->pers.connected == CON_CONNECTING ) {
+		return -1;
+	}
+
+
+	// then spectators
+	if ( ca->sess.sessionTeam == TEAM_SPECTATOR && cb->sess.sessionTeam == TEAM_SPECTATOR ) {
+		if( ( ca->sess.specOnly && cb->sess.specOnly ) || ( !ca->sess.specOnly && !cb->sess.specOnly ) ) {
+			if ( ca->sess.spectatorTime < cb->sess.spectatorTime ) {
+				return -1;
+			}
+			if ( ca->sess.spectatorTime > cb->sess.spectatorTime ) {
+				return 1;
+			}
+			return 0;
+		}
+		if( ca->sess.specOnly ){
+			return 1;
+		}
+		if( cb->sess.specOnly ){
+			return -1;
+		}
+	}
+	if ( ca->sess.sessionTeam == TEAM_SPECTATOR ) {
+		return 1;
+	}
+	if ( cb->sess.sessionTeam == TEAM_SPECTATOR ) {
+		return -1;
+	}
+        
+        if( ca->dmgtaken == 0 && cb->dmgtaken != 0 )
+		return 1;
+	if( ca->dmgtaken != 0 && cb->dmgtaken == 0 )
+		return -1;
+	if( ca->dmgtaken == 0 && cb->dmgtaken == 0 )
+		return 0;
+        
+	if( ca->dmgdone/ca->dmgtaken > cb->dmgdone/cb->dmgtaken )
+		return -1;
+	else if( ca->dmgdone/ca->dmgtaken < cb->dmgdone/cb->dmgtaken )
+		return 1;
+	else
+		return 0;
+	
+	
+}
+
+/*
 ================
-ShuffleTeams
- *Randomizes the teams based on a type of function and then restarts the map
- *Currently there is only one type so type is ignored. You can add total randomizaion or waighted randomization later.
- *
- *The function will split the teams like this:
- *1. Red team
- *2. Blue team
- *3. Blue team
- *4. Red team
- *5. Go to 1
+
 ================
 */
 void ShuffleTeams(void) {
+    int		sortPlayers[MAX_CLIENTS];
     int i;
-    int assignedClients=1, nextTeam=TEAM_RED;
-
+    int nextTeam = TEAM_RED;
+    int count = 0;
+    
     if ( g_gametype.integer < GT_TEAM || g_ffa_gt==1)
-        return; //Can only shuffle team games!
-
-    for( i=0;i < level.numConnectedClients; i++ ) {
-        if( g_entities[ &level.clients[level.sortedClients[i]] - level.clients].r.svFlags & SVF_BOT)
-            continue; //Don't sort bots... they are always equal
+        return;
+    
+    
+    for( i = 0; i < level.numConnectedClients; i++ ){
+	    sortPlayers[i] = level.sortedClients[i];
+    }
+    
+    qsort( sortPlayers, level.numConnectedClients, sizeof(sortPlayers[0]), SortPlayers );
+    
+    for( i = 0; i < level.numConnectedClients; i++ ){
+	    
+	    if( g_entities[ &level.clients[level.sortedClients[i]] - level.clients].r.svFlags & SVF_BOT)
+            continue; 
         
-        if(level.clients[level.sortedClients[i]].sess.sessionTeam==TEAM_RED || level.clients[level.sortedClients[i]].sess.sessionTeam==TEAM_BLUE ) {
-            //For every second client we chenge team. But we do it a little of to make it slightly more fair
-            if(assignedClients>1) {
-                assignedClients=0;
-                if(nextTeam == TEAM_RED)
-                    nextTeam = TEAM_BLUE;
-                else
-                    nextTeam = TEAM_RED;
-            }
-
-            //Set the team
-            //We do not run all the logic because we shall run map_restart in a moment.
-            level.clients[level.sortedClients[i]].sess.sessionTeam = nextTeam;
-
-            ClientUserinfoChanged( level.sortedClients[i] );
-            ClientBegin( level.sortedClients[i] );
-
-            assignedClients++;
-        }
+	    if( level.clients[sortPlayers[i]].sess.sessionTeam==TEAM_RED || level.clients[sortPlayers[i]].sess.sessionTeam==TEAM_BLUE ){
+		    level.clients[sortPlayers[i]].sess.sessionTeam = nextTeam;
+		    count++;
+		    G_Printf("%i\n", nextTeam);
+		    if( nextTeam == TEAM_RED )
+			    nextTeam = TEAM_BLUE;
+		    else if( nextTeam == TEAM_BLUE)
+			    nextTeam = TEAM_RED;
+    
+		    ClientUserinfoChanged( sortPlayers[i] );
+		    ClientBegin( sortPlayers[i] );
+	    }
     }
 
     //Restart!
