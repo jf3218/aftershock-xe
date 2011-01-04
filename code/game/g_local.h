@@ -1233,6 +1233,7 @@ extern vmCvar_t	    g_statsPath;
 extern vmCvar_t	    g_teamLock;
 
 extern vmCvar_t	    g_reduceRailDamage;
+extern vmCvar_t	    g_reduceLightningDamage;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

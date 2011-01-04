@@ -127,6 +127,8 @@ static void Demos_MenuEvent( void *ptr, int event ) {
 		}
 		break;
 	case ID_BACK:
+		for(; *currentFolder; currentFolder++)
+			*currentFolder = ' ';
 		UI_PopMenu();
 		break;
 
@@ -168,21 +170,21 @@ static void meowdrawdemo( void ) {
     Menu_Draw(&s_demos.menu);
 }
 
-/*static int QDECL UI_Demo_SortCompare( const void *arg1, const void *arg2 ){
-	int num1, num2;
-	const char *a, *b;
+static void sortDemos( const char **list, int itemnum ){
+	int i,j;
+	const char* buffer;
 	
-	num1 = *(int *)arg1;
-	num2 = *(int *)arg2;
+	for( j = 0; j < itemnum; j++ )
+		for( i = 0; i < itemnum - j; i++ ){
+			if( Q_stricmp(list[i],list[i+1]) == -1 && list[i+1]){
+				buffer = list[i];
+				list[i] = list[i+1];
+				list[i+1] = buffer;
+			}
+		}
+		
 	
-	a = s_demos.list.itemnames[num1];
-	b = s_demos.list.itemnames[num2];
-	
-	Com_Printf("%i %i\n", num1, num2);
-	
-	
-	return Q_stricmp(a,b);
-}*/
+}
 
 /*
 ===============
@@ -190,7 +192,7 @@ Demos_MenuInit
 ===============
 */
 static void Demos_MenuInit( qboolean firstStart ) {
-	int		i;
+	int		i,j;
 	int		len;
 	char	*demoname, extension[16];
 	char	folder[128];
@@ -307,10 +309,11 @@ static void Demos_MenuInit( qboolean firstStart ) {
 	s_demos.list.numitems = trap_FS_GetFileList( folder, extension, s_demos.names, sizeof(s_demos.names) );
 	
 	
-	
 	s_demos.list.numitems			+= s_demos.numFolders;
 	s_demos.list.itemnames			= (const char **)s_demos.demolist;
 	//s_demos.list.columns			= 1;
+	
+	
 
 	if (!s_demos.list.numitems) {
 		strcpy( s_demos.names, "No Demos Found." );
@@ -336,7 +339,7 @@ static void Demos_MenuInit( qboolean firstStart ) {
 		demoname += len + 1;
 	}
 	demoname =  s_demos.names;
-	for ( i = s_demos.numFolders; i < s_demos.list.numitems; i++ ) {
+	for ( i = s_demos.numFolders; i < s_demos.list.numitems+1; i++ ) {
 		s_demos.list.itemnames[i] = demoname;
 
 		// strip extension
@@ -348,6 +351,8 @@ static void Demos_MenuInit( qboolean firstStart ) {
 
 		demoname += len + 1;
 	}
+	
+	sortDemos( s_demos.list.itemnames, s_demos.list.numitems );
 	
 	Menu_AddItem( &s_demos.menu, &s_demos.banner );
 	Menu_AddItem( &s_demos.menu, &s_demos.framel );
@@ -383,6 +388,9 @@ UI_DemosMenu
 ===============
 */
 void UI_DemosMenu( void ) {
+	
+	
+	Com_Printf("%s\n", currentFolder);
 	Demos_MenuInit( qtrue );
 	UI_PushMenu( &s_demos.menu );
 }

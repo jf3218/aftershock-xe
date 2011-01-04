@@ -711,7 +711,8 @@ LIGHTNING GUN
 
 ======================================================================
 */
-
+#define LG_DMG_NORMAL	8
+#define LG_DMG_REDUCED 6
 void Weapon_LightningFire( gentity_t *ent ) {
 	trace_t		tr;
 	vec3_t		end;
@@ -719,7 +720,11 @@ void Weapon_LightningFire( gentity_t *ent ) {
 	gentity_t	*traceEnt, *tent;
 	int			damage, i, passent;
 
-	damage = 8 * s_quadFactor;
+	
+	if( g_reduceLightningDamage.integer )
+		damage = LG_DMG_REDUCED * s_quadFactor;
+	else
+		damage = LG_DMG_NORMAL * s_quadFactor;
 
 	passent = ent->s.number;
 	for (i = 0; i < 10; i++) {

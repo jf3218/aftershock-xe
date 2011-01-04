@@ -222,6 +222,7 @@ vmCvar_t     g_statsPath;
 vmCvar_t     g_teamLock;
 
 vmCvar_t     g_reduceRailDamage;
+vmCvar_t     g_reduceLightningDamage;
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -449,6 +450,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_teamLock, "g_teamLock", "0", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 
 	{ &g_reduceRailDamage, "g_reduceRailDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
+	{ &g_reduceLightningDamage, "g_reduceLightningDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing
