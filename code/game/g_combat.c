@@ -767,7 +767,9 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 			    //Must be 1 so the correct number of kills are displayed to the clients. 
 			    attacker->client->pers.multiKillCount = 1;
 			}
+			
 			attacker->client->lastKillTime = level.time;
+			self->client->lastKilledTime = level.time;
 		}
 	} else {
 		if(g_gametype.integer!=GT_LMS && !((g_gametype.integer==GT_ELIMINATION || g_gametype.integer==GT_CTF_ELIMINATION) && level.time < level.roundStartTime))

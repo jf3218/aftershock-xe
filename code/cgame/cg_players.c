@@ -883,7 +883,7 @@ static void CG_ColorFromString( const char *v, vec3_t color ) {
 
 	VectorClear( color );
 
-	val = atoi( v );
+	/*val = atoi( v );
 
 	if ( val < 1 || val > 7 ) {
 		VectorSet( color, 1, 1, 1 );
@@ -898,7 +898,11 @@ static void CG_ColorFromString( const char *v, vec3_t color ) {
 	}
 	if ( val & 4 ) {
 		color[0] = 1.0f;
-	}
+	}*/
+	color[0] = g_color_table[ColorIndex(*v)][0];
+	color[1] = g_color_table[ColorIndex(*v)][1];
+	color[2] = g_color_table[ColorIndex(*v)][2];
+	color[3] = g_color_table[ColorIndex(*v)][3];
 }
 
 /*

@@ -1080,6 +1080,25 @@ int G_CheckAftershockAccount( char* name, char* pw ){
 	}
 }
 
+qboolean ClientNameAllowed( const char *in , int size){
+	int count = 0;
+	
+	if( !strcmp( in, "UnnamedPlayer" ) )
+		return qfalse;
+	
+	for(; *in; in++)
+	{
+		if( ( *in >= 'a' && *in <= 'z' ) || ( *in >= 'A' && *in <= 'Z' ) || *in == '*' ){
+			if( !(Q_IsColorString(in - 1)) )
+				count++;
+		}
+	}
+	if( count < 3 )
+		return qfalse;
+	
+	return qtrue;
+}
+
 /*
 ===========
 ClientUserInfoChanged
@@ -1184,6 +1203,19 @@ void ClientUserinfoChanged( int clientNum ) {
 	Q_strncpyz ( oldname, client->pers.netname, sizeof( oldname ) );
 	s = Info_ValueForKey (userinfo, "name");
 	ClientCleanName( s, client->pers.netname, sizeof(client->pers.netname) );
+	
+	if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) ){
+		if( client->sess.sessionTeam != TEAM_SPECTATOR ){
+			Q_strncpyz ( client->pers.netname, oldname, sizeof( client->pers.netname ) );
+			Info_SetValueForKey(userinfo, "name", oldname);
+			trap_SendServerCommand( ent-g_entities, va("screenPrint \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
+			trap_SendServerCommand( ent-g_entities, va("print \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
+			
+			if( !ClientNameAllowed(oldname, sizeof(oldname)) )
+				SetTeam( ent, "spectator" );
+		}
+	}
+			
 
     //KK-OAPub Added From Tremulous-Control Name Changes
     if( strcmp( oldname, client->pers.netname ) )
@@ -1748,6 +1780,7 @@ void ClientSpawn(gentity_t *ent) {
 	int		lastTarget;
 	int		kills;
 	int		timeouts;
+	int 		lastKilledTime;
  
 
 	index = ent - g_entities;
@@ -1921,6 +1954,7 @@ void ClientSpawn(gentity_t *ent) {
 	lastAttacker = client->lastAttacker;
 	lastKiller = client->lastKiller;
 	lastTarget = client->lastTarget;
+	lastKilledTime = client->lastKilledTime;
 
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		persistant[i] = client->ps.persistant[i];
@@ -1971,6 +2005,7 @@ void ClientSpawn(gentity_t *ent) {
 	client->lastTarget = lastTarget;
 	
 	client->lastkilled_client = -1;
+	client->lastKilledTime = lastKilledTime;
 
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		client->ps.persistant[i] = persistant[i];
@@ -2277,7 +2312,11 @@ void ClientDisconnect( int clientNum ) {
         if ( ent->client->pers.connected == CON_CONNECTED && ent->client->sess.sessionTeam != TEAM_SPECTATOR)
             PlayerStore_store(Info_ValueForKey(userinfo,"cl_guid"),ent->client->ps);
 	
-	trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_YELLOW "%s" S_COLOR_YELLOW " disconnected\"", ent->client->pers.netname) );
+	if( ( level.time - ent->client->lastKilledTime ) < 4000 && ( level.time - ent->client->lastKilledTime ) > 750 )
+		trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_YELLOW "%s" S_COLOR_RED " disconnected in RAGE!\"", ent->client->pers.netname) );
+	else
+		trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_YELLOW "%s" S_COLOR_YELLOW " disconnected\"", ent->client->pers.netname) );
+	
 	G_LogPrintf( "ClientDisconnect: %i\n", clientNum );
 
 	// if we are playing in tourney mode and losing, give a win to the other player

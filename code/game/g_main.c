@@ -1038,7 +1038,7 @@ void AddTournamentPlayer( void ) {
 	}
 
 	// never change during intermission
-	if ( level.intermissiontime ) {
+	if ( level.intermissiontime || level.intermissionQueued ) {
 		return;
 	}
 
@@ -1130,13 +1130,13 @@ void AdjustTournamentScores( void ) {
 	int			clientNum;
 
 	clientNum = level.sortedClients[0];
-	if ( level.clients[ clientNum ].pers.connected == CON_CONNECTED ) {
+	if ( level.clients[ clientNum ].pers.connected == CON_CONNECTED && level.clients[ clientNum ].sess.sessionTeam == TEAM_FREE ) {
 		level.clients[ clientNum ].sess.wins++;
 		ClientUserinfoChanged( clientNum );
 	}
 
 	clientNum = level.sortedClients[1];
-	if ( level.clients[ clientNum ].pers.connected == CON_CONNECTED ) {
+	if ( level.clients[ clientNum ].pers.connected == CON_CONNECTED && level.clients[ clientNum ].sess.sessionTeam == TEAM_FREE ) {
 		level.clients[ clientNum ].sess.losses++;
 		ClientUserinfoChanged( clientNum );
 	}

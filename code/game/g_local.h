@@ -382,6 +382,7 @@ struct gclient_s {
 	int			airOutTime;
 
 	int			lastKillTime;		// for multiple kill rewards
+	int 			lastKilledTime;
 
 	qboolean	fireHeld;			// used for hook
 	gentity_t	*hook;				// grapple hook if out
@@ -912,6 +913,7 @@ void CheckTeamVote( int team );
 //
 char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot );
 void ClientUserinfoChanged( int clientNum );
+qboolean ClientNameAllowed( const char *in , int size);
 void ClientDisconnect( int clientNum );
 void ClientBegin( int clientNum );
 void ClientCommand( int clientNum );

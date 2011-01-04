@@ -1020,13 +1020,19 @@ void SetTeam( gentity_t *ent, char *s ) {
 	// see what change is requested
 	//
 	client = ent->client;
-
 	clientNum = client - level.clients;
         trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	specClient = 0;
 	specState = SPECTATOR_NOT;
 	specOnly = client->sess.specOnly;
-	if ( !Q_stricmp( s, "speconly" ) || !Q_stricmp( s, "so" ) ){
+	
+	if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) ){
+		team =  TEAM_SPECTATOR;
+		specState = SPECTATOR_FREE;
+		trap_SendServerCommand( ent-g_entities, va("screenPrint \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
+		trap_SendServerCommand( ent-g_entities, va("print \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
+	}
+	else if ( !Q_stricmp( s, "speconly" ) || !Q_stricmp( s, "so" ) ){
 		team =  TEAM_SPECTATOR;
 		specState = SPECTATOR_FREE;
 		specOnly = 1;
@@ -1242,7 +1248,7 @@ void Cmd_Team_f( gentity_t *ent ) {
 
 	// if they are playing a tournement game, count as a loss
 	if ( (g_gametype.integer == GT_TOURNAMENT )
-		&& ent->client->sess.sessionTeam == TEAM_FREE ) {
+		&& ent->client->sess.sessionTeam == TEAM_FREE && !level.warmupTime ) {
 		ent->client->sess.losses++;
 	}
 

@@ -2790,6 +2790,11 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		mark = cgs.media.bulletMarkShader;
 		sfx = 0;
 		radius = 4;
+		light = 30;
+		duration = 100;
+		lightColor[0] = 1;
+		lightColor[1] = 0.75;
+		lightColor[2] = 0.0;
 		break;
 
 #ifdef MISSIONPACK
@@ -2814,6 +2819,11 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		}
 
 		radius = 8;
+		light = 30;
+		duration = 100;
+		lightColor[0] = 1;
+		lightColor[1] = 0.75;
+		lightColor[2] = 0.0;
 		break;
 #endif
 
@@ -2831,7 +2841,12 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 			sfx = cgs.media.sfx_ric3;
 		}
 
-		radius = 8;
+		radius = 6;
+		light = 30;
+		duration = 100;
+		lightColor[0] = 1;
+		lightColor[1] = 0.75;
+		lightColor[2] = 0.0;
 		break;
 	}
 
