@@ -712,7 +712,7 @@ LIGHTNING GUN
 ======================================================================
 */
 #define LG_DMG_NORMAL	8
-#define LG_DMG_REDUCED 6
+#define LG_DMG_REDUCED 7
 void Weapon_LightningFire( gentity_t *ent ) {
 	trace_t		tr;
 	vec3_t		end;

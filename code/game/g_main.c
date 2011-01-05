@@ -328,7 +328,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_truePing, "g_truePing", "0", CVAR_ARCHIVE, 0, qtrue },
 	// it's CVAR_SYSTEMINFO so the client's sv_fps will be automagically set to its value
 	{ &sv_fps, "sv_fps", "40", CVAR_SYSTEMINFO | CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse },
-        { &g_lagLightning, "g_lagLightning", "1", CVAR_ARCHIVE, 0, qtrue },
+        { &g_lagLightning, "g_lagLightning", "0", CVAR_ARCHIVE, 0, qtrue },
 //unlagged - server options
 
 	{ &g_rankings, "g_rankings", "0", 0, 0, qfalse},
@@ -438,7 +438,7 @@ static cvarTable_t		gameCvarTable[] = {
 		{ &g_autoReady, "g_autoReady", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 	
 	{ &g_timeoutAllowed, "g_timeoutAllowed", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
-	{ &g_timeoutTime, "g_timeoutTime", "60", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
+	{ &g_timeoutTime, "g_timeoutTime", "30000", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 	
 	{ &g_delagprojectiles, "g_delagprojectiles", "100", CVAR_SYSTEMINFO, 0, qfalse },
 	
@@ -3153,6 +3153,9 @@ void G_RunFrame( int levelTime ) {
 
 	// get any cvar changes
 	G_UpdateCvars();
+	
+	if( level.timeout )
+		return;
 
         if( (g_gametype.integer==GT_ELIMINATION || g_gametype.integer==GT_CTF_ELIMINATION) && !(g_elimflags.integer & EF_NO_FREESPEC) && g_elimination_lockspectator.integer>1)
             trap_Cvar_Set("elimflags",va("%i",g_elimflags.integer|EF_NO_FREESPEC));
@@ -3268,6 +3271,7 @@ void G_RunFrame( int levelTime ) {
 	// NOW run the missiles, with all players backward-reconciled
 	// to the positions they were in exactly 50ms ago, at the end
 	// of the last server frame
+	
 	G_TimeShiftAllClients( level.previousTime, NULL );
 
 	ent = &g_entities[0];

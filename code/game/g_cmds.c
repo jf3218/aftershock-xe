@@ -922,12 +922,21 @@ void Cmd_Timeout_f( gentity_t *player ) {
 	int i;
 	gentity_t *ent;
 	
-	if( !g_timeoutAllowed.integer )
+	if( !g_timeoutAllowed.integer ){
+		trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout not allowed\"" ) );
 		return;
+	}
+	if( level.warmupTime ){
+		trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout not allowed in warmup\"" ) );
+		return;
+	}
+	
 	if( player->client->sess.sessionTeam == TEAM_SPECTATOR )
 		return;
-	if( !(player->client->timeouts < g_timeoutAllowed.integer) )
+	if( !(player->client->timeouts < g_timeoutAllowed.integer) ){
+		trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout limit reached\"" ) );
 		return;
+	}
 	
 	if( level.timeout )
 		trap_SendServerCommand( player-g_entities, va("timeout %i %i", level.timeoutTime, level.timeoutAdd ) );

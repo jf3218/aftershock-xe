@@ -780,6 +780,9 @@ void ClientThink_real( gentity_t *ent ) {
 	int			oldEventSequence;
 	int			msec;
 	usercmd_t	*ucmd;
+	
+	if( level.timeout )
+		return;
 
 	client = ent->client;
 
