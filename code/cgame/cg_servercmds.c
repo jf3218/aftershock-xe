@@ -112,20 +112,25 @@ void CG_SetGameString( void ){
 	else{
 		Com_sprintf(playerName, sizeof(playerName),"%s", cgs.clientinfo[cg.clientNum].name);
 	}
+	
 	count = 0;
 	for( i = 0; i < 128 ; i++ ){
-		if( playerName[i] == '/' || playerName[i] == '*' || playerName[i] == '|' ){
-			continue;
-		}
-		else if( playerName[i] == '^' && ( ( playerName[i+1] >= '0' && playerName[i+1] <= '9' ) || ( playerName[i+1] >= 'a' && playerName[i+1] <= 'z' ) || ( playerName[i+1] >= 'A' && playerName[i+1] <= 'Z' ) ) ){
+		if( playerName[i] == '^' && ( ( playerName[i+1] >= '0' && playerName[i+1] <= '9' ) || ( playerName[i+1] >= 'a' && playerName[i+1] <= 'z' ) || ( playerName[i+1] >= 'A' && playerName[i+1] <= 'Z' ) ) ){
 			i++;
 			continue;
 		}
+		else if( ( !( playerName[i] >= '0' && playerName[i] <= '9' ) && !( playerName[i] >= 'a' && playerName[i] <= 'z' ) && !( playerName[i] >= 'A' && playerName[i] <= 'Z' ) ) ){
+			continue;
+		}
+		
 		else {
 			playerName[count] = playerName[i];
 			count++;
 		}
-	}	
+	}
+	
+	playerName[count] = '\0';
+		
 	
 	Com_sprintf(gameString, sizeof(gameString), "%04d-%02d-%02d/%04d%02d%02d%02d%02d%02d-%s-%s-%s", 
 		    1900 + now.tm_year,
