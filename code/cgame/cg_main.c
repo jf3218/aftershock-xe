@@ -613,8 +613,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_crosshairHitColor, "cg_crosshairHitColor", "0", CVAR_ARCHIVE},
 	{&cg_itemFX, "cg_itemFX", "7", CVAR_ARCHIVE},
 	
-	{&aftershock_login, "aftershock_login", "", CVAR_TEMP | CVAR_USERINFO },
-	{&aftershock_password, "aftershock_password", "", CVAR_TEMP | CVAR_USERINFO },
+	{&aftershock_login, "aftershock_login", "", CVAR_USERINFO },
+	{&aftershock_password, "aftershock_password", "", CVAR_USERINFO },
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

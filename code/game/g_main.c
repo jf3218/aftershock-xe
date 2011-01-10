@@ -2019,6 +2019,10 @@ void G_WriteStats( void ){
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
+		  string = va("aftershock_login:%20s     aftershock_hash: %32s\n\n", cl->aftershock_name, cl->aftershock_hash );
+		  len = strlen( string );
+		  trap_FS_Write(string, len, f);
+		  
 		  if( cl->accuracy_shots ) {
 			acc = cl->accuracy_hits * 100 / cl->accuracy_shots;
 		  }
@@ -3185,7 +3189,7 @@ void G_RunFrame( int levelTime ) {
 		level.BlueTeamLocked = qfalse;
 	}
 	
-	if( ( level.warmupTime == 0 ) && ( level.time - level.startTime > 2000 ) && !level.intermissionQueued ){
+	if( ( level.warmupTime == 0 ) && ( level.time - level.startTime > 2000 ) && !level.intermissionQueued && ( g_gametype.integer != GT_FFA ) ){
 		//G_Printf("%i \n", g_gametype.integer );
 		//G_Printf("%i %i %i\n", level.numPlayingClients, TeamCount( -1, TEAM_RED ), TeamCount( -1, TEAM_BLUE ) );
 		if ( ( level.numPlayingClients < 2 ) && ( g_gametype.integer < GT_TEAM ) ) {
