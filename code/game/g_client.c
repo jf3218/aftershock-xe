@@ -1450,7 +1450,7 @@ void ClientUserinfoChanged( int clientNum ) {
 	s = Info_ValueForKey (userinfo, "name");
 	ClientCleanName( s, client->pers.netname, sizeof(client->pers.netname) );
 	
-	if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) ){
+	/*if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) ){
 		if( client->sess.sessionTeam != TEAM_SPECTATOR ){
 			Q_strncpyz ( client->pers.netname, oldname, sizeof( client->pers.netname ) );
 			Info_SetValueForKey(userinfo, "name", oldname);
@@ -1460,7 +1460,7 @@ void ClientUserinfoChanged( int clientNum ) {
 			if( !ClientNameAllowed(oldname, sizeof(oldname)) )
 				SetTeam( ent, "spectator" );
 		}
-	}
+	}*/
 			
 
     //KK-OAPub Added From Tremulous-Control Name Changes
