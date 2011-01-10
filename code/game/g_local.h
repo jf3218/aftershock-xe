@@ -461,8 +461,8 @@ struct gclient_s {
 	int			kills;
 	int 			timeouts;
 	
-	char			aftershock_name[32];
-	char			aftershock_hash[32];
+	char			aftershock_name[33];
+	char			aftershock_hash[33];
 	
 };
 

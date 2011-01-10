@@ -2019,7 +2019,7 @@ void G_WriteStats( void ){
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  
-		  string = va("aftershock_login:%20s     aftershock_hash: %32s\n\n", cl->aftershock_name, cl->aftershock_hash );
+		  string = va("aftershock_login:%20s     aftershock_hash: %33s\n\n", cl->aftershock_name, cl->aftershock_hash );
 		  len = strlen( string );
 		  trap_FS_Write(string, len, f);
 		  

@@ -2042,8 +2042,8 @@ void ClientSpawn(gentity_t *ent) {
 	int		kills;
 	int		timeouts;
 	int 		lastKilledTime;
-	char		aftershock_name[32];
-	char		aftershock_hash[32];
+	char		aftershock_name[33];
+	char		aftershock_hash[33];
  
 
 	index = ent - g_entities;
@@ -2205,7 +2205,7 @@ void ClientSpawn(gentity_t *ent) {
 		stats[i] = client->stats[i];	
 	}
 	
-	for( i = 0; i < 32; i++ ){
+	for( i = 0; i < 33; i++ ){
 		aftershock_name[i] = client->aftershock_name[i];
 		aftershock_hash[i] = client->aftershock_hash[i];
 	}
@@ -2259,7 +2259,7 @@ void ClientSpawn(gentity_t *ent) {
 		client->stats[i] = stats[i];
 	}
 	
-	for( i = 0; i < 32; i++ ){
+	for( i = 0; i < 33; i++ ){
 		client->aftershock_name[i] = aftershock_name[i];
 		client->aftershock_hash[i] = aftershock_hash[i];
 	}
