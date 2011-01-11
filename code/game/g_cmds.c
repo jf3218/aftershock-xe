@@ -1035,13 +1035,13 @@ void SetTeam( gentity_t *ent, char *s ) {
 	specState = SPECTATOR_NOT;
 	specOnly = client->sess.specOnly;
 	
-	if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) ){
+	/*if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) ){
 		team =  TEAM_SPECTATOR;
 		specState = SPECTATOR_FREE;
 		trap_SendServerCommand( ent-g_entities, va("screenPrint \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
 		trap_SendServerCommand( ent-g_entities, va("print \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
 	}
-	else if ( !Q_stricmp( s, "speconly" ) || !Q_stricmp( s, "so" ) ){
+	else*/ if ( !Q_stricmp( s, "speconly" ) || !Q_stricmp( s, "so" ) ){
 		team =  TEAM_SPECTATOR;
 		specState = SPECTATOR_FREE;
 		specOnly = 1;
