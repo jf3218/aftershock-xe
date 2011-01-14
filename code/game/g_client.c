@@ -1812,7 +1812,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 		trap_SendServerCommand( clientNum, "print \"Full lag compensation is OFF!\n\"" );
 	}
 	
-	client->lastKilledTime = -1000;
+	client->lastKilledTime = -5000;
 
 //unlagged - backward reconciliation #5
     G_admin_namelog_update( client, qfalse );
@@ -1872,6 +1872,7 @@ void ClientBegin( int clientNum ) {
 	if ( ent->r.linked ) {
 		trap_UnlinkEntity( ent );
 	}
+	
 	G_InitGentity( ent );
 	ent->touch = 0;
 	ent->pain = 0;
@@ -1926,8 +1927,10 @@ void ClientBegin( int clientNum ) {
 	// world to the new position
 	flags = client->ps.eFlags;
 	memset( &client->ps, 0, sizeof( client->ps ) );
-        if( client->sess.sessionTeam != TEAM_SPECTATOR )
-            PlayerStore_restore(Info_ValueForKey(userinfo,"cl_guid"),&(client->ps));
+	
+        /*if( client->sess.sessionTeam != TEAM_SPECTATOR )
+            PlayerStore_restore(Info_ValueForKey(userinfo,"cl_guid"),&(client->ps));*/
+	
 	client->ps.eFlags = flags;
 
 	if( ( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ) && ( client->sess.sessionTeam == TEAM_SPECTATOR ) ){
@@ -1984,9 +1987,6 @@ void ClientBegin( int clientNum ) {
 	ent->client->lastTarget = -1;
 	ent->client->lastKiller = -1;
 	
-	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
-		G_SendLivingCount();
-	
 	if( *Info_ValueForKey( userinfo, "aftershock_login" ) )
 		Q_strncpyz ( ent->client->aftershock_name, Info_ValueForKey( userinfo, "aftershock_login" ), sizeof( ent->client->aftershock_name ) );
 	else
@@ -1995,6 +1995,11 @@ void ClientBegin( int clientNum ) {
 		Q_strncpyz ( ent->client->aftershock_hash, G_MD5String(Info_ValueForKey( userinfo, "aftershock_password" )), sizeof( ent->client->aftershock_hash ) );
 	else
 		Q_strncpyz ( ent->client->aftershock_hash, "none", sizeof( ent->client->aftershock_hash ) );
+	
+	if( !( *Info_ValueForKey( userinfo, "aftershock_login" ) && *Info_ValueForKey( userinfo, "aftershock_password" ) ) ){
+		trap_SendServerCommand( ent-g_entities, va("print \"" S_COLOR_YELLOW "not logged in, register on http://oaunofficial.exulo.de for login\n\"") );
+		trap_SendServerCommand( ent-g_entities, va("screenPrint \"" S_COLOR_YELLOW "not logged in, register on ^2http://oaunofficial.exulo.de ^3for login\"") );
+	}
 	
 	G_toSmallCaps(ent->client->aftershock_hash);
 	
@@ -2545,6 +2550,12 @@ void ClientDisconnect( int clientNum ) {
 			StopFollowing( &g_entities[i] );
 		}
 	}
+	
+	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ){
+		if( ent->client->sess.sessionTeam != TEAM_SPECTATOR ){
+			G_SendLivingCount();
+		}
+	}
 
 	// send effect if they were completely connected
         /*
@@ -2582,8 +2593,8 @@ void ClientDisconnect( int clientNum ) {
 
 
 
-        if ( ent->client->pers.connected == CON_CONNECTED && ent->client->sess.sessionTeam != TEAM_SPECTATOR)
-            PlayerStore_store(Info_ValueForKey(userinfo,"cl_guid"),ent->client->ps);
+        /*if ( ent->client->pers.connected == CON_CONNECTED && ent->client->sess.sessionTeam != TEAM_SPECTATOR)
+            PlayerStore_store(Info_ValueForKey(userinfo,"cl_guid"),ent->client->ps);*/
 	
 	if( ( level.time - ent->client->lastKilledTime ) < 4000 && ( level.time - ent->client->lastKilledTime ) > 750 )
 		trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_YELLOW "%s" S_COLOR_RED " disconnected in RAGE!\"", ent->client->pers.netname) );
@@ -2628,9 +2639,6 @@ void ClientDisconnect( int clientNum ) {
 	}
 	
 	SendReadymask( -1 );
-	
-	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
-		G_SendLivingCount();
 }
 
 

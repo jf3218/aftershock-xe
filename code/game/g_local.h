@@ -1236,6 +1236,8 @@ extern vmCvar_t	    g_teamLock;
 extern vmCvar_t	    g_reduceRailDamage;
 extern vmCvar_t	    g_reduceLightningDamage;
 
+extern vmCvar_t	    g_extrapolateFrames;
+
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
 int		trap_Milliseconds( void );

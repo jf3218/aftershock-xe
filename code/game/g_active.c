@@ -1081,12 +1081,13 @@ void ClientThink_real( gentity_t *ent ) {
 	// skip correction is all handled server-side now
 	// since that's the case, it makes no sense to store the extra info
 	// in the client's snapshot entity, so let's save a little bandwidth
-/*
-	if (g_smoothClients.integer) {
+
+
+/*	if (g_smoothClients.integer) {
 		BG_PlayerStateToEntityStateExtraPolate( &ent->client->ps, &ent->s, ent->client->ps.commandTime, qtrue );
 	}
-	else {
-*/
+	else {*/
+
 		BG_PlayerStateToEntityState( &ent->client->ps, &ent->s, qtrue );
 //	}
 //unlagged - smooth clients #2
@@ -1355,7 +1356,7 @@ void ClientEndFrame( gentity_t *ent ) {
 /*	if (g_smoothClients.integer) {
 		BG_PlayerStateToEntityStateExtraPolate( &ent->client->ps, &ent->s, ent->client->ps.commandTime, qtrue );
 	}
-	else { */
+	else {*/ 
 		BG_PlayerStateToEntityState( &ent->client->ps, &ent->s, qtrue );
 //	}
 	SendPendingPredictableEvents( &ent->client->ps );
@@ -1368,8 +1369,8 @@ void ClientEndFrame( gentity_t *ent ) {
 	frames = level.framenum - ent->client->lastUpdateFrame - 1;
 
 	// don't extrapolate more than two frames
-	if ( frames > 2 ) {
-		frames = 2;
+	if ( frames > g_extrapolateFrames.integer ) {
+		frames = g_extrapolateFrames.integer;
 
 		// if they missed more than two in a row, show the phone jack
 		ent->client->ps.eFlags |= EF_CONNECTION;
