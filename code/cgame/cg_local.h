@@ -688,6 +688,8 @@ typedef struct {
 	
 	int	lastHitTime;
 	int	lastHitDamage;
+	
+	vec3_t	accel;
 
 } cg_t;
 

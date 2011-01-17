@@ -251,9 +251,9 @@ Chooses a player start, deathmatch start, etc
 ============
 */
 gentity_t *SelectSpawnPoint ( vec3_t avoidPoint, vec3_t origin, vec3_t angles ) {
-	//return SelectRandomFurthestSpawnPoint( avoidPoint, origin, angles );
+	return SelectRandomFurthestSpawnPoint( avoidPoint, origin, angles );
 
-	
+	/*
 	gentity_t	*spot;
 	gentity_t	*nearestSpot;
 
@@ -278,7 +278,7 @@ gentity_t *SelectSpawnPoint ( vec3_t avoidPoint, vec3_t origin, vec3_t angles ) 
 	origin[2] += 9;
 	VectorCopy (spot->s.angles, angles);
 
-	return spot;
+	return spot;*/
 }
 
 /*
@@ -289,12 +289,20 @@ Try to find a spawn point marked 'initial', otherwise
 use normal spawn selection.
 ============
 */
-gentity_t *SelectInitialSpawnPoint( vec3_t origin, vec3_t angles ) {
+gentity_t *SelectInitialSpawnPoint( vec3_t origin, vec3_t angles, qboolean isbot ) {
 	gentity_t	*spot;
 
 	spot = NULL;
+	
 	while ((spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != NULL) {
-		if ( spot->spawnflags & 1 ) {
+		
+		if(((spot->flags & FL_NO_BOTS) && isbot) ||
+		   ((spot->flags & FL_NO_HUMANS) && !isbot))
+		{
+			continue;
+		}
+		
+		if ( spot->spawnflags & 0x01 ) {
 			break;
 		}
 	}
@@ -2138,7 +2146,8 @@ void ClientSpawn(gentity_t *ent) {
 			// the first spawn should be at a good looking spot
 			if ( !client->pers.initialSpawn && client->pers.localClient ) {
 				client->pers.initialSpawn = qtrue;
-				spawnPoint = SelectInitialSpawnPoint( spawn_origin, spawn_angles );
+				spawnPoint = SelectInitialSpawnPoint( spawn_origin, spawn_angles,
+								      !!(ent->r.svFlags & SVF_BOT));
 			} else {
 				// don't spawn near existing origin if possible
 				spawnPoint = SelectSpawnPoint ( 

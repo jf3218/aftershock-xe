@@ -155,6 +155,10 @@ static void CG_TransitionSnapshot( void ) {
 	// move nextSnap to snap and do the transitions
 	oldFrame = cg.snap;
 	cg.snap = cg.nextSnap;
+	
+	VectorMA(cg.snap->ps.velocity, -1, oldFrame->ps.velocity, cg.accel );
+	
+	Com_Printf("accelx %f, accely %f\n", cg.accel[0], cg.accel[1]);
 
 	BG_PlayerStateToEntityState( &cg.snap->ps, &cg_entities[ cg.snap->ps.clientNum ].currentState, qfalse );
 	cg_entities[ cg.snap->ps.clientNum ].interpolate = qfalse;
