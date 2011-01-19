@@ -158,7 +158,9 @@ static void CG_TransitionSnapshot( void ) {
 	
 	VectorMA(cg.snap->ps.velocity, -1, oldFrame->ps.velocity, cg.accel );
 	
-	Com_Printf("accelx %f, accely %f\n", cg.accel[0], cg.accel[1]);
+	VectorScale(  cg.accel, 1000.0f/((float)cg.time-(float)cg.lastSnapTime), cg.accel );
+	cg.lastSnapTime = cg.time;
+	//Com_Printf("accelx %f, accely %f\n", cg.accel[0], cg.accel[1]);
 
 	BG_PlayerStateToEntityState( &cg.snap->ps, &cg_entities[ cg.snap->ps.clientNum ].currentState, qfalse );
 	cg_entities[ cg.snap->ps.clientNum ].interpolate = qfalse;

@@ -690,6 +690,8 @@ typedef struct {
 	int	lastHitDamage;
 	
 	vec3_t	accel;
+	
+	int lastSnapTime;
 
 } cg_t;
 
@@ -1499,6 +1501,8 @@ extern vmCvar_t			cg_itemFX;
 
 extern vmCvar_t			aftershock_login;
 extern vmCvar_t			aftershock_password;
+
+extern vmCvar_t			cg_drawAccel;
 
 
 //unlagged - cg_unlagged.c

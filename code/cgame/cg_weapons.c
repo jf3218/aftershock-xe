@@ -2992,6 +2992,10 @@ void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum
 	float		r, u;
 	vec3_t		end;
 	vec3_t		forward, right, up;
+	int		outery, outerx;
+	
+	outery = sin(60 * (2*M_PI/360 ) ) * OUTERRADIUS;
+	outerx = cos(60 * (2*M_PI/360 ) ) * OUTERRADIUS;
 
 	// derive the right and up vectors from the forward vector, because
 	// the client won't have any other information
@@ -3001,8 +3005,64 @@ void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum
 
 	// generate the "random" spread pattern
 	for ( i = 0 ; i < DEFAULT_SHOTGUN_COUNT ; i++ ) {
-		r = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
-		u = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
+		/*r = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
+		u = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;*/
+		
+		//NEW sg-pattern
+		switch(i){
+			case 0: 
+				r = OUTERRADIUS;
+				u = 0;
+				break;
+			case 1: 
+				r = outerx;
+				u = outery;
+				break;
+			case 2: 
+				r = -outerx;
+				u = outery;
+				break;
+			case 3: 
+				r = -OUTERRADIUS;
+				u = 0;
+				break;
+			case 4: 
+				r = -outerx;
+				u = -outery;
+				break;
+			case 5: 
+				r = outerx;
+				u = -outery;
+				break;
+			case 6: 
+				r = INNERRADIUS;
+				u = INNERRADIUS;
+				break;
+			case 7: 
+				r = -INNERRADIUS;
+				u = INNERRADIUS;
+				break;
+			case 8: 
+				r = -INNERRADIUS;
+				u = -INNERRADIUS;
+				break;
+			case 9: 
+				r = INNERRADIUS;
+				u = -INNERRADIUS;
+				break;
+			case 10: 
+				r = 0;
+				u = 0;
+				break;
+			default:
+				r = 0;
+				u = 0;
+		}
+		
+		r += Q_crandom( &seed ) * ( DEFAULT_SHOTGUN_SPREAD * 16 - OUTERRADIUS );
+		u += Q_crandom( &seed ) * ( DEFAULT_SHOTGUN_SPREAD * 16 - OUTERRADIUS );
+		//NEW sg-pattern
+		
 		VectorMA( origin, 8192 * 16, forward, end);
 		VectorMA (end, r, right, end);
 		VectorMA (end, u, up, end);

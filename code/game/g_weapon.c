@@ -386,6 +386,8 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 	int			oldScore;
 	qboolean	hitClient = qfalse;
 	int 		hits=0;
+	
+	int		outery, outerx;
 
 //unlagged - attack prediction #2
 	// use this for testing
@@ -405,13 +407,75 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 	G_DoTimeShiftFor( ent );
 //unlagged - backward reconciliation #2
 
+	outery = sin(60 * (2*M_PI/360 ) ) * OUTERRADIUS;
+	outerx = cos(60 * (2*M_PI/360 ) ) * OUTERRADIUS;
+
 	// generate the "random" spread pattern
 	for ( i = 0 ; i < DEFAULT_SHOTGUN_COUNT ; i++ ) {
-		r = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
-		u = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
+		
+		/*r = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
+		u = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;*/
+		
+		//NEW sg-pattern
+		switch(i){
+			case 0: 
+				r = OUTERRADIUS;
+				u = 0;
+				break;
+			case 1: 
+				r = outerx;
+				u = outery;
+				break;
+			case 2: 
+				r = -outerx;
+				u = outery;
+				break;
+			case 3: 
+				r = -OUTERRADIUS;
+				u = 0;
+				break;
+			case 4: 
+				r = -outerx;
+				u = -outery;
+				break;
+			case 5: 
+				r = outerx;
+				u = -outery;
+				break;
+			case 6: 
+				r = INNERRADIUS;
+				u = INNERRADIUS;
+				break;
+			case 7: 
+				r = -INNERRADIUS;
+				u = INNERRADIUS;
+				break;
+			case 8: 
+				r = -INNERRADIUS;
+				u = -INNERRADIUS;
+				break;
+			case 9: 
+				r = INNERRADIUS;
+				u = -INNERRADIUS;
+				break;
+			case 10: 
+				r = 0;
+				u = 0;
+				break;
+			default:
+				r = 0;
+				u = 0;
+		}
+		
+		r += Q_crandom( &seed ) * ( DEFAULT_SHOTGUN_SPREAD * 16 - OUTERRADIUS );
+		u += Q_crandom( &seed ) * ( DEFAULT_SHOTGUN_SPREAD * 16 - OUTERRADIUS );
+		//NEW sg-pattern
+		
+		//G_Printf("r: %f, u: %f\n", r, u);
 		VectorMA( origin, 8192 * 16, forward, end);
 		VectorMA (end, r, right, end);
 		VectorMA (end, u, up, end);
+		
 		if( ShotgunPellet( origin, end, ent ) ) {
 			if( !hitClient ){
 				hitClient = qtrue;

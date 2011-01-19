@@ -793,32 +793,78 @@ static float CG_DrawSpeedMeter( float y ) {
 	}
 }
 
-static float CG_DrawAccelMeter( float y ) {
-	char        *s;
-	int         w;
-	vec_t       *acc;
-	int         accel;
+#define ACCELBAR_WIDTH 4 * BIGCHAR_WIDTH
+#define ACCELBAR_HEIGHT 10
 
+static float CG_DrawAccelMeter( float y ) {
+	vec_t       *acc;
+	vec_t	    *vel;
+	int         accel;
+	int	    vel_norm;
+	int 	    width;
+	float	    *color;
 	/* speed meter can get in the way of the scoreboard */
 	if ( cg.scoreBoardShowing ) {
 		return y;
 	}
 
 	acc = cg.accel;
-	/* ignore vertical component of velocity */
-	accel = sqrt(acc[0] * acc[0] + acc[1] * acc[1])*40;
+	vel = cg.snap->ps.velocity;
+	vel_norm = sqrt( vel[0]*vel[0] + vel[1] * vel[1] );
+	
+	if( vel_norm >= 310 )
+		accel = (acc[0]*vel[0] + acc[1]*vel[1])/vel_norm;
+	else
+		accel = 0;
 
-	s = va( "%iu/s^2", accel );
-
-	w = CG_DrawStrlen( s ) * BIGCHAR_WIDTH;
-
-	if (cg_drawSpeed.integer == 1) {
-		/* top left-hand corner of screen */
-		CG_DrawBigString( 635 - w, y + 2, s, 1.0F);
-		return y + BIGCHAR_HEIGHT + 4;
+	if( accel > 400 )
+		accel = 400;
+	if( accel < -400 )
+		accel = -400;
+	
+	if (cg_drawAccel.integer == 1) {
+		if( accel > 0 ){
+			width = ACCELBAR_WIDTH * accel / 400;
+			
+			color[0] = 0.0f;
+			color[1] = 1.0f;
+			color[2] = 0.0f;
+			color[3] = 0.33f;
+			
+			CG_FillRect( 635 - ACCELBAR_WIDTH, y, width, ACCELBAR_HEIGHT, color );
+		}
+		else if( accel < 0 ){
+			width = ACCELBAR_WIDTH * (-accel) / 400;
+			
+			color[0] = 1.0f;
+			color[1] = 0.0f;
+			color[2] = 0.0f;
+			color[3] = 0.33f;
+			
+			CG_FillRect( 635 - ACCELBAR_WIDTH - width, y, width, ACCELBAR_HEIGHT, color );
+		}
+		return y + ACCELBAR_HEIGHT + 4;
 	} else {
-		/* center of screen */
-		CG_DrawBigString( 320 - w / 2, 320, s, 1.0F);
+		if( accel > 0 ){
+			width = ACCELBAR_WIDTH * accel / 400;
+			
+			color[0] = 0.0f;
+			color[1] = 1.0f;
+			color[2] = 0.0f;
+			color[3] = 0.33f;
+			
+			CG_FillRect( 320, 320, width, ACCELBAR_HEIGHT, color );
+		}
+		else if( accel < 0 ){
+			width = ACCELBAR_WIDTH * (-accel) / 400;
+			
+			color[0] = 1.0f;
+			color[1] = 0.0f;
+			color[2] = 0.0f;
+			color[3] = 0.33f;
+			
+			CG_FillRect( 320 - width, 320, width, ACCELBAR_HEIGHT, color );
+		}
 		return y;
 	}
 }
@@ -1554,8 +1600,9 @@ static void CG_DrawUpperRight(stereoFrame_t stereoFrame)
 	if ( cg_drawSpeed.integer ) {
 		y = CG_DrawSpeedMeter( y );
 	}
-	
-	y = CG_DrawAccelMeter( y );
+	if( cg_drawAccel.integer ) {
+		y = CG_DrawAccelMeter( y );
+	}
 	
 	CG_DrawLivingCount( y );
 

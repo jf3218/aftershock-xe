@@ -602,6 +602,9 @@ typedef struct {
     qboolean    endgameSend;
     int		timeComplete;
     
+    int 	redFlagTaken;
+    int		blueFlagTaken;
+    
 } level_locals_t;
 
 //KK-OAX These are some Print Shortcuts for KillingSprees and Admin

@@ -1196,6 +1196,7 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 	gentity_t	*player;
 	gclient_t	*cl = other->client;
 	int			enemy_flag;
+	int 		mins,secs,msecs;
 
 	if( g_gametype.integer == GT_1FCTF ) {
 		enemy_flag = PW_NEUTRALFLAG;
@@ -1221,6 +1222,14 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 		other->client->pers.teamState.lastreturnedflag = level.time;
 		//ResetFlag will remove this entity!  We must return zero
 		Team_ReturnFlagSound(Team_ResetFlag(team), team);
+		
+		if( team == TEAM_RED ){
+			level.redFlagTaken = -1;
+		}
+		else if( team == TEAM_BLUE ){
+			level.blueFlagTaken = -1;
+		}
+		
 		return 0;
 	}
 	}
@@ -1239,6 +1248,30 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
                 G_LogPrintf( "CTF: %i %i %i: %s captured the %s flag!\n", cl->ps.clientNum, OtherTeam(team), 1, cl->pers.netname, TeamName(OtherTeam(team)) );
             if(g_gametype.integer == GT_CTF_ELIMINATION)
                 G_LogPrintf( "CTF_ELIMINATION: %i %i %i %i: %s captured the %s flag!\n", level.roundNumber, cl->ps.clientNum, OtherTeam(team), 1, cl->pers.netname, TeamName(OtherTeam(team)) );
+	    
+	    if( team == TEAM_RED ){
+		    msecs = level.time - level.blueFlagTaken;
+		    secs = msecs/1000;
+		    msecs -= secs*1000;
+		    mins = secs/60;
+		    secs -= mins*60;
+		    
+		    PrintMsg( NULL, "Flag held for %i:%i:%i\n", mins, secs, msecs );
+		    trap_SendServerCommand( -1, va("screenPrint \"^1Red ^3captured the flag in %i:%i:%3i\"", mins, secs, msecs) );
+		    level.blueFlagTaken = -1;
+	    }
+	    else if( team == TEAM_BLUE ){
+		    msecs = level.time - level.redFlagTaken;
+		    secs = msecs/1000;
+		    msecs -= secs*1000;
+		    mins = secs/60;
+		    secs -= mins*60;
+		    
+		    PrintMsg( NULL, "Flag held for %i:%i:%i\n", mins, secs, msecs );
+		    trap_SendServerCommand( -1, va("screenPrint \"^4Blue ^3captured the flag in %i:%i:%3i\"", mins, secs, msecs) );
+		    level.redFlagTaken = -1;
+	    }
+		    
 	}
 
 	cl->ps.powerups[enemy_flag] = 0;
@@ -1351,6 +1384,15 @@ int Team_TouchEnemyFlag( gentity_t *ent, gentity_t *other, int team ) {
 			cl->ps.powerups[PW_BLUEFLAG] = INT_MAX; // flags never expire
 
 		Team_SetFlagStatus( team, FLAG_TAKEN );
+	}
+	
+	if( !( ent->flags & FL_DROPPED_ITEM ) ){
+		if( team == TEAM_RED ){
+			level.redFlagTaken = level.time;
+		}
+		else if( team == TEAM_BLUE ){
+			level.blueFlagTaken = level.time;
+		}
 	}
 
 	AddScore(other, ent->r.currentOrigin, CTF_FLAG_BONUS);

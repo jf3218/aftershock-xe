@@ -994,7 +994,7 @@ void CG_ParseServerinfo( void ) {
 	trap_Cvar_Set("g_startWhenReady", va("%i", cgs.startWhenReady));
 	
 	if( cg_autosnaps.integer )
-		trap_Cvar_Set("snaps", va("%i", atoi( Info_ValueForKey( info, "sv_fps" ) )));
+		trap_Cvar_Set("snaps", va("%i", atoi( Info_ValueForKey( info, "sv_fps" )) ));
 }
 
 /*

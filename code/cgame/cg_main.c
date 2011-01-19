@@ -357,6 +357,8 @@ vmCvar_t	cg_itemFX;
 vmCvar_t	aftershock_login;
 vmCvar_t	aftershock_password;
 
+vmCvar_t	cg_drawAccel;
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -615,6 +617,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	
 	{&aftershock_login, "aftershock_login", "", CVAR_USERINFO },
 	{&aftershock_password, "aftershock_password", "", CVAR_USERINFO },
+	
+	{&cg_drawAccel, "cg_drawAccel", "0", CVAR_ARCHIVE },
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -1235,7 +1239,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.grenadeSkinColor = trap_R_RegisterShader( "grenadeProjectileColor" );
 
 	for (i = 0; i < NUM_CROSSHAIRS; i++ ) {
-		if (i < 10)
+		if (i < 26)
 			cgs.media.crosshairShader[i] = trap_R_RegisterShader( va("gfx/2d/crosshair%c", 'a'+i) );
 		else
 			cgs.media.crosshairShader[i] = trap_R_RegisterShader( va("gfx/2d/crosshair%02d", i - 10) );
