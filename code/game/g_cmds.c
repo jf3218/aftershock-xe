@@ -931,8 +931,10 @@ void Cmd_Timeout_f( gentity_t *player ) {
 		return;
 	}
 	
-	if( player->client->sess.sessionTeam == TEAM_SPECTATOR )
+	if( player->client->sess.sessionTeam == TEAM_SPECTATOR && !player->client->referee){
+		trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout not allowed as spectator\"" ) );
 		return;
+	}
 	if( !(player->client->timeouts < g_timeoutAllowed.integer) ){
 		trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout limit reached\"" ) );
 		return;
@@ -946,7 +948,8 @@ void Cmd_Timeout_f( gentity_t *player ) {
 		level.timeoutAdd = g_timeoutTime.integer;
 		level.timeoutDelay += level.timeoutAdd;
 		
-		player->client->timeouts++;
+		if( !player->client->referee )
+			player->client->timeouts++;
 		
 		ent = &g_entities[0];
 		for (i=0 ; i<level.num_entities ; i++, ent++) {
@@ -973,7 +976,13 @@ Cmd_Ready_f
 =================
 */
 void Cmd_Ready_f( gentity_t *ent ) {
-  
+	
+	if( g_startWhenReady.integer == 3 ){
+		trap_SendServerCommand(ent-g_entities,va("screenPrint \"only a referee can start the game\"" ) );
+		trap_SendServerCommand(ent-g_entities,va("print \"only a referee can start the game\"" ) );
+		return;
+	}
+	
 	if( ent->client->ready )
 		ent->client->ready = qfalse;
 	else
@@ -2166,7 +2175,310 @@ static const char *gameNames[] = {
 	"Domination"
 };
 
+void Cmd_Ref_f( gentity_t *ent ){
+	char*	c;
+	char	arg1[MAX_STRING_TOKENS];
+	char	arg2[MAX_STRING_TOKENS];
+	char	arg3[MAX_STRING_TOKENS];
+	char    buffer[256];
+	char	command[1024];
+	int	i;
+	
+	if( !ent->client->referee ){
+		trap_SendServerCommand( ent-g_entities, "print \"You are not referee.\n\"" );
+		trap_SendServerCommand(ent-g_entities,va("screenPrint \"" S_COLOR_CYAN "You are not referee\"" ) );
+		return;
+	}
+	
+	trap_Argv( 1, arg1, sizeof( arg1 ) );
+	trap_Argv( 2, arg2, sizeof( arg2 ) );
+	trap_Argv( 3, arg3, sizeof( arg3 ) );
+	
+	for( c = arg2; *c; ++c) {
+		switch(*c) {
+			case '\n':
+			case '\r':
+			case ';':
+				trap_SendServerCommand( ent-g_entities, "print \"Invalid ref-string.\n\"" );
+				return;
+			break;
+		}
+        }
+        
+        if ( !Q_stricmp( arg1, "map_restart" ) ) {
+	} else if ( !Q_stricmp( arg1, "nextmap" ) ) {
+	} else if ( !Q_stricmp( arg1, "map" ) ) {
+	} else if ( !Q_stricmp( arg1, "g_gametype" ) ) {
+	} else if ( !Q_stricmp( arg1, "kick" ) ) {
+	} else if ( !Q_stricmp( arg1, "clientkick" ) ) {
+	} else if ( !Q_stricmp( arg1, "timelimit" ) ) {
+	} else if ( !Q_stricmp( arg1, "fraglimit" ) ) {
+	} else if ( !Q_stricmp( arg1, "remove" ) ){
+	} else if ( !Q_stricmp( arg1, "clientremove" ) ){
+	} else if ( !Q_stricmp( arg1, "lock" ) ){
+	} else if ( !Q_stricmp( arg1, "unlock" ) ){
+	} else if ( !Q_stricmp( arg1, "startgame" ) ){
+	} else {
+		trap_SendServerCommand( ent-g_entities, "print \"Invalid ref-string.\n\"" );
+		//trap_SendServerCommand( ent-g_entities, "print \"Vote commands are: map_restart, nextmap, map <mapname>, g_gametype <n>, kick <player>, clientkick <clientnum>, g_doWarmup, timelimit <time>, fraglimit <frags>.\n\"" );
+                buffer[0] = 0;
+                strcat(buffer,"print \"referee commands are: ");
+                if(allowedRef("map_restart"))
+                    strcat(buffer, "map_restart, ");
+                if(allowedRef("nextmap"))
+                    strcat(buffer, "nextmap, ");
+                if(allowedRef("map"))
+                    strcat(buffer, "map <mapname>, ");
+                if(allowedRef("g_gametype"))
+                    strcat(buffer, "g_gametype <n>, ");
+                if(allowedRef("kick"))
+                    strcat(buffer, "kick <player>, ");
+                if(allowedRef("clientkick"))
+                    strcat(buffer, "clientkick <clientnum>, ");
+                if(allowedRef("timelimit"))
+                    strcat(buffer, "timelimit <time>, ");
+                if(allowedRef("fraglimit"))
+                    strcat(buffer, "fraglimit <frags>, ");
+		if(allowedRef("remove"))
+                    strcat(buffer, "remove <player>, ");
+		if(allowedRef("clientremove"))
+                    strcat(buffer, "clientremove <clientnum>, ");
+		if(allowedRef("lock"))
+                    strcat(buffer, "lock, ");
+		if(allowedRef("unlock"))
+                    strcat(buffer, "unlock, ");
+		if(allowedRef("startgame"))
+                    strcat(buffer, "startgame, ");
+		
+                buffer[strlen(buffer)-2] = 0;
+                strcat(buffer, ".\"");
+                trap_SendServerCommand( ent-g_entities, buffer);
+		return;
+	}
+	
+	if(!allowedRef(arg1)) {
+                trap_SendServerCommand( ent-g_entities, "print \"Not allowed here.\n\"" );
+		buffer[0] = 0;
+                strcat(buffer,"print \"referee commands are: ");
+                if(allowedRef("map_restart"))
+                    strcat(buffer, "map_restart, ");
+                if(allowedRef("nextmap"))
+                    strcat(buffer, "nextmap, ");
+                if(allowedRef("map"))
+                    strcat(buffer, "map <mapname>, ");
+                if(allowedRef("g_gametype"))
+                    strcat(buffer, "g_gametype <n>, ");
+                if(allowedRef("kick"))
+                    strcat(buffer, "kick <player>, ");
+                if(allowedRef("clientkick"))
+                    strcat(buffer, "clientkick <clientnum>, ");
+                if(allowedRef("timelimit"))
+                    strcat(buffer, "timelimit <time>, ");
+                if(allowedRef("fraglimit"))
+                    strcat(buffer, "fraglimit <frags>, ");
+		if(allowedRef("remove"))
+                    strcat(buffer, "remove <player>, ");
+		if(allowedRef("clientremove"))
+                    strcat(buffer, "clientremove <clientnum>, ");
+		if(allowedRef("lock"))
+                    strcat(buffer, "lock, ");
+		if(allowedRef("unlock"))
+                    strcat(buffer, "unlock, ");
+		if(allowedRef("startgame"))
+                    strcat(buffer, "startgame, ");
+                buffer[strlen(buffer)-2] = 0;
+                strcat(buffer, ".\"");
+                trap_SendServerCommand( ent-g_entities, buffer);
+		return;
+	}
+	
+	// special case for g_gametype, check for bad values
+	if ( !Q_stricmp( arg1, "g_gametype" ) ) {
+                char	s[MAX_STRING_CHARS];
+		i = atoi( arg2 );
+		if( i == GT_SINGLE_PLAYER || i < GT_FFA || i >= GT_MAX_GAME_TYPE) {
+			trap_SendServerCommand( ent-g_entities, "print \"Invalid gametype.\n\"" );
+			return;
+		}
 
+                if( i== g_gametype.integer ) {
+                    trap_SendServerCommand( ent-g_entities, "print \"This is current gametype\n\"" );
+			return;
+                }
+                
+                if(!allowedGametype(arg2)){
+                    trap_SendServerCommand( ent-g_entities, "print \"Gametype is not available.\n\"" );
+                    return;
+                }
+                
+		if( trap_Argc() >= 3 )
+			trap_Cvar_VariableStringBuffer( "nextmap", s, sizeof(s) );
+		
+		/*if(!allowedMap(arg3)){
+                    trap_SendServerCommand( ent-g_entities, "print \"Map is not available.\n\"" );
+                    return;
+                }*/
+		
+		
+		if (*s) {
+			/*if( trap_Argc() >= 3 ){
+				Com_sprintf( command, sizeof( command ), "%s %d; map %s; set nextmap \"%s\"", arg1, i,arg3,s );
+			}
+			else{*/
+				Com_sprintf( command, sizeof( command ), "%s %d; map_restart; set nextmap \"%s\"", arg1, i,s );
+			//}
+                } else {
+			/*if( trap_Argc() >= 3 ){
+				Com_sprintf( command, sizeof( command ), "%s %d; map", arg1, i, arg3);
+			}
+			else{*/
+				Com_sprintf( command, sizeof( command ), "%s %d; map_restart", arg1, i );
+			//}
+                }
+	} else if ( !Q_stricmp( arg1, "map" ) ) {
+		// special case for map changes, we want to reset the nextmap setting
+		// this allows a player to change maps, but not upset the map rotation
+		char	s[MAX_STRING_CHARS];
+                
+                if(!allowedMap(arg2)){
+                    trap_SendServerCommand( ent-g_entities, "print \"Map is not available.\n\"" );
+                    return;
+                }
+
+		trap_Cvar_VariableStringBuffer( "nextmap", s, sizeof(s) );
+		if (*s) {
+			Com_sprintf( command, sizeof( command ), "%s %s; set nextmap \"%s\"", arg1, arg2, s );
+		} else {
+			Com_sprintf( command, sizeof( command ), "%s %s", arg1, arg2 );
+		}
+	} else if ( !Q_stricmp( arg1, "nextmap" ) ) {
+		char	s[MAX_STRING_CHARS];
+
+                //Sago: Needs to think about this, we miss code to parse if nextmap has arg2
+                /*if(!allowedMap(arg2)){
+                    trap_SendServerCommand( ent-g_entities, "print \"Map is not available.\n\"" );
+                    return;
+                }*/
+
+		trap_Cvar_VariableStringBuffer( "nextmap", s, sizeof(s) );
+		if (!*s) {
+			trap_SendServerCommand( ent-g_entities, "print \"nextmap not set.\n\"" );
+			return;
+		}
+		Com_sprintf( command, sizeof( command ), "vstr nextmap");
+		
+        } else if ( !Q_stricmp( arg1, "fraglimit" ) ) {
+                i = atoi(arg2);
+                if(!allowedFraglimit(i)) {
+                    trap_SendServerCommand( ent-g_entities, "print \"Cannot set fraglimit.\n\"" );
+                    return;
+                }
+            
+                Com_sprintf( command, sizeof( command ), "%s \"%d\"", arg1, i );
+		
+        } else if ( !Q_stricmp( arg1, "timelimit" ) ) {
+                i = atoi(arg2);
+                if(!allowedTimelimit(i)) {
+                    trap_SendServerCommand( ent-g_entities, "print \"Cannot set timelimit.\n\"" );
+                    return;
+                }
+            
+                Com_sprintf( command, sizeof( command ), "%s \"%d\"", arg1, i );
+		
+        } else if ( !Q_stricmp( arg1, "map_restart" ) ) {
+                Com_sprintf( command, sizeof( command ), "map_restart" );
+	} else if ( !Q_stricmp( arg1, "clientkick" ) ) {
+                i = atoi(arg2);
+
+                if(i>=MAX_CLIENTS) { //Only numbers <128 is clients
+                    trap_SendServerCommand( ent-g_entities, "print \"Cannot kick that number.\n\"" );
+                    return;
+                }
+                Com_sprintf( command, sizeof( command ), "clientkick_game \"%d\"", i );
+	} else if ( !Q_stricmp( arg1, "kick" ) ) {
+                i = 0;
+                while(Q_stricmp(arg2,(g_entities+i)->client->pers.netname)) {
+                    //Not client i, try next
+                    i++;
+                    if(i>=MAX_CLIENTS){ //Only numbers <128 is clients
+                        trap_SendServerCommand( ent-g_entities, "print \"Cannot find the playername. Try clientkick instead.\n\"" );
+                        return;
+                    }
+                }
+
+                Com_sprintf( command, sizeof( command ), "clientkick_game \"%d\"", i );
+        } else if ( !Q_stricmp( arg1, "clientremove" ) ) {
+                i = atoi(arg2);
+
+                if(i>=MAX_CLIENTS) { //Only numbers <128 is clients
+                    trap_SendServerCommand( ent-g_entities, "print \"Cannot remove that number.\n\"" );
+                    return;
+                }
+                if( (g_entities+i)->client->sess.sessionTeam != TEAM_SPECTATOR ){
+			SetTeam( g_entities + i, "s" );
+		}
+		else{
+			trap_SendServerCommand( ent-g_entities, "print \"Client is spec already.\n\"" );
+		}
+	}
+	else if ( !Q_stricmp( arg1, "remove" ) ) {
+                i = 0;
+                while(Q_stricmp(arg2,(g_entities+i)->client->pers.netname)) {
+                    //Not client i, try next
+                    i++;
+                    if(i>=MAX_CLIENTS){ //Only numbers <128 is clients
+                        trap_SendServerCommand( ent-g_entities, "print \"Cannot find the playername. Try clientremove instead.\n\"" );
+                        return;
+                    }
+                }
+                if( (g_entities+i)->client->sess.sessionTeam != TEAM_SPECTATOR ){
+			SetTeam( g_entities + i, "s" );
+		}
+		else{
+			trap_SendServerCommand( ent-g_entities, "print \"Client is spec already.\n\"" );
+		}
+	} else if ( !Q_stricmp( arg1, "lock" ) ) {
+                if( g_teamLock.integer ){
+			if( g_gametype.integer >= GT_TEAM ){
+				level.RedTeamLocked = qtrue;
+				level.BlueTeamLocked = qtrue;
+				trap_SendServerCommand( ent-g_entities, "print \"Teams are locked now.\n\"" );
+				return;
+			}
+			trap_SendServerCommand( ent-g_entities, "print \"Teamlock not allowed in this gametype.\n\"" );
+			return;
+		}
+		trap_SendServerCommand( ent-g_entities, "print \"Teamlock not allowed on this server.\n\"" );
+	} else if ( !Q_stricmp( arg1, "unlock" ) ) {
+                if( g_teamLock.integer ){
+			if( g_gametype.integer >= GT_TEAM ){
+				level.RedTeamLocked = qfalse;
+				level.BlueTeamLocked = qfalse;
+				trap_SendServerCommand( ent-g_entities, "print \"Teams are unlocked now.\n\"" );
+				return;
+			}
+			trap_SendServerCommand( ent-g_entities, "print \"Teamlock not allowed in this gametype.\n\"" );
+			return;
+		}
+		trap_SendServerCommand( ent-g_entities, "print \"Teamlock not allowed on this server.\n\"" );
+	} else if ( !Q_stricmp( arg1, "startgame" ) ) {
+                if( !g_startWhenReady.integer ){
+			trap_SendServerCommand( ent-g_entities, "print \"g_startWhenReady not set on this server.\n\"" );
+			return;
+		}
+		for(i = 0; i < MAX_CLIENTS; i++){
+			(g_entities+i)->client->ready = qtrue;
+		}
+	} else {
+		//Com_sprintf( level.voteString, sizeof( level.voteString ), "%s \"%s\"", arg1, arg2 );
+		//Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
+                trap_SendServerCommand( ent-g_entities, "print \"Server vality check failed, appears to be my fault. Sorry\n\"" );
+                return;
+	}
+	
+	trap_SendConsoleCommand( EXEC_APPEND, va("%s\n", command ) );
+	
+}
 
 /*
 ==================
@@ -2180,6 +2492,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 	char	arg2[MAX_STRING_TOKENS];
 	char	arg3[MAX_STRING_TOKENS];
         char    buffer[256];
+	qboolean mapAllowed = qtrue;
 
 	if ( !g_allowVote.integer ) {
 		trap_SendServerCommand( ent-g_entities, "print \"Voting not allowed here.\n\"" );
@@ -2319,17 +2632,16 @@ void Cmd_CallVote_f( gentity_t *ent ) {
                 }
                 
 		if( trap_Argc() >= 3 )
-		
-		trap_Cvar_VariableStringBuffer( "nextmap", s, sizeof(s) );
+			trap_Cvar_VariableStringBuffer( "nextmap", s, sizeof(s) );
 		
 		if(!allowedMap(arg3)){
                     trap_SendServerCommand( ent-g_entities, "print \"Map is not available.\n\"" );
-                    return;
+		    mapAllowed = qfalse;
                 }
 		
 		
 		if (*s) {
-			if( trap_Argc() >= 3 ){
+			if( trap_Argc() >= 3 && mapAllowed ){
 				Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %d; map %s; set nextmap \"%s\"", arg1, i,arg3,s );
 				Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change gametype to: %s   Map: %s?", gameNames[i], arg3 );
 			}
@@ -2338,7 +2650,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 				Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change gametype to: %s?", gameNames[i] );
 			}
                 } else {
-			if( trap_Argc() >= 3 ){
+			if( trap_Argc() >= 3  && mapAllowed){
 				Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %d; map", arg1, i, arg3);
 				Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change gametype to: %s   Map: %s?", gameNames[i], arg3 );
 			}
@@ -2852,6 +3164,21 @@ void Cmd_Unlock_f( gentity_t *ent ){
 	
 }
 
+void Cmd_Listplayers_f( gentity_t *ent ){
+	int i = 0;
+	char buffer[1024];
+	gclient_t *cl;
+	strcat(buffer, va("<clientNum>   <name>   <score>   <team>\n" ) );
+        while( i < MAX_CLIENTS ) {
+		cl = (g_entities+i)->client;
+                if((g_entities+i)->client->pers.connected == CON_CONNECTED){ //Only numbers <128 is clients
+			strcat(buffer, va("%i   %s^7   %i   %s\n", cl->ps.clientNum, cl->pers.netname, cl->ps.persistant[PERS_SCORE], TeamName(cl->sess.sessionTeam) ) );
+                }
+		i++;
+	}
+	trap_SendServerCommand( ent-g_entities, va("print \"%s\"", buffer));
+}
+
 	
 
 //KK-OAX This is the table that ClientCommands runs the console entry against. 
@@ -2917,6 +3244,8 @@ commands_t cmds[ ] =
   { "drop", 0, Cmd_Drop_f },
   { "lock", 0, Cmd_Lock_f },
   { "unlock", 0, Cmd_Unlock_f },
+  { "ref", 0, Cmd_Ref_f },
+  { "listplayers", 0, Cmd_Listplayers_f },
   
 };
 

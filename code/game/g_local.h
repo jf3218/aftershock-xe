@@ -464,6 +464,8 @@ struct gclient_s {
 	char			aftershock_name[33];
 	char			aftershock_hash[33];
 	
+	qboolean		referee;
+	
 };
 
 
@@ -993,6 +995,7 @@ void PlayerStore_restore(char* guid, playerState_t *ps);
 // g_vote.c
 //
 int allowedVote(char *commandStr);
+int allowedRef(char *commandStr);
 void CheckVote( void );
 void CountVotes( void );
 
@@ -1240,6 +1243,9 @@ extern vmCvar_t	    g_reduceRailDamage;
 extern vmCvar_t	    g_reduceLightningDamage;
 
 extern vmCvar_t	    g_extrapolateFrames;
+
+extern vmCvar_t	    g_refPassword;
+extern vmCvar_t     g_refNames;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

@@ -802,7 +802,7 @@ static float CG_DrawAccelMeter( float y ) {
 	int         accel;
 	int	    vel_norm;
 	int 	    width;
-	float	    *color;
+	vec4_t	    color;
 	/* speed meter can get in the way of the scoreboard */
 	if ( cg.scoreBoardShowing ) {
 		return y;
@@ -812,19 +812,25 @@ static float CG_DrawAccelMeter( float y ) {
 	vel = cg.snap->ps.velocity;
 	vel_norm = sqrt( vel[0]*vel[0] + vel[1] * vel[1] );
 	
-	if( vel_norm >= 310 )
+	if( vel_norm >= 320 )
 		accel = (acc[0]*vel[0] + acc[1]*vel[1])/vel_norm;
 	else
 		accel = 0;
 
 	if( accel > 400 )
 		accel = 400;
-	if( accel < -400 )
+	else if( accel < -400 )
 		accel = -400;
+	
+	width = ACCELBAR_WIDTH * accel / 400;
+	
+	if( width > ACCELBAR_WIDTH )
+		width = ACCELBAR_WIDTH;
+	else if( width < -ACCELBAR_WIDTH )
+		width = - ACCELBAR_WIDTH;
 	
 	if (cg_drawAccel.integer == 1) {
 		if( accel > 0 ){
-			width = ACCELBAR_WIDTH * accel / 400;
 			
 			color[0] = 0.0f;
 			color[1] = 1.0f;
@@ -833,8 +839,8 @@ static float CG_DrawAccelMeter( float y ) {
 			
 			CG_FillRect( 635 - ACCELBAR_WIDTH, y, width, ACCELBAR_HEIGHT, color );
 		}
-		else if( accel < 0 ){
-			width = ACCELBAR_WIDTH * (-accel) / 400;
+		else if( accel <= 0 ){
+			width *= -1;
 			
 			color[0] = 1.0f;
 			color[1] = 0.0f;
@@ -846,7 +852,6 @@ static float CG_DrawAccelMeter( float y ) {
 		return y + ACCELBAR_HEIGHT + 4;
 	} else {
 		if( accel > 0 ){
-			width = ACCELBAR_WIDTH * accel / 400;
 			
 			color[0] = 0.0f;
 			color[1] = 1.0f;
@@ -855,8 +860,8 @@ static float CG_DrawAccelMeter( float y ) {
 			
 			CG_FillRect( 320, 320, width, ACCELBAR_HEIGHT, color );
 		}
-		else if( accel < 0 ){
-			width = ACCELBAR_WIDTH * (-accel) / 400;
+		else if( accel <= 0 ){
+			width *= -1; 
 			
 			color[0] = 1.0f;
 			color[1] = 0.0f;

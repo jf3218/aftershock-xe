@@ -53,6 +53,30 @@ int allowedVote(char *commandStr) {
         return qfalse;
 }
 
+int allowedRef(char *commandStr) {
+    char tempStr[MAX_VOTENAME_LENGTH*2];
+    int length;
+    char voteNames[MAX_CVAR_VALUE_STRING];
+    trap_Cvar_VariableStringBuffer( "g_refNames", voteNames, sizeof( voteNames ) );
+    if(!Q_stricmp(voteNames, "*" ))
+        return qtrue; //if star, everything is allowed
+    length = strlen(commandStr);
+    if(length>MAX_VOTENAME_LENGTH*2-3)
+    {
+        //Error: too long
+        return qfalse;
+    }
+    //Now constructing a string that starts and ends with '/' like: "/clientkick/"
+    tempStr[0] = '/';
+    strncpy(&tempStr[1],commandStr,length);
+    tempStr[length+1] = '/';
+    tempStr[length+2] = '\0';
+    if(Q_stristr(voteNames,tempStr) != NULL)
+        return qtrue;
+    else
+        return qfalse;
+}
+
 /*
 ==================
 getMappage

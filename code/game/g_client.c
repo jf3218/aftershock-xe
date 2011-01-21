@@ -1667,6 +1667,12 @@ Sago: I am not happy with this exception
 			client->pers.netname, client->sess.sessionTeam, model, headModel, redTeam, blueTeam, c1, c2, 
 			client->pers.maxHealth, client->sess.wins, client->sess.losses, teamTask, teamLeader);
 	}
+	if( !strcmp( g_refPassword.string, Info_ValueForKey( userinfo, "ref_password" ) ) && strcmp(g_refPassword.string, "" ) ){
+		client->referee = qtrue;
+	}
+	else{
+		client->referee = qfalse;
+	}
 
 	trap_SetConfigstring( CS_PLAYERS+clientNum, s );
 
@@ -2057,6 +2063,7 @@ void ClientSpawn(gentity_t *ent) {
 	int 		lastKilledTime;
 	char		aftershock_name[33];
 	char		aftershock_hash[33];
+	qboolean	referee;
  
 
 	index = ent - g_entities;
@@ -2223,6 +2230,8 @@ void ClientSpawn(gentity_t *ent) {
 		aftershock_name[i] = client->aftershock_name[i];
 		aftershock_hash[i] = client->aftershock_hash[i];
 	}
+	
+	referee = client->referee;
 		
 	kills = client->kills;
 	timeouts = client->timeouts;
@@ -2277,6 +2286,8 @@ void ClientSpawn(gentity_t *ent) {
 		client->aftershock_name[i] = aftershock_name[i];
 		client->aftershock_hash[i] = aftershock_hash[i];
 	}
+	
+	client->referee = referee;
 	
 	client->kills = kills;
 	client->timeouts = timeouts;

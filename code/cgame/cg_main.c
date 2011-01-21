@@ -359,6 +359,9 @@ vmCvar_t	aftershock_password;
 
 vmCvar_t	cg_drawAccel;
 
+vmCvar_t	ref_password;
+
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -453,7 +456,6 @@ static cvarTable_t cvarTable[] = { // bk001129
         { &cg_cyclegrapple, "cg_cyclegrapple", "1", CVAR_ARCHIVE},
         { &cg_vote_custom_commands, "cg_vote_custom_commands", "", CVAR_ROM },
 	{ &cg_synchronousClients, "g_synchronousClients", "0", CVAR_SYSTEMINFO },	// communicated by systeminfo
-
         { &cg_autovertex, "cg_autovertex", "0", CVAR_ARCHIVE },
 #ifdef MISSIONPACK
 	{ &cg_redTeamName, "g_redteam", DEFAULT_REDTEAM_NAME, CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_USERINFO },
@@ -469,7 +471,6 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_enableDust, "g_enableDust", "0", CVAR_SERVERINFO},
 	{ &cg_enableBreath, "g_enableBreath", "0", CVAR_SERVERINFO},
 	{ &cg_obeliskRespawnDelay, "g_obeliskRespawnDelay", "10", CVAR_SERVERINFO},
-
 	{ &cg_cameraOrbit, "cg_cameraOrbit", "0", CVAR_CHEAT},
 	{ &cg_cameraOrbitDelay, "cg_cameraOrbitDelay", "50", CVAR_ARCHIVE},
 	{ &cg_timescaleFadeEnd, "cg_timescaleFadeEnd", "1", 0},
@@ -481,7 +482,6 @@ static cvarTable_t cvarTable[] = { // bk001129
 //	{ &cg_smoothClients, "cg_smoothClients", "0", CVAR_USERINFO | CVAR_ARCHIVE},
 //unlagged - smooth clients #2
 	{ &cg_cameraMode, "com_cameraMode", "0", CVAR_CHEAT},
-
 	{ &pmove_fixed, "pmove_fixed", "0", CVAR_SYSTEMINFO},
 	{ &pmove_msec, "pmove_msec", "8", CVAR_SYSTEMINFO},
         { &pmove_float, "pmove_float", "0", CVAR_SYSTEMINFO},
@@ -509,10 +509,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_trueLightning, "cg_trueLightning", "0.0", CVAR_ARCHIVE},
         { &cg_music, "cg_music", "", CVAR_ARCHIVE},
 //	{ &cg_pmove_fixed, "cg_pmove_fixed", "0", CVAR_USERINFO | CVAR_ARCHIVE }
-
 	{ &cg_fragmsgsize, "cg_fragmsgsize", "1.0", CVAR_ARCHIVE},
 	{ &cg_crosshairPulse, "cg_crosshairPulse", "1", CVAR_ARCHIVE},
-	
 	{ &cg_differentCrosshairs, "cg_differentCrosshairs", "0", CVAR_ARCHIVE},
 	{ &cg_ch1, "cg_ch1", "1", CVAR_ARCHIVE},
 	{ &cg_ch1size, "cg_ch1size", "24", CVAR_ARCHIVE},
@@ -540,72 +538,50 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_ch12size, "cg_ch12size", "24", CVAR_ARCHIVE},
 	{ &cg_ch13, "cg_ch13", "1", CVAR_ARCHIVE},
 	{ &cg_ch13size, "cg_ch13size", "24", CVAR_ARCHIVE},
-
 	{ &cg_crosshairColorRed, "cg_crosshairColorRed", "1.0", CVAR_ARCHIVE},
         { &cg_crosshairColorGreen, "cg_crosshairColorGreen", "1.0", CVAR_ARCHIVE},
         { &cg_crosshairColorBlue, "cg_crosshairColorBlue", "1.0", CVAR_ARCHIVE},
-
 	{ &cg_weaponBarStyle, "cg_weaponBarStyle", "0", CVAR_ARCHIVE},
-
 	{&cg_deathNoticeTime, "cg_deathNoticeTime", "3000", CVAR_ARCHIVE},
 	{&s_ambient, "s_ambient", "1", CVAR_ARCHIVE},
 	{&cg_nokick, "cg_nokick", "0", CVAR_ARCHIVE},
 	{&cg_hiResCharset, "cg_hiResCharset", "1", CVAR_ARCHIVE},
 	{&cg_weaponBobbing, "cg_weaponBobbing", "1", CVAR_ARCHIVE},
-
 	{&cg_blueteammodel, "cg_blueteammodel", "skelebot/pm", CVAR_ARCHIVE},
 	{&cg_redteammodel, "cg_redteammodel", "major/pm", CVAR_ARCHIVE},
 	{&cg_enemymodel, "cg_enemymodel", "smarine/pm", CVAR_ARCHIVE},
 	{&cg_teammodel, "cg_teammodel", "major/pm", CVAR_ARCHIVE},
 	{&cg_forceteammodels, "cg_forceteammodels", "0", CVAR_ARCHIVE},
-
 	{&cg_enemyHeadColor, "cg_enemyHeadColor", "yellow", CVAR_ARCHIVE},
 	{&cg_enemyTorsoColor, "cg_enemyTorsoColor", "yellow", CVAR_ARCHIVE},
 	{&cg_enemyLegsColor, "cg_enemyLegsColor", "yellow", CVAR_ARCHIVE},
-
 	{&cg_blueHeadColor, "cg_blueHeadColor", "blue", CVAR_ARCHIVE},
 	{&cg_blueTorsoColor, "cg_blueTorsoColor", "blue", CVAR_ARCHIVE},
 	{&cg_blueLegsColor, "cg_blueLegsColor", "blue", CVAR_ARCHIVE},
-
 	{&cg_redHeadColor, "cg_redHeadColor", "red", CVAR_ARCHIVE},
 	{&cg_redTorsoColor, "cg_redTorsoColor", "red", CVAR_ARCHIVE},
 	{&cg_redLegsColor, "cg_redLegsColor", "red", CVAR_ARCHIVE},
-
 	{&cg_teamHeadColor, "cg_teamHeadColor", "white", CVAR_ARCHIVE},
 	{&cg_teamTorsoColor, "cg_teamTorsoColor", "white", CVAR_ARCHIVE},
-	{&cg_teamLegsColor, "cg_teamLegsColor", "white", CVAR_ARCHIVE},
-	
+	{&cg_teamLegsColor, "cg_teamLegsColor", "white", CVAR_ARCHIVE},	
 	{&cg_deadBodyDarken, "cg_deadBodyDarken", "1", CVAR_ARCHIVE},
 	{&cg_deadBodyColor, "cg_deadBodyColor", "0x323232FF", CVAR_ARCHIVE},
-
 	{&cg_plasmaBallAlpha, "cg_plasmaBallAlpha", "255", CVAR_ARCHIVE},
-
 	{&cg_drawItemPickups, "cg_drawItemPickups", "7", CVAR_ARCHIVE},
-
 	{&cg_mapConfigs, "cg_mapConfigs", "0", CVAR_ARCHIVE},
-
 	{&cg_teamWeaponColor, "cg_teamWeaponColor", "0xFFFFFFFF", CVAR_ARCHIVE},
 	{&cg_enemyWeaponColor, "cg_enemyWeaponColor", "0x00FF00FF", CVAR_ARCHIVE},
 	{&cg_forceWeaponColor, "cg_forceWeaponColor", "0", CVAR_ARCHIVE},
-
 	{&cg_rocketTrailRadius, "cg_rocketTrailRadius", "64", CVAR_ARCHIVE},
 	{&cg_grenadeTrailRadius, "cg_grenadeTrailRadius", "32", CVAR_ARCHIVE},
-
 	{&cg_brightItems, "cg_brightItems", "0", CVAR_ARCHIVE},
-	
 	{&cg_autoaction, "cg_autoaction", "0", CVAR_ARCHIVE},
-	
 	{&cg_drawRespawnTimer, "cg_drawRespawnTimer", "1", CVAR_ARCHIVE},
-	
 	{&cg_autosnaps, "cg_autosnaps", "1", CVAR_ARCHIVE},
-	
 	{&cg_particles, "cg_particles", "1", CVAR_ARCHIVE},
-	
 	{&cg_lightningStyle, "cg_lightningStyle", "0", CVAR_ARCHIVE},
-	
 	{&cg_hitMarks, "cg_hitMarks", "1", CVAR_ARCHIVE},
 	{&cg_newRewards, "cg_newRewards", "1", CVAR_ARCHIVE},
-	
 	{&cg_drawLivingCount, "cg_drawLivingCount", "1", CVAR_ARCHIVE},
 	{&cg_drawCenterprint, "cg_drawCenterprint", "1", CVAR_ARCHIVE},
 	{&cg_nomip, "cg_nomip", "0", CVAR_ARCHIVE},
@@ -614,11 +590,10 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_lgHitSfx, "cg_lgHitSfx", "1", CVAR_ARCHIVE},
 	{&cg_crosshairHitColor, "cg_crosshairHitColor", "0", CVAR_ARCHIVE},
 	{&cg_itemFX, "cg_itemFX", "7", CVAR_ARCHIVE},
-	
 	{&aftershock_login, "aftershock_login", "", CVAR_USERINFO },
 	{&aftershock_password, "aftershock_password", "", CVAR_USERINFO },
-	
 	{&cg_drawAccel, "cg_drawAccel", "0", CVAR_ARCHIVE },
+	{&ref_password, "ref_password", "", CVAR_USERINFO | CVAR_TEMP },
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

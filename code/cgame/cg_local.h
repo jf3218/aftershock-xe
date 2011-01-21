@@ -1502,7 +1502,10 @@ extern vmCvar_t			cg_itemFX;
 extern vmCvar_t			aftershock_login;
 extern vmCvar_t			aftershock_password;
 
+
 extern vmCvar_t			cg_drawAccel;
+
+extern vmCvar_t			ref_password;
 
 
 //unlagged - cg_unlagged.c
