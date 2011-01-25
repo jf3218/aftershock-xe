@@ -797,9 +797,11 @@ static float CG_DrawSpeedMeter( float y ) {
 #define ACCELBAR_HEIGHT 10
 
 static float CG_DrawAccelMeter( float y ) {
-	vec_t       *acc;
+	vec_t       *accel;
+	vec_t	    *lastaccel;
+	vec3_t	    acc;
 	vec_t	    *vel;
-	int         accel;
+	int         accelValue;
 	int	    vel_norm;
 	int 	    width;
 	vec4_t	    color;
@@ -808,21 +810,26 @@ static float CG_DrawAccelMeter( float y ) {
 		return y;
 	}
 
-	acc = cg.accel;
+	accel = cg.accel;
+	lastaccel = cg.lastaccel;
+	
+	acc[0] = ((cg.time-cg.AccelTime) * accel[0] + ( (cg.AccelTime - cg.lastAccelTime) - cg.time + cg.AccelTime ) * lastaccel[0])/(cg.AccelTime - cg.lastAccelTime);
+	acc[1] = ((cg.time-cg.AccelTime) * accel[1] + ( (cg.AccelTime - cg.lastAccelTime) - cg.time + cg.AccelTime ) * lastaccel[1])/(cg.AccelTime - cg.lastAccelTime);
+	
 	vel = cg.snap->ps.velocity;
 	vel_norm = sqrt( vel[0]*vel[0] + vel[1] * vel[1] );
 	
 	if( vel_norm >= 320 )
-		accel = (acc[0]*vel[0] + acc[1]*vel[1])/vel_norm;
+		accelValue = (acc[0]*vel[0] + acc[1]*vel[1])/vel_norm;
 	else
-		accel = 0;
+		accelValue = 0;
 
-	if( accel > 400 )
-		accel = 400;
-	else if( accel < -400 )
-		accel = -400;
+	if( accelValue > 200 )
+		accelValue = 200;
+	else if( accelValue < -200 )
+		accelValue = -200;
 	
-	width = ACCELBAR_WIDTH * accel / 400;
+	width = ACCELBAR_WIDTH * accelValue / 200;
 	
 	if( width > ACCELBAR_WIDTH )
 		width = ACCELBAR_WIDTH;
@@ -830,7 +837,7 @@ static float CG_DrawAccelMeter( float y ) {
 		width = - ACCELBAR_WIDTH;
 	
 	if (cg_drawAccel.integer == 1) {
-		if( accel > 0 ){
+		if( accelValue > 0 ){
 			
 			color[0] = 0.0f;
 			color[1] = 1.0f;
@@ -839,7 +846,7 @@ static float CG_DrawAccelMeter( float y ) {
 			
 			CG_FillRect( 635 - ACCELBAR_WIDTH, y, width, ACCELBAR_HEIGHT, color );
 		}
-		else if( accel <= 0 ){
+		else if( accelValue <= 0 ){
 			width *= -1;
 			
 			color[0] = 1.0f;
@@ -851,7 +858,7 @@ static float CG_DrawAccelMeter( float y ) {
 		}
 		return y + ACCELBAR_HEIGHT + 4;
 	} else {
-		if( accel > 0 ){
+		if( accelValue > 0 ){
 			
 			color[0] = 0.0f;
 			color[1] = 1.0f;
@@ -860,7 +867,7 @@ static float CG_DrawAccelMeter( float y ) {
 			
 			CG_FillRect( 320, 320, width, ACCELBAR_HEIGHT, color );
 		}
-		else if( accel <= 0 ){
+		else if( accelValue <= 0 ){
 			width *= -1; 
 			
 			color[0] = 1.0f;

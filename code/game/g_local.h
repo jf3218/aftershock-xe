@@ -1247,6 +1247,8 @@ extern vmCvar_t	    g_extrapolateFrames;
 extern vmCvar_t	    g_refPassword;
 extern vmCvar_t     g_refNames;
 
+extern vmCvar_t     g_muteSpec;
+
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
 int		trap_Milliseconds( void );

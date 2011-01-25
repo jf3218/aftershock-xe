@@ -690,8 +690,9 @@ typedef struct {
 	int	lastHitDamage;
 	
 	vec3_t	accel;
-	
-	int lastSnapTime;
+	vec3_t  lastaccel;
+	int AccelTime;
+	int lastAccelTime;
 
 } cg_t;
 

@@ -1178,12 +1178,12 @@ static void CG_RegisterGraphics( void ) {
 	if( cg_nomip.integer & 256 ){
 		cgs.media.smokePuffShader = trap_R_RegisterShader( "smokePuff_nomip" );
 		cgs.media.smokePuffRageProShader = trap_R_RegisterShader( "smokePuffRagePro_nomip" );
-		cgs.media.shotgunSmokePuffShader = trap_R_RegisterShader( "shotgunSmokePuff_nomip" );
+		cgs.media.shotgunSmokePuffShader = trap_R_RegisterShader( "aftershock_shotgunSmoke_nomip" );
 	}
 	else{
 		cgs.media.smokePuffShader = trap_R_RegisterShader( "smokePuff" );
 		cgs.media.smokePuffRageProShader = trap_R_RegisterShader( "smokePuffRagePro" );
-		cgs.media.shotgunSmokePuffShader = trap_R_RegisterShader( "shotgunSmokePuff" );
+		cgs.media.shotgunSmokePuffShader = trap_R_RegisterShader( "aftershock_shotgunSmoke" );
 	}
 #ifdef MISSIONPACK
 	cgs.media.nailPuffShader = trap_R_RegisterShader( "nailtrail" );
@@ -1215,9 +1215,9 @@ static void CG_RegisterGraphics( void ) {
 
 	for (i = 0; i < NUM_CROSSHAIRS; i++ ) {
 		if (i < 26)
-			cgs.media.crosshairShader[i] = trap_R_RegisterShader( va("gfx/2d/crosshair%c", 'a'+i) );
+			cgs.media.crosshairShader[i] = trap_R_RegisterShader( va("aftershock_crosshair%c", 'a'+i) );
 		else
-			cgs.media.crosshairShader[i] = trap_R_RegisterShader( va("gfx/2d/crosshair%02d", i - 10) );
+			cgs.media.crosshairShader[i] = trap_R_RegisterShader( va("aftershock_crosshair%02d", i - 26) );
  	}
 
 	cgs.media.backTileShader = trap_R_RegisterShader( "gfx/2d/backtile" );

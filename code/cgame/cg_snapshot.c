@@ -131,6 +131,7 @@ static void CG_TransitionSnapshot( void ) {
 	centity_t			*cent;
 	snapshot_t			*oldFrame;
 	int					i;
+	
 
 	if ( !cg.snap ) {
 		CG_Error( "CG_TransitionSnapshot: NULL cg.snap" );
@@ -156,10 +157,15 @@ static void CG_TransitionSnapshot( void ) {
 	oldFrame = cg.snap;
 	cg.snap = cg.nextSnap;
 	
-	VectorMA(cg.snap->ps.velocity, -1, oldFrame->ps.velocity, cg.accel );
+	if( (cg.time - cg.AccelTime) > 250 ){
+		VectorCopy(cg.accel, cg.lastaccel );
+		VectorMA(cg.snap->ps.velocity, -1, oldFrame->ps.velocity, cg.accel );
+		VectorScale(  cg.accel, 1000.0f/((float)cg.time-(float)cg.AccelTime), cg.accel );
+		
+		cg.lastAccelTime = cg.AccelTime;
+		cg.AccelTime = cg.time;
+	}
 	
-	VectorScale(  cg.accel, 1000.0f/((float)cg.time-(float)cg.lastSnapTime), cg.accel );
-	cg.lastSnapTime = cg.time;
 	//Com_Printf("accelx %f, accely %f\n", cg.accel[0], cg.accel[1]);
 
 	BG_PlayerStateToEntityState( &cg.snap->ps, &cg_entities[ cg.snap->ps.clientNum ].currentState, qfalse );

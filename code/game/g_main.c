@@ -229,6 +229,8 @@ vmCvar_t     g_extrapolateFrames;
 vmCvar_t     g_refPassword;
 vmCvar_t     g_refNames;
 
+vmCvar_t     g_muteSpec;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -459,6 +461,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_extrapolateFrames, "g_extrapolateFrames", "2", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_refPassword, "g_refPassword", "", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_refNames, "g_refNames", "/map_restart/nextmap/map/g_gametype/kick/clientkick/timelimit/fraglimit/remove/clientremove/lock/unlock/startgame/", CVAR_ARCHIVE, 0, qfalse },
+	{ &g_muteSpec, "g_muteSpec", "0", CVAR_ARCHIVE, 0, qfalse},
 };
 
 // bk001129 - made static to avoid aliasing

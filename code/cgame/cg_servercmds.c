@@ -1168,6 +1168,23 @@ static void CG_ConfigStringModified( void ) {
 	} else if ( num == CS_FLAGSTATUS ) {
 		if( cgs.gametype == GT_CTF || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype == GT_DOUBLE_D) {
 			// format is rb where its red/blue, 0 is at base, 1 is taken, 2 is dropped
+			if( cgs.redflag == 1 && ( ( str[0] - '0' ) == 2 ) ){
+				if( cgs.clientinfo[cg.clientNum].team == TEAM_RED ){
+					CG_CenterPrint( va( "^2The enemy dropped your flag" ), 100, SMALLCHAR_WIDTH );
+				}
+				else{
+					CG_CenterPrint( va( "^1Your team dropped the flag" ), 100, SMALLCHAR_WIDTH );
+				}
+			}
+			if( cgs.blueflag == 1 && ( ( str[1] - '0' ) == 2 ) ){
+				if( cgs.clientinfo[cg.clientNum].team == TEAM_BLUE ){
+					CG_CenterPrint( va( "^2The enemy dropped your flag" ), 100, SMALLCHAR_WIDTH );
+				}
+				else{
+					CG_CenterPrint( va( "^1Your team dropped the flag" ), 100, SMALLCHAR_WIDTH );
+				}
+			}
+			
 			cgs.redflag = str[0] - '0';
 			cgs.blueflag = str[1] - '0';
 		}

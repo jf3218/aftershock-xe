@@ -899,10 +899,17 @@ static void CG_ColorFromString( const char *v, vec3_t color ) {
 	if ( val & 4 ) {
 		color[0] = 1.0f;
 	}*/
+	
+	if( !( *v >= '1' && *v <= '9' ) && !( *v >= 'a' && *v <= 'z' ) && !( *v >= 'A' && *v <= 'Z' ) ){
+		color[0] = 1.0f;
+		color[1] = 1.0f;
+		color[2] = 1.0f;
+		return;
+	}
+	
 	color[0] = g_color_table[ColorIndex(*v)][0];
 	color[1] = g_color_table[ColorIndex(*v)][1];
 	color[2] = g_color_table[ColorIndex(*v)][2];
-	color[3] = g_color_table[ColorIndex(*v)][3];
 }
 
 /*

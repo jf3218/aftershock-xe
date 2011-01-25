@@ -585,8 +585,49 @@ hasteSmokePuff
 	}
 }
 
+aftershock_shotgunSmoke
+{
+	{
+		animmap 8 gfx/misc/shotgunsmoke1.tga gfx/misc/shotgunsmoke2.tga gfx/misc/shotgunsmoke3.tga gfx/misc/shotgunsmoke4.tga gfx/misc/shotgunsmoke5.tga gfx/misc/shotgunsmoke6.tga gfx/misc/shotgunsmoke7.tga gfx/misc/shotgunsmoke8.tga 
+		blendfunc gl_one gl_src_alpha
+		rgbGen wave inversesawtooth 0 1 0 8 
+	}
+	{
+		animmap 8 gfx/misc/shotgunsmoke2.tga gfx/misc/shotgunsmoke3.tga gfx/misc/shotgunsmoke4.tga gfx/misc/shotgunsmoke5.tga gfx/misc/shotgunsmoke6.tga gfx/misc/shotgunsmoke7.tga gfx/misc/shotgunsmoke8.tga gfx/misc/shotgunsmoke8.tga 
+		blendfunc gl_one gl_src_alpha
+		rgbGen wave sawtooth 0 1 0 8 
+	}
+}
+
+aftershock_shotgunSmoke_nomip
+{
+	nopicmip
+	{
+		animmap 8 gfx/misc/shotgunsmoke1.tga gfx/misc/shotgunsmoke2.tga gfx/misc/shotgunsmoke3.tga gfx/misc/shotgunsmoke4.tga gfx/misc/shotgunsmoke5.tga gfx/misc/shotgunsmoke6.tga gfx/misc/shotgunsmoke7.tga gfx/misc/shotgunsmoke8.tga 
+		blendfunc gl_one gl_src_alpha
+		rgbGen wave inversesawtooth 0 1 0 8 
+	}
+	{
+		animmap 8 gfx/misc/shotgunsmoke2.tga gfx/misc/shotgunsmoke3.tga gfx/misc/shotgunsmoke4.tga gfx/misc/shotgunsmoke5.tga gfx/misc/shotgunsmoke6.tga gfx/misc/shotgunsmoke7.tga gfx/misc/shotgunsmoke8.tga gfx/misc/shotgunsmoke8.tga 
+		blendfunc gl_one gl_src_alpha
+		rgbGen wave sawtooth 0 1 0 8 
+	}
+}
+
 shotgunSmokePuff
 {
+	cull disable
+	{
+		clampmap gfx/misc/smokepuff3.tga
+		blendfunc blend
+		tcMod rotate -45
+		alphaGen entity
+	}
+}
+
+shotgunSmokePuff_nomip
+{
+	nopicmip
 	cull disable
 	{
 		clampmap gfx/misc/smokepuff3.tga
@@ -632,17 +673,7 @@ hasteSmokePuff_nomip
 	}
 }
 
-shotgunSmokePuff_nomip
-{
-	nopicmip
-	cull disable
-	{
-		clampmap gfx/misc/smokepuff3.tga
-		blendfunc blend
-		tcMod rotate -45
-		alphaGen entity
-	}
-}
+
 
 sprites/plasma1
 {

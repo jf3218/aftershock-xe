@@ -399,14 +399,14 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 				}
 			}
 			else{
-				re->shaderRGBA[0] = ci->color1[0] * 255;
-				re->shaderRGBA[1] = ci->color1[1] * 255;
-				re->shaderRGBA[2] = ci->color1[2] * 255;
+				re->shaderRGBA[0] = ci->color2[0] * 255;
+				re->shaderRGBA[1] = ci->color2[1] * 255;
+				re->shaderRGBA[2] = ci->color2[2] * 255;
 				re->shaderRGBA[3] = 255;
 		
-				le->color[0] = ci->color1[0] * 0.75;
-				le->color[1] = ci->color1[1] * 0.75;
-				le->color[2] = ci->color1[2] * 0.75;
+				le->color[0] = ci->color2[0] * 0.75;
+				le->color[1] = ci->color2[1] * 0.75;
+				le->color[2] = ci->color2[2] * 0.75;
 				le->color[3] = 1.0f;
 			}
 
@@ -923,9 +923,9 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[3] = trap_S_RegisterSound( "sound/weapons/vulcan/vulcanf4b.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_MachineGunEjectBrass;
 		if( cg_nomip.integer & 16 )
-			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion_nomip" );
+			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "aftershock_bulletExplosion_nomip" );
 		else
-			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion" );
+			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "aftershock_bulletExplosion" );
 		break;
 #endif
 
@@ -937,9 +937,9 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[3] = trap_S_RegisterSound( "sound/weapons/machinegun/machgf4b.wav", qfalse );
 		weaponInfo->ejectBrassFunc = CG_MachineGunEjectBrass;
 		if( cg_nomip.integer & 16 )
-			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion_nomip" );
+			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "aftershock_bulletExplosion_nomip" );
 		else
-			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "bulletExplosion" );
+			cgs.media.bulletExplosionShader = trap_R_RegisterShader( "aftershock_bulletExplosion" );
 		break;
 
 	case WP_SHOTGUN:
@@ -961,9 +961,9 @@ void CG_RegisterWeapon( int weaponNum ) {
 
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/rocket/rocklf1a.wav", qfalse );
 		if( cg_nomip.integer & 4 )
-			cgs.media.rocketExplosionShader = trap_R_RegisterShader( "rocketExplosion_nomip" );
+			cgs.media.rocketExplosionShader = trap_R_RegisterShader( "aftershock_rocketExplosion_nomip" );
 		else
-			cgs.media.rocketExplosionShader = trap_R_RegisterShader( "rocketExplosion" );
+			cgs.media.rocketExplosionShader = trap_R_RegisterShader( "aftershock_rocketExplosion" );
 		break;
 
 #ifdef MISSIONPACK
@@ -974,7 +974,7 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->trailRadius = 32;
 		MAKERGB( weaponInfo->flashDlightColor, 1, 0.70f, 0 );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/proxmine/wstbfire.wav", qfalse );
-		cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "grenadeExplosion" );
+		cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "aftershock_grenadeExplosion2" );
 		break;
 #endif
 
@@ -986,9 +986,9 @@ void CG_RegisterWeapon( int weaponNum ) {
 		MAKERGB( weaponInfo->flashDlightColor, 1, 0.70f, 0 );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/grenade/grenlf1a.wav", qfalse );
 		if( cg_nomip.integer & 8 )
-			cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "grenadeExplosion2_nomip" );
+			cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "aftershock_grenadeExplosion2_nomip" );
 		else
-			cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "grenadeExplosion2" );
+			cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "aftershock_grenadeExplosion2" );
 		break;
 
 #ifdef MISSIONPACK
@@ -1016,12 +1016,12 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/plasma/hyprbf1a.wav", qfalse );
 		
 		if( cg_nomip.integer & 2 ){
-			cgs.media.plasmaExplosionShader = trap_R_RegisterShader( "plasmaExplosion_nomip" );
-			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc_nomip" );
+			cgs.media.plasmaExplosionShader = trap_R_RegisterShader( "aftershock_plasmaExplosion_nomip" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "aftershock_railDisc_nomip" );
 		}
 		else{
-			cgs.media.plasmaExplosionShader = trap_R_RegisterShader( "plasmaExplosion" );
-			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc" );
+			cgs.media.plasmaExplosionShader = trap_R_RegisterShader( "aftershock_plasmaExplosion" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "aftershock_railDisc" );
 		}
 		
 		break;
@@ -1032,13 +1032,13 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/railgun/railgf1a.wav", qfalse );
 		
 		if( cg_nomip.integer & 32 ){
-			cgs.media.railExplosionShader = trap_R_RegisterShader( "railExplosion_nomip" );
-			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc_nomip" );
-			cgs.media.railCoreShader = trap_R_RegisterShader( "railCore_nomip" );
+			cgs.media.railExplosionShader = trap_R_RegisterShader( "aftershock_railExplosion_nomip" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "aftershock_railDisc_nomip" );
+			cgs.media.railCoreShader = trap_R_RegisterShader( "aftershock_railCore_nomip" );
 		}
 		else{
-			cgs.media.railExplosionShader = trap_R_RegisterShader( "railExplosion" );
-			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc" );
+			cgs.media.railExplosionShader = trap_R_RegisterShader( "aftershock_railExplosion" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "aftershock_railDisc" );
 			cgs.media.railCoreShader = trap_R_RegisterShader( "railCore" );
 		}
 		
@@ -1051,9 +1051,9 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/bfg/bfg_fire.wav", qfalse );
 		
 		if( cg_nomip.integer & 64 )
-			cgs.media.bfgExplosionShader = trap_R_RegisterShader( "bfgExplosion_nomip" );
+			cgs.media.bfgExplosionShader = trap_R_RegisterShader( "aftershock_bfgExplosion_nomip" );
 		else
-			cgs.media.bfgExplosionShader = trap_R_RegisterShader( "bfgExplosion" );
+			cgs.media.bfgExplosionShader = trap_R_RegisterShader( "aftershock_bfgExplosion" );
 		
 		weaponInfo->missileModel = trap_R_RegisterModel( "models/weaphits/bfg.md3" );
 		weaponInfo->missileSound = trap_S_RegisterSound( "sound/weapons/rocket/rockfly.wav", qfalse );
@@ -2056,6 +2056,10 @@ void CG_DrawWeaponBar0(int count, int bits, float *color){
 	int i;
 	int w;
 	char *s;
+	vec4_t charColor;
+	int ammoPack;
+	
+	charColor[3] = color[3];
 	
 	for ( i = MAX_WEAPONS - 1 ; i >= 0 ; i-- ) {
                 //Sago: Do mad change of grapple placement:
@@ -2071,6 +2075,52 @@ void CG_DrawWeaponBar0(int count, int bits, float *color){
 		if( i != WP_GAUNTLET ) {
 			// draw weapon icon
 			
+			switch( i ){
+				case WP_MACHINEGUN:
+					ammoPack = 50;
+					break;
+				case WP_SHOTGUN:
+					ammoPack = 10;
+					break;
+				case WP_GRENADE_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_ROCKET_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_LIGHTNING:
+					ammoPack = 60;
+					break;
+				case WP_RAILGUN:
+					ammoPack = 10;
+					break;
+				case WP_PLASMAGUN:
+					ammoPack = 30;
+					break;
+				case WP_BFG:
+					ammoPack = 15;
+					break;
+				default: 
+					ammoPack = 200;
+					break;
+			}
+			
+			if ( cg.snap->ps.ammo[ i ] < ammoPack/2+1 ){
+				charColor[0] = 1.0;
+				charColor[1] = 0.0;
+				charColor[2] = 0.0;
+			} else if ( cg.snap->ps.ammo[ i ] < ammoPack ){
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 0.0;
+			} else{
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 1.0;
+			}
+				
+			
+			
 			if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 				CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderLeft );
 			}
@@ -2085,7 +2135,7 @@ void CG_DrawWeaponBar0(int count, int bits, float *color){
 			if(cg.snap->ps.ammo[ i ]!=-1){
 				s = va("%i", cg.snap->ps.ammo[ i ] );
 				w = CG_DrawStrlen( s ) * SMALLCHAR_WIDTH;
-				CG_DrawSmallStringColor(x - w/2 + 32, y+4, s, color);
+				CG_DrawSmallStringColor(x - w/2 + 32, y+4, s, charColor);
 			}
 
 			y -= 24;
@@ -2109,7 +2159,10 @@ void CG_DrawWeaponBar1(int count, int bits, float *color){
 	int i;
 	int w;
 	char *s;
+	vec4_t charColor;
+	int ammoPack;
 	
+	charColor[3] = color[3];
 	
 	for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
                 //Sago: Do mad change of grapple placement:
@@ -2124,6 +2177,51 @@ void CG_DrawWeaponBar1(int count, int bits, float *color){
 		}
 		if( i != WP_GAUNTLET ) {
 			// draw weapon icon
+			
+			switch( i ){
+				case WP_MACHINEGUN:
+					ammoPack = 50;
+					break;
+				case WP_SHOTGUN:
+					ammoPack = 10;
+					break;
+				case WP_GRENADE_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_ROCKET_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_LIGHTNING:
+					ammoPack = 60;
+					break;
+				case WP_RAILGUN:
+					ammoPack = 10;
+					break;
+				case WP_PLASMAGUN:
+					ammoPack = 30;
+					break;
+				case WP_BFG:
+					ammoPack = 15;
+					break;
+				default: 
+					ammoPack = 200;
+					break;
+			}
+			
+			if ( cg.snap->ps.ammo[ i ] < ammoPack/2+1 ){
+				charColor[0] = 1.0;
+				charColor[1] = 0.0;
+				charColor[2] = 0.0;
+			} else if ( cg.snap->ps.ammo[ i ] < ammoPack ){
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 0.0;
+			} else{
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 1.0;
+			}
+			
 			if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 				CG_DrawPic( x, y, 30, 38, cgs.media.selectionShaderMid );
 			}
@@ -2137,7 +2235,7 @@ void CG_DrawWeaponBar1(int count, int bits, float *color){
 			if(cg.snap->ps.ammo[ i ]!=-1){
 				s = va("%i", cg.snap->ps.ammo[ i ] );
 				w = CG_DrawStrlen( s ) * SMALLCHAR_WIDTH;
-				CG_DrawSmallStringColor(x - w/2 + 15, y+20, s, color);
+				CG_DrawSmallStringColor(x - w/2 + 15, y+20, s, charColor);
 			}
 			
 			x += 30;
@@ -2161,6 +2259,10 @@ void CG_DrawWeaponBar2(int count, int bits, float *color){
 	int i;
 	int w;
 	char *s;
+	vec4_t charColor;
+	int ammoPack;
+	
+	charColor[3] = color[3];
 	
 	for ( i = MAX_WEAPONS - 1 ; i >= 0 ; i-- ) {
                 //Sago: Do mad change of grapple placement:
@@ -2175,6 +2277,51 @@ void CG_DrawWeaponBar2(int count, int bits, float *color){
 		}
 		if( i != WP_GAUNTLET ) {
 			// draw weapon icon
+			
+			switch( i ){
+				case WP_MACHINEGUN:
+					ammoPack = 50;
+					break;
+				case WP_SHOTGUN:
+					ammoPack = 10;
+					break;
+				case WP_GRENADE_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_ROCKET_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_LIGHTNING:
+					ammoPack = 60;
+					break;
+				case WP_RAILGUN:
+					ammoPack = 10;
+					break;
+				case WP_PLASMAGUN:
+					ammoPack = 30;
+					break;
+				case WP_BFG:
+					ammoPack = 15;
+					break;
+				default: 
+					ammoPack = 200;
+					break;
+			}
+			
+			if ( cg.snap->ps.ammo[ i ] < ammoPack/2+1 ){
+				charColor[0] = 1.0;
+				charColor[1] = 0.0;
+				charColor[2] = 0.0;
+			} else if ( cg.snap->ps.ammo[ i ] < ammoPack ){
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 0.0;
+			} else{
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 1.0;
+			}
+			
 			if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 				CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderRight );
 			}
@@ -2189,7 +2336,7 @@ void CG_DrawWeaponBar2(int count, int bits, float *color){
 			if(cg.snap->ps.ammo[ i ]!=-1){
 				s = va("%i", cg.snap->ps.ammo[ i ] );
 				w = CG_DrawStrlen( s ) * SMALLCHAR_WIDTH;
-				CG_DrawSmallStringColor(x - w/2 + 32, y+4, s, color);
+				CG_DrawSmallStringColor(x - w/2 + 32, y+4, s, charColor);
 			}
 
 			y -= 24;
@@ -2214,11 +2361,60 @@ void CG_DrawWeaponBar3(int count, int bits, float *color){
 	int i;
 	int w;
 	char *s;
+	vec4_t charColor;
+	int ammoPack;
+	
+	charColor[3] = color[3];
 	
 	for ( i = MAX_WEAPONS - 1 ; i >= 0 ; i-- ) {
 		if( cg_weapons[i].weaponIcon ){
 			if( i != WP_GAUNTLET ) {
 				// draw weapon icon
+				
+				switch( i ){
+				case WP_MACHINEGUN:
+					ammoPack = 50;
+					break;
+				case WP_SHOTGUN:
+					ammoPack = 10;
+					break;
+				case WP_GRENADE_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_ROCKET_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_LIGHTNING:
+					ammoPack = 60;
+					break;
+				case WP_RAILGUN:
+					ammoPack = 10;
+					break;
+				case WP_PLASMAGUN:
+					ammoPack = 30;
+					break;
+				case WP_BFG:
+					ammoPack = 15;
+					break;
+				default: 
+					ammoPack = 200;
+					break;
+			}
+			
+			if ( cg.snap->ps.ammo[ i ] < ammoPack/2+1 ){
+				charColor[0] = 1.0;
+				charColor[1] = 0.0;
+				charColor[2] = 0.0;
+			} else if ( cg.snap->ps.ammo[ i ] < ammoPack ){
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 0.0;
+			} else{
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 1.0;
+			}
+				
 				if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 					CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderLeft );
 				}
@@ -2233,7 +2429,7 @@ void CG_DrawWeaponBar3(int count, int bits, float *color){
 					if(cg.snap->ps.ammo[ i ]!=-1){
 						s = va("%i", cg.snap->ps.ammo[ i ] );
 						w = CG_DrawStrlen( s ) * SMALLCHAR_WIDTH;
-						CG_DrawSmallStringColor(x - w/2 + 32, y+4, s, color);
+						CG_DrawSmallStringColor(x - w/2 + 32, y+4, s, charColor);
 					}
 				}
 				y -= 24;
@@ -2256,12 +2452,60 @@ void CG_DrawWeaponBar4(int count, int bits, float *color){
 	int i;
 	int w;
 	char *s;
+	vec4_t charColor;
+	int ammoPack;
 	
+	charColor[3] = color[3];
 	
 	for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
                 if( cg_weapons[i].weaponIcon ){
 			if( i != WP_GAUNTLET ) {
 				// draw weapon icon
+				
+				switch( i ){
+				case WP_MACHINEGUN:
+					ammoPack = 50;
+					break;
+				case WP_SHOTGUN:
+					ammoPack = 10;
+					break;
+				case WP_GRENADE_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_ROCKET_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_LIGHTNING:
+					ammoPack = 60;
+					break;
+				case WP_RAILGUN:
+					ammoPack = 10;
+					break;
+				case WP_PLASMAGUN:
+					ammoPack = 30;
+					break;
+				case WP_BFG:
+					ammoPack = 15;
+					break;
+				default: 
+					ammoPack = 200;
+					break;
+			}
+			
+			if ( cg.snap->ps.ammo[ i ] < ammoPack/2+1 ){
+				charColor[0] = 1.0;
+				charColor[1] = 0.0;
+				charColor[2] = 0.0;
+			} else if ( cg.snap->ps.ammo[ i ] < ammoPack ){
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 0.0;
+			} else{
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 1.0;
+			}
+				
 				if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 					CG_DrawPic( x, y, 30, 38, cgs.media.selectionShaderMid );
 				}
@@ -2275,7 +2519,7 @@ void CG_DrawWeaponBar4(int count, int bits, float *color){
 					if(cg.snap->ps.ammo[ i ]!=-1){
 						s = va("%i", cg.snap->ps.ammo[ i ] );
 						w = CG_DrawStrlen( s ) * SMALLCHAR_WIDTH;
-						CG_DrawSmallStringColor(x - w/2 + 15, y+20, s, color);
+						CG_DrawSmallStringColor(x - w/2 + 15, y+20, s, charColor);
 					}
 				}
 				x += 30;
@@ -2297,11 +2541,60 @@ void CG_DrawWeaponBar5(int count, int bits, float *color){
 	int i;
 	int w;
 	char *s;
+	vec4_t charColor;
+	int ammoPack;
+	
+	charColor[3] = color[3];
 	
 	for ( i = MAX_WEAPONS-1 ; i >= 0 ; i-- ) {
 		if( cg_weapons[i].weaponIcon ){
 			if( i != WP_GAUNTLET ) {
 				// draw weapon icon
+				
+				switch( i ){
+				case WP_MACHINEGUN:
+					ammoPack = 50;
+					break;
+				case WP_SHOTGUN:
+					ammoPack = 10;
+					break;
+				case WP_GRENADE_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_ROCKET_LAUNCHER:
+					ammoPack = 5;
+					break;
+				case WP_LIGHTNING:
+					ammoPack = 60;
+					break;
+				case WP_RAILGUN:
+					ammoPack = 10;
+					break;
+				case WP_PLASMAGUN:
+					ammoPack = 30;
+					break;
+				case WP_BFG:
+					ammoPack = 15;
+					break;
+				default: 
+					ammoPack = 200;
+					break;
+			}
+			
+			if ( cg.snap->ps.ammo[ i ] < ammoPack/2+1 ){
+				charColor[0] = 1.0;
+				charColor[1] = 0.0;
+				charColor[2] = 0.0;
+			} else if ( cg.snap->ps.ammo[ i ] < ammoPack ){
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 0.0;
+			} else{
+				charColor[0] = 1.0;
+				charColor[1] = 1.0;
+				charColor[2] = 1.0;
+			}
+				
 				if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 					CG_DrawPic( x, y, 50, 24, cgs.media.selectionShaderRight );
 				}
@@ -2316,7 +2609,7 @@ void CG_DrawWeaponBar5(int count, int bits, float *color){
 					if(cg.snap->ps.ammo[ i ]!=-1){
 						s = va("%i", cg.snap->ps.ammo[ i ] );
 						w = CG_DrawStrlen( s ) * SMALLCHAR_WIDTH;
-						CG_DrawSmallStringColor(x - w/2 + 32, y+4, s, color);
+						CG_DrawSmallStringColor(x - w/2 + 32, y+4, s, charColor);
 					}
 				}
 	

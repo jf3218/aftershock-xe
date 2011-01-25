@@ -179,6 +179,20 @@ static void CG_Echo_f( void ) {
 	CG_Printf( string );
 }
 
+static void CG_Currenttime_f( void ) {
+	qtime_t	now;
+
+	trap_RealTime( &now );
+	
+	CG_Printf("%04d %02d %02d - %02d:%02d:%02d\n", 
+		    1900 + now.tm_year,
+			1 + now.tm_mon,
+			now.tm_mday,
+			now.tm_hour,
+			now.tm_min,
+			now.tm_sec);
+}
+
 #ifdef MISSIONPACK
 extern menuDef_t *menuScoreboard;
 void Menu_Reset( void );			// FIXME: add to right include file
@@ -568,6 +582,7 @@ static consoleCommand_t	commands[] = {
 	{ "+acc", CG_AccDown_f },
 	{ "-acc", CG_AccUp_f },
 	{ "secho", CG_Echo_f },
+	{ "currenttime", CG_Currenttime_f },
 
 };
 
