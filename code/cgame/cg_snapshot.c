@@ -157,7 +157,7 @@ static void CG_TransitionSnapshot( void ) {
 	oldFrame = cg.snap;
 	cg.snap = cg.nextSnap;
 	
-	if( (cg.time - cg.AccelTime) > 250 ){
+	if( (cg.time - cg.AccelTime) > 200 ){
 		VectorCopy(cg.accel, cg.lastaccel );
 		VectorMA(cg.snap->ps.velocity, -1, oldFrame->ps.velocity, cg.accel );
 		VectorScale(  cg.accel, 1000.0f/((float)cg.time-(float)cg.AccelTime), cg.accel );

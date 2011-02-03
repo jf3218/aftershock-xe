@@ -1211,15 +1211,9 @@ static void CG_AddToTeamChat( const char *str ) {
 	int len;
 	char *p, *ls;
 	int lastcolor;
-	int chatHeight;
+	int chatHeight = TEAMCHAT_HEIGHT;
 
-	if (cg_teamChatHeight.integer < TEAMCHAT_HEIGHT) {
-		chatHeight = cg_teamChatHeight.integer;
-	} else {
-		chatHeight = TEAMCHAT_HEIGHT;
-	}
-
-	if (chatHeight <= 0 || cg_teamChatTime.integer <= 0) {
+	if ( cg_teamChatTime.integer <= 0) {
 		// team chat disabled, dump into normal chat
 		cgs.teamChatPos = cgs.teamLastChatPos = 0;
 		return;
@@ -1285,18 +1279,9 @@ void CG_AddToChat(const char *str)
   int len;
   char *p, *ls;
   int lastcolor;
-  int chatHeight;
+  int chatHeight = TEAMCHAT_HEIGHT;
 
-  if (cg_chatHeight.integer < TEAMCHAT_HEIGHT)
-  {
-    chatHeight = cg_chatHeight.integer;
-  }
-  else
-  {
-    chatHeight = TEAMCHAT_HEIGHT;
-  }
-
-  if (chatHeight <= 0 || cg_chatTime.integer <= 0)
+  if ( cg_chatTime.integer <= 0)
   {
     // team chat disabled, dump into normal chat
     cgs.chatPos = cgs.lastChatPos = 0;
@@ -1765,170 +1750,6 @@ void CG_ParseLivingCount( void ){
 	cgs.blueLivingCount = newBlue;
 }
 
-#define MAX_VOICECHATBUFFER		32
-
-typedef struct bufferedVoiceChat_s
-{
-	int clientNum;
-	sfxHandle_t snd;
-	int voiceOnly;
-	char cmd[MAX_SAY_TEXT];
-	char message[MAX_SAY_TEXT];
-} bufferedVoiceChat_t;
-
-bufferedVoiceChat_t voiceChatBuffer[MAX_VOICECHATBUFFER];
-
-/*
-=================
-CG_PlayVoiceChat
-=================
-*/
-void CG_PlayVoiceChat( bufferedVoiceChat_t *vchat ) {
-#ifdef MISSIONPACK
-	// if we are going into the intermission, don't start any voices
-	if ( cg.intermissionStarted ) {
-		return;
-	}
-
-	if ( !cg_noVoiceChats.integer ) {
-		trap_S_StartLocalSound( vchat->snd, CHAN_VOICE);
-		if (vchat->clientNum != cg.snap->ps.clientNum) {
-			int orderTask = CG_ValidOrder(vchat->cmd);
-			if (orderTask > 0) {
-				cgs.acceptOrderTime = cg.time + 5000;
-				Q_strncpyz(cgs.acceptVoice, vchat->cmd, sizeof(cgs.acceptVoice));
-				cgs.acceptTask = orderTask;
-				cgs.acceptLeader = vchat->clientNum;
-			}
-			// see if this was an order
-			CG_ShowResponseHead();
-		}
-	}
-	if (!vchat->voiceOnly && !cg_noVoiceText.integer) {
-		CG_AddToTeamChat( vchat->message );
-		CG_Printf( "%s\n", vchat->message );
-	}
-	voiceChatBuffer[cg.voiceChatBufferOut].snd = 0;
-#endif
-}
-
-/*
-=====================
-CG_PlayBufferedVoieChats
-=====================
-*/
-void CG_PlayBufferedVoiceChats( void ) {
-#ifdef MISSIONPACK
-	if ( cg.voiceChatTime < cg.time ) {
-		if (cg.voiceChatBufferOut != cg.voiceChatBufferIn && voiceChatBuffer[cg.voiceChatBufferOut].snd) {
-			//
-			CG_PlayVoiceChat(&voiceChatBuffer[cg.voiceChatBufferOut]);
-			//
-			cg.voiceChatBufferOut = (cg.voiceChatBufferOut + 1) % MAX_VOICECHATBUFFER;
-			cg.voiceChatTime = cg.time + 1000;
-		}
-	}
-#endif
-}
-
-/*
-=====================
-CG_AddBufferedVoiceChat
-=====================
-*/
-void CG_AddBufferedVoiceChat( bufferedVoiceChat_t *vchat ) {
-#ifdef MISSIONPACK
-	// if we are going into the intermission, don't start any voices
-	if ( cg.intermissionStarted ) {
-		return;
-	}
-
-	memcpy(&voiceChatBuffer[cg.voiceChatBufferIn], vchat, sizeof(bufferedVoiceChat_t));
-	cg.voiceChatBufferIn = (cg.voiceChatBufferIn + 1) % MAX_VOICECHATBUFFER;
-	if (cg.voiceChatBufferIn == cg.voiceChatBufferOut) {
-		CG_PlayVoiceChat( &voiceChatBuffer[cg.voiceChatBufferOut] );
-		cg.voiceChatBufferOut++;
-	}
-#endif
-}
-
-/*
-=================
-CG_VoiceChatLocal
-=================
-*/
-void CG_VoiceChatLocal( int mode, qboolean voiceOnly, int clientNum, int color, const char *cmd ) {
-#ifdef MISSIONPACK
-	char *chat;
-	voiceChatList_t *voiceChatList;
-	clientInfo_t *ci;
-	sfxHandle_t snd;
-	bufferedVoiceChat_t vchat;
-
-	// if we are going into the intermission, don't start any voices
-	if ( cg.intermissionStarted ) {
-		return;
-	}
-
-	if ( clientNum < 0 || clientNum >= MAX_CLIENTS ) {
-		clientNum = 0;
-	}
-	ci = &cgs.clientinfo[ clientNum ];
-
-	cgs.currentVoiceClient = clientNum;
-
-	voiceChatList = CG_VoiceChatListForClient( clientNum );
-
-	if ( CG_GetVoiceChat( voiceChatList, cmd, &snd, &chat ) ) {
-		//
-		if ( mode == SAY_TEAM || !cg_teamChatsOnly.integer ) {
-			vchat.clientNum = clientNum;
-			vchat.snd = snd;
-			vchat.voiceOnly = voiceOnly;
-			Q_strncpyz(vchat.cmd, cmd, sizeof(vchat.cmd));
-			if ( mode == SAY_TELL ) {
-				Com_sprintf(vchat.message, sizeof(vchat.message), "[%s]: %c%c%s", ci->name, Q_COLOR_ESCAPE, color, chat);
-			}
-			else if ( mode == SAY_TEAM ) {
-				Com_sprintf(vchat.message, sizeof(vchat.message), "(%s): %c%c%s", ci->name, Q_COLOR_ESCAPE, color, chat);
-			}
-			else {
-				Com_sprintf(vchat.message, sizeof(vchat.message), "%s: %c%c%s", ci->name, Q_COLOR_ESCAPE, color, chat);
-			}
-			CG_AddBufferedVoiceChat(&vchat);
-		}
-	}
-#endif
-}
-
-/*
-=================
-CG_VoiceChat
-=================
-*/
-void CG_VoiceChat( int mode ) {
-#ifdef MISSIONPACK
-	const char *cmd;
-	int clientNum, color;
-	qboolean voiceOnly;
-
-	voiceOnly = atoi(CG_Argv(1));
-	clientNum = atoi(CG_Argv(2));
-	color = atoi(CG_Argv(3));
-	cmd = CG_Argv(4);
-
-	if (cg_noTaunt.integer != 0) {
-		if (!strcmp(cmd, VOICECHAT_KILLINSULT)  || !strcmp(cmd, VOICECHAT_TAUNT) || \
-			!strcmp(cmd, VOICECHAT_DEATHINSULT) || !strcmp(cmd, VOICECHAT_KILLGAUNTLET) || \
-			!strcmp(cmd, VOICECHAT_PRAISE)) {
-			return;
-		}
-	}
-
-	CG_VoiceChatLocal( mode, voiceOnly, clientNum, color, cmd );
-#endif
-}
-
 /*
 =================
 CG_RemoveChatEscapeChar
@@ -2025,21 +1846,6 @@ static void CG_ServerCommand( void ) {
 		}
 		return;
 	}
-	if ( !strcmp( cmd, "vchat" ) ) {
-		CG_VoiceChat( SAY_ALL );
-		return;
-	}
-
-	if ( !strcmp( cmd, "vtchat" ) ) {
-		CG_VoiceChat( SAY_TEAM );
-		return;
-	}
-
-	if ( !strcmp( cmd, "vtell" ) ) {
-		CG_VoiceChat( SAY_TELL );
-		return;
-	}
-
 	if ( !strcmp( cmd, "scores" ) ) {
 		CG_ParseScores();
 		return;

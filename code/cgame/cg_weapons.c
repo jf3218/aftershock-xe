@@ -2016,7 +2016,7 @@ void CG_DrawWeaponSelect( void ) {
 		}
 	}
 	
-	switch(cg_weaponBarStyle.integer){
+	/*switch(cg_weaponBarStyle.integer){
 		case 0:
 			CG_DrawWeaponBar0(count,bits, color);
 			break;
@@ -2038,9 +2038,94 @@ void CG_DrawWeaponSelect( void ) {
 		default:
 			//CG_DrawWeaponBar0(count,bits, color);
 			break;
-	}
+	}*/
+	
+	CG_DrawWeaponBar( count, bits, color );
 	trap_R_SetColor(NULL);
 	return;
+}
+
+void CG_DrawWeaponBar( int count, int bits, float *color ){
+	hudElements_t hudelement = cgs.hud[HUD_WEAPONLIST];
+	int height, width, xpos, ypos, textalign;
+	qboolean horizontal;
+	int boxWidth, boxHeight, x,y;
+	int i;
+	int iconsize;
+	int icon_xrel, icon_yrel, text_xrel, text_yrel;
+	char* s;
+	int w;
+	
+	height = hudelement.height;
+	width = hudelement.width;
+	xpos = hudelement.xpos;
+	ypos = hudelement.ypos;
+	textalign = hudelement.textAlign;
+	
+	horizontal = height < width;
+	
+	count = 0;
+	for( i = WP_MACHINEGUN ; i <= WP_BFG; i++ ){
+		if( cg_weapons[i].weaponIcon )
+			count++;
+	}
+	
+	if( horizontal ){
+		boxHeight = height;
+		boxWidth = width/9;
+	}
+	else{
+		boxHeight = height/9;
+		boxWidth = width;
+	}
+	
+	x = xpos;
+	y = ypos;
+	
+	if( textalign == 0 ){
+			if( boxHeight < ( boxWidth - 3*hudelement.fontWidth - 6 ) )
+				iconsize = boxHeight;
+			else
+				iconsize = ( boxWidth - 3*hudelement.fontWidth - 6 );
+			
+			icon_yrel = boxHeight/2 - iconsize/2;
+			icon_xrel = boxHeight - iconsize - 2;
+			
+			text_yrel = boxHeight/2 - hudelement.fontHeight/2;
+			text_xrel = 2;
+	}
+	
+		
+		for( i = WP_MACHINEGUN; i <= WP_BFG; i++ ){
+			if( cg_weapons[i].weaponIcon ){
+				if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
+					if( hudelement.imageHandle )
+						CG_DrawPic( x, y, boxWidth, boxHeight, hudelement.imageHandle );
+					else
+						CG_DrawPic( x, y, boxWidth, boxHeight, cgs.media.selectionShaderMid );
+				}
+				
+				CG_DrawPic( x + icon_xrel, y + icon_yrel, iconsize, iconsize, cg_weapons[i].weaponIcon );
+				
+				if(cg.snap->ps.ammo[ i ]!=-1){
+					s = va("%i", cg.snap->ps.ammo[ i ] );
+					w = CG_DrawStrlen( s ) * SMALLCHAR_WIDTH;
+					CG_DrawSmallStringColor(x+text_xrel, y+text_yrel, s, colorWhite);
+				}
+			
+				if( horizontal )
+					x += boxWidth;
+				else
+					y += boxHeight;
+			}
+		}
+	
+	
+	
+	
+	
+	
+	
 }
 
 /*

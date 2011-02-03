@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "../game/challenges.h"
 
-
 // The entire cgame module is unloaded and reloaded on each level change,
 // so there is NO persistant data between levels on the client side.
 // If you absolutely need something stored, it can either be kept
@@ -455,6 +454,141 @@ typedef struct {
 	int numpositions;
 } skulltrail_t;
 
+//=====================================SUPERHUD=========================
+
+// hudElements_t
+// struct to save all the hudelement data
+typedef struct {
+	qboolean inuse;
+	int xpos;
+	int ypos;
+	int width;
+	int height;
+	float color[4];
+	float bgcolor[4];
+	qboolean fill;
+	int fontWidth;
+	int fontHeight;
+	char *image;
+	char *text;
+	int textAlign;
+	int textstyle;
+	int time;
+	qhandle_t imageHandle;
+} hudElements_t;
+
+enum{ 
+	HUD_DEFAULT,
+	HUD_AMMOWARNING,
+	HUD_ATTACKERICON,
+	HUD_ATTACKERNAME,
+	HUD_CHAT1,
+	HUD_CHAT2,
+	HUD_CHAT3,
+	HUD_CHAT4,
+	HUD_CHAT5,
+	HUD_CHAT6,
+	HUD_CHAT7,
+	HUD_CHAT8,
+	HUD_FS_OWN,
+	HUD_FS_NME,
+	HUD_FOLLOW,
+	HUD_FPS,
+	HUD_FRAGMSG,
+	HUD_GAMETIME,
+	HUD_CATIME,
+	HUD_GAMETYPE,
+	HUD_ITEMPICKUPNAME,
+	HUD_ITEMPICKUPTIME,
+	HUD_ITEMPICKUPICON,
+	HUD_NETGRAPH,
+	HUD_NETGRAPHPING,
+	HUD_SPEED,
+	HUD_ACCEL,
+	HUD_PU1,
+	HUD_PU2,
+	HUD_PU3,
+	HUD_PU4,
+	HUD_PU1ICON,
+	HUD_PU2ICON,
+	HUD_PU3ICON,
+	HUD_PU4ICON,
+	HUD_RANKMSG,
+	HUD_SCORELIMIT,
+	HUD_SCORENME,
+	HUD_SCOREOWN,
+	HUD_SPECMESSAGE,
+	HUD_ARMORBAR,
+	HUD_ARMORCOUNT,
+	HUD_ARMORICON,
+	HUD_AMMOBAR,
+	HUD_AMMOCOUNT,
+	HUD_AMMOICON,
+	HUD_HEALTHBAR,
+	HUD_HEALTHCOUNT,
+	HUD_HEALTHICON,
+	HUD_TARGETNAME,
+	HUD_TARGETSTATUS,
+	HUD_TC_NME,
+	HUD_TC_OWN,
+	HUD_TI_NME,
+	HUD_TI_OWN,
+	HUD_TEAMCHAT1,
+	HUD_TEAMCHAT2,
+	HUD_TEAMCHAT3,
+	HUD_TEAMCHAT4,
+	HUD_TEAMCHAT5,
+	HUD_TEAMCHAT6,
+	HUD_TEAMCHAT7,
+	HUD_TEAMCHAT8,
+	HUD_VOTEMSG,
+	HUD_WARMUP,
+	HUD_WEAPONLIST,
+	HUD_READYSTATUS,
+	HUD_DEATHNOTICE1,
+	HUD_DEATHNOTICE2,
+	HUD_DEATHNOTICE3,
+	HUD_DEATHNOTICE4,
+	HUD_DEATHNOTICE5,
+	HUD_COUNTDOWN,
+	HUD_PREDECORATE1,
+	HUD_PREDECORATE2,
+	HUD_PREDECORATE3,
+	HUD_PREDECORATE4,
+	HUD_PREDECORATE5,
+	HUD_PREDECORATE6,
+	HUD_PREDECORATE7,
+	HUD_PREDECORATE8,
+	HUD_POSTDECORATE1,
+	HUD_POSTDECORATE2,
+	HUD_POSTDECORATE3,
+	HUD_POSTDECORATE4,
+	HUD_POSTDECORATE5,
+	HUD_POSTDECORATE6,
+	HUD_POSTDECORATE7,
+	HUD_POSTDECORATE8,
+	
+	HUD_MAX
+};
+
+typedef enum {
+	TOT_LPAREN,
+	TOT_RPAREN,
+	TOT_WORD,
+	TOT_NUMBER,
+	TOT_NIL,
+	TOT_MAX
+} tokenType_t;
+
+#define TOKENVALUE_SIZE 64
+
+typedef struct {
+	char value[TOKENVALUE_SIZE];
+	int type;
+} token_t;
+//=========================SUPERHUD END==================================
+
+
 
 #define MAX_REWARDSTACK		10
 #define MAX_SOUNDBUFFER		20
@@ -693,6 +827,11 @@ typedef struct {
 	vec3_t  lastaccel;
 	int AccelTime;
 	int lastAccelTime;
+	
+	char fragMessage[512];
+	int  fragMessageTime;
+	char rankMessage[512];
+	int  rankMessageTime;
 
 } cg_t;
 
@@ -720,6 +859,7 @@ typedef struct {
 	qhandle_t	neutralFlagModel;
 	qhandle_t	redFlagShader[3];
 	qhandle_t	blueFlagShader[3];
+	qhandle_t	neutralFlagShader[3];
 	qhandle_t	flagShader[4];
 
 //For Double Domination:
@@ -1238,6 +1378,8 @@ typedef struct {
 	int		timeoutCount;
 	int		redLivingCount;
 	int		blueLivingCount;
+	
+	hudElements_t   hud[HUD_MAX];
 } cgs_t;
 
 //==============================================================================
@@ -1258,12 +1400,10 @@ extern	vmCvar_t		cg_bobroll;
 extern	vmCvar_t		cg_swingSpeed;
 extern	vmCvar_t		cg_shadows;
 extern	vmCvar_t		cg_gibs;
-extern	vmCvar_t		cg_drawTimer;
-extern	vmCvar_t		cg_drawFPS;
 extern	vmCvar_t		cg_drawSnapshot;
 extern	vmCvar_t		cg_draw3dIcons;
 extern	vmCvar_t		cg_drawIcons;
-extern	vmCvar_t		cg_ammoWarning;
+extern	vmCvar_t		cg_ammoWarningSound;
 extern	vmCvar_t		cg_drawCrosshair;
 extern	vmCvar_t		cg_drawCrosshairNames;
 extern	vmCvar_t		cg_drawRewards;
@@ -1304,14 +1444,10 @@ extern	vmCvar_t		cg_zoomFov;
 extern	vmCvar_t		cg_thirdPersonRange;
 extern	vmCvar_t		cg_thirdPersonAngle;
 extern	vmCvar_t		cg_thirdPerson;
-extern	vmCvar_t		cg_lagometer;
-extern	vmCvar_t		cg_drawAttacker;
 extern	vmCvar_t		cg_drawSpeed;
 extern	vmCvar_t		cg_synchronousClients;
 extern	vmCvar_t		cg_teamChatTime;
-extern	vmCvar_t		cg_teamChatHeight;
 extern  vmCvar_t 		cg_chatTime;
-extern  vmCvar_t 		cg_chatHeight;
 extern	vmCvar_t		cg_stats;
 extern	vmCvar_t 		cg_forceModel;
 extern	vmCvar_t 		cg_buildScript;
@@ -1322,8 +1458,6 @@ extern	vmCvar_t		cg_deferPlayers;
 extern	vmCvar_t		cg_drawFriend;
 extern	vmCvar_t		cg_teamChatsOnly;
 extern	vmCvar_t		cg_noChat;
-extern	vmCvar_t		cg_noVoiceChats;
-extern	vmCvar_t		cg_noVoiceText;
 extern  vmCvar_t		cg_scorePlum;
 //unlagged - smooth clients #2
 // this is done server-side now
@@ -1410,14 +1544,6 @@ extern	vmCvar_t		cg_ch8;
 extern	vmCvar_t		cg_ch8size;
 extern	vmCvar_t		cg_ch9;
 extern	vmCvar_t		cg_ch9size;
-extern	vmCvar_t		cg_ch10;
-extern	vmCvar_t		cg_ch10size;
-extern	vmCvar_t		cg_ch11;
-extern	vmCvar_t		cg_ch11size;
-extern	vmCvar_t		cg_ch12;
-extern	vmCvar_t		cg_ch12size;
-extern	vmCvar_t		cg_ch13;
-extern	vmCvar_t		cg_ch13size;
 
 extern	vmCvar_t                cg_crosshairColorRed;
 extern	vmCvar_t                cg_crosshairColorGreen;
@@ -1507,6 +1633,8 @@ extern vmCvar_t			aftershock_password;
 extern vmCvar_t			cg_drawAccel;
 
 extern vmCvar_t			ref_password;
+
+extern vmCvar_t			cg_hud;
 
 
 //unlagged - cg_unlagged.c
@@ -1811,10 +1939,7 @@ void CG_InitConsoleCommands( void );
 void CG_ExecuteNewServerCommands( int latestSequence );
 void CG_ParseServerinfo( void );
 void CG_SetConfigValues( void );
-void CG_LoadVoiceChats( void );
 void CG_ShaderStateChanged(void);
-void CG_VoiceChatLocal( int mode, qboolean voiceOnly, int clientNum, int color, const char *cmd );
-void CG_PlayBufferedVoiceChats( void );
 void CG_AddToChat(const char *str);
 
 //

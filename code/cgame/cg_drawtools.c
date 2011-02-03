@@ -105,7 +105,90 @@ void CG_DrawPic( float x, float y, float width, float height, qhandle_t hShader 
 	trap_R_DrawStretchPic( x, y, width, height, 0, 0, 1, 1, hShader );
 }
 
+/*
+================
+CG_DrawHudIcon
 
+Coordinates are 640*480 virtual values
+=================
+*/
+void CG_DrawHudIcon( int hudnumber, qboolean override, qhandle_t hShader ) {
+	hudElements_t hudelement = cgs.hud[hudnumber];
+	vec4_t color;
+	
+	if( !hudelement.inuse )
+		return;
+	
+	color[0] = hudelement.bgcolor[0];
+	color[1] = hudelement.bgcolor[1];
+	color[2] = hudelement.bgcolor[2];
+	color[3] = hudelement.bgcolor[3];
+	
+	if( hudelement.fill ){
+		CG_FillRect( hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, color );
+	}
+	else{
+		CG_DrawRect( hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, 1.0f, color );
+	}
+	
+	if( hudelement.imageHandle && override ){
+		CG_DrawPic(hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, hudelement.imageHandle);
+		return;
+	}
+	if( hShader ){
+		trap_R_SetColor(hudelement.color);
+		CG_DrawPic(hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, hShader);
+		trap_R_SetColor( NULL );
+	}
+}
+
+void CG_DrawScoresHud( int hudnumber, char* text, qboolean spec ){
+	hudElements_t hudelement = cgs.hud[hudnumber];
+	vec4_t color;
+	int x,y, w;
+	qboolean shadow;
+	
+	if( !hudelement.inuse )
+		return;
+	
+	shadow = hudelement.textstyle & 1;
+	if( !spec ){
+		color[0] = hudelement.bgcolor[0];
+		color[1] = hudelement.bgcolor[1];
+		color[2] = hudelement.bgcolor[2];
+		color[3] = hudelement.bgcolor[3];
+	}
+	else{
+		color[0] = 0.5f;
+		color[1] = 0.5f;
+		color[2] = 0.5f;
+		color[3] = 0.5f;
+	}
+	CG_FillRect( hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, color );
+	
+	y = hudelement.ypos + hudelement.height/2 - hudelement.fontHeight/2;
+	
+	w = CG_DrawStrlen(text) * hudelement.fontWidth;
+		
+	if( hudelement.textAlign == 0 )
+		x = hudelement.xpos;
+	else if( hudelement.textAlign == 2 )
+		x = hudelement.xpos + hudelement.width - w;
+	else
+		x = hudelement.xpos + hudelement.width/2 - w/2;
+
+	
+	color[0] = hudelement.color[0];
+	color[1] = hudelement.color[1];
+	color[2] = hudelement.color[2];
+	color[3] = hudelement.color[3];
+	
+	
+		
+	CG_DrawStringExt( x, y, text, color, qfalse, shadow, hudelement.fontWidth, hudelement.fontHeight, 0 );
+}
+	
+	
 
 /*
 ===============
@@ -231,6 +314,41 @@ void CG_DrawStringExt( int x, int y, const char *string, const float *setColor,
 	trap_R_SetColor( NULL );
 }
 
+void CG_DrawStringHud( int hudnumber, qboolean colorize, char* text ){
+	hudElements_t hudelement = cgs.hud[hudnumber];
+	int w, x;
+	vec4_t color;
+	qboolean shadow = (hudelement.textstyle & 1);
+	
+	if( !hudelement.inuse ){
+		return;
+	}
+	
+	w = CG_DrawStrlen(text) * hudelement.fontWidth;
+		
+	if( hudelement.textAlign == 0 )
+		x = hudelement.xpos;
+	else if( hudelement.textAlign == 2 )
+		x = hudelement.xpos + hudelement.width - w;
+	else
+		x = hudelement.xpos + hudelement.width/2 - w/2;
+
+	if( colorize ){
+		color[0] = hudelement.color[0];
+		color[1] = hudelement.color[1];
+		color[2] = hudelement.color[2];
+		color[3] = hudelement.color[3];
+	}
+	else {
+		color[0] = 1.0;
+		color[1] = 1.0;
+		color[2] = 1.0;
+		color[3] = 1.0;
+	}
+		
+	CG_DrawStringExt( x, hudelement.ypos, text, color, qfalse, shadow, hudelement.fontWidth, hudelement.fontHeight, 0 );
+}
+		
 void CG_DrawBigString( int x, int y, const char *s, float alpha ) {
 	float	color[4];
 

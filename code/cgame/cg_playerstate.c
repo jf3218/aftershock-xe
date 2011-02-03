@@ -81,7 +81,7 @@ void CG_CheckAmmo( void ) {
 		cg.lowAmmoWarning = 1;
 	}
 
-	if( !( cg_ammoWarning.integer & 2 ) )
+	if( !( cg_ammoWarningSound.integer ) )
 		return;
 	
 	// play a sound on transitions

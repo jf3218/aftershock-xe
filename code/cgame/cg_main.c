@@ -36,6 +36,8 @@ int enemyModelModificationCount = -1;
 int teamModelModificationCount = -1;
 int forceTeamModelsModificationCount = -1;
 
+int hudModificationCount = -1;
+
 
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
 void CG_Shutdown( void );
@@ -111,14 +113,11 @@ vmCvar_t	cg_bobroll;
 vmCvar_t	cg_swingSpeed;
 vmCvar_t	cg_shadows;
 vmCvar_t	cg_gibs;
-vmCvar_t	cg_drawTimer;
-vmCvar_t	cg_drawFPS;
 vmCvar_t	cg_drawSnapshot;
 vmCvar_t	cg_draw3dIcons;
 vmCvar_t	cg_drawIcons;
-vmCvar_t	cg_ammoWarning;
+vmCvar_t	cg_ammoWarningSound;
 vmCvar_t	cg_drawCrosshair;
-vmCvar_t	cg_drawCrosshairNames;
 vmCvar_t	cg_drawRewards;
 vmCvar_t	cg_crosshairSize;
 vmCvar_t	cg_crosshairX;
@@ -154,14 +153,10 @@ vmCvar_t	cg_zoomFov;
 vmCvar_t	cg_thirdPerson;
 vmCvar_t	cg_thirdPersonRange;
 vmCvar_t	cg_thirdPersonAngle;
-vmCvar_t	cg_lagometer;
-vmCvar_t	cg_drawAttacker;
 vmCvar_t	cg_drawSpeed;
 vmCvar_t	cg_synchronousClients;
 vmCvar_t 	cg_teamChatTime;
-vmCvar_t 	cg_teamChatHeight;
 vmCvar_t 	cg_chatTime;
-vmCvar_t 	cg_chatHeight;
 vmCvar_t 	cg_stats;
 vmCvar_t 	cg_buildScript;
 vmCvar_t 	cg_forceModel;
@@ -174,8 +169,6 @@ vmCvar_t	cg_teamOverlayUserinfo;
 vmCvar_t	cg_drawFriend;
 vmCvar_t	cg_teamChatsOnly;
 vmCvar_t	cg_noChat;
-vmCvar_t	cg_noVoiceChats;
-vmCvar_t	cg_noVoiceText;
 vmCvar_t	cg_hudFiles;
 vmCvar_t 	cg_scorePlum;
 //unlagged - smooth clients #2
@@ -264,14 +257,6 @@ vmCvar_t	cg_ch8;
 vmCvar_t	cg_ch8size;
 vmCvar_t	cg_ch9;
 vmCvar_t	cg_ch9size;
-vmCvar_t	cg_ch10;
-vmCvar_t	cg_ch10size;
-vmCvar_t	cg_ch11;
-vmCvar_t	cg_ch11size;
-vmCvar_t	cg_ch12;
-vmCvar_t	cg_ch12size;
-vmCvar_t	cg_ch13;
-vmCvar_t	cg_ch13size;
 
 vmCvar_t	cg_crosshairColorRed;
 vmCvar_t	cg_crosshairColorGreen;
@@ -361,6 +346,8 @@ vmCvar_t	cg_drawAccel;
 
 vmCvar_t	ref_password;
 
+vmCvar_t	cg_hud;
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -371,7 +358,7 @@ typedef struct {
 
 static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_ignore, "cg_ignore", "0", 0 },	// used for debugging
-	{ &cg_autoswitch, "cg_autoswitch", "1", CVAR_ARCHIVE },
+	{ &cg_autoswitch, "cg_autoswitch", "0", CVAR_ARCHIVE },
 	{ &cg_drawGun, "cg_drawGun", "3", CVAR_ARCHIVE },
 	{ &cg_zoomFov, "cg_zoomfov", "22.5", CVAR_ARCHIVE },
 	{ &cg_fov, "cg_fov", "90", CVAR_ARCHIVE | CVAR_USERINFO },
@@ -380,16 +367,12 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_gibs, "cg_gibs", "1", CVAR_ARCHIVE  },
 	{ &cg_draw2D, "cg_draw2D", "1", CVAR_ARCHIVE  },
 	{ &cg_drawStatus, "cg_drawStatus", "1", CVAR_ARCHIVE  },
-	{ &cg_drawTimer, "cg_drawTimer", "0", CVAR_ARCHIVE  },
-	{ &cg_drawFPS, "cg_drawFPS", "0", CVAR_ARCHIVE  },
 	{ &cg_drawSnapshot, "cg_drawSnapshot", "0", CVAR_ARCHIVE  },
 	{ &cg_draw3dIcons, "cg_draw3dIcons", "1", CVAR_ARCHIVE  },
 	{ &cg_drawIcons, "cg_drawIcons", "1", CVAR_ARCHIVE  },
-	{ &cg_ammoWarning, "cg_ammoWarning", "3", CVAR_ARCHIVE  },
-	{ &cg_drawAttacker, "cg_drawAttacker", "1", CVAR_ARCHIVE  },
+	{ &cg_ammoWarningSound, "cg_ammoWarningSound", "1", CVAR_ARCHIVE  },
 	{ &cg_drawSpeed, "cg_drawSpeed", "0", CVAR_ARCHIVE  },
 	{ &cg_drawCrosshair, "cg_drawCrosshair", "4", CVAR_ARCHIVE },
-	{ &cg_drawCrosshairNames, "cg_drawCrosshairNames", "1", CVAR_ARCHIVE },
 	{ &cg_drawRewards, "cg_drawRewards", "1", CVAR_ARCHIVE },
 	{ &cg_crosshairSize, "cg_crosshairSize", "24", CVAR_ARCHIVE },
 	{ &cg_crosshairHealth, "cg_crosshairHealth", "1", CVAR_ARCHIVE },
@@ -398,7 +381,6 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_brassTime, "cg_brassTime", "2500", CVAR_ARCHIVE },
 	{ &cg_simpleItems, "cg_simpleItems", "0", CVAR_ARCHIVE },
 	{ &cg_addMarks, "cg_marks", "1", CVAR_ARCHIVE },
-	{ &cg_lagometer, "cg_lagometer", "1", CVAR_ARCHIVE },
 	{ &cg_railTrailTime, "cg_railTrailTime", "600", CVAR_ARCHIVE  },
 	{ &cg_gun_x, "cg_gunX", "0", CVAR_ARCHIVE },
 	{ &cg_gun_y, "cg_gunY", "0", CVAR_ARCHIVE },
@@ -426,9 +408,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_thirdPersonAngle, "cg_thirdPersonAngle", "0", CVAR_CHEAT },
 	{ &cg_thirdPerson, "cg_thirdPerson", "0", 0 },
 	{ &cg_teamChatTime, "cg_teamChatTime", "5000", CVAR_ARCHIVE  },
-	{ &cg_teamChatHeight, "cg_teamChatHeight", "5", CVAR_ARCHIVE  },
 	{ &cg_chatTime, "cg_chatTime", "5000", CVAR_ARCHIVE},
-	{ &cg_chatHeight, "cg_chatHeight", "5", CVAR_ARCHIVE},
 	{ &cg_forceModel, "cg_forceModel", "1", CVAR_ARCHIVE  },
 	{ &cg_predictItems, "cg_predictItems", "1", CVAR_ARCHIVE },
 #ifdef MISSIONPACK
@@ -442,8 +422,6 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_drawFriend, "cg_drawFriend", "1", CVAR_ARCHIVE },
 	{ &cg_teamChatsOnly, "cg_teamChatsOnly", "0", CVAR_ARCHIVE },
 	{ &cg_noChat, "cg_noChat", "0", CVAR_ARCHIVE },
-	{ &cg_noVoiceChats, "cg_noVoiceChats", "0", CVAR_ARCHIVE },
-	{ &cg_noVoiceText, "cg_noVoiceText", "0", CVAR_ARCHIVE },
 	// the following variables are created in other parts of the system,
 	// but we also reference them here
 	{ &cg_buildScript, "com_buildScript", "0", 0 },	// force loading of all possible data amd error on failures
@@ -530,14 +508,6 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_ch8size, "cg_ch8size", "24", CVAR_ARCHIVE},
 	{ &cg_ch9, "cg_ch9", "1", CVAR_ARCHIVE},
 	{ &cg_ch9size, "cg_ch9size", "24", CVAR_ARCHIVE},
-	{ &cg_ch10, "cg_ch10", "1", CVAR_ARCHIVE},
-	{ &cg_ch10size, "cg_ch10size", "24", CVAR_ARCHIVE},
-	{ &cg_ch11, "cg_ch11", "1", CVAR_ARCHIVE},
-	{ &cg_ch11size, "cg_ch11size", "24", CVAR_ARCHIVE},
-	{ &cg_ch12, "cg_ch12", "1", CVAR_ARCHIVE},
-	{ &cg_ch12size, "cg_ch12size", "24", CVAR_ARCHIVE},
-	{ &cg_ch13, "cg_ch13", "1", CVAR_ARCHIVE},
-	{ &cg_ch13size, "cg_ch13size", "24", CVAR_ARCHIVE},
 	{ &cg_crosshairColorRed, "cg_crosshairColorRed", "1.0", CVAR_ARCHIVE},
         { &cg_crosshairColorGreen, "cg_crosshairColorGreen", "1.0", CVAR_ARCHIVE},
         { &cg_crosshairColorBlue, "cg_crosshairColorBlue", "1.0", CVAR_ARCHIVE},
@@ -594,6 +564,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&aftershock_password, "aftershock_password", "", CVAR_USERINFO },
 	{&cg_drawAccel, "cg_drawAccel", "0", CVAR_ARCHIVE },
 	{&ref_password, "ref_password", "", CVAR_USERINFO | CVAR_TEMP },
+	{&cg_hud, "cg_hud", "hud/default.txt", CVAR_ARCHIVE },
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -719,6 +690,17 @@ void CG_UpdateCvars( void ) {
 
 		CG_ForceModelChange();
 	}
+	
+	if( hudModificationCount != cg_hud.modificationCount ){
+		for( i = 0; i < HUD_MAX ; i++ ){
+			
+		}
+		hudModificationCount = cg_hud.modificationCount;
+		CG_ClearHud();
+		CG_LoadHudFile( cg_hud.string );
+	}
+	
+	
 }
 
 int CG_CrosshairPlayer( void ) {
@@ -1265,6 +1247,9 @@ static void CG_RegisterGraphics( void ) {
 		cgs.media.blueFlagShader[0] = trap_R_RegisterShaderNoMip( "icons/iconf_blu1" );
 		cgs.media.blueFlagShader[1] = trap_R_RegisterShaderNoMip( "icons/iconf_blu2" );
 		cgs.media.blueFlagShader[2] = trap_R_RegisterShaderNoMip( "icons/iconf_blu3" );
+		cgs.media.neutralFlagShader[0] = trap_R_RegisterShaderNoMip( "icons/iconf_neu1" );
+		cgs.media.neutralFlagShader[1] = trap_R_RegisterShaderNoMip( "icons/iconf_neu2" );
+		cgs.media.neutralFlagShader[2] = trap_R_RegisterShaderNoMip( "icons/iconf_neu3" );
 		cgs.media.flagPoleModel = trap_R_RegisterModel( "models/flag2/flagpole.md3" );
 		cgs.media.flagFlapModel = trap_R_RegisterModel( "models/flag2/flagflap3.md3" );
 
@@ -2423,6 +2408,8 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 		cgs.respawnTimerNextItem[i] = -1;
 	}
 	cgs.respawnTimerNumber = 0;
+	
+	CG_LoadHudFile(cg_hud.string);
 }
 
 /*
