@@ -617,7 +617,6 @@ CG_DrawStatusBar
 
 ================
 */
-#ifndef MISSIONPACK
 static void CG_DrawStatusBar( void ) {
 	int			color;
 	centity_t	*cent;
@@ -732,7 +731,6 @@ static void CG_DrawStatusBar( void ) {
 	else
 		CG_DrawHudIcon( HUD_ARMORICON, qtrue, cgs.media.armorYellow );
 }
-#endif
 
 /*
 ===========================================================================================
@@ -2146,7 +2144,7 @@ static void CG_DrawReward( void ) {
 	count = cg.rewardCount[0] - count*10;		// number of small rewards to draw
 	*/
 
-	if ( cg.rewardCount[0] >= 10 ) {
+	//if ( cg.rewardCount[0] >= 10 ) {
 		y = 56;
 		x = 320 - ICON_SIZE/2;
 		CG_DrawPic( x, y, ICON_SIZE-4, ICON_SIZE-4, cg.rewardShader[0] );
@@ -2154,7 +2152,7 @@ static void CG_DrawReward( void ) {
 		x = ( SCREEN_WIDTH - SMALLCHAR_WIDTH * CG_DrawStrlen( buf ) ) / 2;
 		CG_DrawStringExt( x, y+ICON_SIZE, buf, color, qfalse, qtrue,
 								SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0 );
-	}
+	/*}
 	else {
 
 		count = cg.rewardCount[0];
@@ -2165,7 +2163,7 @@ static void CG_DrawReward( void ) {
 			CG_DrawPic( x, y, ICON_SIZE-4, ICON_SIZE-4, cg.rewardShader[0] );
 			x += ICON_SIZE;
 		}
-	}
+	}*/
 	trap_R_SetColor( NULL );
 }
 
@@ -3665,29 +3663,20 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 		// don't draw any status if dead or the scoreboard is being explicitly shown
 		if ( !cg.showScores && cg.snap->ps.stats[STAT_HEALTH] > 0 ) {
 
-#ifdef MISSIONPACK
-			if ( cg_drawStatus.integer ) {
-				Menu_PaintAll();
-				CG_DrawTimedMenus();
-			}
-#else
+
 			CG_Predecorate();
 			CG_DrawStatusBar();
-#endif
 
 			CG_DrawAmmoWarning();
-#ifdef MISSIONPACK
-			CG_DrawProxWarning();
-#endif
+
 			if(stereoFrame == STEREO_CENTER)
 				CG_DrawCrosshair();
 			CG_DrawCrosshairNames();
 			CG_DrawWeaponSelect();
 
-                        #ifndef MISSIONPACK
+
 			CG_DrawHoldableItem();
 			CG_DrawPersistantPowerup();
-			#endif
 
                         CG_DrawReward();
 			CG_DrawPickupItem();
@@ -3695,9 +3684,7 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 		}
     
 		if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
-#ifndef MISSIONPACK
 			CG_DrawTeamInfo();
-#endif
 		}
 	}
 	

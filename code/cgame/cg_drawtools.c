@@ -324,6 +324,8 @@ void CG_DrawStringHud( int hudnumber, qboolean colorize, char* text ){
 		return;
 	}
 	
+	CG_DrawHudIcon( hudnumber, qtrue, hudelement.imageHandle );
+	
 	w = CG_DrawStrlen(text) * hudelement.fontWidth;
 		
 	if( hudelement.textAlign == 0 )

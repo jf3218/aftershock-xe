@@ -1819,7 +1819,7 @@ void CG_KeyEvent(int key, qboolean down) {
 
 
   Display_HandleKey(key, down, cgs.cursorX, cgs.cursorY);
-
+  
 	if (cgs.capturedItem) {
 		cgs.capturedItem = NULL;
 	}	else {

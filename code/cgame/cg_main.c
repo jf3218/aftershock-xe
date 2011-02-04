@@ -516,7 +516,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&s_ambient, "s_ambient", "1", CVAR_ARCHIVE},
 	{&cg_nokick, "cg_nokick", "0", CVAR_ARCHIVE},
 	{&cg_hiResCharset, "cg_hiResCharset", "1", CVAR_ARCHIVE},
-	{&cg_weaponBobbing, "cg_weaponBobbing", "1", CVAR_ARCHIVE},
+	{&cg_weaponBobbing, "cg_weaponBobbing", "0", CVAR_ARCHIVE},
 	{&cg_blueteammodel, "cg_blueteammodel", "skelebot/pm", CVAR_ARCHIVE},
 	{&cg_redteammodel, "cg_redteammodel", "major/pm", CVAR_ARCHIVE},
 	{&cg_enemymodel, "cg_enemymodel", "smarine/pm", CVAR_ARCHIVE},
@@ -1193,7 +1193,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.tracerShader = trap_R_RegisterShader( "gfx/misc/tracer" );
 	cgs.media.selectShader = trap_R_RegisterShader( "gfx/2d/select" );
 
-	cgs.media.grenadeSkinColor = trap_R_RegisterShader( "grenadeProjectileColor" );
+	cgs.media.grenadeSkinColor = trap_R_RegisterShader( "models/ammo/grenadeColor" );
 
 	for (i = 0; i < NUM_CROSSHAIRS; i++ ) {
 		if (i < 26)
@@ -2448,6 +2448,7 @@ void CG_EventHandling(int type) {
 
 
 void CG_KeyEvent(int key, qboolean down) {
+	CG_Printf( "%i\n", key );
 }
 
 void CG_MouseEvent(int x, int y) {
