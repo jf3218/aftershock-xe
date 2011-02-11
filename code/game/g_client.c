@@ -2011,8 +2011,8 @@ void ClientBegin( int clientNum ) {
 		Q_strncpyz ( ent->client->aftershock_hash, "none", sizeof( ent->client->aftershock_hash ) );
 	
 	if( !( *Info_ValueForKey( userinfo, "aftershock_login" ) && *Info_ValueForKey( userinfo, "aftershock_password" ) ) ){
-		trap_SendServerCommand( ent-g_entities, va("print \"" S_COLOR_YELLOW "not logged in, register on http://oaunofficial.exulo.de for login\n\"") );
-		trap_SendServerCommand( ent-g_entities, va("screenPrint \"" S_COLOR_YELLOW "not logged in, register on ^2http://oaunofficial.exulo.de ^3for login\"") );
+		trap_SendServerCommand( ent-g_entities, va("print \"" S_COLOR_YELLOW "not logged in, register on http://www.aftershock-fps.de for login\n\"") );
+		trap_SendServerCommand( ent-g_entities, va("screenPrint \"" S_COLOR_YELLOW "not logged in, register on ^2http://www.aftershock-fps.de ^3for login\"") );
 	}
 	
 	G_toSmallCaps(ent->client->aftershock_hash);

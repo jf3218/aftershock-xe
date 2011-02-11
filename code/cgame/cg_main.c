@@ -99,7 +99,7 @@ intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, 
 cg_t				cg;
 cgs_t				cgs;
 centity_t			cg_entities[MAX_GENTITIES];
-weaponInfo_t		cg_weapons[MAX_WEAPONS];
+weaponInfo_t			cg_weapons[MAX_WEAPONS];
 itemInfo_t			cg_items[MAX_ITEMS];
 
 
@@ -124,7 +124,6 @@ vmCvar_t	cg_crosshairX;
 vmCvar_t	cg_crosshairY;
 vmCvar_t	cg_crosshairHealth;
 vmCvar_t	cg_draw2D;
-vmCvar_t	cg_drawStatus;
 vmCvar_t	cg_animSpeed;
 vmCvar_t	cg_debugAnim;
 vmCvar_t	cg_debugPosition;
@@ -226,7 +225,6 @@ vmCvar_t	cl_timeNudge;
 //unlagged - client options
 
 //elimination addition
-vmCvar_t	cg_alwaysWeaponBar;
 vmCvar_t	cg_hitBeep;
 vmCvar_t        cg_voip_teamonly;
 vmCvar_t        cg_voteflags;
@@ -261,8 +259,6 @@ vmCvar_t	cg_ch9size;
 vmCvar_t	cg_crosshairColorRed;
 vmCvar_t	cg_crosshairColorGreen;
 vmCvar_t	cg_crosshairColorBlue;
-
-vmCvar_t	cg_weaponBarStyle;
 
 vmCvar_t 	cg_deathNoticeTime;
 
@@ -316,8 +312,6 @@ vmCvar_t	cg_brightItems;
 
 vmCvar_t	cg_autoaction;
 
-vmCvar_t	cg_drawRespawnTimer;
-
 vmCvar_t	cg_autosnaps;
 
 vmCvar_t	cg_particles;
@@ -327,7 +321,6 @@ vmCvar_t	cg_lightningStyle;
 vmCvar_t	cg_hitMarks;
 
 vmCvar_t	cg_newRewards;
-vmCvar_t	cg_drawLivingCount;
 vmCvar_t	cg_drawCenterprint;
 
 vmCvar_t	cg_nomip;
@@ -366,7 +359,6 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_shadows, "cg_shadows", "1", CVAR_ARCHIVE  },
 	{ &cg_gibs, "cg_gibs", "1", CVAR_ARCHIVE  },
 	{ &cg_draw2D, "cg_draw2D", "1", CVAR_ARCHIVE  },
-	{ &cg_drawStatus, "cg_drawStatus", "1", CVAR_ARCHIVE  },
 	{ &cg_drawSnapshot, "cg_drawSnapshot", "0", CVAR_ARCHIVE  },
 	{ &cg_draw3dIcons, "cg_draw3dIcons", "1", CVAR_ARCHIVE  },
 	{ &cg_drawIcons, "cg_drawIcons", "1", CVAR_ARCHIVE  },
@@ -427,7 +419,6 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_buildScript, "com_buildScript", "0", 0 },	// force loading of all possible data amd error on failures
 	{ &cg_paused, "cl_paused", "0", CVAR_ROM },
 	{ &cg_blood, "cg_blood", "0", CVAR_ARCHIVE },
-	{ &cg_alwaysWeaponBar, "cg_alwaysWeaponBar", "1", CVAR_ARCHIVE},	//Elimination
         { &cg_hitBeep, "cg_hitBeep", "2", CVAR_ARCHIVE},
         { &cg_voip_teamonly, "cg_voipTeamOnly", "1", CVAR_ARCHIVE},
         { &cg_voteflags, "cg_voteflags", "*", CVAR_ROM},
@@ -511,7 +502,6 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_crosshairColorRed, "cg_crosshairColorRed", "1.0", CVAR_ARCHIVE},
         { &cg_crosshairColorGreen, "cg_crosshairColorGreen", "1.0", CVAR_ARCHIVE},
         { &cg_crosshairColorBlue, "cg_crosshairColorBlue", "1.0", CVAR_ARCHIVE},
-	{ &cg_weaponBarStyle, "cg_weaponBarStyle", "0", CVAR_ARCHIVE},
 	{&cg_deathNoticeTime, "cg_deathNoticeTime", "3000", CVAR_ARCHIVE},
 	{&s_ambient, "s_ambient", "1", CVAR_ARCHIVE},
 	{&cg_nokick, "cg_nokick", "0", CVAR_ARCHIVE},
@@ -546,13 +536,11 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_grenadeTrailRadius, "cg_grenadeTrailRadius", "32", CVAR_ARCHIVE},
 	{&cg_brightItems, "cg_brightItems", "0", CVAR_ARCHIVE},
 	{&cg_autoaction, "cg_autoaction", "0", CVAR_ARCHIVE},
-	{&cg_drawRespawnTimer, "cg_drawRespawnTimer", "1", CVAR_ARCHIVE},
 	{&cg_autosnaps, "cg_autosnaps", "1", CVAR_ARCHIVE},
 	{&cg_particles, "cg_particles", "1", CVAR_ARCHIVE},
 	{&cg_lightningStyle, "cg_lightningStyle", "0", CVAR_ARCHIVE},
 	{&cg_hitMarks, "cg_hitMarks", "1", CVAR_ARCHIVE},
 	{&cg_newRewards, "cg_newRewards", "1", CVAR_ARCHIVE},
-	{&cg_drawLivingCount, "cg_drawLivingCount", "1", CVAR_ARCHIVE},
 	{&cg_drawCenterprint, "cg_drawCenterprint", "1", CVAR_ARCHIVE},
 	{&cg_nomip, "cg_nomip", "0", CVAR_ARCHIVE},
 	{&cg_lightningExplosion, "cg_lightningExplosion", "0", CVAR_ARCHIVE},
@@ -839,11 +827,6 @@ static void CG_RegisterSounds( void ) {
 	char	name[MAX_QPATH];
 	const char	*soundName;
 
-	// voice commands
-#ifdef MISSIONPACK
-	CG_LoadVoiceChats();
-#endif
-
 	cgs.media.oneMinuteSound = trap_S_RegisterSound( "sound/feedback/1_minute.wav", qtrue );
 	cgs.media.fiveMinuteSound = trap_S_RegisterSound( "sound/feedback/5_minute.wav", qtrue );
 	cgs.media.suddenDeathSound = trap_S_RegisterSound( "sound/feedback/sudden_death.wav", qtrue );
@@ -855,9 +838,6 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.count1Sound = trap_S_RegisterSound( "sound/feedback/one.wav", qtrue );
 	cgs.media.countFightSound = trap_S_RegisterSound( "sound/feedback/fight.wav", qtrue );
 	cgs.media.countPrepareSound = trap_S_RegisterSound( "sound/feedback/prepare.wav", qtrue );
-#ifdef MISSIONPACK
-	cgs.media.countPrepareTeamSound = trap_S_RegisterSound( "sound/feedback/prepare_team.wav", qtrue );
-#endif
 
 	// N_G: Another condition that makes no sense to me, see for
 	// yourself if you really meant this

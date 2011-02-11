@@ -475,6 +475,8 @@ typedef struct {
 	int textstyle;
 	int time;
 	qhandle_t imageHandle;
+	int teamColor;
+	int teamBgColor;
 } hudElements_t;
 
 enum{ 
@@ -551,6 +553,18 @@ enum{
 	HUD_DEATHNOTICE4,
 	HUD_DEATHNOTICE5,
 	HUD_COUNTDOWN,
+	HUD_RESPAWNTIMER,
+	HUD_STATUSBARFLAG,
+	HUD_TEAMOVERLAY1,
+	HUD_TEAMOVERLAY2,
+	HUD_TEAMOVERLAY3,
+	HUD_TEAMOVERLAY4,
+	HUD_TEAMOVERLAY5,
+	HUD_TEAMOVERLAY6,
+	HUD_TEAMOVERLAY7,
+	HUD_TEAMOVERLAY8,
+	HUD_REWARD,
+	HUD_REWARDCOUNT,
 	HUD_PREDECORATE1,
 	HUD_PREDECORATE2,
 	HUD_PREDECORATE3,
@@ -1413,7 +1427,6 @@ extern	vmCvar_t		cg_crosshairX;
 extern	vmCvar_t		cg_crosshairY;
 extern	vmCvar_t		cg_crosshairSize;
 extern	vmCvar_t		cg_crosshairHealth;
-extern	vmCvar_t		cg_drawStatus;
 extern	vmCvar_t		cg_draw2D;
 extern	vmCvar_t		cg_animSpeed;
 extern	vmCvar_t		cg_debugAnim;
@@ -1512,7 +1525,6 @@ extern	vmCvar_t		cl_timeNudge;
 //unlagged - client options
 
 //extra CVARS elimination
-extern	vmCvar_t		cg_alwaysWeaponBar;
 extern	vmCvar_t		cg_hitBeep;
 extern  vmCvar_t                cg_voip_teamonly;
 extern  vmCvar_t                cg_voteflags;
@@ -1548,8 +1560,6 @@ extern	vmCvar_t		cg_ch9size;
 extern	vmCvar_t                cg_crosshairColorRed;
 extern	vmCvar_t                cg_crosshairColorGreen;
 extern	vmCvar_t                cg_crosshairColorBlue;
-
-extern vmCvar_t			cg_weaponBarStyle;
 
 extern vmCvar_t 		cg_deathNoticeTime;
 
@@ -1603,8 +1613,6 @@ extern vmCvar_t			cg_brightItems;
 
 extern vmCvar_t			cg_autoaction;
 
-extern vmCvar_t			cg_drawRespawnTimer;
-
 extern vmCvar_t			cg_autosnaps;
 
 extern vmCvar_t			cg_particles;
@@ -1614,7 +1622,6 @@ extern vmCvar_t			cg_lightningStyle;
 extern vmCvar_t			cg_hitMarks;
 
 extern vmCvar_t			cg_newRewards;
-extern vmCvar_t			cg_drawLivingCount;
 extern vmCvar_t			cg_drawCenterprint;
 
 extern vmCvar_t			cg_nomip;
@@ -1720,6 +1727,8 @@ void UI_DrawProportionalString( int x, int y, const char* str, int style, vec4_t
 void CG_DrawRect( float x, float y, float width, float height, float size, const float *color );
 void CG_DrawSides(float x, float y, float w, float h, float size);
 void CG_DrawTopBottom(float x, float y, float w, float h, float size);
+
+void CG_DrawHudIcon( int hudnumber, qboolean override, qhandle_t hShader );
 
 
 //
@@ -1833,6 +1842,7 @@ void CG_AddViewWeapon (playerState_t *ps);
 void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent, int team );
 void CG_DrawWeaponSelect( void );
 
+void CG_DrawWeaponBar(int count, int bits, float *color);
 void CG_DrawWeaponBar0(int count, int bits, float *color);
 void CG_DrawWeaponBar1(int count, int bits, float *color);
 void CG_DrawWeaponBar2(int count, int bits, float *color);
@@ -1949,6 +1959,14 @@ void CG_Respawn( void );
 void CG_TransitionPlayerState( playerState_t *ps, playerState_t *ops );
 void CG_CheckChangedPredictableEvents( playerState_t *ps );
 void pushReward(sfxHandle_t sfx, qhandle_t shader, int rewardCount);
+
+//
+// cg_superHud.c
+//
+void CG_HudEdit_f( void );
+void CG_ClearHud( void );
+void CG_LoadHudFile( const char* hudFile );
+void CG_WriteHudFile_f( void );
 
 
 //===============================================

@@ -583,6 +583,8 @@ static consoleCommand_t	commands[] = {
 	{ "-acc", CG_AccUp_f },
 	{ "secho", CG_Echo_f },
 	{ "currenttime", CG_Currenttime_f },
+	{ "hudedit", CG_HudEdit_f },
+	{ "saveHud", CG_WriteHudFile_f }
 
 };
 

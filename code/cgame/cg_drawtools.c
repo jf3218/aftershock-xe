@@ -119,9 +119,33 @@ void CG_DrawHudIcon( int hudnumber, qboolean override, qhandle_t hShader ) {
 	if( !hudelement.inuse )
 		return;
 	
-	color[0] = hudelement.bgcolor[0];
-	color[1] = hudelement.bgcolor[1];
-	color[2] = hudelement.bgcolor[2];
+	if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 1 ){
+		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+			color[0] = 1;
+			color[1] = 0;
+			color[2] = 0;
+		} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+			color[0] = 0;
+			color[1] = 0;
+			color[2] = 1;
+		}
+	}
+	else if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 2 ){
+		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+			color[0] = 1;
+			color[1] = 0;
+			color[2] = 0;
+		} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+			color[0] = 0;
+			color[1] = 0;
+			color[2] = 1;
+		}
+	}
+	else{
+		color[0] = hudelement.bgcolor[0];
+		color[1] = hudelement.bgcolor[1];
+		color[2] = hudelement.bgcolor[2];
+	}
 	color[3] = hudelement.bgcolor[3];
 	
 	if( hudelement.fill ){
@@ -131,15 +155,45 @@ void CG_DrawHudIcon( int hudnumber, qboolean override, qhandle_t hShader ) {
 		CG_DrawRect( hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, 1.0f, color );
 	}
 	
+	if( cgs.gametype >= GT_TEAM && hudelement.teamColor == 1 ){
+		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+			color[0] = 1;
+			color[1] = 0;
+			color[2] = 0;
+		} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+			color[0] = 0;
+			color[1] = 0;
+			color[2] = 1;
+		}
+	}
+	else if( cgs.gametype >= GT_TEAM && hudelement.teamColor == 2 ){
+		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+			color[0] = 1;
+			color[1] = 0;
+			color[2] = 0;
+		} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+			color[0] = 0;
+			color[1] = 0;
+			color[2] = 1;
+		}
+	}
+	else{
+		color[0] = hudelement.color[0];
+		color[1] = hudelement.color[1];
+		color[2] = hudelement.color[2];
+	}
+	color[3] = hudelement.color[3];
+	
+	trap_R_SetColor(color);
+	
 	if( hudelement.imageHandle && override ){
 		CG_DrawPic(hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, hudelement.imageHandle);
 		return;
 	}
 	if( hShader ){
-		trap_R_SetColor(hudelement.color);
 		CG_DrawPic(hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, hShader);
-		trap_R_SetColor( NULL );
 	}
+	trap_R_SetColor( NULL );
 }
 
 void CG_DrawScoresHud( int hudnumber, char* text, qboolean spec ){
@@ -153,10 +207,34 @@ void CG_DrawScoresHud( int hudnumber, char* text, qboolean spec ){
 	
 	shadow = hudelement.textstyle & 1;
 	if( !spec ){
-		color[0] = hudelement.bgcolor[0];
-		color[1] = hudelement.bgcolor[1];
-		color[2] = hudelement.bgcolor[2];
-		color[3] = hudelement.bgcolor[3];
+		if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 1 ){
+			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+					color[0] = 1;
+				color[1] = 0;
+				color[2] = 0;
+			} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+				color[0] = 0;
+				color[1] = 0;
+				color[2] = 1;
+			}
+		}
+		else if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 2 ){
+			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+				color[0] = 1;
+				color[1] = 0;
+				color[2] = 0;
+			} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+				color[0] = 0;
+				color[1] = 0;
+				color[2] = 1;
+			}
+		}	
+		else{
+			color[0] = hudelement.bgcolor[0];
+			color[1] = hudelement.bgcolor[1];
+			color[2] = hudelement.bgcolor[2];
+		}
+	color[3] = hudelement.bgcolor[3];
 	}
 	else{
 		color[0] = 0.5f;
@@ -336,9 +414,33 @@ void CG_DrawStringHud( int hudnumber, qboolean colorize, char* text ){
 		x = hudelement.xpos + hudelement.width/2 - w/2;
 
 	if( colorize ){
-		color[0] = hudelement.color[0];
-		color[1] = hudelement.color[1];
-		color[2] = hudelement.color[2];
+		if( cgs.gametype >= GT_TEAM && hudelement.teamColor == 1 ){
+			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+				color[0] = 1;
+				color[1] = 0;
+				color[2] = 0;
+			} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+				color[0] = 0;
+				color[1] = 0;
+				color[2] = 1;
+			}
+		}
+		else if( cgs.gametype >= GT_TEAM && hudelement.teamColor == 2 ){
+			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+				color[0] = 1;
+				color[1] = 0;
+				color[2] = 0;
+			} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+				color[0] = 0;
+				color[1] = 0;
+				color[2] = 1;
+			}
+		}
+		else{
+			color[0] = hudelement.color[0];
+			color[1] = hudelement.color[1];
+			color[2] = hudelement.color[2];
+		}
 		color[3] = hudelement.color[3];
 	}
 	else {

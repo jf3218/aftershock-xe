@@ -1017,11 +1017,11 @@ void CG_RegisterWeapon( int weaponNum ) {
 		
 		if( cg_nomip.integer & 2 ){
 			cgs.media.plasmaExplosionShader = trap_R_RegisterShader( "aftershock_plasmaExplosion_nomip" );
-			cgs.media.railRingsShader = trap_R_RegisterShader( "aftershock_railDisc_nomip" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc_nomip" );
 		}
 		else{
 			cgs.media.plasmaExplosionShader = trap_R_RegisterShader( "aftershock_plasmaExplosion" );
-			cgs.media.railRingsShader = trap_R_RegisterShader( "aftershock_railDisc" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc" );
 		}
 		
 		break;
@@ -1033,12 +1033,12 @@ void CG_RegisterWeapon( int weaponNum ) {
 		
 		if( cg_nomip.integer & 32 ){
 			cgs.media.railExplosionShader = trap_R_RegisterShader( "aftershock_railExplosion_nomip" );
-			cgs.media.railRingsShader = trap_R_RegisterShader( "aftershock_railDisc_nomip" );
-			cgs.media.railCoreShader = trap_R_RegisterShader( "aftershock_railCore_nomip" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc_nomip" );
+			cgs.media.railCoreShader = trap_R_RegisterShader( "railCore_nomip" );
 		}
 		else{
 			cgs.media.railExplosionShader = trap_R_RegisterShader( "aftershock_railExplosion" );
-			cgs.media.railRingsShader = trap_R_RegisterShader( "aftershock_railDisc" );
+			cgs.media.railRingsShader = trap_R_RegisterShader( "railDisc" );
 			cgs.media.railCoreShader = trap_R_RegisterShader( "railCore" );
 		}
 		
@@ -1967,7 +1967,6 @@ CG_DrawWeaponSelect
 void CG_DrawWeaponSelect( void ) {
 	int		i;
 	int		bits;
-	int		count;
 	float		*color;
 	vec4_t		realColor; 
 	
@@ -1978,10 +1977,10 @@ void CG_DrawWeaponSelect( void ) {
 		return;
 	}
 
-	color = CG_FadeColor( cg.weaponSelectTime, WEAPON_SELECT_TIME );
+	color = CG_FadeColor( cg.weaponSelectTime, cgs.hud[HUD_WEAPONLIST].time );
 
 	//Elimination: Always show weapon bar
-	if(cg_alwaysWeaponBar.integer) {
+	if(!cgs.hud[HUD_WEAPONLIST].time) {
 		realColor[0] = 1.0;
 		realColor[1] = 1.0;
 		realColor[2] = 1.0;
@@ -1992,6 +1991,7 @@ void CG_DrawWeaponSelect( void ) {
 	if ( !color ) {
 		return;
 	}
+	
 	trap_R_SetColor( color );
 
 	// showing weapon select clears pickup item display, but not the blend blob
@@ -1999,48 +1999,10 @@ void CG_DrawWeaponSelect( void ) {
 
 	// count the number of weapons owned
 	bits = cg.snap->ps.stats[ STAT_WEAPONS ];
-	count = 0;
-
-	if( cg_weaponBarStyle.integer < 3 ) {
-		for ( i = 1 ; i < MAX_WEAPONS ; i++ ) {
-			if ( bits & ( 1 << i ) ) {
-				count++;
-			}
-		}
-	}
-	else {
-		for ( i = 1 ; i < MAX_WEAPONS ; i++ ) {
-			if ( cg_weapons[i].weaponIcon ) {
-				count++;
-			}
-		}
-	}
 	
-	/*switch(cg_weaponBarStyle.integer){
-		case 0:
-			CG_DrawWeaponBar0(count,bits, color);
-			break;
-		case 1:
-			CG_DrawWeaponBar1(count,bits, color);
-			break;
-		case 2:
-			CG_DrawWeaponBar2(count,bits, color);
-			break;
-		case 3:
-			CG_DrawWeaponBar3(count,bits, color);
-			break;
-		case 4:
-			CG_DrawWeaponBar4(count,bits, color);
-			break;
-		case 5:
-			CG_DrawWeaponBar5(count,bits, color);
-			break;
-		default:
-			//CG_DrawWeaponBar0(count,bits, color);
-			break;
-	}*/
 	
-	CG_DrawWeaponBar( count, bits, color );
+	if( cgs.hud[HUD_WEAPONLIST].inuse )
+		CG_DrawWeaponBar( 0, bits, color );
 	trap_R_SetColor(NULL);
 	return;
 }
@@ -2152,7 +2114,7 @@ void CG_DrawWeaponBar( int count, int bits, float *color ){
 						ammoPack = 60;
 						break;
 					case WP_RAILGUN:
-						ammoPack = 10;
+						ammoPack = 5;
 						break;
 					case WP_PLASMAGUN:
 						ammoPack = 30;
@@ -2182,8 +2144,10 @@ void CG_DrawWeaponBar( int count, int bits, float *color ){
 				if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 					if( hudelement.imageHandle )
 						CG_DrawPic( x, y, boxWidth, boxHeight, hudelement.imageHandle );
+					if( hudelement.fill )
+						CG_FillRect( x, y, boxWidth, boxHeight, hudelement.bgcolor );
 					else
-						CG_DrawPic( x, y, boxWidth, boxHeight, cgs.media.selectionShaderMid );
+						CG_DrawRect( x, y, boxWidth, boxHeight, 2, hudelement.bgcolor );
 				}
 				
 				CG_DrawPic( x + icon_xrel, y + icon_yrel, iconsize, iconsize, cg_weapons[i].weaponIcon );

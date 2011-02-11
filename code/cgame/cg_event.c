@@ -235,7 +235,6 @@ static void CG_Obituary( entityState_t *ent ) {
 
 	// check for kill messages from the current clientNum
 	if ( attacker == cg.snap->ps.clientNum ) {
-		char	*s;
 
 		if ( cgs.gametype < GT_TEAM ) {
 			Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,"You fragged %s", targetName );

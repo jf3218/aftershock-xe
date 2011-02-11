@@ -879,7 +879,6 @@ CG_ColorFromString
 ====================
 */
 static void CG_ColorFromString( const char *v, vec3_t color ) {
-	int val;
 
 	VectorClear( color );
 

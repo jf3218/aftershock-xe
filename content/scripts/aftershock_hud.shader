@@ -8,6 +8,26 @@
 	}
 }
 
+StatusBar
+{
+	nopicmip
+	{
+		map menu/hud/StatusBar.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		RgbGen identityLighting
+	}
+}
+
+AmmoBar1
+{
+	nopicmip
+	{
+		map menu/hud/AmmoBar1.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		RgbGen identityLighting
+	}
+}
+
 icons/icons/selectionMarkerLeft
 {
 	nopicmip

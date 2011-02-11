@@ -10,7 +10,9 @@ typedef struct {
 	int parameterTypes[MAX_PARAMETER];
 } hudElementProperties_t;
 
-hudElementProperties_t hudProperties[10] = {
+#define MAX_HUDPROPERTIES 14
+
+hudElementProperties_t hudProperties[ MAX_HUDPROPERTIES ] = {
 	{ (char*)"rect", 4, { TOT_NUMBER, TOT_NUMBER, TOT_NUMBER, TOT_NUMBER } },
 	{ (char*)"bgcolor", 4, { TOT_NUMBER, TOT_NUMBER, TOT_NUMBER, TOT_NUMBER } },
 	{ (char*)"color", 4, { TOT_NUMBER, TOT_NUMBER, TOT_NUMBER, TOT_NUMBER } },
@@ -20,7 +22,11 @@ hudElementProperties_t hudProperties[10] = {
 	{ (char*)"text", 1, { TOT_WORD } },
 	{ (char*)"textalign", 1, { TOT_WORD } },
 	{ (char*)"time", 1, { TOT_NUMBER } },
-	{ (char*)"textstyle", 1, { TOT_NUMBER } }
+	{ (char*)"textstyle", 1, { TOT_NUMBER } },
+	{ (char*)"teamcolor", 0, { TOT_NIL } },
+	{ (char*)"enemycolor", 0, { TOT_NIL } },
+	{ (char*)"teambgcolor", 0, { TOT_NIL } },
+	{ (char*)"enemybgcolor", 0, { TOT_NIL } }
 };
 
 static const char *HudNames[] =
@@ -98,6 +104,18 @@ static const char *HudNames[] =
     "DeathNotice4",
     "DeathNotice5",
     "Countdown",
+    "RespawnTimer",
+    "StatusBar_Flag",
+    "TeamOverlay1",
+    "TeamOverlay2",
+    "TeamOverlay3",
+    "TeamOverlay4",
+    "TeamOverlay5",
+    "TeamOverlay6",
+    "TeamOverlay7",
+    "TeamOverlay8",
+    "Reward",
+    "RewardCount",
     "PreDecorate1",
     "PreDecorate2",
     "PreDecorate3",
@@ -118,7 +136,7 @@ static const char *HudNames[] =
     "HUD_MAX"
 }; 
 
-int CG_setTokens( char* in, char* out, int start ){
+static int CG_setTokens( char* in, char* out, int start ){
 	int i = 0;
 	while ( in[ start + i ] != ' ' ){
 		if( in[ start + i ] == '\0' ){
@@ -132,7 +150,7 @@ int CG_setTokens( char* in, char* out, int start ){
 	return start+i+1;
 }
 
-int CG_setTokenType( char* value ){
+static int CG_setTokenType( char* value ){
 	int count = 0;
 	qboolean lpar= qfalse,rpar= qfalse,number= qfalse, character = qfalse;
 	
@@ -160,11 +178,11 @@ int CG_setTokenType( char* value ){
 		return TOT_NIL;
 }
 
-qboolean SkippedChar( char in ){
+static qboolean SkippedChar( char in ){
 	return( in == '\n' || in == '\r' || in == ';' || in == '\t' || in == ' ' );
 }
 
-int CG_HudElement( token_t in ){
+static int CG_HudElement( token_t in ){
 	int i;
 	int name;
 	
@@ -176,7 +194,7 @@ int CG_HudElement( token_t in ){
 	return -1;
 }
 
-int CG_FindNextToken( char *find, token_t *in, int start ){
+static int CG_FindNextToken( char *find, token_t *in, int start ){
 	int i;
 	int cmp;
 	
@@ -188,7 +206,7 @@ int CG_FindNextToken( char *find, token_t *in, int start ){
 	return -1;
 }
 
-qboolean CG_AbeforeB( char *A, char *B, token_t *in, int start ){
+static qboolean CG_AbeforeB( char *A, char *B, token_t *in, int start ){
 	int a = CG_FindNextToken( A, in, start );
 	int b = CG_FindNextToken( B, in, start );
 	
@@ -261,11 +279,11 @@ static void CG_SetTextStyle( int hudnumber, char* arg1 ){
 
 static void CG_setHudElement( int hudnumber, token_t *in, int min, int max ){
 	int i,j,k;
-	qboolean rect=qfalse, bgcolor=qfalse, color=qfalse, fill=qfalse, fontsize=qfalse, image=qfalse, text=qfalse, textalign=qfalse, time=qfalse, textstyle = qfalse;
+	qboolean rect=qfalse, bgcolor=qfalse, color=qfalse, fill=qfalse, fontsize=qfalse, image=qfalse, text=qfalse, textalign=qfalse, time=qfalse, textstyle = qfalse, teamcolor = qfalse, teambgcolor = qfalse;
 	
 	//Syntax check and parsing
 	for( i = min; i <= max; i++ ){
-		for( j = 0; j < 10; j++ ){
+		for( j = 0; j < MAX_HUDPROPERTIES; j++ ){
 			if( strcmp( in[i].value, hudProperties[j].name ) == 0 ){
 				for( k = 0; k < hudProperties[j].parameterNum; k++ ){
 					if( hudProperties[j].parameterTypes[k] != in[i+1+k].type ){
@@ -313,6 +331,22 @@ static void CG_setHudElement( int hudnumber, token_t *in, int min, int max ){
 					CG_SetTextStyle( hudnumber, in[i+1].value );
 					textstyle = qtrue;
 				}
+				else if( strcmp( in[i].value, "teamcolor" ) == 0 ){
+					cgs.hud[hudnumber].teamColor = 1;
+					teamcolor = qtrue;
+				}
+				else if( strcmp( in[i].value, "enemycolor" ) == 0 ){
+					cgs.hud[hudnumber].teamColor = 2;
+					teamcolor = qtrue;
+				}
+				else if( strcmp( in[i].value, "teambgcolor" ) == 0 ){
+					cgs.hud[hudnumber].teamBgColor = 1;
+					teambgcolor = qtrue;
+				}
+				else if( strcmp( in[i].value, "enemybgcolor" ) == 0 ){
+					cgs.hud[hudnumber].teamBgColor = 2;
+					teambgcolor = qtrue;
+				}
 			}
 		}
 	}
@@ -358,39 +392,102 @@ static void CG_setHudElement( int hudnumber, token_t *in, int min, int max ){
 		if( !textstyle ){
 			cgs.hud[hudnumber].textstyle = cgs.hud[HUD_DEFAULT].textstyle;
 		}
+		if( !teamcolor ){
+			cgs.hud[hudnumber].teamColor = 0;
+		}
+		if( !teambgcolor ){
+			cgs.hud[hudnumber].teamBgColor = 0;
+		}
 	}
 	
 	cgs.hud[hudnumber].inuse = qtrue;
 }
 
-void CG_WriteHudFile(){
+void CG_WriteHudFile_f( void ){
 	int i;
+	fileHandle_t f;
+	char *string;
+	int len;
+	const char* filename = CG_Argv(1);
 	
-	for( i = HUD_DEFAULT+1; i < HUD_MAX; i++ ){
-		
+	if( trap_Argc() < 2 ){
+		CG_Printf("error: Missing filename\n");
+		return;
+	}
+	
+	trap_FS_FOpenFile( filename, &f, FS_WRITE );
+	
+	for( i = HUD_DEFAULT+1; i < HUD_MAX; i++ ){	
 		if( !cgs.hud[i].inuse )
 			continue;
 		
-		CG_Printf("%s {\n", HudNames[i]);
-		CG_Printf("\trect %i %i %i %i\n", cgs.hud[i].xpos, cgs.hud[i].ypos, cgs.hud[i].width, cgs.hud[i].height );
-		CG_Printf("\tcolor %f %3f %3f %3f\n", cgs.hud[i].color[0], cgs.hud[i].color[1], cgs.hud[i].color[2], cgs.hud[i].color[3] );
-		CG_Printf("\tbgcolor %3f %3f %3f %3f\n", cgs.hud[i].bgcolor[0], cgs.hud[i].bgcolor[1], cgs.hud[i].bgcolor[2], cgs.hud[i].bgcolor[3] );
-		if( cgs.hud[i].fill )
-			CG_Printf("\tfill\n");
-		CG_Printf("\tfontsize %i %i\n", cgs.hud[i].fontWidth, cgs.hud[i].fontHeight );
-		CG_Printf("\timage %s\n", cgs.hud[i].image );
-		CG_Printf("\ttext %s\n", cgs.hud[i].text );
+		string = va("%s\n{\n", HudNames[i] );
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
 		
-		if( cgs.hud[i].textAlign == 0 )
-			CG_Printf("\ttextalign L\n");
-		else if( cgs.hud[i].textAlign == 2 )
-			CG_Printf("\ttextalign R\n");
-		else 
-			CG_Printf("\ttextalign C\n");
+		string = va("\trect %i %i %i %i\n", cgs.hud[i].xpos, cgs.hud[i].ypos, cgs.hud[i].width, cgs.hud[i].height );
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
 		
-		CG_Printf("\ttime %i\n", cgs.hud[i].time );
-		CG_Printf("}\n\n");
+		string = va("\tcolor %f %f %f %f\n", cgs.hud[i].color[0], cgs.hud[i].color[1], cgs.hud[i].color[2], cgs.hud[i].color[3] );
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("\tbgcolor %f %f %f %f\n", cgs.hud[i].bgcolor[0], cgs.hud[i].bgcolor[1], cgs.hud[i].bgcolor[2], cgs.hud[i].bgcolor[3] );
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		if( cgs.hud[i].fill ){
+			string = va("\tfill\n");
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+		}
+		
+		string = va("\tfontsize %i %i\n", cgs.hud[i].fontWidth, cgs.hud[i].fontHeight );
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		if( cgs.hud[i].imageHandle ){
+			string = va("\timage %s\n", cgs.hud[i].image );
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+		}
+		
+		if( strcmp( cgs.hud[i].text, "" ) != 0 ){
+			string = va("\ttext %s\n", cgs.hud[i].text );
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+		}
+		
+		if( cgs.hud[i].textAlign == 0 ){
+			string = va("\ttextalign L\n" );
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+		}
+		else if( cgs.hud[i].textAlign == 2 ){
+			string = va("\ttextalign R\n" );
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+		}
+		else{
+			string = va("\ttextalign C\n" );
+			len = strlen( string );
+			trap_FS_Write(string, len, f);
+		}
+		
+		string = va("\ttextstyle %i\n", cgs.hud[i].textstyle );
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		string = va("\ttime %i\n}\n", cgs.hud[i].time );
+		len = strlen( string );
+		trap_FS_Write(string, len, f);
+		
+		
 	}
+	trap_FS_FCloseFile(f);
+	
+	trap_Cvar_Set("cg_hud", filename);
 }
 
 token_t tokens[MAX_TOKENNUM];
@@ -514,6 +611,7 @@ void CG_ClearHud( void ){
 		cgs.hud[i].height = 0;
 		cgs.hud[i].width = 0;
 		cgs.hud[i].image = (char*)"";
+		cgs.hud[i].imageHandle = trap_R_RegisterShader(cgs.hud[i].image);
 		cgs.hud[i].inuse = qfalse;
 		cgs.hud[i].text = (char*)"";
 		cgs.hud[i].textAlign = 1;
@@ -522,4 +620,123 @@ void CG_ClearHud( void ){
 		cgs.hud[i].xpos = 0;
 		cgs.hud[i].ypos = 0;
 	}
+}
+
+void CG_HudEdit_f( void ){
+	int i;
+	int hudnumber;
+	char arg1[8];
+	char arg2[8];
+	char arg3[8];
+	char arg4[8];
+	if( trap_Argc() == 1 ){
+		CG_Printf("HudElement names are: ");
+		for( i = 0; i < HUD_MAX; i++ ){
+			CG_Printf("%s, ", HudNames[i]);
+		}
+		CG_Printf("\n");
+		return;
+	}
+	
+	for( i = 0; i < HUD_MAX; i++ ){
+		if( !strcmp( CG_Argv(1), HudNames[i] ) )
+			break;
+			
+	}
+	
+	if( i == HUD_MAX ){
+		CG_Printf("Wrong hudelement, hudelement-names are: ");
+		for( i = 0; i < HUD_MAX; i++ ){
+			CG_Printf("%s, ", HudNames[i]);
+		}
+		CG_Printf("\n");
+		return;
+	}
+	
+	hudnumber = i;
+	
+	if( trap_Argc() == 2 ){
+		CG_Printf("HudProperties are: ");
+		for( i = 0; i < 10; i++ ){
+			CG_Printf("%s, ", hudProperties[i].name );
+		}
+		CG_Printf("unfill, on, off\n");
+		return;
+	}
+	
+	if( !strcmp(CG_Argv(2),"on" ) ){
+		cgs.hud[hudnumber].inuse = qtrue;
+		return;
+	}
+	else if( !strcmp(CG_Argv(2),"off" ) ){
+		cgs.hud[hudnumber].inuse = qfalse;
+		return;
+	}
+	else if( !strcmp(CG_Argv(2),"fill" ) ){
+		cgs.hud[hudnumber].fill = qtrue;
+		return;
+	}
+	else if( !strcmp(CG_Argv(2),"unfill" ) ){
+		cgs.hud[hudnumber].fill = qfalse;
+		return;
+	}
+	
+	if( trap_Argc() == 3 ){
+		if( strcmp( CG_Argv(2), "rect" ) == 0 )
+			CG_Printf("rect %i %i %i %i\n", cgs.hud[hudnumber].xpos, cgs.hud[hudnumber].ypos, cgs.hud[hudnumber].width, cgs.hud[hudnumber].height );
+		else if( strcmp( CG_Argv(2), "bgcolor" ) == 0 )
+			CG_Printf("bgcolor %i %i %i %i\n", cgs.hud[hudnumber].bgcolor[0], cgs.hud[hudnumber].bgcolor[1], cgs.hud[hudnumber].bgcolor[2], cgs.hud[hudnumber].bgcolor[3] );
+		else if( strcmp( CG_Argv(2), "color" ) == 0 )
+			CG_Printf("color %i %i %i %i\n", cgs.hud[hudnumber].color[0], cgs.hud[hudnumber].color[1], cgs.hud[hudnumber].color[2], cgs.hud[hudnumber].color[3] );
+		else if( strcmp( CG_Argv(2), "fontsize" ) == 0 )
+			CG_Printf("fontsize %i %i\n", cgs.hud[hudnumber].fontWidth, cgs.hud[hudnumber].fontHeight );
+		else if( strcmp( CG_Argv(2), "image" ) == 0 )
+			CG_Printf("image %s\n", cgs.hud[hudnumber].image );
+		else if( strcmp( CG_Argv(2), "text" ) == 0 )
+			CG_Printf("text %s\n", cgs.hud[hudnumber].text );
+		else if( strcmp( CG_Argv(2), "time" ) == 0 )
+			CG_Printf("time %i\n", cgs.hud[hudnumber].time );
+		else if( strcmp( CG_Argv(2), "textstyle" ) == 0 )
+			CG_Printf("textstyle %i\n", cgs.hud[hudnumber].textstyle );
+		else if( strcmp( CG_Argv(2), "textalign" ) == 0 ){
+			if( cgs.hud[hudnumber].textAlign == 0 )
+				CG_Printf("textalign L\n");
+			else if( cgs.hud[hudnumber].textAlign == 2 )
+				CG_Printf("textalign R\n");
+			else 
+				CG_Printf("textalign C\n");
+		}
+		else{
+			CG_Printf("Wrong HudPropertie, HudProperties are: ");
+			for( i = 0; i < 10; i++ ){
+				CG_Printf("%s, ", hudProperties[i].name );
+			}
+			CG_Printf("unfill, on, off\n");
+		}
+			
+		return;
+	}
+	Q_strncpyz( arg1, CG_Argv(3), sizeof(arg1) );
+	Q_strncpyz( arg2, CG_Argv(4), sizeof(arg2) );
+	Q_strncpyz( arg3, CG_Argv(5), sizeof(arg3) );
+	Q_strncpyz( arg4, CG_Argv(6), sizeof(arg4) );
+
+	if( strcmp( CG_Argv(2), "rect" ) == 0 )
+		CG_SetHudRect( hudnumber, arg1, arg2, arg3, arg4 );
+	else if( strcmp( CG_Argv(2), "bgcolor" ) == 0 )
+		CG_SetHudBGColor( hudnumber, arg1, arg2, arg3, arg4 );
+	else if( strcmp( CG_Argv(2), "color" ) == 0 )
+		CG_SetHudColor( hudnumber, arg1, arg2, arg3, arg4 );
+	else if( strcmp( CG_Argv(2), "fontsize" ) == 0 )
+		CG_SetHudFontsize( hudnumber, arg1, arg2 );
+	else if( strcmp( CG_Argv(2), "image" ) == 0 )
+		CG_SetHudImage( hudnumber, arg1 );
+	else if( strcmp( CG_Argv(2), "text" ) == 0 )
+		CG_SetHudText( hudnumber, arg1 );
+	else if( strcmp( CG_Argv(2), "textalign" ) == 0 )
+		CG_SetHudTextalign( hudnumber, arg1 );
+	else if( strcmp( CG_Argv(2), "time" ) == 0 )
+		CG_SetHudTime( hudnumber, arg1 );
+	else if( strcmp( CG_Argv(2), "textstyle" ) == 0 )
+		CG_SetTextStyle( hudnumber, arg1 );
 }
