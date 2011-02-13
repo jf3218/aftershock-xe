@@ -356,6 +356,9 @@ static void CG_DrawBarHud( int hudnumber, int value, int maxvalue ){
 	if( !hudelement.inuse )
 		return;
 	
+	if( hudelement.color[0] != 1 || hudelement.color[1] != 1 || hudelement.color[2] != 1 )
+		trap_R_SetColor(hudelement.color);
+	
 	if( scale > 1.0f )
 		scale = 1.0f;
 	
@@ -425,6 +428,8 @@ static void CG_DrawBarHud( int hudnumber, int value, int maxvalue ){
 	else{
 		CG_DrawPic( x, y, width, height, cgs.media.whiteShader);
 	}
+	
+	trap_R_SetColor( NULL );
 }
 	
 
@@ -649,12 +654,15 @@ static void CG_DrawStatusBar( void ) {
 			if ( cg.predictedPlayerState.weaponstate == WEAPON_FIRING
 				&& cg.predictedPlayerState.weaponTime > 100 ) {
 				// draw as dark grey when reloading
-				color = 2;	// dark grey
+				//color = 2;	// dark grey
+				VectorCopy( colors[2], hcolor );
 			} else {
 				if ( value >= 0 ) {
-					color = 0;	// green
+					//color = 0;	// green
+					VectorCopy( colors[0], hcolor );
 				} else {
-					color = 1;	// red
+					//color = 1;	// red
+					VectorCopy( colors[1], hcolor );
 				}
 			}
 			if( cgs.hud[HUD_AMMOBAR].inuse )
@@ -687,9 +695,14 @@ static void CG_DrawStatusBar( void ) {
 						ammoPack = 200;
 						break;
 				}
+			hcolor[3] = cgs.hud[HUD_AMMOCOUNT].color[3];
+			trap_R_SetColor( hcolor );
 			
-			trap_R_SetColor( colors[color] );
 			CG_DrawFieldHud( value, HUD_AMMOCOUNT );
+			
+			hcolor[3] = cgs.hud[HUD_AMMOBAR].color[3];
+			trap_R_SetColor( hcolor );
+			
 			CG_DrawBarHud( HUD_AMMOBAR, value, ammoPack );
 			trap_R_SetColor( NULL );
 
@@ -719,18 +732,28 @@ static void CG_DrawStatusBar( void ) {
 	
 	value = ps->stats[STAT_HEALTH];
 	if ( value > 100 ) {
-		trap_R_SetColor( colors[3] );		// white
+		VectorCopy( colors[3], hcolor );
+		//trap_R_SetColor( colors[3] );		// white
 	} else if (value > 25) {
-		trap_R_SetColor( colors[0] );	// yellow
+		//trap_R_SetColor( colors[0] );	// yellow
+		VectorCopy( colors[0], hcolor );
 	} else if (value > 0) {
 		color = (cg.time >> 8) & 1;	// flash
-		trap_R_SetColor( colors[color] );
+		VectorCopy( colors[color], hcolor );
+		//trap_R_SetColor( colors[color] );
 	} else {
-		trap_R_SetColor( colors[1] );	// red
+		//trap_R_SetColor( colors[1] );	// red
+		VectorCopy( colors[1], hcolor );
 	}
 
+	hcolor[3] = cgs.hud[HUD_HEALTHCOUNT].color[3];
+	trap_R_SetColor(hcolor);
 	// stretch the health up when taking damage
 	CG_DrawFieldHud( value, HUD_HEALTHCOUNT );
+	
+	hcolor[3] = cgs.hud[HUD_HEALTHBAR].color[3];
+	trap_R_SetColor(hcolor);
+	
 	CG_DrawBarHud( HUD_HEALTHBAR, value, 100);
 	/*CG_ColorForHealth( hcolor );
 	trap_R_SetColor( hcolor );*/
@@ -741,11 +764,20 @@ static void CG_DrawStatusBar( void ) {
 	//
 	value = ps->stats[STAT_ARMOR];
 	if ( value > 100 )
-		trap_R_SetColor( colors[3] );		// white
+		VectorCopy( colors[3], hcolor );
+		//trap_R_SetColor( colors[3] );		// white
 	else
-		trap_R_SetColor( colors[0] );	// yellow
+		VectorCopy( colors[0], hcolor );
+		//trap_R_SetColor( colors[0] );	// yellow
+	
+	hcolor[3] = cgs.hud[HUD_ARMORCOUNT].color[3];
+	trap_R_SetColor(hcolor);
 	
 	CG_DrawFieldHud( value, HUD_ARMORCOUNT );
+	
+	hcolor[3] = cgs.hud[HUD_ARMORBAR].color[3];
+	trap_R_SetColor(hcolor);
+	
 	CG_DrawBarHud( HUD_ARMORBAR, ps->stats[STAT_ARMOR], 100);
 	trap_R_SetColor( NULL );
 	
@@ -1113,7 +1145,7 @@ static void CG_DrawEliminationTimer( void ) {
 	int			mins, seconds, tens, sec;
 	int			msec;
 	vec4_t			color;
-	const char	*st;
+	char	*st;
 	int rst;
 	
 	rst = cgs.roundStartTime;
@@ -1175,9 +1207,9 @@ Lots of stuff
 	seconds -= tens * 10;
 
 	if(msec>=0)
-		s = va( " %i:%i%i", mins, tens, seconds );
+		s = va( "%i:%i%i", mins, tens, seconds );
 	else
-		s = va( " Overtime");
+		s = va( "^1Overtime");
 	//w = CG_DrawStrlen( s ) * BIGCHAR_WIDTH;
 	
 	//CG_DrawBigStringColor( 635 - w, y + 2, s, color);
@@ -1604,7 +1636,7 @@ static void CG_DrawScores( void ) {
 
 	// draw from the right side to left
 	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
-		s = va( "%2i", s2 );
+		s = va( "%i", s2 );
 		
 		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE )
 			CG_DrawScoresHud(  HUD_SCOREOWN, s, qfalse );
@@ -1631,7 +1663,7 @@ static void CG_DrawScores( void ) {
 				}
 			}
 		}
-		s = va( "%2i", s1 );
+		s = va( "%i", s1 );
 
 		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED )
 			CG_DrawScoresHud(  HUD_SCOREOWN, s, qfalse );
@@ -1664,7 +1696,7 @@ static void CG_DrawScores( void ) {
 			v = cgs.fraglimit;
 		}
 		if ( v ) {
-			s = va( "%2i", v );
+			s = va( "%i", v );
 			CG_DrawScoresHud(  HUD_SCORELIMIT, s, qfalse );
 		}
 
@@ -1680,7 +1712,7 @@ static void CG_DrawScores( void ) {
 			s2 = score;
 		}
 		if ( s2 != SCORE_NOT_PRESENT ) {
-			s = va( "%2i", s2 );
+			s = va( "%i", s2 );
 			w = CG_DrawStrlen( s ) * BIGCHAR_WIDTH + 8;
 			x -= w;
 			if( spectator ){
@@ -1695,7 +1727,7 @@ static void CG_DrawScores( void ) {
 
 		// first place
 		if ( s1 != SCORE_NOT_PRESENT ) {
-			s = va( "%2i", s1 );
+			s = va( "%i", s1 );
 			w = CG_DrawStrlen( s ) * BIGCHAR_WIDTH + 8;
 			x -= w;
 			if( spectator ){
@@ -1709,7 +1741,7 @@ static void CG_DrawScores( void ) {
 		}
 
 		if ( cgs.fraglimit ) {
-			s = va( "%2i", cgs.fraglimit );
+			s = va( "%i", cgs.fraglimit );
 			CG_DrawScoresHud(  HUD_SCORELIMIT, s, qfalse );
 		}
 

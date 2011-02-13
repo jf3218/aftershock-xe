@@ -39,6 +39,7 @@ cd windows\build\cgame
 %cc%  ../../../code/cgame/cg_unlagged.c
 %cc%  ../../../code/cgame/cg_view.c
 %cc%  ../../../code/cgame/cg_weapons.c
+%cc%  ../../../code/cgame/cg_superHud.c
 
 %cc%  ../../../code/game/bg_lib.c
 %cc%  ../../../code/game/bg_misc.c
