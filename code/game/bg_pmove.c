@@ -1492,6 +1492,28 @@ static void PM_BeginWeaponChange( int weapon ) {
 	PM_StartTorsoAnim( TORSO_DROP );
 }
 
+/*
+===============
+PM_DelayedWeaponChange
+===============
+*/
+static void PM_DelayedWeaponChange( void ) {
+	int		weapon;
+
+	weapon = pm->cmd.weapon;
+	if ( weapon < WP_NONE || weapon >= WP_NUM_WEAPONS ) {
+		weapon = WP_NONE;
+	}
+
+	if ( !( pm->ps->stats[STAT_WEAPONS] & ( 1 << weapon ) ) ) {
+		weapon = WP_NONE;
+	}
+
+	pm->ps->weapon = weapon;
+	pm->ps->weaponstate = WEAPON_RAISING;
+	PM_StartTorsoAnim( TORSO_RAISE );
+}
+
 
 /*
 ===============
@@ -1563,6 +1585,10 @@ static void PM_Weapon( void ) {
 		pm->ps->weapon = WP_NONE;
 		return;
 	}
+	
+	if( !( pm->ps->stats[STAT_WEAPONS] & ( 1 << pm->ps->weapon ) ) ){
+		PM_AddEvent( EV_WEAPONDROP );
+	}
 
 	// check for item using
 	if ( pm->cmd.buttons & BUTTON_USE_HOLDABLE ) {
@@ -1599,9 +1625,6 @@ static void PM_Weapon( void ) {
 	if ( pm->ps->weaponTime > 0 ) {
 		return;
 	}
-	
-	if((pm->ps->pm_flags & PMF_ELIMWARMUP))
-		return;
 
 	// change weapon if time
 	if ( pm->ps->weaponstate == WEAPON_DROPPING ) {
@@ -1616,6 +1639,10 @@ static void PM_Weapon( void ) {
 		} else {
 			PM_StartTorsoAnim( TORSO_STAND );
 		}
+		return;
+	}
+	
+	if((pm->ps->pm_flags & PMF_ELIMWARMUP)){
 		return;
 	}
 

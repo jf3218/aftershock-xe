@@ -148,9 +148,14 @@ G_SendLivingCount
 */
 void G_SendLivingCount( void ) {
 	char		entry[128];
-
-	Com_sprintf (entry, sizeof(entry),
+	
+	
+	if( level.roundRespawned )
+		Com_sprintf (entry, sizeof(entry),
 				" %i %i %i %i ", TeamLivingCount( -1, TEAM_RED ), TeamLivingCount( -1, TEAM_BLUE ), TeamCount( -1, TEAM_RED ), TeamCount( -1, TEAM_BLUE ) ); 
+	else 
+		Com_sprintf (entry, sizeof(entry),
+				" %i %i %i %i ", TeamCount( -1, TEAM_RED ), TeamCount( -1, TEAM_BLUE ), TeamCount( -1, TEAM_RED ), TeamCount( -1, TEAM_BLUE ) ); 
 
 	trap_SendServerCommand( -1, va("livingCount%s", entry ));
 }
@@ -3108,6 +3113,10 @@ void Cmd_DropWeapon_f( gentity_t *ent ){
 		return;
 	
 	weapon = ent->s.weapon;
+	
+	if( weapon <= WP_NONE || weapon >= WP_NUM_WEAPONS )
+		return;
+	
 	item = BG_FindItemForWeapon( weapon );
 	if( ( ent->client->ps.stats[STAT_WEAPONS] & ( 1 << item->giTag ) ) && ( weapon != WP_GAUNTLET ) ) {
 		out = Drop_Item_Weapon( ent, item, 0 );

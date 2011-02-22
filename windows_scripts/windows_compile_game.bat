@@ -46,6 +46,7 @@ cd windows\build\game
 %cc%  ../../../code/game/g_mover.c
 %cc%  ../../../code/game/g_playerstore.c
 rem %cc%  ../../../code/game/g_rankings.c
+%cc%  ../../../code/game/g_serverstats.c
 %cc%  ../../../code/game/g_session.c
 %cc%  ../../../code/game/g_spawn.c
 %cc%  ../../../code/game/g_svcmds.c

@@ -856,6 +856,7 @@ void DisableWeapons(void)
 		client->client->ps.pm_flags |= PMF_ELIMWARMUP;
 	}
         ProximityMine_RemoveAll(); //Remove all the prox mines
+	Grenade_RemoveAll(); //Remove all the prox mines
 	return;
 }
 
@@ -2004,11 +2005,11 @@ void ClientBegin( int clientNum ) {
 	if( *Info_ValueForKey( userinfo, "aftershock_login" ) )
 		Q_strncpyz ( ent->client->aftershock_name, Info_ValueForKey( userinfo, "aftershock_login" ), sizeof( ent->client->aftershock_name ) );
 	else
-		Q_strncpyz ( ent->client->aftershock_name, "none", sizeof( ent->client->aftershock_name ) );
+		Q_strncpyz ( ent->client->aftershock_name, "", sizeof( ent->client->aftershock_name ) );
 	if( *Info_ValueForKey( userinfo, "aftershock_password" ) )
 		Q_strncpyz ( ent->client->aftershock_hash, G_MD5String(Info_ValueForKey( userinfo, "aftershock_password" )), sizeof( ent->client->aftershock_hash ) );
 	else
-		Q_strncpyz ( ent->client->aftershock_hash, "none", sizeof( ent->client->aftershock_hash ) );
+		Q_strncpyz ( ent->client->aftershock_hash, "", sizeof( ent->client->aftershock_hash ) );
 	
 	if( !( *Info_ValueForKey( userinfo, "aftershock_login" ) && *Info_ValueForKey( userinfo, "aftershock_password" ) ) ){
 		trap_SendServerCommand( ent-g_entities, va("print \"" S_COLOR_YELLOW "not logged in, register on http://www.aftershock-fps.de for login\n\"") );
@@ -2527,8 +2528,8 @@ else
 	// clear entity state values
 	BG_PlayerStateToEntityState( &client->ps, &ent->s, qtrue );
 	
-	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
-		G_SendLivingCount();
+	/*if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
+		G_SendLivingCount();*/
 }
 
 
@@ -2542,10 +2543,13 @@ Will not be called between levels.
 This should NOT be called directly by any game logic,
 call trap_DropClient(), which will call this and do
 server system housekeeping.
+TODO: Add flagdrop(done)
+TODO: Add disconnected Players to statsfile
 ============
 */
 void ClientDisconnect( int clientNum ) {
 	gentity_t	*ent;
+	gentity_t	*tent;
 	int			i;
         char	userinfo[MAX_INFO_STRING];
 
@@ -2561,6 +2565,13 @@ void ClientDisconnect( int clientNum ) {
     G_admin_namelog_update( ent->client, qtrue );
     
         trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
+	
+	
+	if( ( level.disconnectedClientsNumber < MAX_DISCONNECTEDCLIENTS ) && ( ent->client->pers.connected == CON_CONNECTED ) && ( level.warmupTime == 0 ) ){
+		level.disconnectedClients[level.disconnectedClientsNumber] = *ent->client;
+		level.disconnectedClients[level.disconnectedClientsNumber].pers.enterTime = (level.time - level.disconnectedClients[level.disconnectedClientsNumber].pers.enterTime);
+		level.disconnectedClientsNumber++;
+	}
 
 	// stop any following clients
 	for ( i = 0 ; i < level.maxclients ; i++ ) {
@@ -2581,7 +2592,7 @@ void ClientDisconnect( int clientNum ) {
         /*
          *Sago: I have removed this. A little dangerous but I make him suicide in a moment.
          */
-	/*if ( ent->client->pers.connected == CON_CONNECTED
+	if ( ent->client->pers.connected == CON_CONNECTED
 		&& ent->client->sess.sessionTeam != TEAM_SPECTATOR ) {
 		tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
 		tent->s.clientNum = ent->s.clientNum;
@@ -2595,7 +2606,7 @@ void ClientDisconnect( int clientNum ) {
 		}
 //#endif
 
-	}*/
+	}
 
         //Is the player alive?
         i = (ent->client->ps.stats[STAT_HEALTH]>0);
@@ -2608,7 +2619,7 @@ void ClientDisconnect( int clientNum ) {
 		// Kill him (makes sure he loses flags, etc)
 		ent->flags &= ~FL_GODMODE;
 		ent->client->ps.stats[STAT_HEALTH] = ent->health = 0;
-		player_die (ent, ent, g_entities + ENTITYNUM_WORLD, 100000, MOD_SUICIDE);
+	//	player_die (ent, ent, g_entities + ENTITYNUM_WORLD, 100000, MOD_SUICIDE);
 	}
 
 

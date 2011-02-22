@@ -1729,8 +1729,14 @@ void CG_ParseLivingCount( void ){
 	int newRed, newBlue;
 	int countRed, countBlue;
 	
-	if( cg.warmup < 0 )
+	countRed = atoi( CG_Argv(3));
+	countBlue = atoi( CG_Argv(4));
+	
+	if( cg.warmup < 0 ){
+		cgs.redLivingCount = countRed;
+		cgs.blueLivingCount = countBlue;
 		return;
+	}
 	
 	newRed = atoi( CG_Argv(1));
 	newBlue = atoi( CG_Argv(2));
@@ -1983,6 +1989,14 @@ static void CG_ServerCommand( void ) {
                 Q_strcat(infoString,sizeof(infoString)," ");
             }
             trap_Cvar_Set("cg_vote_custom_commands",infoString);
+		return;
+	}
+	//
+	//Removed voicechats
+	if( !strcmp( cmd, "vtell" ) ){
+		return;
+	}
+	else if( !strcmp( cmd, "vchat" ) ){
 		return;
 	}
 

@@ -474,6 +474,7 @@ struct gclient_s {
 //
 #define	MAX_SPAWN_VARS			64
 #define	MAX_SPAWN_VARS_CHARS	4096
+#define MAX_DISCONNECTEDCLIENTS 32
 
 typedef struct {
 	struct gclient_s	*clients;		// [maxclients]
@@ -606,6 +607,9 @@ typedef struct {
     
     int 	redFlagTaken;
     int		blueFlagTaken;
+    
+    int		disconnectedClientsNumber;
+    struct gclient_s disconnectedClients[MAX_DISCONNECTEDCLIENTS];
     
 } level_locals_t;
 
@@ -953,6 +957,12 @@ int G_FindNearestTeammate( gentity_t *ent );
 // bg_alloc.c
 //
 void Svcmd_GameMem_f( void );
+
+//
+// g_serverstats.c
+//
+void G_WriteXMLStats( void );
+
 
 //
 // g_session.c

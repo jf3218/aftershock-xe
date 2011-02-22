@@ -937,6 +937,7 @@ void CG_PredictPlayerState( void ) {
 			cg.eventSequence = cg.predictedPlayerState.eventSequence;
 		}
 	}
+	
 }
 
 

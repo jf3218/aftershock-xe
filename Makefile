@@ -1747,6 +1747,7 @@ Q3GOBJ_ = \
   $(B)/baseq3/game/g_missile.o \
   $(B)/baseq3/game/g_mover.o \
   $(B)/baseq3/game/g_playerstore.o \
+  $(B)/baseq3/game/g_serverstats.o \
   $(B)/baseq3/game/g_session.o \
   $(B)/baseq3/game/g_spawn.o \
   $(B)/baseq3/game/g_svcmds.o \
@@ -1806,6 +1807,7 @@ MPGOBJ_ = \
   $(B)/missionpack/game/g_missile.o \
   $(B)/missionpack/game/g_mover.o \
   $(B)/missionpack/game/g_playerstore.o \
+  $(B)/baseq3/game/g_serverstats.o \
   $(B)/missionpack/game/g_session.o \
   $(B)/missionpack/game/g_spawn.o \
   $(B)/missionpack/game/g_svcmds.o \

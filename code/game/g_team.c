@@ -1256,8 +1256,8 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 		    mins = secs/60;
 		    secs -= mins*60;
 		    
-		    PrintMsg( NULL, "Flag held for %i:%i:%i\n", mins, secs, msecs );
-		    trap_SendServerCommand( -1, va("screenPrint \"^3Red captured the flag in %i:%i:%03i\"", mins, secs, msecs) );
+		    PrintMsg( NULL, "Flag held for %i:%02i:%03i\n", mins, secs, msecs );
+		    trap_SendServerCommand( -1, va("screenPrint \"^3Red captured the flag in %i:%02i:%03i\"", mins, secs, msecs) );
 		    level.blueFlagTaken = -1;
 	    }
 	    else if( team == TEAM_BLUE ){
@@ -1267,8 +1267,8 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 		    mins = secs/60;
 		    secs -= mins*60;
 		    
-		    PrintMsg( NULL, "Flag held for %i:%i:%i\n", mins, secs, msecs );
-		    trap_SendServerCommand( -1, va("screenPrint \"^3Blue captured the flag in %i:%i:%03i\"", mins, secs, msecs) );
+		    PrintMsg( NULL, "Flag held for %i:%03i:%03i\n", mins, secs, msecs );
+		    trap_SendServerCommand( -1, va("screenPrint \"^3Blue captured the flag in %i:%02i:%03i\"", mins, secs, msecs) );
 		    level.redFlagTaken = -1;
 	    }
 		    

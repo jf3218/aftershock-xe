@@ -1302,6 +1302,14 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		DEBUGNAME("EV_DEBUG_LINE");
 		CG_Beam( cent );
 		break;
+		
+	case EV_WEAPONDROP:
+		DEBUGNAME("EV_WEAPONDROP");
+//		trap_S_StartSound (NULL, es->number, CHAN_AUTO, cgs.media.noAmmoSound );
+		if ( es->number == cg.snap->ps.clientNum ) {
+			CG_OutOfAmmoChange();
+		}
+		break;
 
 	default:
 		DEBUGNAME("UNKNOWN");

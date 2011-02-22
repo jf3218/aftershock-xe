@@ -1715,6 +1715,7 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 
 	CG_RegisterWeapon( weaponNum );
 	weapon = &cg_weapons[weaponNum];
+		
 
 	// add the weapon
 	memset( &gun, 0, sizeof( gun ) );
@@ -1795,6 +1796,10 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 		CG_PositionRotatedEntityOnTag( &barrel, &gun, weapon->weaponModel, "tag_barrel" );
 
 		CG_AddWeaponWithPowerups( &barrel, cent->currentState.powerups );
+	}
+	
+	if ( ( cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION ) && cg.time < cgs.roundStartTime ){
+		return;
 	}
 
 	// make sure we aren't looking at cg.predictedPlayerEntity for LG
@@ -1895,6 +1900,9 @@ void CG_AddViewWeapon( playerState_t *ps ) {
 	if ( !cg_drawGun.integer ) {
 		vec3_t		origin;
 
+		if ( ( cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION ) && cg.time < cgs.roundStartTime )
+			return;
+		
 		if ( cg.predictedPlayerState.eFlags & EF_FIRING ) {
 			// special hack for lightning gun...
 			VectorCopy( cg.refdef.vieworg, origin );
@@ -2019,6 +2027,7 @@ void CG_DrawWeaponBar( int count, int bits, float *color ){
 	int w;
 	vec4_t charColor;
 	int ammoPack;
+	vec4_t bgcolor;
 	
 	charColor[3] = color[3];
 	
@@ -2035,18 +2044,51 @@ void CG_DrawWeaponBar( int count, int bits, float *color ){
 		if( cg_weapons[i].weaponIcon )
 			count++;
 	}
+	if( hudelement.bgcolor[3] != 0 ){
+		if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 1 ){
+			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+				bgcolor[0] = 1;
+				bgcolor[1] = 0;
+				bgcolor[2] = 0;
+			} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+				bgcolor[0] = 0;
+				bgcolor[1] = 0;
+				bgcolor[2] = 1;
+			}
+		}
+		else if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 2 ){
+			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+				bgcolor[0] = 1;
+				bgcolor[1] = 0;
+				bgcolor[2] = 0;
+			} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
+				bgcolor[0] = 0;
+				bgcolor[1] = 0;
+				bgcolor[2] = 1;
+			}
+		}
+	
+		else{
+			bgcolor[0] = hudelement.bgcolor[0];
+			bgcolor[1] = hudelement.bgcolor[1];
+			bgcolor[2] = hudelement.bgcolor[2];
+		}
+		bgcolor[3] = hudelement.bgcolor[3];
+	}
 	
 	if( horizontal ){
 		boxHeight = height;
 		boxWidth = width/8;
 		x = xpos + width/2 - (boxWidth*count)/2;
 		y = ypos;
+		CG_FillRect( x, y, count*boxWidth, boxHeight, bgcolor );
 	}
 	else{
 		boxHeight = height/8;
 		boxWidth = width;
 		x = xpos;
 		y = ypos + height/2 - (boxHeight*count)/2;
+		CG_FillRect( x, y, boxWidth, count*boxHeight, bgcolor);
 	}
 	
 	if( textalign == 0 ){
@@ -2144,10 +2186,10 @@ void CG_DrawWeaponBar( int count, int bits, float *color ){
 				if ( ( ( i == cg.weaponSelect ) && !(cg.snap->ps.pm_flags & PMF_FOLLOW) ) || ( ( i == cg_entities[cg.snap->ps.clientNum].currentState.weapon ) && (cg.snap->ps.pm_flags & PMF_FOLLOW) ) ) {
 					if( hudelement.imageHandle )
 						CG_DrawPic( x, y, boxWidth, boxHeight, hudelement.imageHandle );
-					if( hudelement.fill )
-						CG_FillRect( x, y, boxWidth, boxHeight, hudelement.bgcolor );
+					else if( hudelement.fill )
+						CG_FillRect( x, y, boxWidth, boxHeight, hudelement.color );
 					else
-						CG_DrawRect( x, y, boxWidth, boxHeight, 2, hudelement.bgcolor );
+						CG_DrawRect( x, y, boxWidth, boxHeight, 2, hudelement.color );
 				}
 				
 				CG_DrawPic( x + icon_xrel, y + icon_yrel, iconsize, iconsize, cg_weapons[i].weaponIcon );

@@ -402,7 +402,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_teamChatTime, "cg_teamChatTime", "5000", CVAR_ARCHIVE  },
 	{ &cg_chatTime, "cg_chatTime", "5000", CVAR_ARCHIVE},
 	{ &cg_forceModel, "cg_forceModel", "1", CVAR_ARCHIVE  },
-	{ &cg_predictItems, "cg_predictItems", "1", CVAR_ARCHIVE },
+	{ &cg_predictItems, "cg_predictItems", "0", CVAR_ARCHIVE },
 #ifdef MISSIONPACK
 	{ &cg_deferPlayers, "cg_deferPlayers", "0", CVAR_ARCHIVE },
 #else
@@ -687,8 +687,6 @@ void CG_UpdateCvars( void ) {
 		CG_ClearHud();
 		CG_LoadHudFile( cg_hud.string );
 	}
-	
-	
 }
 
 int CG_CrosshairPlayer( void ) {
@@ -2559,11 +2557,11 @@ void CG_oaUnofficialCvars( void ) {
 	char rendererinfos[128];
 
 	trap_Cvar_VariableStringBuffer("com_maxfps",rendererinfos,sizeof(rendererinfos) );
-	if(atoi( rendererinfos ) > 125 );
+	if(atoi( rendererinfos ) > 125 )
             	trap_Cvar_Set("com_maxfps","125");
 
 	trap_Cvar_VariableStringBuffer("cg_shadows",rendererinfos,sizeof(rendererinfos) );
-	if(atoi( rendererinfos ) > 1 );
+	if(atoi( rendererinfos ) > 1 )
 		trap_Cvar_Set("cg_shadows","1");
 	
 	trap_Cvar_VariableStringBuffer("r_vertexlight",rendererinfos,sizeof(rendererinfos) );
