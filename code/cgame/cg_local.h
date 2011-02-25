@@ -477,6 +477,8 @@ typedef struct {
 	qhandle_t imageHandle;
 	int teamColor;
 	int teamBgColor;
+	char *cvar;
+	int cvarValue;
 } hudElements_t;
 
 enum{ 

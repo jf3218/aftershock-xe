@@ -206,6 +206,7 @@ void CG_Text_Paint(float x, float y, float scale, vec4_t color, const char *text
 CG_DrawField
 
 Draws large numbers for status bar and powerups
+TODO: Different Fonts
 ==============
 */
 #ifndef MISSIONPACK
@@ -345,6 +346,13 @@ static void CG_DrawFieldHud( int value, int hudnumber ){
 			CG_DrawFieldFontsize ( hudelement.xpos+hudelement.width/2 - 5*hudelement.fontWidth/2, hudelement.ypos, 3, value, hudelement.fontWidth, hudelement.fontHeight);
 	}
 }
+
+//
+// CG_DrawBarHud
+//
+// Draws bars for Ammo, Health and Armor 
+//
+//
 
 static void CG_DrawBarHud( int hudnumber, int value, int maxvalue ){
 	hudElements_t hudelement = cgs.hud[hudnumber];
@@ -1258,8 +1266,8 @@ CG_DrawTeamOverlay
 =================
 */
 
-static float CG_DrawTeamOverlay( float y, qboolean right, qboolean upper ) {
-	int x, w, h, xx;
+static float CG_DrawTeamOverlay( qboolean right, qboolean upper ) {
+	int x, y, w, h, xx;
 	int i, j, len;
 	const char *p;
 	vec4_t		color;
@@ -1268,7 +1276,7 @@ static float CG_DrawTeamOverlay( float y, qboolean right, qboolean upper ) {
 	char st[16];
 	clientInfo_t *ci;
 	gitem_t	*item;
-	int ret_y, count;
+	int count;
 	hudElements_t hudelement;
 
 	/*if ( !cg_drawTeamOverlay.integer ) {
@@ -1276,7 +1284,7 @@ static float CG_DrawTeamOverlay( float y, qboolean right, qboolean upper ) {
 	}*/
 
 	if ( cg.snap->ps.persistant[PERS_TEAM] != TEAM_RED && cg.snap->ps.persistant[PERS_TEAM] != TEAM_BLUE ) {
-		return y; // Not on any team
+		return; // Not on any team
 	}
 
 	plyrs = 0;
@@ -1295,7 +1303,7 @@ static float CG_DrawTeamOverlay( float y, qboolean right, qboolean upper ) {
 	}
 
 	if (!plyrs)
-		return y;
+		return;
 
 	if (pwidth > TEAM_OVERLAY_MAXNAME_WIDTH)
 		pwidth = TEAM_OVERLAY_MAXNAME_WIDTH;
@@ -1490,7 +1498,7 @@ static float CG_DrawTeamOverlay( float y, qboolean right, qboolean upper ) {
 		}
 	}
 
-	return ret_y;
+	return;
 //#endif
 }
 
@@ -1550,15 +1558,12 @@ CG_DrawUpperRight
 
 =====================
 */
-static void CG_DrawUpperRight(stereoFrame_t stereoFrame)
+static void CG_DrawUpperRight()
 {
 	float	y;
 
 	y = 0;
 
-	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cg_drawTeamOverlay.integer == 1 ) {
-		y = CG_DrawTeamOverlay( y, qtrue, qtrue );
-	}
 	/*if ( cgs.gametype == GT_DOUBLE_D ) {
 		y = CG_DrawDoubleDominationThings(y);
 	} 
@@ -1578,28 +1583,12 @@ static void CG_DrawUpperRight(stereoFrame_t stereoFrame)
 	if ( cg_drawSnapshot.integer ) {
 		y = CG_DrawSnapshot( y );
 	}
-	if ( stereoFrame == STEREO_CENTER || stereoFrame == STEREO_RIGHT ) {
-		CG_DrawFPS();
-	}
-	if (cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS) {
-		CG_DrawEliminationTimer();
-		/*if (cgs.clientinfo[ cg.clientNum ].isDead)
-			y = CG_DrawEliminationDeathMessage( y);*/
-	}
+	
 
 	//y = CG_DrawFollowMessage( y );
 
 	
-	CG_DrawAttacker();
 	
-	if ( cg_drawSpeed.integer ) {
-		CG_DrawSpeedMeter();
-	}
-	if( cg_drawAccel.integer ) {
-		CG_DrawAccelMeter();
-	}
-	
-	CG_DrawLivingCount();
 
 }
 
@@ -1843,7 +1832,7 @@ static void CG_DrawLowerRight( void ) {
 	y = 480 - ICON_SIZE;
 
 	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cg_drawTeamOverlay.integer == 2 ) {
-		y = CG_DrawTeamOverlay( y, qtrue, qfalse );
+		CG_DrawTeamOverlay( qtrue, qfalse );
 	} 
 
 	CG_DrawScores();
@@ -1864,7 +1853,7 @@ static void CG_DrawLowerLeft( void ) {
 	y = 480 - ICON_SIZE;
 
 	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cg_drawTeamOverlay.integer == 3 ) {
-		y = CG_DrawTeamOverlay( y, qfalse, qfalse );
+		CG_DrawTeamOverlay( qfalse, qfalse );
 	} 
 }
 #endif // MISSIONPACK
@@ -3045,7 +3034,7 @@ static void CG_DrawCrosshairNames( void ) {
 	if ( cg.snap->ps.persistant[PERS_TEAM] != cgs.clientinfo[ cg.crosshairClientNum ].team )
 		return;
 	
-	if( cgs.hud[HUD_TARGETSTATUS].inuse ){
+	if( ( cgs.hud[HUD_TARGETSTATUS].inuse ) && ( cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR ) ){
 		if( cgs.clientinfo[ cg.crosshairClientNum ].health >= 100 )
 			healthcolor = 2;
 		else if( cgs.clientinfo[ cg.crosshairClientNum ].health >= 50 )
@@ -3672,13 +3661,39 @@ static void CG_Draw2D(stereoFrame_t stereoFrame)
 	
 	CG_DrawTimeout();
 
-	CG_DrawUpperRight(stereoFrame);
+	//CG_DrawUpperRight();
+	
+	if ( stereoFrame == STEREO_CENTER || stereoFrame == STEREO_RIGHT ) {
+		CG_DrawFPS();
+	}
+	if (cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS) {
+		CG_DrawEliminationTimer();
+	}
+	
+	CG_DrawAttacker();
+	
+	if ( cg_drawSpeed.integer ) {
+		CG_DrawSpeedMeter();
+	}
+	if( cg_drawAccel.integer ) {
+		CG_DrawAccelMeter();
+	}
+	
+	CG_DrawLivingCount();
 	
 	CG_DrawTimer();
 
 #ifndef MISSIONPACK
-	CG_DrawLowerRight();
-	CG_DrawLowerLeft();
+
+	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cg_drawTeamOverlay.integer ) {
+		CG_DrawTeamOverlay( qtrue, qfalse );
+	} 
+
+	CG_DrawScores();
+	CG_DrawPowerups();
+	
+//	CG_DrawLowerRight();
+//	CG_DrawLowerLeft();
 #endif
 
 	if ( !CG_DrawFollow() ) {

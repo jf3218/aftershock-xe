@@ -32,7 +32,7 @@ typedef struct {
 	int parameterTypes[MAX_PARAMETER];
 } hudElementProperties_t;
 
-#define MAX_HUDPROPERTIES 14
+#define MAX_HUDPROPERTIES 15
 
 hudElementProperties_t hudProperties[ MAX_HUDPROPERTIES ] = {
 	{ (char*)"rect", 4, { TOT_NUMBER, TOT_NUMBER, TOT_NUMBER, TOT_NUMBER } },
@@ -48,7 +48,8 @@ hudElementProperties_t hudProperties[ MAX_HUDPROPERTIES ] = {
 	{ (char*)"teamcolor", 0, { TOT_NIL } },
 	{ (char*)"enemycolor", 0, { TOT_NIL } },
 	{ (char*)"teambgcolor", 0, { TOT_NIL } },
-	{ (char*)"enemybgcolor", 0, { TOT_NIL } }
+	{ (char*)"enemybgcolor", 0, { TOT_NIL } },
+	{ (char*)"cvar", 2, { TOT_WORD, TOT_NUMBER } }
 };
 
 static const char *HudNames[] =
@@ -299,9 +300,14 @@ static void CG_SetTextStyle( int hudnumber, char* arg1 ){
 	cgs.hud[hudnumber].textstyle = atoi(arg1);
 }
 
+static void CG_SetHudCvar( int hudnumber, char *arg1, char *arg2 ){
+	cgs.hud[hudnumber].cvar = arg1;
+	cgs.hud[hudnumber].cvarValue = atoi(arg2);
+}
+
 static void CG_setHudElement( int hudnumber, token_t *in, int min, int max ){
 	int i,j,k;
-	qboolean rect=qfalse, bgcolor=qfalse, color=qfalse, fill=qfalse, fontsize=qfalse, image=qfalse, text=qfalse, textalign=qfalse, time=qfalse, textstyle = qfalse, teamcolor = qfalse, teambgcolor = qfalse;
+	qboolean rect=qfalse, bgcolor=qfalse, color=qfalse, fill=qfalse, fontsize=qfalse, image=qfalse, text=qfalse, textalign=qfalse, time=qfalse, textstyle = qfalse, teamcolor = qfalse, teambgcolor = qfalse, cvar = qfalse;
 	
 	//Syntax check and parsing
 	for( i = min; i <= max; i++ ){
@@ -369,6 +375,10 @@ static void CG_setHudElement( int hudnumber, token_t *in, int min, int max ){
 					cgs.hud[hudnumber].teamBgColor = 2;
 					teambgcolor = qtrue;
 				}
+				else if( strcmp( in[i].value, "cvar" ) == 0 ){
+					CG_SetHudCvar(hudnumber, in[i+1].value, in[i+2].value);
+					cvar = qtrue;
+				}
 			}
 		}
 	}
@@ -419,6 +429,10 @@ static void CG_setHudElement( int hudnumber, token_t *in, int min, int max ){
 		}
 		if( !teambgcolor ){
 			cgs.hud[hudnumber].teamBgColor = 0;
+		}
+		if( !cvar ){
+			cgs.hud[hudnumber].cvar = cgs.hud[HUD_DEFAULT].cvar;
+			cgs.hud[hudnumber].cvarValue = cgs.hud[HUD_DEFAULT].cvarValue;
 		}
 	}
 	
@@ -531,7 +545,7 @@ void CG_LoadHudFile( const char* hudFile ){
 	cgs.hud[HUD_DEFAULT].image = (char*)" ";
 	cgs.hud[HUD_DEFAULT].textAlign = 1;
 	
-	len = trap_FS_FOpenFile( hudFile, &f, FS_READ );
+	len = trap_FS_FOpenFile ( hudFile, &f, FS_READ );
 	
 	if ( !f ) {
 		CG_Printf( "%s",va( S_COLOR_YELLOW "hud file not found: %s, using default\n", hudFile ) );
@@ -605,7 +619,7 @@ void CG_LoadHudFile( const char* hudFile ){
 				//CG_Printf("debug abeforeb\n");
 				rpar = CG_FindNextToken((char*)"}", tokens, tokenNum+2 );
 				//CG_Printf("debug findnexttoken\n");
-				if( rpar != 1 ){
+				if( rpar != -1 ){
 					CG_setHudElement(i, tokens, lpar+1, rpar-1);
 					tokenNum = rpar;
 				}	

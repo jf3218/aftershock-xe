@@ -231,6 +231,9 @@ vmCvar_t     g_refNames;
 
 vmCvar_t     g_muteSpec;
 
+vmCvar_t     g_mapcycle;
+vmCvar_t     g_useMapcycle;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -463,6 +466,9 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_refPassword, "g_refPassword", "", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_refNames, "g_refNames", "/map_restart/nextmap/map/g_gametype/kick/clientkick/timelimit/fraglimit/remove/clientremove/lock/unlock/startgame/", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_muteSpec, "g_muteSpec", "0", CVAR_ARCHIVE, 0, qfalse},
+	
+	{ &g_mapcycle, "g_mapcycle", "mapcycle.cfg", CVAR_ARCHIVE, 0, qfalse},
+	{ &g_useMapcycle, "g_useMapcycle", "0", CVAR_ARCHIVE | CVAR_LATCH, 0, qfalse},
 };
 
 // bk001129 - made static to avoid aliasing
@@ -972,6 +978,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	
 	memset(level.disconnectedClients, 0, MAX_DISCONNECTEDCLIENTS * sizeof(level.disconnectedClients[0]));
 	level.disconnectedClientsNumber = 0;
+	
+	if( g_useMapcycle.integer )
+		G_LoadMapcycle();
         
         
 }
@@ -1609,6 +1618,8 @@ void ExitLevel (void) {
 	gclient_t *cl;
 	char nextmap[MAX_STRING_CHARS];
 	char d1[MAX_STRING_CHARS];
+	char	command[1024];
+	char    mapname[MAX_MAPNAME];
 
 	//bot interbreeding
 	BotInterbreedEndMatch();
@@ -1625,15 +1636,21 @@ void ExitLevel (void) {
 		}
 		return;	
 	}
+	if( g_useMapcycle.integer ){
+	    trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
+            Com_sprintf(command, sizeof( command ),"map %s\n", G_GetNextMap(mapname));
+	    trap_SendConsoleCommand( EXEC_APPEND, command );
+	}
+	else {
+	    trap_Cvar_VariableStringBuffer( "nextmap", nextmap, sizeof(nextmap) );
+	    trap_Cvar_VariableStringBuffer( "d1", d1, sizeof(d1) );
 
-	trap_Cvar_VariableStringBuffer( "nextmap", nextmap, sizeof(nextmap) );
-	trap_Cvar_VariableStringBuffer( "d1", d1, sizeof(d1) );
-
-	if( !Q_stricmp( nextmap, "map_restart 0" ) && Q_stricmp( d1, "" ) ) {
-		trap_Cvar_Set( "nextmap", "vstr d2" );
-		trap_SendConsoleCommand( EXEC_APPEND, "vstr d1\n" );
-	} else {
-		trap_SendConsoleCommand( EXEC_APPEND, "vstr nextmap\n" );
+	    if( !Q_stricmp( nextmap, "map_restart 0" ) && Q_stricmp( d1, "" ) ) {
+		    trap_Cvar_Set( "nextmap", "vstr d2" );
+		    trap_SendConsoleCommand( EXEC_APPEND, "vstr d1\n" );
+	    } else {
+		    trap_SendConsoleCommand( EXEC_APPEND, "vstr nextmap\n" );
+	    }
 	}
 
 	level.changemap = NULL;

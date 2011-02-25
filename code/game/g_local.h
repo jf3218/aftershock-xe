@@ -1259,6 +1259,9 @@ extern vmCvar_t     g_refNames;
 
 extern vmCvar_t     g_muteSpec;
 
+extern vmCvar_t	    g_mapcycle;
+extern vmCvar_t	    g_useMapcycle;
+
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
 int		trap_Milliseconds( void );

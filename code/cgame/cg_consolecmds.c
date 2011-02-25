@@ -663,4 +663,5 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand ("loaddefered");	// spelled wrong, but not changing for demo
 	trap_AddCommand ("ref");
 	trap_AddCommand ("listplayers");
+	trap_AddCommand ("mapcycle");
 }
