@@ -1431,6 +1431,9 @@ void ClientUserinfoChanged( int clientNum ) {
 	// see if the player is nudging his shots
 	s = Info_ValueForKey( userinfo, "cg_cmdTimeNudge" );
 	client->pers.cmdTimeNudge = atoi( s );
+	
+	s = Info_ValueForKey( userinfo, "cg_multiview" );
+	client->pers.multiview = atoi( s );
 	 
 	// see if the player wants to debug the backward reconciliation
 	/*s = Info_ValueForKey( userinfo, "cg_debugDelag" );
@@ -2018,9 +2021,7 @@ void ClientBegin( int clientNum ) {
 	
 	G_toSmallCaps(ent->client->aftershock_hash);
 	
-	if( *Info_ValueForKey( userinfo, "aftershock_login" ) )
-	
-	G_SendAllItems();
+	//G_SendAllItems();
 	
 }
 

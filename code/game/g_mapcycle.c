@@ -27,37 +27,37 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define MAX_MAPCYCLETOKENS 512
 
 typedef struct mapcycle_s {
-    char *maps[MAX_MAPCYCLECOUNT];
-    int minplayers[MAX_MAPCYCLECOUNT];
-    int maxplayers[MAX_MAPCYCLECOUNT];
-    int  mapcycleCount;
-    char *allowedMaps[MAX_MAPCYCLECOUNT];
-    int  allowedMapsCount;
-    qboolean allAllowed;
+	char *maps[MAX_MAPCYCLECOUNT];
+	int minplayers[MAX_MAPCYCLECOUNT];
+	int maxplayers[MAX_MAPCYCLECOUNT];
+	int  mapcycleCount;
+	char *allowedMaps[MAX_MAPCYCLECOUNT];
+	int  allowedMapsCount;
+	qboolean allAllowed;
 } mapcycle_t;
 
 mapcycle_t mapcycle;
 
 typedef enum {
-    TOT_LPAREN,
-    TOT_RPAREN,
-    TOT_WORD,
-    TOT_NUMBER,
-    TOT_NIL,
-    TOT_MAX
+	TOT_LPAREN,
+	TOT_RPAREN,
+	TOT_WORD,
+	TOT_NUMBER,
+	TOT_NIL,
+	TOT_MAX
 } tokenType_t;
 
 #define TOKENVALUE_SIZE 64
 
 typedef struct {
-    char value[TOKENVALUE_SIZE];
-    int type;
+	char value[TOKENVALUE_SIZE];
+	int type;
 } token_t;
 
-static int G_setTokens( char* in, char* out, int start ){
+static int G_setTokens ( char* in, char* out, int start ) {
 	int i = 0;
-	while ( in[ start + i ] != ' ' ){
-		if( in[ start + i ] == '\0' ){
+	while ( in[ start + i ] != ' ' ) {
+		if ( in[ start + i ] == '\0' ) {
 			out[i] = in[start+1];
 			return MAX_MAPCYCLELENGTH;
 		}
@@ -74,29 +74,29 @@ G_setTokenType
 Reads the string and gives out the type of the token
 =================
 */
-static int G_setTokenType( char* value ){
+static int G_setTokenType ( char* value ) {
 	int count = 0;
 	qboolean lpar= qfalse,rpar= qfalse,number= qfalse, character = qfalse;
-	
-	while( value[count] != '\0' ){
-		if( value[count] == '{' )
+
+	while ( value[count] != '\0' ) {
+		if ( value[count] == '{' )
 			lpar = qtrue;
-		else if( value[count] == '}' )
+		else if ( value[count] == '}' )
 			rpar = qtrue;
-		else if( value[count] >= '0' && value[count] <= '9' )
+		else if ( value[count] >= '0' && value[count] <= '9' )
 			number = qtrue;
-		else if( ( value[count] >= 'a' && value[count] <= 'z' ) || ( value[count] >= 'A' && value[count] <= 'Z' ) )
+		else if ( ( value[count] >= 'a' && value[count] <= 'z' ) || ( value[count] >= 'A' && value[count] <= 'Z' ) )
 			character = qtrue;
 		count++;
 	}
-	
-	if( lpar && !( rpar || number || character ) )
+
+	if ( lpar && ! ( rpar || number || character ) )
 		return TOT_LPAREN;
-	else if( rpar && !( lpar || number || character ) )
+	else if ( rpar && ! ( lpar || number || character ) )
 		return TOT_RPAREN;
-	else if( number && !( lpar || rpar || character ) )
+	else if ( number && ! ( lpar || rpar || character ) )
 		return TOT_NUMBER;
-	else if( character && !( lpar || rpar ) )
+	else if ( character && ! ( lpar || rpar ) )
 		return TOT_WORD;
 	else
 		return TOT_NIL;
@@ -105,17 +105,17 @@ static int G_setTokenType( char* value ){
 /*
 =================
 G_FindNextToken
-Gives out the position of a token, 
+Gives out the position of a token,
 if the token is not found, -1 is returned
 =================
 */
-static int G_FindNextToken( char *find, token_t *in, int start ){
+static int G_FindNextToken ( char *find, token_t *in, int start ) {
 	int i;
 	int cmp;
-	
-	for( i = start; i < MAX_MAPCYCLETOKENS; i++ ){
-		cmp= strcmp( in[i].value, find );
-		if( cmp == 0 )
+
+	for ( i = start; i < MAX_MAPCYCLETOKENS; i++ ) {
+		cmp= strcmp ( in[i].value, find );
+		if ( cmp == 0 )
 			return i;
 	}
 	return -1;
@@ -129,15 +129,15 @@ found before the second argument
 =================
 */
 
-static qboolean G_AbeforeB( char *A, char *B, token_t *in, int start ){
-	int a = G_FindNextToken( A, in, start );
-	int b = G_FindNextToken( B, in, start );
-	
-	if( b == -1 && a != -1 )
+static qboolean G_AbeforeB ( char *A, char *B, token_t *in, int start ) {
+	int a = G_FindNextToken ( A, in, start );
+	int b = G_FindNextToken ( B, in, start );
+
+	if ( b == -1 && a != -1 )
 		return qtrue;
-	if( a == -1 && b != -1 )
+	if ( a == -1 && b != -1 )
 		return qfalse;
-	if( a < b )
+	if ( a < b )
 		return qtrue;
 	else
 		return qfalse;
@@ -150,67 +150,61 @@ returns qtrue if the argument
 is a char we should skip
 =================
 */
-static qboolean SkippedChar( char in ) {
-    return( in == '\n' || in == '\r' || in == ';' || in == '\t' || in == ' ' );
+static qboolean SkippedChar ( char in ) {
+	return ( in == '\n' || in == '\r' || in == ';' || in == '\t' || in == ' ' );
 }
 
 /*
 =================
 G_MapAvailable
-search for a map in the mapfolder, 
+search for a map in the mapfolder,
 if the map is not found return qfalse
 =================
 */
-static qboolean G_MapAvailable( char* map ){
-    fileHandle_t	file;           //To check that the map actually exists.
-    
+static qboolean G_MapAvailable ( char* map ) {
+	fileHandle_t	file;           //To check that the map actually exists.
 
-    trap_FS_FOpenFile(va("maps/%s.bsp",map),&file,FS_READ);
-    if(!file)
-        return qfalse; //maps/MAPNAME.bsp does not exist
-    trap_FS_FCloseFile(file);
-    return qtrue;
+
+	trap_FS_FOpenFile ( va ( "maps/%s.bsp",map ),&file,FS_READ );
+	if ( !file )
+		return qfalse; //maps/MAPNAME.bsp does not exist
+	trap_FS_FCloseFile ( file );
+	return qtrue;
 }
 
 /*
 =================
 G_setMapcycle
-reads the tokens to set the 
+reads the tokens to set the
 mapcycle
 =================
 */
-static void G_setMapcycle( token_t *in, int min, int max ){
-    int lastmappos;
-    qboolean lastMapAvailable = qfalse;
-    int i;
-    
-    for( i = min; i <= max; i++ ){
-	if( in[i].type == TOT_WORD ){
-	      lastmappos = i;
-	      if( G_MapAvailable(in[i].value) ){
-		    mapcycle.maps[mapcycle.mapcycleCount] = in[i].value;
-		    mapcycle.mapcycleCount++;
-		    lastMapAvailable = qtrue;
-		    //G_Printf("Mapname %s\n", in[i].value );
-	      }
-	      else{
-		    lastMapAvailable = qfalse;
-		    G_Printf("Map %s not found\n", in[i].value );
-	      }
+static void G_setMapcycle ( token_t *in, int min, int max ) {
+	int lastmappos;
+	qboolean lastMapAvailable = qfalse;
+	int i;
+
+	for ( i = min; i <= max; i++ ) {
+		if ( in[i].type == TOT_WORD ) {
+			lastmappos = i;
+			if ( G_MapAvailable ( in[i].value ) ) {
+				mapcycle.maps[mapcycle.mapcycleCount] = in[i].value;
+				mapcycle.mapcycleCount++;
+				lastMapAvailable = qtrue;
+			} else {
+				lastMapAvailable = qfalse;
+				G_Printf ( "Map %s not found\n", in[i].value );
+			}
+		} else if ( in[i].type == TOT_NUMBER && lastMapAvailable ) {
+			if ( ( i - lastmappos ) == 1 ) {
+				mapcycle.minplayers[mapcycle.mapcycleCount-1] = atoi ( in[i].value );
+			} else if ( ( i - lastmappos ) == 2 ) {
+				mapcycle.maxplayers[mapcycle.mapcycleCount-1] = atoi ( in[i].value );
+			} else {
+				G_Printf ( "Error: Number not assigned to map\n" );
+			}
+		}
 	}
-	else if( in[i].type == TOT_NUMBER && lastMapAvailable ){
-	      if( (i - lastmappos) == 1 ){
-		    //G_Printf("minplayers %s\n", in[i].value);
-		    mapcycle.minplayers[mapcycle.mapcycleCount-1] = atoi(in[i].value);
-	      } else if( (i - lastmappos) == 2 ){
-		    //G_Printf("maxplayers %s\n", in[i].value);
-		    mapcycle.maxplayers[mapcycle.mapcycleCount-1] = atoi(in[i].value);
-	      }
-	      else{
-		    G_Printf("Error: Number not assigned to map\n");
-	      }
-	}
-    }
 }
 
 /*
@@ -220,45 +214,41 @@ reads the tokens to set the votable
 maps
 =================
 */
-static void G_setAllowedMaps( token_t *in, int min, int max ){
-    int i;
-    
-    for( i = min; i <= max; i++ ){
-	if( in[i].type == TOT_WORD ){
-	      if( G_MapAvailable(in[i].value) ){
-		    mapcycle.allowedMaps[mapcycle.allowedMapsCount] = in[i].value;
-		    mapcycle.allowedMapsCount++;
-		    G_Printf("Mapname %s\n", in[i].value );
-	      }
-	      else{
-		    G_Printf("Map %s not found\n", in[i].value );
-	      }
+static void G_setAllowedMaps ( token_t *in, int min, int max ) {
+	int i;
+
+	for ( i = min; i <= max; i++ ) {
+		if ( in[i].type == TOT_WORD ) {
+			if ( G_MapAvailable ( in[i].value ) ) {
+				mapcycle.allowedMaps[mapcycle.allowedMapsCount] = in[i].value;
+				mapcycle.allowedMapsCount++;
+			} else {
+				G_Printf ( "Map %s not found\n", in[i].value );
+			}
+		} else {
+			G_Printf ( "No valid mapname %s\n", in[i].value );
+		}
 	}
-	else{
-	      G_Printf("No valid mapname %s\n", in[i].value );
-	}
-    }
 }
 /*
 =================
 G_getNextMapNumber
-returns the next possible 
+returns the next possible
 mapnumber in the cycle
 =================
 */
-static int G_getNextMapNumber( int i ){
+static int G_getNextMapNumber ( int i ) {
 	int start,j;
 	int buffer;
-	
-	if( i == (mapcycle.mapcycleCount-1) )
+
+	if ( i == ( mapcycle.mapcycleCount-1 ) )
 		start = 0;
 	else
 		start = i+1;
-	
-	for( j = 0; j < mapcycle.mapcycleCount; j++ ){
-		buffer = (start+j)%mapcycle.mapcycleCount;
-		//G_Printf("%i, %i, %i, %i, %s\n", level.numConnectedClients, mapcycle.minplayers[buffer], mapcycle.maxplayers[buffer], buffer, mapcycle.maps[buffer]);
-		if( level.numConnectedClients <= mapcycle.maxplayers[buffer] && level.numConnectedClients >= mapcycle.minplayers[buffer] ){
+
+	for ( j = 0; j < mapcycle.mapcycleCount; j++ ) {
+		buffer = ( start+j ) %mapcycle.mapcycleCount;
+		if ( level.numConnectedClients <= mapcycle.maxplayers[buffer] && level.numConnectedClients >= mapcycle.minplayers[buffer] ) {
 			return buffer;
 		}
 	}
@@ -269,26 +259,25 @@ static int G_getNextMapNumber( int i ){
 =================
 G_GetNextMap
 finds the current mapnumber and
-returns the next possible 
+returns the next possible
 map in the cycle
 =================
 */
-char *G_GetNextMap( char *map ){
+char *G_GetNextMap ( char *map ) {
 	int i;
-	
-	if( mapcycle.mapcycleCount == 0 )
+
+	if ( mapcycle.mapcycleCount == 0 )
 		return map;
-	
-	for( i = 0; i < mapcycle.mapcycleCount; i++ ){
-		if( strcmp( map, mapcycle.maps[i] ) == 0 )
+
+	for ( i = 0; i < mapcycle.mapcycleCount; i++ ) {
+		if ( strcmp ( map, mapcycle.maps[i] ) == 0 )
 			break;
 	}
-	
-	if( i == mapcycle.mapcycleCount ){
-		return mapcycle.maps[G_getNextMapNumber( (int)(random()*mapcycle.mapcycleCount) )];
-	}
-	else{
-		return mapcycle.maps[G_getNextMapNumber( i )];
+
+	if ( i == mapcycle.mapcycleCount ) {
+		return mapcycle.maps[G_getNextMapNumber ( ( int ) ( random() *mapcycle.mapcycleCount ) ) ];
+	} else {
+		return mapcycle.maps[G_getNextMapNumber ( i ) ];
 	}
 	return map;
 }
@@ -296,27 +285,27 @@ char *G_GetNextMap( char *map ){
 /*
 =================
 G_mapIsVoteable
-looks up in the mapcycle and 
+looks up in the mapcycle and
 the allowed mapcycle
-and returns qtrue if the map 
+and returns qtrue if the map
 in the argument is voteable
 =================
 */
-qboolean G_mapIsVoteable( char* map ){
+qboolean G_mapIsVoteable ( char* map ) {
 	int i;
-	if( mapcycle.allAllowed && G_MapAvailable(map) )
-	      return qtrue;
-	
-	for( i = 0; i < mapcycle.mapcycleCount; i++ ){
-		if( strcmp( map, mapcycle.maps[i] ) == 0 )
+	if ( mapcycle.allAllowed && G_MapAvailable ( map ) )
+		return qtrue;
+
+	for ( i = 0; i < mapcycle.mapcycleCount; i++ ) {
+		if ( strcmp ( map, mapcycle.maps[i] ) == 0 )
 			return qtrue;
 	}
-	
-	for( i = 0; i < mapcycle.allowedMapsCount; i++ ){
-		if( strcmp( map, mapcycle.allowedMaps[i] ) == 0 )
+
+	for ( i = 0; i < mapcycle.allowedMapsCount; i++ ) {
+		if ( strcmp ( map, mapcycle.allowedMaps[i] ) == 0 )
 			return qtrue;
 	}
-	
+
 	return qfalse;
 }
 /*
@@ -326,21 +315,21 @@ prints out a list of all
 voteable maps
 =================
 */
-void G_drawAllowedMaps( gentity_t *ent ){
+void G_drawAllowedMaps ( gentity_t *ent ) {
 	int i;
 	char buffer[2048];
-	
-	strcat(buffer,va("Allowed maps are: "));
-	
-	for( i = 0; i < mapcycle.mapcycleCount; i++ ){
-	      strcat(buffer, va("^2%s ", mapcycle.maps[i]) );
+
+	strcat ( buffer,va ( "Allowed maps are: " ) );
+
+	for ( i = 0; i < mapcycle.mapcycleCount; i++ ) {
+		strcat ( buffer, va ( "^2%s ", mapcycle.maps[i] ) );
 	}
-	for( i = 0; i < mapcycle.allowedMapsCount; i++ ){
-	      strcat(buffer, va("^1%s ", mapcycle.allowedMaps[i]));
+	for ( i = 0; i < mapcycle.allowedMapsCount; i++ ) {
+		strcat ( buffer, va ( "^1%s ", mapcycle.allowedMaps[i] ) );
 	}
-	
-	strcat(buffer, va("\n") );
-	trap_SendServerCommand( ent-g_entities, va("print \"%s\"", buffer));
+
+	strcat ( buffer, va ( "\n" ) );
+	trap_SendServerCommand ( ent-g_entities, va ( "print \"%s\"", buffer ) );
 }
 
 /*
@@ -350,20 +339,20 @@ prints out a list of all
 information in the mapcycle
 =================
 */
-void G_drawMapcycle( gentity_t *ent ){
+void G_drawMapcycle ( gentity_t *ent ) {
 	int i;
 	char buffer[2048];
-	
-	for( i = 0; i < mapcycle.mapcycleCount; i++ ){
-	      strcat(buffer, va("^3%i ^2%s ^3%i %i\n", i, mapcycle.maps[i], mapcycle.minplayers[i], mapcycle.maxplayers[i] ) );
+
+	for ( i = 0; i < mapcycle.mapcycleCount; i++ ) {
+		strcat ( buffer, va ( "^3%i ^2%s ^3%i %i\n", i, mapcycle.maps[i], mapcycle.minplayers[i], mapcycle.maxplayers[i] ) );
 	}
-	strcat(buffer, va("\n") );
-	for( i = 0; i < mapcycle.allowedMapsCount; i++ ){
-	      strcat(buffer, va("^1%s ", mapcycle.allowedMaps[i]));
+	strcat ( buffer, va ( "\n" ) );
+	for ( i = 0; i < mapcycle.allowedMapsCount; i++ ) {
+		strcat ( buffer, va ( "^1%s ", mapcycle.allowedMaps[i] ) );
 	}
-	
-	strcat(buffer, va("\n") );
-	trap_SendServerCommand( ent-g_entities, va("print \"%s\"", buffer));
+
+	strcat ( buffer, va ( "\n" ) );
+	trap_SendServerCommand ( ent-g_entities, va ( "print \"%s\"", buffer ) );
 }
 
 /*
@@ -373,15 +362,15 @@ set the init values
 minplayers 0, maxplayers 64
 =================
 */
-static void G_initMapcycle( void ){
-      int i;
-      mapcycle.mapcycleCount = 0;
-      mapcycle.allowedMapsCount = 0;
-      mapcycle.allAllowed = qtrue;
-      for( i = 0; i < MAX_MAPCYCLECOUNT; i++ ){
-	      mapcycle.minplayers[i] = 0;
-	      mapcycle.maxplayers[i] = MAX_CLIENTS;
-      }
+static void G_initMapcycle ( void ) {
+	int i;
+	mapcycle.mapcycleCount = 0;
+	mapcycle.allowedMapsCount = 0;
+	mapcycle.allAllowed = qtrue;
+	for ( i = 0; i < MAX_MAPCYCLECOUNT; i++ ) {
+		mapcycle.minplayers[i] = 0;
+		mapcycle.maxplayers[i] = MAX_CLIENTS;
+	}
 }
 
 token_t tokens[MAX_MAPCYCLETOKENS];
@@ -394,115 +383,108 @@ and parse it
 =================
 */
 void G_LoadMapcycle ( void ) {
-    int len;
-    fileHandle_t f;
-    char buffer[MAX_MAPCYCLELENGTH];
-    int i, charCount = 0;
-    qboolean pgbreak = qfalse, lastSpace = qtrue;
-    int tokenNum = 0, maxTokenNum;
-    int lpar, rpar;
-    qboolean allAllowed = qtrue;
-    
-    G_initMapcycle();
+	int len;
+	fileHandle_t f;
+	char buffer[MAX_MAPCYCLELENGTH];
+	int i, charCount = 0;
+	qboolean pgbreak = qfalse, lastSpace = qtrue;
+	int tokenNum = 0, maxTokenNum;
+	int lpar, rpar;
+	qboolean allAllowed = qtrue;
 
-    len = trap_FS_FOpenFile ( g_mapcycle.string, &f, FS_READ );
+	G_initMapcycle();
 
-    if ( !f ) {
-        G_Printf("Mapcycle %s not found, setting g_useMapcycle to 0\n", g_mapcycle.string);
-        trap_Cvar_Set("g_useMapcycle", "0");
-        return;
-    }
+	len = trap_FS_FOpenFile ( g_mapcycle.string, &f, FS_READ );
 
-    if ( len > MAX_MAPCYCLELENGTH ) {
-        G_Printf("Mapcycle file too large, %s is %i, max allowed is %i\n", g_mapcycle.string, len, MAX_MAPCYCLELENGTH );
-        return;
-    }
+	if ( !f ) {
+		G_Printf ( "Mapcycle %s not found, setting g_useMapcycle to 0\n", g_mapcycle.string );
+		trap_Cvar_Set ( "g_useMapcycle", "0" );
+		return;
+	}
 
-    trap_FS_Read( buffer, len, f );
-    buffer[len] = 0;
-    trap_FS_FCloseFile( f );
+	if ( len > MAX_MAPCYCLELENGTH ) {
+		G_Printf ( "Mapcycle file too large, %s is %i, max allowed is %i\n", g_mapcycle.string, len, MAX_MAPCYCLELENGTH );
+		return;
+	}
 
-    COM_Compress(buffer);
+	trap_FS_Read ( buffer, len, f );
+	buffer[len] = 0;
+	trap_FS_FCloseFile ( f );
 
-    for ( i = 0; i < MAX_MAPCYCLELENGTH; i++ ) {
+	COM_Compress ( buffer );
 
-        //Filter comments( start at # and end at break )
-        if ( buffer[i] == '#' ) {
-            while ( i < MAX_MAPCYCLELENGTH && !pgbreak ) {
-                if ( buffer[i] == '\n' || buffer[i] == '\r' )
-                    pgbreak = qtrue;
-                i++;
-            }
-            pgbreak = qfalse;
-            lastSpace = qtrue;
-            //continue;
-        }
+	for ( i = 0; i < MAX_MAPCYCLELENGTH; i++ ) {
 
-        if ( SkippedChar( buffer[i] ) ) {
-            if ( !lastSpace ) {
-                buffer[charCount] = ' ';
-                charCount++;
-                lastSpace = qtrue;
-            }
-            continue;
-        }
-
-        lastSpace = qfalse;
-        buffer[charCount] = buffer[i];
-        charCount++;
-    }
-    
-    buffer[charCount] = '\0';
-
-    i = 0;
-    while ( i < MAX_MAPCYCLELENGTH && tokenNum < MAX_MAPCYCLETOKENS) {
-        i = G_setTokens( buffer, tokens[tokenNum].value, i);
-        tokens[tokenNum].type = G_setTokenType( tokens[tokenNum].value );
-        tokenNum++;
-    }
-    maxTokenNum = tokenNum;
-
-    G_Printf("Mapcycle parser found %i tokens\n", maxTokenNum );
-    
-    for( tokenNum = 0; tokenNum < maxTokenNum; tokenNum++ ){
-		
-		if( strcmp(tokens[tokenNum].value, "mapcycle") == 0 ) {
-			if( strcmp( tokens[tokenNum+1].value, "{" ) == 0 ){
-				//CG_Printf("lpar found\n");
-				lpar = tokenNum+1;
-				if( G_AbeforeB((char*)"{",(char*)"}", tokens, tokenNum+2)){
-					G_Printf("error: \"}\" expected at %s\n", tokens[tokenNum].value);
-					break;
-				}
-				//CG_Printf("debug abeforeb\n");
-				rpar = G_FindNextToken((char*)"}", tokens, tokenNum+2 );
-				//CG_Printf("debug findnexttoken\n");
-				if( rpar != -1 ){
-					G_setMapcycle( tokens, lpar+1, rpar-1 );
-					tokenNum = rpar;
-				}	
+		//Filter comments( start at # and end at break )
+		if ( buffer[i] == '#' ) {
+			while ( i < MAX_MAPCYCLELENGTH && !pgbreak ) {
+				if ( buffer[i] == '\n' || buffer[i] == '\r' )
+					pgbreak = qtrue;
+				i++;
 			}
+			pgbreak = qfalse;
+			lastSpace = qtrue;
+			//continue;
 		}
-		else if( strcmp(tokens[tokenNum].value, "allowed") == 0 ) {
-			allAllowed = qfalse;
-			if( strcmp( tokens[tokenNum+1].value, "{" ) == 0 ){
-				//CG_Printf("lpar found\n");
+
+		if ( SkippedChar ( buffer[i] ) ) {
+			if ( !lastSpace ) {
+				buffer[charCount] = ' ';
+				charCount++;
+				lastSpace = qtrue;
+			}
+			continue;
+		}
+
+		lastSpace = qfalse;
+		buffer[charCount] = buffer[i];
+		charCount++;
+	}
+
+	buffer[charCount] = '\0';
+
+	i = 0;
+	while ( i < MAX_MAPCYCLELENGTH && tokenNum < MAX_MAPCYCLETOKENS ) {
+		i = G_setTokens ( buffer, tokens[tokenNum].value, i );
+		tokens[tokenNum].type = G_setTokenType ( tokens[tokenNum].value );
+		tokenNum++;
+	}
+	maxTokenNum = tokenNum;
+
+	G_Printf ( "Mapcycle parser found %i tokens\n", maxTokenNum );
+
+	for ( tokenNum = 0; tokenNum < maxTokenNum; tokenNum++ ) {
+
+		if ( strcmp ( tokens[tokenNum].value, "mapcycle" ) == 0 ) {
+			if ( strcmp ( tokens[tokenNum+1].value, "{" ) == 0 ) {
 				lpar = tokenNum+1;
-				if( G_AbeforeB((char*)"{",(char*)"}", tokens, tokenNum+2)){
-					G_Printf("error: \"}\" expected at %s\n", tokens[tokenNum].value);
+				if ( G_AbeforeB ( ( char* ) "{", ( char* ) "}", tokens, tokenNum+2 ) ) {
+					G_Printf ( "error: \"}\" expected at %s\n", tokens[tokenNum].value );
 					break;
 				}
-				//CG_Printf("debug abeforeb\n");
-				rpar = G_FindNextToken((char*)"}", tokens, tokenNum+2 );
-				//CG_Printf("debug findnexttoken\n");
-				if( rpar != -1 ){
-					G_setAllowedMaps( tokens, lpar+1, rpar-1 );
+				rpar = G_FindNextToken ( ( char* ) "}", tokens, tokenNum+2 );
+				if ( rpar != -1 ) {
+					G_setMapcycle ( tokens, lpar+1, rpar-1 );
 					tokenNum = rpar;
-				}	
+				}
+			}
+		} else if ( strcmp ( tokens[tokenNum].value, "allowed" ) == 0 ) {
+			allAllowed = qfalse;
+			if ( strcmp ( tokens[tokenNum+1].value, "{" ) == 0 ) {
+				lpar = tokenNum+1;
+				if ( G_AbeforeB ( ( char* ) "{", ( char* ) "}", tokens, tokenNum+2 ) ) {
+					G_Printf ( "error: \"}\" expected at %s\n", tokens[tokenNum].value );
+					break;
+				}
+				rpar = G_FindNextToken ( ( char* ) "}", tokens, tokenNum+2 );
+				if ( rpar != -1 ) {
+					G_setAllowedMaps ( tokens, lpar+1, rpar-1 );
+					tokenNum = rpar;
+				}
 			}
 		}
 	}
-	
+
 	mapcycle.allAllowed = allAllowed;
 }
 

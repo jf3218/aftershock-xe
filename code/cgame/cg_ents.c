@@ -1058,7 +1058,7 @@ CG_AddCEntity
 
 ===============
 */
-static void CG_AddCEntity( centity_t *cent ) {
+static void CG_AddCEntity( centity_t *cent, int otherClient ) {
 	// event-only entities will have been dealt with already
 	if ( cent->currentState.eType >= ET_EVENTS ) {
 		return;
@@ -1083,7 +1083,7 @@ static void CG_AddCEntity( centity_t *cent ) {
 		CG_General( cent );
 		break;
 	case ET_PLAYER:
-		CG_Player( cent );
+		CG_Player( cent, otherClient );
 		break;
 	case ET_ITEM:
 		CG_Item( cent );
@@ -1118,7 +1118,7 @@ CG_AddPacketEntities
 
 ===============
 */
-void CG_AddPacketEntities( void ) {
+void CG_AddPacketEntities( int otherClient ) {
 	int					num;
 	centity_t			*cent;
 	playerState_t		*ps;
@@ -1185,7 +1185,7 @@ void CG_AddPacketEntities( void ) {
 	// generate and add the entity from the playerstate
 	ps = &cg.predictedPlayerState;
 	BG_PlayerStateToEntityState( ps, &cg.predictedPlayerEntity.currentState, qfalse );
-	CG_AddCEntity( &cg.predictedPlayerEntity );
+	CG_AddCEntity( &cg.predictedPlayerEntity, otherClient );
 
 	// lerp the non-predicted value for lightning gun origins
 	CG_CalcEntityLerpPositions( &cg_entities[ cg.snap->ps.clientNum ] );
@@ -1200,7 +1200,7 @@ void CG_AddPacketEntities( void ) {
 				// transition it immediately and add it
 				CG_TransitionEntity( cent );
 				cent->interpolate = qtrue;
-				CG_AddCEntity( cent );
+				CG_AddCEntity( cent, otherClient );
 			}
 		}
 	}
@@ -1213,7 +1213,7 @@ void CG_AddPacketEntities( void ) {
 //unlagged - early transitioning
 		if ( !cg.nextSnap || (cent->nextState.eType != ET_MISSILE && cent->nextState.eType != ET_GENERAL) ) {
 //unlagged - early transitioning
-			CG_AddCEntity( cent );
+			CG_AddCEntity( cent, otherClient );
 		} //Also unlagged
 	}
 }

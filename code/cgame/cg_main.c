@@ -341,6 +341,31 @@ vmCvar_t	ref_password;
 
 vmCvar_t	cg_hud;
 
+vmCvar_t	cg_consoleTime;
+
+vmCvar_t	cg_multiview;
+
+vmCvar_t	cg_multiview1_xpos;
+vmCvar_t	cg_multiview1_ypos;
+vmCvar_t	cg_multiview1_width;
+vmCvar_t	cg_multiview1_height;
+
+vmCvar_t	cg_multiview2_xpos;
+vmCvar_t	cg_multiview2_ypos;
+vmCvar_t	cg_multiview2_width;
+vmCvar_t	cg_multiview2_height;
+
+vmCvar_t	cg_multiview3_xpos;
+vmCvar_t	cg_multiview3_ypos;
+vmCvar_t	cg_multiview3_width;
+vmCvar_t	cg_multiview3_height;
+
+vmCvar_t	cg_multiview4_xpos;
+vmCvar_t	cg_multiview4_ypos;
+vmCvar_t	cg_multiview4_width;
+vmCvar_t	cg_multiview4_height;
+
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -553,6 +578,28 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_drawAccel, "cg_drawAccel", "0", CVAR_ARCHIVE },
 	{&ref_password, "ref_password", "", CVAR_USERINFO | CVAR_TEMP },
 	{&cg_hud, "cg_hud", "hud/default.txt", CVAR_ARCHIVE },
+	{&cg_consoleTime, "cg_consoleTime", "3000", CVAR_ARCHIVE },
+	{&cg_multiview, "cg_multiview", "2", CVAR_ARCHIVE | CVAR_USERINFO },
+	
+	{&cg_multiview1_xpos, "cg_multiview1_xpos", "0", CVAR_ARCHIVE },
+	{&cg_multiview1_ypos, "cg_multiview1_ypos", "0", CVAR_ARCHIVE },
+	{&cg_multiview1_width, "cg_multiview1_width", "640", CVAR_ARCHIVE },
+	{&cg_multiview1_height, "cg_multiview1_height", "480", CVAR_ARCHIVE },
+	
+	{&cg_multiview2_xpos, "cg_multiview2_xpos", "440", CVAR_ARCHIVE },
+	{&cg_multiview2_ypos, "cg_multiview2_ypos", "0", CVAR_ARCHIVE },
+	{&cg_multiview2_width, "cg_multiview2_width", "200", CVAR_ARCHIVE },
+	{&cg_multiview2_height, "cg_multiview2_height", "160", CVAR_ARCHIVE },
+	
+	{&cg_multiview3_xpos, "cg_multiview3_xpos", "440", CVAR_ARCHIVE },
+	{&cg_multiview3_ypos, "cg_multiview3_ypos", "160", CVAR_ARCHIVE },
+	{&cg_multiview3_width, "cg_multiview3_width", "200", CVAR_ARCHIVE },
+	{&cg_multiview3_height, "cg_multiview3_height", "160", CVAR_ARCHIVE },
+	
+	{&cg_multiview4_xpos, "cg_multiview4_xpos", "440", CVAR_ARCHIVE },
+	{&cg_multiview4_ypos, "cg_multiview4_ypos", "320", CVAR_ARCHIVE },
+	{&cg_multiview4_width, "cg_multiview4_width", "200", CVAR_ARCHIVE },
+	{&cg_multiview4_height, "cg_multiview4_height", "160", CVAR_ARCHIVE },
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -710,6 +757,8 @@ void QDECL CG_Printf( const char *msg, ... ) {
 	va_start (argptr, msg);
 	Q_vsnprintf (text, sizeof(text), msg, argptr);
 	va_end (argptr);
+	
+	CG_AddToConsole(text);
 
 	trap_Print( text );
 }

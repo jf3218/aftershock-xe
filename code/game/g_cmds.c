@@ -266,7 +266,7 @@ void G_SendEndGame( void ) {
 
 /*
 ==================
-DeathmatchScoreboardMessage
+G_SendStats
 
 ==================
 */

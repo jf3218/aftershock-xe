@@ -1218,6 +1218,15 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 	gclient_t	*cl;
 	int i, preservedScore[MAX_PERSISTANT]; //for keeping in elimination
 
+	if( ent->client->pers.multiview >= 2 && g_allowMultiview.integer ){
+		for( i = 0 ; i < MAX_GENTITIES; i++ ){
+			if( g_entities[i].inuse ){
+				g_entities[i].r.svFlags |= SVF_CLIENTMASKVISIBLE;
+				g_entities[i].r.singleClient |= (1 << ent->client->ps.clientNum);
+			}
+		}
+	}
+
 	// if we are doing a chase cam or a remote view, grab the latest info
 	if ( ent->client->sess.spectatorState == SPECTATOR_FOLLOW ) {
 		int		clientNum, flags;

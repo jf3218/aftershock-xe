@@ -567,6 +567,7 @@ enum{
 	HUD_TEAMOVERLAY8,
 	HUD_REWARD,
 	HUD_REWARDCOUNT,
+	HUD_CONSOLE,
 	HUD_PREDECORATE1,
 	HUD_PREDECORATE2,
 	HUD_PREDECORATE3,
@@ -604,7 +605,7 @@ typedef struct {
 } token_t;
 //=========================SUPERHUD END==================================
 
-
+#define MAX_MULTIVIEW 4
 
 #define MAX_REWARDSTACK		10
 #define MAX_SOUNDBUFFER		20
@@ -1334,6 +1335,11 @@ typedef struct {
 	int chatMsgTimes[TEAMCHAT_HEIGHT];
 	int chatPos;
 	int lastChatPos;
+	
+	char consoleMsgs[TEAMCHAT_HEIGHT][TEAMCHAT_WIDTH * 3 + 1];
+	int consoleMsgTimes[TEAMCHAT_HEIGHT];
+	int consolePos;
+	int lastConsolePos;
 
 	int deathNoticeTime[ DEATHNOTICE_HEIGHT ];
 	char deathNoticeName1[ DEATHNOTICE_HEIGHT ][ MAX_NAME_LENGTH ];
@@ -1396,6 +1402,8 @@ typedef struct {
 	int		blueLivingCount;
 	
 	hudElements_t   hud[HUD_MAX];
+	
+	int 		allowMultiview;
 } cgs_t;
 
 //==============================================================================
@@ -1645,6 +1653,29 @@ extern vmCvar_t			ref_password;
 
 extern vmCvar_t			cg_hud;
 
+extern vmCvar_t			cg_consoleTime;
+
+extern vmCvar_t			cg_multiview;
+
+extern vmCvar_t			cg_multiview1_xpos;
+extern vmCvar_t			cg_multiview1_ypos;
+extern vmCvar_t			cg_multiview1_width;
+extern vmCvar_t			cg_multiview1_height;
+
+extern vmCvar_t			cg_multiview2_xpos;
+extern vmCvar_t			cg_multiview2_ypos;
+extern vmCvar_t			cg_multiview2_width;
+extern vmCvar_t			cg_multiview2_height;
+
+extern vmCvar_t			cg_multiview3_xpos;
+extern vmCvar_t			cg_multiview3_ypos;
+extern vmCvar_t			cg_multiview3_width;
+extern vmCvar_t			cg_multiview3_height;
+
+extern vmCvar_t			cg_multiview4_xpos;
+extern vmCvar_t			cg_multiview4_ypos;
+extern vmCvar_t			cg_multiview4_width;
+extern vmCvar_t			cg_multiview4_height;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
@@ -1747,7 +1778,7 @@ void CG_AddLagometerFrameInfo( void );
 void CG_AddLagometerSnapshotInfo( snapshot_t *snap );
 void CG_CenterPrint( const char *str, int y, int charWidth );
 void CG_DrawHead( float x, float y, float w, float h, int clientNum, vec3_t headAngles );
-void CG_DrawActive( stereoFrame_t stereoView );
+void CG_DrawActive( stereoFrame_t stereoView, qboolean draw2d );
 void CG_DrawFlagModel( float x, float y, float w, float h, int team, qboolean force2D );
 void CG_DrawTeamBackground( int x, int y, int w, int h, float alpha, int team );
 void CG_OwnerDraw(float x, float y, float w, float h, float text_x, float text_y, int ownerDraw, int ownerDrawFlags, int align, float special, float scale, vec4_t color, qhandle_t shader, int textStyle);
@@ -1778,7 +1809,7 @@ qhandle_t CG_StatusHandle(int task);
 //
 // cg_player.c
 //
-void CG_Player( centity_t *cent );
+void CG_Player( centity_t *cent, int otherClient );
 void CG_ResetPlayerEntity( centity_t *cent );
 void CG_AddRefEntityWithPowerups( refEntity_t *ent, entityState_t *state, int team );
 void CG_NewClientInfo( int clientNum );
@@ -1811,7 +1842,7 @@ void CG_AddDeathNotice( char name1[ MAX_NAME_LENGTH ], int team1, char name2[ MA
 // cg_ents.c
 //
 void CG_SetEntitySoundPosition( centity_t *cent );
-void CG_AddPacketEntities( void );
+void CG_AddPacketEntities( int otherClient );
 void CG_Beam( centity_t *cent );
 void CG_AdjustPositionForMover( const vec3_t in, int moverNum, int fromTime, int toTime, vec3_t out );
 
@@ -1953,6 +1984,7 @@ void CG_ParseServerinfo( void );
 void CG_SetConfigValues( void );
 void CG_ShaderStateChanged(void);
 void CG_AddToChat(const char *str);
+void CG_AddToConsole(const char *str);
 
 //
 // cg_playerstate.c

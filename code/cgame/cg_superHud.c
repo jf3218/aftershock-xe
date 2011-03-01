@@ -139,6 +139,7 @@ static const char *HudNames[] =
     "TeamOverlay8",
     "Reward",
     "RewardCount",
+    "Console",
     "PreDecorate1",
     "PreDecorate2",
     "PreDecorate3",
@@ -273,6 +274,8 @@ static void CG_SetHudImage( int hudnumber, char* arg1 ){
 	cgs.hud[hudnumber].image = arg1;
 	//CG_Printf("%s\n", arg1);
 	cgs.hud[hudnumber].imageHandle = trap_R_RegisterShader( arg1 );
+	if( !cgs.hud[hudnumber].imageHandle )
+		CG_Printf("%s not found\n", arg1);
 }
 
 static void CG_SetHudText( int hudnumber, char* arg1 ){

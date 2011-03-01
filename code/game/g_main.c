@@ -234,6 +234,7 @@ vmCvar_t     g_muteSpec;
 vmCvar_t     g_mapcycle;
 vmCvar_t     g_useMapcycle;
 
+vmCvar_t     g_allowMultiview;
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -469,6 +470,7 @@ static cvarTable_t		gameCvarTable[] = {
 	
 	{ &g_mapcycle, "g_mapcycle", "mapcycle.cfg", CVAR_ARCHIVE, 0, qfalse},
 	{ &g_useMapcycle, "g_useMapcycle", "0", CVAR_ARCHIVE | CVAR_LATCH, 0, qfalse},
+	{ &g_allowMultiview, "g_allowMultiview", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 };
 
 // bk001129 - made static to avoid aliasing
@@ -3036,6 +3038,8 @@ end = trap_Milliseconds();
 
 	// update to team status?
 	CheckTeamStatus();
+	
+	TeamplaySpectatorMessage();
 
 	// cancel vote if timed out
 	CheckVote();

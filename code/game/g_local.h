@@ -316,6 +316,8 @@ typedef struct {
     int         nameChangeTime;
     int         nameChanges;
     
+    int multiview;
+    
 } clientPersistant_t;
 
 //unlagged - backward reconciliation #1
@@ -499,6 +501,8 @@ typedef struct {
 
 	int			teamScores[TEAM_NUM_TEAMS];
 	int			lastTeamLocationTime;		// last time of client team location update
+	
+	int			lastSpecInfoTime;
 
 	qboolean	newSession;				// don't use any old session data, because
 										// we changed gametype
@@ -1261,6 +1265,8 @@ extern vmCvar_t     g_muteSpec;
 
 extern vmCvar_t	    g_mapcycle;
 extern vmCvar_t	    g_useMapcycle;
+
+extern vmCvar_t	    g_allowMultiview;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

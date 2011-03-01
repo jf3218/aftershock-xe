@@ -2858,7 +2858,7 @@ void CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
 CG_Player
 ===============
 */
-void CG_Player( centity_t *cent ) {
+void CG_Player( centity_t *cent, int otherClient ) {
 	clientInfo_t	*ci;
 	refEntity_t		legs;
 	refEntity_t		torso;
@@ -2891,7 +2891,7 @@ void CG_Player( centity_t *cent ) {
 
 	// get the player model information
 	renderfx = 0;
-	if ( cent->currentState.number == cg.snap->ps.clientNum) {
+	if ( cent->currentState.number == cg.snap->ps.clientNum ) {
 		if (!cg.renderingThirdPerson) {
 			renderfx = RF_THIRD_PERSON;			// only draw in mirrors
 		} else {
@@ -2899,6 +2899,10 @@ void CG_Player( centity_t *cent ) {
 				return;
 			}
 		}
+	}
+	
+	if ( clientNum == otherClient ) {
+		renderfx = RF_THIRD_PERSON;			// only draw in mirrors
 	}
 
 
