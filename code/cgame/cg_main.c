@@ -42,7 +42,6 @@ int hudModificationCount = -1;
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
 void CG_Shutdown( void );
 void CG_oaUnofficialCvars( void );
-void CG_Autoaction( void );
 
 
 /*
@@ -67,9 +66,7 @@ intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, 
 		return CG_ConsoleCommand();
 	case CG_DRAW_ACTIVE_FRAME:
 		CG_DrawActiveFrame( arg0, arg1, arg2 );
-//                CG_FairCvars();
 		CG_oaUnofficialCvars();
-		//CG_Autoaction();
 		return 0;
 	case CG_CROSSHAIR_PLAYER:
 		return CG_CrosshairPlayer();
@@ -236,6 +233,7 @@ vmCvar_t                cg_autovertex;
 vmCvar_t	cg_fragmsgsize;
 
 vmCvar_t	cg_crosshairPulse;
+//TODO: merge that to less cvars
 vmCvar_t	cg_differentCrosshairs;
 vmCvar_t	cg_ch1;
 vmCvar_t	cg_ch1size;
@@ -581,18 +579,18 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_consoleTime, "cg_consoleTime", "3000", CVAR_ARCHIVE },
 	{&cg_multiview, "cg_multiview", "2", CVAR_ARCHIVE | CVAR_USERINFO },
 	
-	{&cg_multiview1_xpos, "cg_multiview1_xpos", "0", CVAR_ARCHIVE },
-	{&cg_multiview1_ypos, "cg_multiview1_ypos", "0", CVAR_ARCHIVE },
-	{&cg_multiview1_width, "cg_multiview1_width", "640", CVAR_ARCHIVE },
-	{&cg_multiview1_height, "cg_multiview1_height", "480", CVAR_ARCHIVE },
+	{&cg_multiview1_xpos, "cg_multiview1_xpos", "0", CVAR_CHEAT },
+	{&cg_multiview1_ypos, "cg_multiview1_ypos", "0", CVAR_CHEAT },
+	{&cg_multiview1_width, "cg_multiview1_width", "640", CVAR_CHEAT },
+	{&cg_multiview1_height, "cg_multiview1_height", "480", CVAR_CHEAT },
 	
 	{&cg_multiview2_xpos, "cg_multiview2_xpos", "440", CVAR_ARCHIVE },
-	{&cg_multiview2_ypos, "cg_multiview2_ypos", "0", CVAR_ARCHIVE },
+	{&cg_multiview2_ypos, "cg_multiview2_ypos", "160", CVAR_ARCHIVE },
 	{&cg_multiview2_width, "cg_multiview2_width", "200", CVAR_ARCHIVE },
 	{&cg_multiview2_height, "cg_multiview2_height", "160", CVAR_ARCHIVE },
 	
 	{&cg_multiview3_xpos, "cg_multiview3_xpos", "440", CVAR_ARCHIVE },
-	{&cg_multiview3_ypos, "cg_multiview3_ypos", "160", CVAR_ARCHIVE },
+	{&cg_multiview3_ypos, "cg_multiview3_ypos", "0", CVAR_ARCHIVE },
 	{&cg_multiview3_width, "cg_multiview3_width", "200", CVAR_ARCHIVE },
 	{&cg_multiview3_height, "cg_multiview3_height", "160", CVAR_ARCHIVE },
 	
@@ -2506,101 +2504,6 @@ void SnapVectorTowards( vec3_t v, vec3_t to ) {
 	}
 }
 //unlagged - attack prediction #3
-/*
-static qboolean do_vid_restart = qfalse;
-
-void CG_FairCvars() {
-    qboolean vid_restart_required = qfalse;
-    char rendererinfos[128];
-
-    if(cgs.gametype == GT_SINGLE_PLAYER) {
-        trap_Cvar_VariableStringBuffer("r_vertexlight",rendererinfos,sizeof(rendererinfos) );
-        if(cg_autovertex.integer && atoi( rendererinfos ) == 0 ) {
-            trap_Cvar_Set("r_vertexlight","1");
-            vid_restart_required = qtrue;
-        }
-        return; //Don't do anything in single player
-    }
-
-    if(cgs.fairflags & FF_LOCK_CVARS_BASIC) {
-        //Lock basic cvars.
-        trap_Cvar_VariableStringBuffer("r_subdivisions",rendererinfos,sizeof(rendererinfos) );
-        if(atoi( rendererinfos ) > 80 ) {
-            trap_Cvar_Set("r_subdivisions","80");
-            vid_restart_required = qtrue;
-        }
-
-        trap_Cvar_VariableStringBuffer("cg_shadows",rendererinfos,sizeof(rendererinfos) );
-        if (atoi( rendererinfos )!=0 && atoi( rendererinfos )!=1 ) {
-            trap_Cvar_Set("cg_shadows","1");
-        }
-    }
-
-    if(cgs.fairflags & FF_LOCK_CVARS_EXTENDED) {
-        //Lock extended cvars.
-        trap_Cvar_VariableStringBuffer("r_subdivisions",rendererinfos,sizeof(rendererinfos) );
-        if(atoi( rendererinfos ) > 20 ) {
-            trap_Cvar_Set("r_subdivisions","20");
-            vid_restart_required = qtrue;
-        }
-
-        trap_Cvar_VariableStringBuffer("r_picmip",rendererinfos,sizeof(rendererinfos) );
-        if(atoi( rendererinfos ) > 3 ) {
-            trap_Cvar_Set("r_picmip","3");
-            vid_restart_required = qtrue;
-        } else if(atoi( rendererinfos ) < 0 ) {
-            trap_Cvar_Set("r_picmip","0");
-            vid_restart_required = qtrue;
-        }
-
-        trap_Cvar_VariableStringBuffer("r_intensity",rendererinfos,sizeof(rendererinfos) );
-        if(atoi( rendererinfos ) > 2 ) {
-            trap_Cvar_Set("r_intensity","2");
-            vid_restart_required = qtrue;
-        } else if(atoi( rendererinfos ) < 0 ) {
-            trap_Cvar_Set("r_intensity","0");
-            vid_restart_required = qtrue;
-        }
-
-        trap_Cvar_VariableStringBuffer("r_mapoverbrightbits",rendererinfos,sizeof(rendererinfos) );
-        if(atoi( rendererinfos ) > 2 ) {
-            trap_Cvar_Set("r_mapoverbrightbits","2");
-            vid_restart_required = qtrue;
-        } else if(atoi( rendererinfos ) < 0 ) {
-            trap_Cvar_Set("r_mapoverbrightbits","0");
-            vid_restart_required = qtrue;
-        }
-
-        trap_Cvar_VariableStringBuffer("r_overbrightbits",rendererinfos,sizeof(rendererinfos) );
-        if(atoi( rendererinfos ) > 2 ) {
-            trap_Cvar_Set("r_overbrightbits","2");
-            vid_restart_required = qtrue;
-        } else if(atoi( rendererinfos ) < 0 ) {
-            trap_Cvar_Set("r_overbrightbits","0");
-            vid_restart_required = qtrue;
-        }
-    } 
-
-    if(cgs.fairflags & FF_LOCK_VERTEX) {
-        trap_Cvar_VariableStringBuffer("r_vertexlight",rendererinfos,sizeof(rendererinfos) );
-        if(atoi( rendererinfos ) != 0 ) {
-            trap_Cvar_Set("r_vertexlight","0");
-            vid_restart_required = qtrue;
-        }
-    } else if(cg_autovertex.integer){
-        trap_Cvar_VariableStringBuffer("r_vertexlight",rendererinfos,sizeof(rendererinfos) );
-        if(atoi( rendererinfos ) == 0 ) {
-            trap_Cvar_Set("r_vertexlight","1");
-            vid_restart_required = qtrue;
-        }
-    }
-
-    if(vid_restart_required && do_vid_restart)
-        trap_SendConsoleCommand("vid_restart");
-
-    do_vid_restart = qtrue;
-}
-*/
 
 void CG_oaUnofficialCvars( void ) {
 	char rendererinfos[128];
@@ -2622,27 +2525,5 @@ void CG_oaUnofficialCvars( void ) {
         trap_Cvar_Set("con_notifytime", "-1");
 }
 
-void CG_Autoaction( void ){
-  
-	if ( cg.infoScreenText[0] != 0 ) {
-		return;
-	}
-	
-	//CG_Printf("gamestring %s\n", cg.gameString );
-	if( cg_autoaction.integer & 1 ){
-		  if( !cg.demoStarted && !cg.intermissionStarted ){
-			  cg.demoStarted = 1;
-			  trap_SendConsoleCommand(va("record"/* %s", cg.gameString*/) );
-		  }
-	}
-	if( cg.intermissionStarted ){
-		if( cg_autoaction.integer & 1  && cg.demoStarted  ){
-			  trap_SendConsoleCommand( "stoprecord" );
-			  cg.demoStarted = 0;
-		}
-		if( cg_autoaction.integer & 2 )
-			  trap_SendConsoleCommand("screenshotJPEG %s" );
-	}
-}
 	
 

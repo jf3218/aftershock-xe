@@ -1394,6 +1394,7 @@ void ClientUserinfoChanged( int clientNum ) {
 	char	blueTeam[MAX_INFO_STRING];
 	char	userinfo[MAX_INFO_STRING];
 	int	i;
+	char      buf[ MAX_INFO_STRING ];
 
 	ent = g_entities + clientNum;
 	client = ent->client;
@@ -1524,6 +1525,9 @@ void ClientUserinfoChanged( int clientNum ) {
             {
                 client->pers.nameChangeTime = level.time;
                 client->pers.nameChanges++;
+		// log renames to demo
+		Info_SetValueForKey( buf, "name", client->pers.netname );
+		G_DemoCommand( DC_CLIENT_SET, va( "%d %s", clientNum, buf ) );
             }
         }
     }
@@ -1811,6 +1815,11 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 		client->sess.sessionTeam != TEAM_SPECTATOR ) {
 		BroadcastTeamChange( client, -1 );
 	}
+	
+	if ( level.demoState == DS_PLAYBACK ) {
+		client->sess.sessionTeam = TEAM_SPECTATOR;
+		client->sess.spectatorState = SPECTATOR_FOLLOW;
+	}
 
 	// count current clients and rank for scoreboard
 	CalculateRanks();
@@ -1880,6 +1889,7 @@ void ClientBegin( int clientNum ) {
 	int			flags;
 	int		countRed, countBlue, countFree;
         char		userinfo[MAX_INFO_STRING];
+	char      buffer[ MAX_INFO_STRING ] = "";
 
         trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 
@@ -1977,6 +1987,12 @@ void ClientBegin( int clientNum ) {
         motd ( ent );
         
 	G_LogPrintf( "ClientBegin: %i\n", clientNum );
+	
+	// log to demo
+	Info_SetValueForKey( buffer, "name", client->pers.netname );
+	Info_SetValueForKey( buffer, "ip", client->pers.ip );
+	Info_SetValueForKey( buffer, "team", va( "%d", client->sess.sessionTeam ) );
+	G_DemoCommand( DC_CLIENT_SET, va( "%d %s", clientNum, buffer ) );
 
 	//Send domination point names:
 	if(g_gametype.integer == GT_DOMINATION) {
@@ -2662,6 +2678,8 @@ void ClientDisconnect( int clientNum ) {
 	ent->client->sess.sessionTeam = TEAM_FREE;
 
 	trap_SetConfigstring( CS_PLAYERS + clientNum, "");
+	
+	G_DemoCommand( DC_CLIENT_REMOVE, va( "%d", clientNum ) );
 
 	CalculateRanks();
         CountVotes();

@@ -235,6 +235,7 @@ vmCvar_t     g_mapcycle;
 vmCvar_t     g_useMapcycle;
 
 vmCvar_t     g_allowMultiview;
+vmCvar_t     g_demoState;
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -471,6 +472,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_mapcycle, "g_mapcycle", "mapcycle.cfg", CVAR_ARCHIVE, 0, qfalse},
 	{ &g_useMapcycle, "g_useMapcycle", "0", CVAR_ARCHIVE | CVAR_LATCH, 0, qfalse},
 	{ &g_allowMultiview, "g_allowMultiview", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
+	// demo state
+	{ &g_demoState, "sv_demoState", "", 0, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing
@@ -481,6 +484,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart );
 void G_RunFrame( int levelTime );
 void G_ShutdownGame( int restart );
 void CheckExitRules( void );
+void G_DemoSetClient( void );
+void G_DemoRemoveClient( void );
 
 
 /*
@@ -523,6 +528,17 @@ intptr_t vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, 
 		return ConsoleCommand();
 	case BOTAI_START_FRAME:
 		return BotAIStartFrame( arg0 );
+	case GAME_DEMO_COMMAND:
+		switch ( arg0 )
+		{
+			case DC_CLIENT_SET:
+				G_DemoSetClient( );
+				break;
+			case DC_CLIENT_REMOVE:
+				G_DemoRemoveClient( );
+				break;
+		}
+		return 0;
 	}
 
 	return -1;
@@ -789,6 +805,8 @@ G_InitGame
 */
 void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	int					i;
+	char buffer[ MAX_CVAR_VALUE_STRING ];
+	int a, b;
 
         
         G_Printf ("------- Game Initialization -------\n");
@@ -822,6 +840,12 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	level.timeoutAdd = 0;
 	level.timeoutDelay = 0;
 	level.endgameSend = qfalse;
+	
+	trap_Cvar_VariableStringBuffer( "session", buffer, sizeof( buffer ) );
+	sscanf( buffer, "%i %i", &a, &b );
+	if ( a != trap_Cvar_VariableIntegerValue( "sv_maxclients" ) ||
+		b != trap_Cvar_VariableIntegerValue( "sv_democlients" ) )
+		level.newSession = qtrue;
 
 	level.snd_fry = G_SoundIndex("sound/player/fry.wav");	// FIXME standing in lava / slime
 
@@ -1280,16 +1304,17 @@ void CalculateRanks( void ) {
 		level.numteamVotingClients[i] = 0;
 	}
 	for ( i = 0 ; i < level.maxclients ; i++ ) {
-		if ( level.clients[i].pers.connected != CON_DISCONNECTED ) {
+		if ( level.clients[i].pers.connected != CON_DISCONNECTED &&
+		     !level.clients[ i ].pers.demoClient ) {
 			level.sortedClients[level.numConnectedClients] = i;
 			level.numConnectedClients++;
 
                         //We just set humanplayers to 0 during intermission
-                        if ( !level.intermissiontime && level.clients[i].pers.connected == CON_CONNECTED && !(g_entities[i].r.svFlags & SVF_BOT) ) {
+                        if ( !level.intermissiontime && level.clients[i].pers.connected == CON_CONNECTED && !level.clients[ i ].pers.demoClient && !(g_entities[i].r.svFlags & SVF_BOT) ) {
                             humanplayers++;
                         }
 
-			if ( level.clients[i].sess.sessionTeam != TEAM_SPECTATOR ) {
+			if ( level.clients[i].sess.sessionTeam != TEAM_SPECTATOR && !level.clients[ i ].pers.demoClient) {
                                 level.numNonSpectatorClients++;
 				// decide if this should be auto-followed
 				if ( level.clients[i].pers.connected == CON_CONNECTED ) {
@@ -1375,6 +1400,70 @@ void CalculateRanks( void ) {
         
         if(g_humanplayers.integer != humanplayers) //Presume all spectators are humans!
             trap_Cvar_Set( "g_humanplayers", va("%i", humanplayers) );
+}
+
+/*
+============
+G_DemoCommand
+
+Store a demo command to a demo if we are recording
+============
+*/
+void G_DemoCommand( demoCommand_t cmd, const char *string )
+{
+  if( level.demoState == DS_RECORDING )
+    trap_DemoCommand( cmd, string );
+}
+
+/*
+============
+G_DemoSetClient
+
+Mark a client as a demo client and load info into it
+============
+*/
+void G_DemoSetClient( void )
+{
+  char buffer[ MAX_INFO_STRING ];
+  gclient_t *client;
+  char *s;
+
+  G_Printf("DemoSet\n");
+  
+  trap_Argv( 0, buffer, sizeof( buffer ) );
+  client = level.clients + atoi( buffer );
+  client->pers.demoClient = qtrue;
+
+  trap_Argv( 1, buffer, sizeof( buffer ) );
+  s = Info_ValueForKey( buffer, "name" );
+  if( *s )
+    Q_strncpyz( client->pers.netname, s, sizeof( client->pers.netname ) );
+  s = Info_ValueForKey( buffer, "ip" );
+  if( *s )
+    Q_strncpyz( client->pers.ip, s, sizeof( client->pers.ip ) );
+  s = Info_ValueForKey( buffer, "team" );
+  if( *s )
+    client->sess.sessionTeam = atoi( s );
+  client->sess.spectatorState = SPECTATOR_NOT;
+}
+
+/*
+============
+G_DemoRemoveClient
+
+Unmark a client as a demo client
+============
+*/
+void G_DemoRemoveClient( void )
+{
+  char buffer[ 3 ];
+  gclient_t *client;
+
+  G_Printf("DemoRemove\n");
+  
+  trap_Argv( 0, buffer, sizeof( buffer ) );
+  client = level.clients + atoi( buffer );
+  client->pers.demoClient = qfalse;
 }
 
 
@@ -1920,10 +2009,16 @@ can see the last frag.
 void CheckExitRules( void ) {
  	int			i;
 	gclient_t	*cl;
+	
+	// don't exit in demos
+  	if( level.demoState == DS_PLAYBACK )
+    		return;
+	
 	// if at the intermission, wait for all non-bots to
 	// signal ready, then go to next level
 	if ( level.intermissiontime ) {
 		if( ( level.time > level.intermissiontime + 2000 ) && ( !level.endgameSend ) ){
+			G_StopServerDemo();
 			G_SendEndGame();
 			if( g_writeStats.integer )
 				G_WriteXMLStats();
@@ -2590,6 +2685,7 @@ void CheckTournament( void ) {
 			trap_Cvar_Set( "g_restarted", "1" );
 			trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
 			level.restarted = qtrue;
+			G_StartServerDemo();
 			return;
 		}
 	} else if ( g_gametype.integer != GT_SINGLE_PLAYER && level.warmupTime != 0 ) {
@@ -2657,6 +2753,7 @@ void CheckTournament( void ) {
 			trap_Cvar_Set( "g_restarted", "1" );
 			trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
 			level.restarted = qtrue;
+			G_StartServerDemo();
 			return;
 		}
 	}
@@ -2806,6 +2903,52 @@ void CheckCvars( void ) {
 }
 
 /*
+==================
+CheckDemo
+==================
+*/
+void CheckDemo( void )
+{
+  int i;
+  if( level.time - level.demoStarted < 1000 )
+    return;
+  // Don't do anything if no change
+  if ( g_demoState.integer == level.demoState )
+    return;
+
+  // log all connected clients
+  if ( g_demoState.integer == DS_RECORDING )
+  {
+    for ( i = 0; i < level.maxclients; i++ )
+    {
+      char buffer[ MAX_INFO_STRING ] = "";
+      if ( level.clients[ i ].pers.connected == CON_CONNECTED )
+      {
+	G_Printf("DemoAdd %i %s\n", i, level.clients[ i ].pers.netname );
+        Info_SetValueForKey( buffer, "name", level.clients[ i ].pers.netname );
+        Info_SetValueForKey( buffer, "ip", level.clients[ i ].pers.ip );
+        Info_SetValueForKey( buffer, "team", va( "%d", level.clients[ i ].sess.sessionTeam ) );
+        G_DemoCommand( DC_CLIENT_SET, va( "%d %s", i, buffer ) );
+      }
+    }
+  }
+
+  // empty teams and display a message
+  else if ( g_demoState.integer == DS_PLAYBACK )
+  {
+    trap_SendServerCommand( -1, "print \"A demo has been started on the server.\n\"" );
+    for ( i = 0; i < level.maxclients; i++ )
+    {
+      if ( level.clients[ i ].sess.sessionTeam != TEAM_SPECTATOR )
+        SetTeam( g_entities + i, "spectator" );
+    }
+  }
+  
+  level.demoState = g_demoState.integer;
+}
+
+
+/*
 =============
 G_RunThink
 
@@ -2843,6 +2986,10 @@ void G_RunFrame( int levelTime ) {
 	int			msec;
 	int start, end;
 
+	/*for( i = 0; i < level.numConnectedClients; i++ ){
+		G_Printf("%s,%i,%i\n", level.clients[level.sortedClients[i]].pers.netname, level.clients[level.sortedClients[i]].sess.sessionTeam, level.clients[level.sortedClients[i]].pers.demoClient );
+	}*/
+	
 	// if we are waiting for the level to restart, do nothing
 	if ( level.restarted ) {
 		return;
@@ -2865,6 +3012,9 @@ void G_RunFrame( int levelTime ) {
 
 	// get any cvar changes
 	G_UpdateCvars();
+	
+	// check demo state
+	CheckDemo( );
 	
 	if( level.timeout )
 		return;

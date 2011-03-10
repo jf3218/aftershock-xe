@@ -21,35 +21,134 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "cg_local.h"
+#define MAX_TOKENNUM 2048
+
+typedef enum {
+	TOT_LPAREN,
+	TOT_RPAREN,
+	TOT_WORD,
+	TOT_NUMBER,
+	TOT_NIL,
+	TOT_MAX
+} tokenType_t;
+
+#define TOKENVALUE_SIZE 64
+
+typedef struct {
+	char value[TOKENVALUE_SIZE];
+	int type;
+} token_t;
+
+token_t tokens[MAX_TOKENNUM];
 
 #define MAX_HUDFILELENGTH 20000
 #define MAX_PARAMETER 4
-#define MAX_TOKENNUM 2048
 
 typedef struct {
 	char *name;
 	int parameterNum;
 	int parameterTypes[MAX_PARAMETER];
+	void	(*function)(int hudnumber, char *arg1, char *arg2, char *arg3, char *arg4);
 } hudElementProperties_t;
+
+static void CG_SetHudRect( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].xpos = atoi(arg1);
+	cgs.hud[hudnumber].ypos = atoi(arg2);
+	cgs.hud[hudnumber].width = atoi(arg3);
+	cgs.hud[hudnumber].height = atoi(arg4);
+}
+
+static void CG_SetHudBGColor( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].bgcolor[0] = atof(arg1);
+	cgs.hud[hudnumber].bgcolor[1] = atof(arg2);
+	cgs.hud[hudnumber].bgcolor[2] = atof(arg3);
+	cgs.hud[hudnumber].bgcolor[3] = atof(arg4);
+}
+
+static void CG_SetHudColor( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].color[0] = atof(arg1);
+	cgs.hud[hudnumber].color[1] = atof(arg2);
+	cgs.hud[hudnumber].color[2] = atof(arg3);
+	cgs.hud[hudnumber].color[3] = atof(arg4);
+}
+
+static void CG_SetHudFontsize( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].fontWidth = atoi(arg1);
+	cgs.hud[hudnumber].fontHeight = atoi(arg2);
+}
+
+static void CG_SetHudImage( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].image = arg1;
+	//CG_Printf("%s\n", arg1);
+	cgs.hud[hudnumber].imageHandle = trap_R_RegisterShader( arg1 );
+	if( !cgs.hud[hudnumber].imageHandle )
+		CG_Printf("%s not found\n", arg1);
+}
+
+static void CG_SetHudText( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].text = arg1;
+}
+
+static void CG_SetHudFill( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].fill = qtrue;
+}
+
+static void CG_SetHudTextalign( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	if( strcmp( arg1, "L") == 0 )
+		cgs.hud[hudnumber].textAlign = 0;
+	else if( strcmp( arg1, "R" ) == 0 )
+		cgs.hud[hudnumber].textAlign = 2;
+	else
+		cgs.hud[hudnumber].textAlign = 1;
+}
+
+static void CG_SetHudTime( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].time = atoi(arg1);
+}
+
+static void CG_SetHudTextStyle( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].textstyle = atoi(arg1);
+}
+
+static void CG_SetHudCvar( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].cvar = arg1;
+	cgs.hud[hudnumber].cvarValue = atoi(arg2);
+}
+
+static void CG_SetHudTeamColor( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].teamColor = 1;
+}
+
+static void CG_SetHudEnemyColor( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].teamColor = 2;
+}
+
+static void CG_SetHudTeamBgColor( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].teamBgColor = 1;
+}
+
+static void CG_SetHudEnemyBgColor( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	cgs.hud[hudnumber].teamBgColor = 2;
+}
 
 #define MAX_HUDPROPERTIES 15
 
 hudElementProperties_t hudProperties[ MAX_HUDPROPERTIES ] = {
-	{ (char*)"rect", 4, { TOT_NUMBER, TOT_NUMBER, TOT_NUMBER, TOT_NUMBER } },
-	{ (char*)"bgcolor", 4, { TOT_NUMBER, TOT_NUMBER, TOT_NUMBER, TOT_NUMBER } },
-	{ (char*)"color", 4, { TOT_NUMBER, TOT_NUMBER, TOT_NUMBER, TOT_NUMBER } },
-	{ (char*)"fill", 0, { TOT_NIL } },
-	{ (char*)"fontsize", 2, { TOT_NUMBER, TOT_NUMBER } },
-	{ (char*)"image", 1, { TOT_WORD } },
-	{ (char*)"text", 1, { TOT_WORD } },
-	{ (char*)"textalign", 1, { TOT_WORD } },
-	{ (char*)"time", 1, { TOT_NUMBER } },
-	{ (char*)"textstyle", 1, { TOT_NUMBER } },
-	{ (char*)"teamcolor", 0, { TOT_NIL } },
-	{ (char*)"enemycolor", 0, { TOT_NIL } },
-	{ (char*)"teambgcolor", 0, { TOT_NIL } },
-	{ (char*)"enemybgcolor", 0, { TOT_NIL } },
-	{ (char*)"cvar", 2, { TOT_WORD, TOT_NUMBER } }
+	{ (char*)"rect", 4, { TOT_NUMBER, TOT_NUMBER, TOT_NUMBER, TOT_NUMBER }, CG_SetHudRect },
+	{ (char*)"bgcolor", 4, { TOT_NUMBER, TOT_NUMBER, TOT_NUMBER, TOT_NUMBER }, CG_SetHudBGColor },
+	{ (char*)"color", 4, { TOT_NUMBER, TOT_NUMBER, TOT_NUMBER, TOT_NUMBER }, CG_SetHudColor },
+	{ (char*)"fill", 0, { TOT_NIL }, CG_SetHudFill },
+	{ (char*)"fontsize", 2, { TOT_NUMBER, TOT_NUMBER }, CG_SetHudFontsize },
+	{ (char*)"image", 1, { TOT_WORD }, CG_SetHudImage },
+	{ (char*)"text", 1, { TOT_WORD }, CG_SetHudText },
+	{ (char*)"textalign", 1, { TOT_WORD }, CG_SetHudTextalign },
+	{ (char*)"time", 1, { TOT_NUMBER }, CG_SetHudTime },
+	{ (char*)"textstyle", 1, { TOT_NUMBER }, CG_SetHudTextStyle },
+	{ (char*)"teamcolor", 0, { TOT_NIL }, CG_SetHudTeamColor },
+	{ (char*)"enemycolor", 0, { TOT_NIL }, CG_SetHudEnemyColor },
+	{ (char*)"teambgcolor", 0, { TOT_NIL }, CG_SetHudTeamBgColor },
+	{ (char*)"enemybgcolor", 0, { TOT_NIL }, CG_SetHudEnemyBgColor },
+	{ (char*)"cvar", 2, { TOT_WORD, TOT_NUMBER }, CG_SetHudCvar }
 };
 
 static const char *HudNames[] =
@@ -244,73 +343,9 @@ static qboolean CG_AbeforeB( char *A, char *B, token_t *in, int start ){
 		return qfalse;
 }
 
-static void CG_SetHudRect( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
-	cgs.hud[hudnumber].xpos = atoi(arg1);
-	cgs.hud[hudnumber].ypos = atoi(arg2);
-	cgs.hud[hudnumber].width = atoi(arg3);
-	cgs.hud[hudnumber].height = atoi(arg4);
-}
-
-static void CG_SetHudBGColor( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
-	cgs.hud[hudnumber].bgcolor[0] = atof(arg1);
-	cgs.hud[hudnumber].bgcolor[1] = atof(arg2);
-	cgs.hud[hudnumber].bgcolor[2] = atof(arg3);
-	cgs.hud[hudnumber].bgcolor[3] = atof(arg4);
-}
-
-static void CG_SetHudColor( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
-	cgs.hud[hudnumber].color[0] = atof(arg1);
-	cgs.hud[hudnumber].color[1] = atof(arg2);
-	cgs.hud[hudnumber].color[2] = atof(arg3);
-	cgs.hud[hudnumber].color[3] = atof(arg4);
-}
-
-static void CG_SetHudFontsize( int hudnumber, char* arg1, char* arg2 ){
-	cgs.hud[hudnumber].fontWidth = atoi(arg1);
-	cgs.hud[hudnumber].fontHeight = atoi(arg2);
-}
-
-static void CG_SetHudImage( int hudnumber, char* arg1 ){
-	cgs.hud[hudnumber].image = arg1;
-	//CG_Printf("%s\n", arg1);
-	cgs.hud[hudnumber].imageHandle = trap_R_RegisterShader( arg1 );
-	if( !cgs.hud[hudnumber].imageHandle )
-		CG_Printf("%s not found\n", arg1);
-}
-
-static void CG_SetHudText( int hudnumber, char* arg1 ){
-	cgs.hud[hudnumber].text = arg1;
-}
-
-static void CG_SetHudFill( int hudnumber ){
-	cgs.hud[hudnumber].fill = qtrue;
-}
-
-static void CG_SetHudTextalign( int hudnumber, char* arg1 ){
-	if( strcmp( arg1, "L") == 0 )
-		cgs.hud[hudnumber].textAlign = 0;
-	else if( strcmp( arg1, "R" ) == 0 )
-		cgs.hud[hudnumber].textAlign = 2;
-	else
-		cgs.hud[hudnumber].textAlign = 1;
-}
-
-static void CG_SetHudTime( int hudnumber, char* arg1 ){
-	cgs.hud[hudnumber].time = atoi(arg1);
-}
-
-static void CG_SetTextStyle( int hudnumber, char* arg1 ){
-	cgs.hud[hudnumber].textstyle = atoi(arg1);
-}
-
-static void CG_SetHudCvar( int hudnumber, char *arg1, char *arg2 ){
-	cgs.hud[hudnumber].cvar = arg1;
-	cgs.hud[hudnumber].cvarValue = atoi(arg2);
-}
-
 static void CG_setHudElement( int hudnumber, token_t *in, int min, int max ){
 	int i,j,k;
-	qboolean rect=qfalse, bgcolor=qfalse, color=qfalse, fill=qfalse, fontsize=qfalse, image=qfalse, text=qfalse, textalign=qfalse, time=qfalse, textstyle = qfalse, teamcolor = qfalse, teambgcolor = qfalse, cvar = qfalse;
+	qboolean mask[MAX_HUDPROPERTIES];
 	
 	//Syntax check and parsing
 	for( i = min; i <= max; i++ ){
@@ -322,123 +357,64 @@ static void CG_setHudElement( int hudnumber, token_t *in, int min, int max ){
 						return;
 					}
 				}
-				if( strcmp( in[i].value, "rect" ) == 0 ){
-					CG_SetHudRect( hudnumber, in[i+1].value, in[i+2].value, in[i+3].value, in[i+4].value );
-					rect = qtrue;
-				}
-				else if( strcmp( in[i].value, "bgcolor" ) == 0 ){
-					CG_SetHudBGColor( hudnumber, in[i+1].value, in[i+2].value, in[i+3].value, in[i+4].value );
-					bgcolor = qtrue;
-				}
-				else if( strcmp( in[i].value, "color" ) == 0 ){
-					CG_SetHudColor( hudnumber, in[i+1].value, in[i+2].value, in[i+3].value, in[i+4].value );
-					color = qtrue;
-				}
-				else if( strcmp( in[i].value, "fill" ) == 0 ){
-					CG_SetHudFill( hudnumber );
-					fill = qtrue;
-				}
-				else if( strcmp( in[i].value, "fontsize" ) == 0 ){
-					CG_SetHudFontsize( hudnumber, in[i+1].value, in[i+2].value );
-					fontsize = qtrue;
-				}
-				else if( strcmp( in[i].value, "image" ) == 0 ){
-					CG_SetHudImage( hudnumber, in[i+1].value );
-					image = qtrue;
-				}
-				else if( strcmp( in[i].value, "text" ) == 0 ){
-					CG_SetHudText( hudnumber, in[i+1].value );
-					text = qtrue;
-				}
-				else if( strcmp( in[i].value, "textalign" ) == 0 ){
-					CG_SetHudTextalign( hudnumber, in[i+1].value );
-					textalign = qtrue;
-				}
-				else if( strcmp( in[i].value, "time" ) == 0 ){
-					CG_SetHudTime( hudnumber, in[i+1].value );
-					time = qtrue;
-				}
-				else if( strcmp( in[i].value, "textstyle" ) == 0 ){
-					CG_SetTextStyle( hudnumber, in[i+1].value );
-					textstyle = qtrue;
-				}
-				else if( strcmp( in[i].value, "teamcolor" ) == 0 ){
-					cgs.hud[hudnumber].teamColor = 1;
-					teamcolor = qtrue;
-				}
-				else if( strcmp( in[i].value, "enemycolor" ) == 0 ){
-					cgs.hud[hudnumber].teamColor = 2;
-					teamcolor = qtrue;
-				}
-				else if( strcmp( in[i].value, "teambgcolor" ) == 0 ){
-					cgs.hud[hudnumber].teamBgColor = 1;
-					teambgcolor = qtrue;
-				}
-				else if( strcmp( in[i].value, "enemybgcolor" ) == 0 ){
-					cgs.hud[hudnumber].teamBgColor = 2;
-					teambgcolor = qtrue;
-				}
-				else if( strcmp( in[i].value, "cvar" ) == 0 ){
-					CG_SetHudCvar(hudnumber, in[i+1].value, in[i+2].value);
-					cvar = qtrue;
-				}
+				hudProperties[j].function(hudnumber, in[i+1].value, in[i+2].value, in[i+3].value, in[i+4].value );
+				mask[j] = qtrue;
 			}
 		}
 	}
 	
 	if( hudnumber != HUD_DEFAULT ){
-		if( !rect ){
+		if( !mask[0] ){
 			cgs.hud[hudnumber].xpos = cgs.hud[HUD_DEFAULT].xpos;
 			cgs.hud[hudnumber].ypos = cgs.hud[HUD_DEFAULT].ypos;
 			cgs.hud[hudnumber].width = cgs.hud[HUD_DEFAULT].width;
 			cgs.hud[hudnumber].height = cgs.hud[HUD_DEFAULT].height;
 		}
-		if( !bgcolor ){
+		if( !mask[1] ){
 			cgs.hud[hudnumber].bgcolor[0] = cgs.hud[HUD_DEFAULT].bgcolor[0];
 			cgs.hud[hudnumber].bgcolor[1] = cgs.hud[HUD_DEFAULT].bgcolor[1];
 			cgs.hud[hudnumber].bgcolor[2] = cgs.hud[HUD_DEFAULT].bgcolor[2];
 			cgs.hud[hudnumber].bgcolor[3] = cgs.hud[HUD_DEFAULT].bgcolor[3];
 		}
-		if( !color ){
+		if( !mask[2] ){
 			cgs.hud[hudnumber].color[0] = cgs.hud[HUD_DEFAULT].color[0];
 			cgs.hud[hudnumber].color[1] = cgs.hud[HUD_DEFAULT].color[1];
 			cgs.hud[hudnumber].color[2] = cgs.hud[HUD_DEFAULT].color[2];
 			cgs.hud[hudnumber].color[3] = cgs.hud[HUD_DEFAULT].color[3];
 		}
-		if( !fill ){
+		if( !mask[3] ){
 			cgs.hud[hudnumber].fill = cgs.hud[HUD_DEFAULT].fill;
 		}
-		if( !fontsize ){
+		if( !mask[4] ){
 			cgs.hud[hudnumber].fontWidth = cgs.hud[HUD_DEFAULT].fontWidth;
 			cgs.hud[hudnumber].fontHeight = cgs.hud[HUD_DEFAULT].fontHeight;
 		}
-		if( !image ){
+		if( !mask[5] ){
 			cgs.hud[hudnumber].image = cgs.hud[HUD_DEFAULT].image;
 		}
-		if( !text ){
+		if( !mask[6] ){
 			cgs.hud[hudnumber].text = cgs.hud[HUD_DEFAULT].text;
 		}
-		if( !textalign ){
+		if( !mask[7] ){
 			cgs.hud[hudnumber].textAlign = cgs.hud[HUD_DEFAULT].textAlign;
 		}
-		if( !time ){
+		if( !mask[8] ){
 			cgs.hud[hudnumber].time = cgs.hud[HUD_DEFAULT].time;
 		}
-		if( !textstyle ){
+		if( !mask[9] ){
 			cgs.hud[hudnumber].textstyle = cgs.hud[HUD_DEFAULT].textstyle;
 		}
-		if( !teamcolor ){
+		if( !( mask[10] || mask[11] ) ){
 			cgs.hud[hudnumber].teamColor = 0;
 		}
-		if( !teambgcolor ){
+		if( !( mask[12] || mask[13] ) ){
 			cgs.hud[hudnumber].teamBgColor = 0;
 		}
-		if( !cvar ){
+		if( !mask[14] ){
 			cgs.hud[hudnumber].cvar = cgs.hud[HUD_DEFAULT].cvar;
 			cgs.hud[hudnumber].cvarValue = cgs.hud[HUD_DEFAULT].cvarValue;
 		}
 	}
-	
 	cgs.hud[hudnumber].inuse = qtrue;
 }
 
@@ -528,8 +504,6 @@ void CG_WriteHudFile_f( void ){
 	
 	trap_Cvar_Set("cg_hud", filename);
 }
-
-token_t tokens[MAX_TOKENNUM];
 
 void CG_LoadHudFile( const char* hudFile ){
 	char buffer[MAX_HUDFILELENGTH];
@@ -639,10 +613,10 @@ void CG_ClearHud( void ){
 		cgs.hud[i].bgcolor[2] = 0;
 		cgs.hud[i].bgcolor[3] = 0;
 		
-		cgs.hud[i].color[0] = 0;
-		cgs.hud[i].color[1] = 0;
-		cgs.hud[i].color[2] = 0;
-		cgs.hud[i].color[3] = 0;
+		cgs.hud[i].color[0] = 1;
+		cgs.hud[i].color[1] = 1;
+		cgs.hud[i].color[2] = 1;
+		cgs.hud[i].color[3] = 1;
 		
 		cgs.hud[i].fill = qfalse;
 		cgs.hud[i].fontHeight = 8;
@@ -654,13 +628,13 @@ void CG_ClearHud( void ){
 		cgs.hud[i].inuse = qfalse;
 		cgs.hud[i].text = (char*)"";
 		cgs.hud[i].textAlign = 1;
-		cgs.hud[i].textstyle = 0;
-		cgs.hud[i].time = 0;
+		cgs.hud[i].textstyle = 1;
+		cgs.hud[i].time = 1500;
 		cgs.hud[i].xpos = 0;
 		cgs.hud[i].ypos = 0;
 	}
 }
-
+//TODO: complete this
 void CG_HudEdit_f( void ){
 	int i;
 	int hudnumber;
@@ -767,15 +741,15 @@ void CG_HudEdit_f( void ){
 	else if( strcmp( CG_Argv(2), "color" ) == 0 )
 		CG_SetHudColor( hudnumber, arg1, arg2, arg3, arg4 );
 	else if( strcmp( CG_Argv(2), "fontsize" ) == 0 )
-		CG_SetHudFontsize( hudnumber, arg1, arg2 );
+		CG_SetHudFontsize( hudnumber, arg1, arg2, arg3, arg4  );
 	else if( strcmp( CG_Argv(2), "image" ) == 0 )
-		CG_SetHudImage( hudnumber, arg1 );
+		CG_SetHudImage( hudnumber, arg1, arg2, arg3, arg4  );
 	else if( strcmp( CG_Argv(2), "text" ) == 0 )
-		CG_SetHudText( hudnumber, arg1 );
+		CG_SetHudText( hudnumber, arg1, arg2, arg3, arg4  );
 	else if( strcmp( CG_Argv(2), "textalign" ) == 0 )
-		CG_SetHudTextalign( hudnumber, arg1 );
+		CG_SetHudTextalign( hudnumber, arg1, arg2, arg3, arg4  );
 	else if( strcmp( CG_Argv(2), "time" ) == 0 )
-		CG_SetHudTime( hudnumber, arg1 );
+		CG_SetHudTime( hudnumber, arg1, arg2, arg3, arg4  );
 	else if( strcmp( CG_Argv(2), "textstyle" ) == 0 )
-		CG_SetTextStyle( hudnumber, arg1 );
+		CG_SetHudTextStyle( hudnumber, arg1, arg2, arg3, arg4  );
 }

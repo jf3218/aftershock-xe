@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
+//TODO: remove this things, noone needs it
+
 //#include "cg_local.h"
 #include "../qcommon/q_shared.h"
 #include "../renderer/tr_types.h"

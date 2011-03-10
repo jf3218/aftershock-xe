@@ -76,15 +76,23 @@ void CG_DrawSides(float x, float y, float w, float h, float size) {
 	trap_R_DrawStretchPic( x + w - size, y, size, h, 0, 0, 0, 0, cgs.media.whiteShader );
 }
 
+/*
+================
+CG_DrawTopBottom
+
+Coords are virtual 640x480
+================
+*/
 void CG_DrawTopBottom(float x, float y, float w, float h, float size) {
 	CG_AdjustFrom640( &x, &y, &w, &h );
 	size *= cgs.screenYScale;
 	trap_R_DrawStretchPic( x, y, w, size, 0, 0, 0, 0, cgs.media.whiteShader );
 	trap_R_DrawStretchPic( x, y + h - size, w, size, 0, 0, 0, 0, cgs.media.whiteShader );
 }
+
 /*
 ================
-UI_DrawRect
+CG_DrawRect
 
 Coordinates are 640*480 virtual values
 =================
@@ -97,8 +105,6 @@ void CG_DrawRect( float x, float y, float width, float height, float size, const
 
 	trap_R_SetColor( NULL );
 }
-
-
 
 /*
 ================
@@ -116,7 +122,11 @@ void CG_DrawPic( float x, float y, float width, float height, qhandle_t hShader 
 ================
 CG_DrawHudIcon
 
-Coordinates are 640*480 virtual values
+Draws an icon defined 
+in the hudfile
+
+TODO: add function CG_SetTeamColor( vec4_t *color )
+and CG_SetTeamBGColor( vec4_t *color )
 =================
 */
 void CG_DrawHudIcon( int hudnumber, qboolean override, qhandle_t hShader ) {
@@ -203,6 +213,18 @@ void CG_DrawHudIcon( int hudnumber, qboolean override, qhandle_t hShader ) {
 	trap_R_SetColor( NULL );
 }
 
+/*
+================
+CG_DrawScoresHud
+
+Draws the scores
+(enemy, own, scorelimit)
+if defined in hud
+  
+TODO: add function CG_SetTeamColor( vec4_t *color )
+and CG_SetTeamBGColor( vec4_t *color )
+=================
+*/
 void CG_DrawScoresHud( int hudnumber, char* text, qboolean spec ){
 	hudElements_t hudelement = cgs.hud[hudnumber];
 	vec4_t color;
@@ -216,7 +238,7 @@ void CG_DrawScoresHud( int hudnumber, char* text, qboolean spec ){
 	if( !spec ){
 		if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 1 ){
 			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-					color[0] = 1;
+				color[0] = 1;
 				color[1] = 0;
 				color[2] = 0;
 			} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
@@ -244,10 +266,7 @@ void CG_DrawScoresHud( int hudnumber, char* text, qboolean spec ){
 	color[3] = hudelement.bgcolor[3];
 	}
 	else{
-		color[0] = 0.5f;
-		color[1] = 0.5f;
-		color[2] = 0.5f;
-		color[3] = 0.5f;
+		color[0] = color[1] = color[2] = color[3] = 0.5f;
 	}
 	CG_FillRect( hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, color );
 	
@@ -399,6 +418,19 @@ void CG_DrawStringExt( int x, int y, const char *string, const float *setColor,
 	trap_R_SetColor( NULL );
 }
 
+/*
+================
+CG_DrawStringHud
+
+Draws a string
+if defined in hud
+  
+TODO: add function CG_SetTeamColor( vec4_t *color )
+and CG_SetTeamBGColor( vec4_t *color )
+
+maybe add override for some elements
+=================
+*/
 void CG_DrawStringHud( int hudnumber, qboolean colorize, char* text ){
 	hudElements_t hudelement = cgs.hud[hudnumber];
 	int w, x;

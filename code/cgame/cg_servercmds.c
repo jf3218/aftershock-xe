@@ -153,7 +153,7 @@ CG_StartOfGame
 
 =================
 */
-static void CG_StartOfGame ( void ) {
+void CG_StartOfGame ( void ) {
 	char 		*cmd;
 
 	if ( cg.demoPlayback )
@@ -162,7 +162,7 @@ static void CG_StartOfGame ( void ) {
 	if ( !cg.demoStarted )
 		CG_SetGameString();
 
-	if ( cg_autoaction.integer & 1 ) {
+	if ( cg_autoaction.integer & 1 && !( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR && ( cg.snap->ps.pm_flags & PMF_SCOREBOARD ) ) ) {
 		cg.demoStarted = 1;
 		cmd = va ( "record %s\n", gameString );
 		trap_SendConsoleCommand ( cmd );

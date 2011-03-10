@@ -985,23 +985,21 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
     CG_TileClear();
 
     //---------------------Multiview-------------------------------
-
-    if ( cgs.allowMultiview && ( cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR ) && cg_multiview.integer > 1 ) {
+    //TODO: resize main window, split hud into pre/post
+    
+    /*if ( cgs.allowMultiview && ( cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR ) && cg_multiview.integer > 1 ) {
         cg.refdef.x = cg_multiview1_xpos.integer * cgs.screenXScale;
         cg.refdef.y = cg_multiview1_ypos.integer * cgs.screenYScale;
         cg.refdef.width = cg_multiview1_width.integer * cgs.screenXScale;
         cg.refdef.height = cg_multiview1_height.integer * cgs.screenYScale;
-    }
+    }*/
 
     // actually issue the rendering calls
     CG_DrawActive( stereoView, qtrue );
-
-    /*if ( cgs.allowMultiview && ( cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR ) && cg_multiview.integer > 1 ) {
-      CG_Draw2D(stereoView);*/
-    /*}
-    else{
-      CG_Draw2D ( stereoView );
-    }*/
+    
+    if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR &&
+	     ( cg.snap->ps.pm_flags & PMF_SCOREBOARD ) )
+	    return;
 
     if ( cg_stats.integer ) {
         CG_Printf( "cg.clientFrame:%i\n", cg.clientFrame );

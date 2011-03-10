@@ -211,7 +211,7 @@ TODO: Different Fonts
 */
 #ifndef MISSIONPACK
 static void CG_DrawField ( int x, int y, int width, int value, float size ) {
-	char	num[16], *ptr;
+	char	num[8], *ptr;
 	int		l;
 	int		frame;
 
@@ -265,7 +265,7 @@ static void CG_DrawField ( int x, int y, int width, int value, float size ) {
 #endif // MISSIONPACK
 
 static void CG_DrawFieldFontsize ( int x, int y, int width, int value, int fontWidth, int fontHeight ) {
-	char	num[16], *ptr;
+	char	num[8], *ptr;
 	int		l;
 	int		frame;
 
@@ -316,7 +316,14 @@ static void CG_DrawFieldFontsize ( int x, int y, int width, int value, int fontW
 		l--;
 	}
 }
+/*
+==============
+CG_DrawFieldHud
 
+Draws large numbers for status bar and powerups, position defined in hud
+TODO: Colorization
+==============
+*/
 static void CG_DrawFieldHud ( int value, int hudnumber ) {
 	hudElements_t hudelement = cgs.hud[hudnumber];
 
@@ -345,12 +352,13 @@ static void CG_DrawFieldHud ( int value, int hudnumber ) {
 	}
 }
 
-//
-// CG_DrawBarHud
-//
-// Draws bars for Ammo, Health and Armor
-//
-//
+/*
+==============
+CG_DrawBarHud
+
+Draw bars for ammo, health and armor
+==============
+*/
 
 static void CG_DrawBarHud ( int hudnumber, int value, int maxvalue ) {
 	hudElements_t hudelement = cgs.hud[hudnumber];
@@ -428,7 +436,7 @@ static void CG_DrawBarHud ( int hudnumber, int value, int maxvalue ) {
 		CG_DrawPic ( x, y, width, height, cgs.media.whiteShader );
 	}
 
-	trap_R_SetColor ( NULL );
+	trap_R_SetColor ( NULL ); //FIXME: really?
 }
 
 
@@ -668,6 +676,9 @@ static void CG_DrawStatusBar ( void ) {
 					VectorCopy ( colors[1], hcolor );
 				}
 			}
+			
+			//TODO: inline function? It is used in Weaponbar too, but the function will be long
+			
 			if ( cgs.hud[HUD_AMMOBAR].inuse )
 				switch ( cent->currentState.weapon ) {
 				case WP_MACHINEGUN:
@@ -710,11 +721,11 @@ static void CG_DrawStatusBar ( void ) {
 			trap_R_SetColor ( NULL );
 
 		}
-		if ( cent->currentState.weapon && cg_weapons[ /*cg.predictedPlayerState.weapon*/ cent->currentState.weapon ].ammoIcon ) {
+		if ( cent->currentState.weapon && cg_weapons[ /*cg.predictedPlayerState.weapon*/ cent->currentState.weapon ].ammoIcon ) { /* for multiview */
 			CG_DrawHudIcon ( HUD_AMMOICON, qfalse, cg_weapons[ /*cg.predictedPlayerState.weapon*/ cent->currentState.weapon ].ammoIcon );
 		}
 	}
-
+	/* TODO: color the flagshader used in the flagstatus, maybe this is faster and it will save memory */
 	if ( cg.predictedPlayerState.powerups[PW_REDFLAG] ) {
 		CG_DrawHudIcon ( HUD_STATUSBARFLAG, qfalse, cgs.media.redFlagShader[0] );
 	} else if ( cg.predictedPlayerState.powerups[PW_BLUEFLAG] ) {
@@ -726,6 +737,7 @@ static void CG_DrawStatusBar ( void ) {
 	//
 	// health
 	//
+	//TODO: we could try the same as above, but we will only save 2*ICONSIZE memory
 	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE )
 		CG_DrawHudIcon ( HUD_HEALTHICON, qtrue,  cgs.media.healthBlue );
 	else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED )
@@ -739,31 +751,23 @@ static void CG_DrawStatusBar ( void ) {
 	
 	if ( value > 100 ) {
 		VectorCopy ( colors[3], hcolor );
-		//trap_R_SetColor( colors[3] );		// white
 	} else if ( value > 25 ) {
-		//trap_R_SetColor( colors[0] );	// yellow
 		VectorCopy ( colors[0], hcolor );
 	} else if ( value > 0 ) {
 		color = ( cg.time >> 8 ) & 1;	// flash
 		VectorCopy ( colors[color], hcolor );
-		//trap_R_SetColor( colors[color] );
 	} else {
-		//trap_R_SetColor( colors[1] );	// red
 		VectorCopy ( colors[1], hcolor );
 	}
 
 	hcolor[3] = cgs.hud[HUD_HEALTHCOUNT].color[3];
 	trap_R_SetColor ( hcolor );
-	// stretch the health up when taking damage
-	CG_DrawFieldHud ( value, HUD_HEALTHCOUNT );
+	CG_DrawFieldHud ( value, HUD_HEALTHCOUNT );  //FIXME: NULL color at the end of DrawFieldHud
 
 	hcolor[3] = cgs.hud[HUD_HEALTHBAR].color[3];
 	trap_R_SetColor ( hcolor );
 
 	CG_DrawBarHud ( HUD_HEALTHBAR, value, 100 );
-	/*CG_ColorForHealth( hcolor );
-	trap_R_SetColor( hcolor );*/
-
 
 	//
 	// armor
@@ -774,10 +778,8 @@ static void CG_DrawStatusBar ( void ) {
 	
 	if ( value > 100 )
 		VectorCopy ( colors[3], hcolor );
-	//trap_R_SetColor( colors[3] );		// white
 	else
 		VectorCopy ( colors[0], hcolor );
-	//trap_R_SetColor( colors[0] );	// yellow
 
 	hcolor[3] = cgs.hud[HUD_ARMORCOUNT].color[3];
 	trap_R_SetColor ( hcolor );
@@ -791,6 +793,7 @@ static void CG_DrawStatusBar ( void ) {
 	trap_R_SetColor ( NULL );
 
 	// if we didn't draw a 3D icon, draw a 2D icon for armor
+	//TODO: same as above, or just keep one icon(yellow)?
 	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE )
 		CG_DrawHudIcon ( HUD_ARMORICON, qtrue, cgs.media.armorBlue );
 	else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED )
@@ -877,6 +880,8 @@ static void CG_DrawSpeedMeter ( void ) {
 
 	vel = cg.snap->ps.velocity;
 	/* ignore vertical component of velocity */
+	//TODO: test to calculate it once when receiving a snapshot and use this value. 
+	//This will reduce calculation ~ 1/3 with snaps 40 and fps 125
 	speed = sqrt ( vel[0] * vel[0] + vel[1] * vel[1] );
 
 	s = va ( "%iu/s", speed );
@@ -885,7 +890,12 @@ static void CG_DrawSpeedMeter ( void ) {
 
 	return;
 }
-
+/*
+================
+CG_DrawAccelMeter
+TODO: Speedup
+================
+*/
 static void CG_DrawAccelMeter ( void ) {
 	vec_t       *accel;
 	vec_t	    *lastaccel;
@@ -1035,7 +1045,7 @@ void CG_DrawTimer ( void ) {
 
 	//CG_DrawBigString( 320 - w/2, 10, s, 1.0F);
 
-	s = va ( "%i:%i%i", mins, tens, seconds );
+	s = va ( "%i:%i%i", mins, tens, seconds );  //FIXME: why not use %02i, is it slower?
 	CG_DrawStringHud ( HUD_GAMETIME, qtrue, s );
 
 	return;
@@ -1044,6 +1054,8 @@ void CG_DrawTimer ( void ) {
 /*
 =================
 CG_DrawLMSmode
+TODO: add to hud, but is it used in the game?
+can we remove the lms gametype?
 =================
 */
 
@@ -1074,6 +1086,7 @@ static float CG_DrawLMSmode ( float y ) {
 /*
 =================
 CG_DrawCTFoneway
+TODO: is it used?
 =================
 */
 
@@ -1211,18 +1224,20 @@ static void CG_DrawEliminationTimer ( void ) {
 	seconds -= tens * 10;
 
 	if ( msec>=0 )
-		s = va ( "%i:%i%i", mins, tens, seconds );
+		s = va ( "%i:%i%i", mins, tens, seconds ); //TODO: %02i, removes  one division
 	else
 		s = va ( "^1Overtime" );
-	//w = CG_DrawStrlen( s ) * BIGCHAR_WIDTH;
-
-	//CG_DrawBigStringColor( 635 - w, y + 2, s, color);
 
 	CG_DrawStringHud ( HUD_CATIME, qtrue, s );
 
 	return;
 }
 
+/*
+=================
+CG_DrawEliminationTimer
+=================
+*/
 static void CG_DrawTimeout ( void ) {
 	int 	msec;
 	int	sec;
@@ -1252,7 +1267,6 @@ static void CG_DrawTimeout ( void ) {
 			break;
 		}
 	}
-
 	CG_DrawStringHud ( HUD_COUNTDOWN, qtrue, st );
 }
 
@@ -1390,9 +1404,7 @@ static float CG_DrawTeamOverlay ( qboolean right, qboolean upper ) {
 				if ( len > lwidth )
 					len = lwidth;
 
-//				xx = x + TINYCHAR_WIDTH * 2 + TINYCHAR_WIDTH * pwidth +
-//					((lwidth/2 - len/2) * TINYCHAR_WIDTH);
-				//xx = x + TINYCHAR_WIDTH * 2 + TINYCHAR_WIDTH * pwidth;
+
 				CG_DrawStringExt ( x, y,
 				                   p, color, qfalse, qfalse, hudelement.fontWidth, hudelement.fontHeight,
 				                   TEAM_OVERLAY_MAXLOCATION_WIDTH );
@@ -1513,32 +1525,32 @@ static float CG_DrawTeamOverlay ( qboolean right, qboolean upper ) {
 
 /*
 =================
-CG_DrawScores
+CG_DrawLivingCount
 
 Draw the small two score display
 =================
 */
 static void CG_DrawLivingCount ( void ) {
-	const char	*s, *t;
-	int			s1, s2;
+	/*const char	*s, *t;
+	int			s1, s2;*/
 
 	if ( cgs.gametype != GT_ELIMINATION && cgs.gametype != GT_CTF_ELIMINATION )
 		return;
 
-	s1 = cgs.redLivingCount;
+	/*s1 = cgs.redLivingCount;
 	s2 = cgs.blueLivingCount;
 	s = va ( "%i", s1 );
-	t = va ( "%i", s2 );
+	t = va ( "%i", s2 );*/
 
-	CG_DrawHudIcon ( HUD_TI_OWN, qtrue, ( qhandle_t ) NULL );
-	CG_DrawHudIcon ( HUD_TI_NME, qtrue, ( qhandle_t ) NULL );
+	CG_DrawHudIcon ( HUD_TI_OWN, qtrue, ( qhandle_t ) NULL ); //TODO: looks nasty
+	CG_DrawHudIcon ( HUD_TI_NME, qtrue, ( qhandle_t ) NULL ); //
 
 	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-		CG_DrawStringHud ( HUD_TC_NME, qtrue, t );
-		CG_DrawStringHud ( HUD_TC_OWN, qtrue, s );
+		CG_DrawStringHud ( HUD_TC_NME, qtrue, va ( "%i", cgs.blueLivingCount ) );
+		CG_DrawStringHud ( HUD_TC_OWN, qtrue, va ( "%i", cgs.redLivingCount ) );
 	} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
-		CG_DrawStringHud ( HUD_TC_NME, qtrue, s );
-		CG_DrawStringHud ( HUD_TC_OWN, qtrue, t );
+		CG_DrawStringHud ( HUD_TC_NME, qtrue, va ( "%i", cgs.redLivingCount ) );
+		CG_DrawStringHud ( HUD_TC_OWN, qtrue, va ( "%i", cgs.blueLivingCount ) );
 	}
 
 	return;
@@ -1548,7 +1560,7 @@ static void CG_DrawLivingCount ( void ) {
 /*
 =====================
 CG_DrawUpperRight
-
+TODO: This functions are not used anymore, or should be
 =====================
 */
 static void CG_DrawUpperRight() {
@@ -1808,7 +1820,7 @@ static void CG_DrawPowerups ( void ) {
 /*
 =====================
 CG_DrawLowerRight
-
+TODO: not used anymore
 =====================
 */
 #ifndef MISSIONPACK
@@ -1829,7 +1841,7 @@ static void CG_DrawLowerRight ( void ) {
 /*
 =====================
 CG_DrawLowerLeft
-
+TODO: not used anymore
 =====================
 */
 #ifndef MISSIONPACK
@@ -1850,6 +1862,8 @@ static void CG_DrawLowerLeft ( void ) {
 /*
 =================
 CG_DrawTeamInfo
+TODO: why isnt it called CG_DrawTeamChat?
+TODO: add time hud-propertie
 =================
 */
 #ifndef MISSIONPACK
@@ -1896,6 +1910,7 @@ static void CG_DrawTeamInfo ( void ) {
 /*
 =================
 CG_DrawConsole
+TODO:hud time
 =================
 */
 static void CG_DrawConsole ( void ) {
@@ -1940,6 +1955,7 @@ static void CG_DrawConsole ( void ) {
 /*
 =================
 CG_DrawChat
+TODO: hud time
 =================
 */
 static void CG_DrawChat ( qboolean endOfGame ) {
@@ -1973,6 +1989,7 @@ static void CG_DrawChat ( qboolean endOfGame ) {
 /*
 =================
 CG_DrawDeathNotice
+TODO: hud time
 =================
 */
 
@@ -2094,7 +2111,7 @@ static void CG_DrawReward ( void ) {
 	float	*color;
 	int		i;
 	float	x, y;
-	char	buf[32];
+	//char	buf[32];  //TODO:aha, 32 digits are useful? 
 
 	if ( !cg_drawRewards.integer ) {
 		return;
@@ -2122,20 +2139,19 @@ static void CG_DrawReward ( void ) {
 
 	trap_R_SetColor ( color );
 
-	//y = 56;
-	//x = 320 - ICON_SIZE/2;
-	//CG_DrawPic( x, y, ICON_SIZE-4, ICON_SIZE-4, cg.rewardShader[0] );
-
 	CG_DrawHudIcon ( HUD_REWARD, qfalse, cg.rewardShader[0] );
 
-	Com_sprintf ( buf, sizeof ( buf ), "%i", cg.rewardCount[0] );
-	//x = ( SCREEN_WIDTH - SMALLCHAR_WIDTH * CG_DrawStrlen( buf ) ) / 2;
-	//CG_DrawStringExt( x, y+ICON_SIZE, buf, color, qfalse, qtrue,
-	//						SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0 );
+	//Com_sprintf ( buf, sizeof ( buf ), "%i", cg.rewardCount[0] );
+
 	CG_DrawStringHud ( HUD_REWARDCOUNT, qfalse, va ( "%i", cg.rewardCount[0] ) );
 	trap_R_SetColor ( NULL );
 }
 
+/*
+===================
+CG_DrawRespawnTimers
+===================
+*/
 void CG_DrawRespawnTimers ( void ) {
 	int i;
 	int time;
@@ -2245,13 +2261,15 @@ void CG_DrawRespawnTimers ( void ) {
 	}
 }
 
-#define READYMSG_YPOS 	100
-
+/*
+===================
+CG_DrawReady
+===================
+*/
 static void CG_DrawReady ( void ) {
 
 	if ( !cgs.startWhenReady )
 		return;
-
 	if ( cg.warmup >= 0 )
 		return;
 
@@ -2352,11 +2370,6 @@ static void CG_DrawDisconnect ( void ) {
 	if ( ( cg.time >> 9 ) & 1 ) {
 		return;
 	}
-	/*
-	x = 640 - 48;
-	y = 480 - 48;
-
-	CG_DrawPic( x, y, 48, 48, trap_R_RegisterShader("gfx/2d/net.tga" ) );*/
 
 	CG_DrawHudIcon ( HUD_NETGRAPH, qfalse, trap_R_RegisterShader ( "gfx/2d/net.tga" ) );
 }
@@ -2377,6 +2390,9 @@ static void CG_DrawLagometer ( void ) {
 	int		color;
 	float	vscale;
 
+	if( cg.demoPlayback )
+		return;
+	
 	if ( cgs.timeout )
 		return;
 
@@ -2387,17 +2403,6 @@ static void CG_DrawLagometer ( void ) {
 
 	if ( !cgs.hud[HUD_NETGRAPH].inuse )
 		return;
-
-	//
-	// draw the graph
-	//
-	/*#ifdef MISSIONPACK
-		x = 640 - 48;
-		y = 480 - 144;
-	#else
-		x = 640 - 48;
-		y = 480 - 48;
-	#endif*/
 
 	trap_R_SetColor ( NULL );
 
@@ -2504,6 +2509,7 @@ CG_CenterPrint
 
 Called for important messages that should stay in the center of the screen
 for a few moments
+TODO: maybe add hudelement
 ==============
 */
 void CG_CenterPrint ( const char *str, int y, int charWidth ) {
@@ -2596,13 +2602,17 @@ static void CG_DrawCenterString ( void ) {
 
 	trap_R_SetColor ( NULL );
 }
-
+/*
+===================
+CG_DrawFragMessage
+===================
+*/
 static void CG_DrawFragMessage ( void ) {
-	hudElements_t hudelement = cgs.hud[HUD_FRAGMSG];
+	hudElements_t hudelement = cgs.hud[HUD_FRAGMSG]; //TODO: do we really need to define this here, for 2 calls?
 
-	if ( !cg.fragMessageTime )
+	if ( !hudelement.inuse )  //In CG_DrawStringHud is a check too, and most ppl will activate fragMessages
 		return;
-	if ( !hudelement.inuse )
+	if ( !cg.fragMessageTime )
 		return;
 	if ( cg.time - cg.fragMessageTime > hudelement.time ) {
 		cg.fragMessageTime = 0;
@@ -2611,7 +2621,11 @@ static void CG_DrawFragMessage ( void ) {
 
 	CG_DrawStringHud ( HUD_FRAGMSG, qtrue, ( const char* ) cg.fragMessage );
 }
-
+/*
+===================
+CG_DrawRankMessage
+===================
+*/
 static void CG_DrawRankMessage ( void ) {
 	hudElements_t hudelement = cgs.hud[HUD_RANKMSG];
 
@@ -2800,7 +2814,7 @@ static void CG_DrawCrosshair ( void ) {
 		color[2]=cg_crosshairColorBlue.value;
 		color[3]=1.0f;
 	}
-
+	//TODO: there must be a better solution, maybe only two cvars with 9 numbers?
 	if ( cg_differentCrosshairs.integer == 1 ) {
 		switch ( currentWeapon ) {
 		case 1:
@@ -3030,7 +3044,7 @@ static void CG_DrawCrosshairNames ( void ) {
 	CG_ScanForCrosshairEntity();
 
 	// draw the name of the player being looked at
-	color = CG_FadeColor ( cg.crosshairClientTime, 1000 );
+	color = CG_FadeColor ( cg.crosshairClientTime, cgs.hud[HUD_TARGETNAME].time );
 	if ( !color ) {
 		trap_R_SetColor ( NULL );
 		return;
@@ -3109,7 +3123,7 @@ static void CG_DrawVote ( void ) {
 	}
 
 	sec = ( VOTE_TIME - ( cg.time - cgs.voteTime ) ) / 1000;
-	if ( sec < 0 ) {
+	if ( sec < 0 ) {			//We could add an inline function for that
 		sec = 0;
 	}
 
@@ -3228,18 +3242,11 @@ CG_DrawIntermission
 =================
 */
 static void CG_DrawIntermission ( void ) {
-//	int key;
-#ifdef MISSIONPACK
-	//if (cg_singlePlayer.integer) {
-	//	CG_DrawCenterString();
-	//	return;
-	//}
-#else
+
 	if ( cgs.gametype == GT_SINGLE_PLAYER ) {
 		CG_DrawCenterString();
 		return;
 	}
-#endif
 	cg.scoreFadeTime = cg.time;
 	cg.scoreBoardShowing = CG_DrawScoreboard();
 }
@@ -3247,6 +3254,7 @@ static void CG_DrawIntermission ( void ) {
 /*
 =================
 CG_DrawFollow
+TODO: Add multiview
 =================
 */
 static qboolean CG_DrawFollow ( void ) {
@@ -3271,7 +3279,7 @@ CG_DrawAmmoWarning
 =================
 */
 static void CG_DrawAmmoWarning ( void ) {
-	const char	*s;
+	//const char	*s;
 
 	//Don't report in instant gib same with RA
 	if ( cgs.nopickup )
@@ -3282,12 +3290,14 @@ static void CG_DrawAmmoWarning ( void ) {
 	}
 
 	if ( cg.lowAmmoWarning == 2 ) {
-		s = "OUT OF AMMO";
+	//	s = "OUT OF AMMO";
+		CG_DrawStringHud ( HUD_AMMOWARNING, qtrue, "OUT OF AMMO" );
 	} else {
-		s = "LOW AMMO WARNING";
+	//	s = "LOW AMMO WARNING";
+		CG_DrawStringHud ( HUD_AMMOWARNING, qtrue, "LOW AMMO WARNING" );
 	}
 
-	CG_DrawStringHud ( HUD_AMMOWARNING, qtrue, s );
+	//CG_DrawStringHud ( HUD_AMMOWARNING, qtrue, s );
 
 }
 
@@ -3296,6 +3306,7 @@ static void CG_DrawAmmoWarning ( void ) {
 /*
 =================
 CG_DrawProxWarning
+TODO: not really used, we need to remove all the crap weapons
 =================
 */
 static void CG_DrawProxWarning ( void ) {
@@ -3352,7 +3363,6 @@ static void CG_DrawWarmup ( void ) {
 	if ( sec < 0 ) {
 
 		s = "Warmup";
-
 		CG_DrawStringHud ( HUD_WARMUP, qtrue, s );
 		cg.warmupCount = 0;
 		return;
@@ -3374,21 +3384,7 @@ static void CG_DrawWarmup ( void ) {
 
 		if ( ci1 && ci2 ) {
 			s = va ( "%s ^7vs %s", ci1->name, ci2->name );
-			/*#ifdef MISSIONPACK
-						w = CG_Text_Width(s, 0.6f, 0);
-						CG_Text_Paint(320 - w / 2, 60, 0.6f, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWEDMORE);
-			#else
-						w = CG_DrawStrlen( s );
-						if ( w > 640 / GIANT_WIDTH ) {
-							cw = 640 / w;
-						} else {
-							cw = GIANT_WIDTH;
-						}*/
-			//CG_DrawStringExt( 320 - w * cw/2, 20,s, colorWhite,
-			//		qfalse, qtrue, cw, (int)(cw * 1.5f), 0 );
 			CG_DrawStringHud ( HUD_GAMETYPE, qtrue, s );
-
-//#endif
 		}
 	} else {
 		if ( cgs.gametype == GT_FFA ) {
@@ -3416,20 +3412,7 @@ static void CG_DrawWarmup ( void ) {
 		} else {
 			s = "";
 		}
-		/*#ifdef MISSIONPACK
-				w = CG_Text_Width(s, 0.6f, 0);
-				CG_Text_Paint(320 - w / 2, 90, 0.6f, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWEDMORE);
-		#else
-				w = CG_DrawStrlen( s );
-				if ( w > 640 / GIANT_WIDTH ) {
-					cw = 640 / w;
-				} else {
-					cw = GIANT_WIDTH;
-				}*/
-		//CG_DrawStringExt( 320 - w * cw/2, 25,s, colorWhite,
-		//		qfalse, qtrue, cw, (int)(cw * 1.1f), 0 );
 		CG_DrawStringHud ( HUD_GAMETYPE, qtrue, s );
-//#endif
 	}
 
 	sec = ( sec - cg.time ) / 1000;
@@ -3454,33 +3437,7 @@ static void CG_DrawWarmup ( void ) {
 			break;
 		}
 	}
-	/*scale = 0.45f;
-	switch ( cg.warmupCount ) {
-	case 0:
-		cw = 28;
-		scale = 0.54f;
-		break;
-	case 1:
-		cw = 24;
-		scale = 0.51f;
-		break;
-	case 2:
-		cw = 20;
-		scale = 0.48f;
-		break;
-	default:
-		cw = 16;
-		scale = 0.45f;
-		break;
-	}
-
-	#ifdef MISSIONPACK
-		w = CG_Text_Width(s, scale, 0);
-		CG_Text_Paint(320 - w / 2, 125, scale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWEDMORE);
-	#else
-	w = CG_DrawStrlen( s );*/
-	//CG_DrawStringExt( 320 - w * cw/2, 70, s, colorWhite,
-	//qfalse, qtrue, cw, (int)(cw * 1.5), 0 );
+	
 	CG_DrawStringHud ( HUD_COUNTDOWN, qtrue, s );
 //#endif
 }
@@ -3516,11 +3473,11 @@ CG_DrawPickupItem
 //#ifndef MISSIONPACK
 static void CG_DrawPickupItem ( void ) {
 	int		value;
-	char		*s;
+	//char		*s;
 	int		min, ten, second, msecs;
-	int x;
+	//int x;
 
-	x = 0;
+	//x = 0;
 
 	if ( cg.snap->ps.stats[STAT_HEALTH] <= 0 ) {
 		return;
@@ -3531,18 +3488,10 @@ static void CG_DrawPickupItem ( void ) {
 		if ( ( cg.time - cg.itemPickupBlendTime ) < 3000 ) {
 			CG_RegisterItemVisuals ( value );
 			if ( cg_drawItemPickups.integer & 1 ) {
-
 				CG_DrawHudIcon ( HUD_ITEMPICKUPICON, qfalse, cg_items[ value ].icon );
-				/*CG_DrawPic( 0, PICKUPITEM_Y, PICKUPITEM_SIZE, PICKUPITEM_SIZE, cg_items[ value ].icon );
-
-				x += PICKUPITEM_SIZE;*/
 			}
 			if ( cg_drawItemPickups.integer & 2 ) {
 				CG_DrawStringHud ( HUD_ITEMPICKUPNAME, qtrue, bg_itemlist[ value ].pickup_name );
-				/*CG_DrawStringExt( x + PICKUPITEM_SPACE, PICKUPITEM_Y + (PICKUPITEM_SIZE/2 - TINYCHAR_HEIGHT/2),
-					bg_itemlist[ value ].pickup_name, colorWhite, qfalse, qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );
-
-				x += PICKUPITEM_SPACE + CG_DrawStrlen( bg_itemlist[ value ].pickup_name ) * SMALLCHAR_WIDTH;*/
 			}
 			if ( cg_drawItemPickups.integer & 4 ) {
 
@@ -3553,36 +3502,41 @@ static void CG_DrawPickupItem ( void ) {
 				ten = second / 10;
 				second -= ten * 10;
 
-				s = va ( "%i:%i%i", min, ten, second );
+				//s = va ( "%i:%i%i", min, ten, second );
 
-				CG_DrawStringHud ( HUD_ITEMPICKUPTIME, qtrue, s );
-				/*CG_DrawStringExt( x+ PICKUPITEM_SPACE, PICKUPITEM_Y + (PICKUPITEM_SIZE/2 - TINYCHAR_HEIGHT/2),
-					s, colorWhite, qfalse, qfalse, TINYCHAR_WIDTH, TINYCHAR_HEIGHT, 0 );;*/
+				CG_DrawStringHud ( HUD_ITEMPICKUPTIME, qtrue, va ( "%i:%i%i", min, ten, second ) );
 			}
 		}
 	}
-
 	return;
 }
-
+/*
+===================
+CG_Predecorate
+===================
+*/
 static void CG_Predecorate ( void ) {
 	int i;
-	hudElements_t hudelement;
+	//hudElements_t hudelement;
 	for ( i = 0; i < 8; i++ ) {
-		hudelement = cgs.hud[HUD_PREDECORATE1 + i];
-		if ( !hudelement.inuse )
+		//hudelement = cgs.hud[HUD_PREDECORATE1 + i];
+		if ( !cgs.hud[HUD_PREDECORATE1+i].inuse )
 			continue;
 		CG_DrawHudIcon ( HUD_PREDECORATE1+i, qtrue, ( qhandle_t ) NULL );
 		CG_DrawStringHud ( HUD_PREDECORATE1+i, qtrue, "" );
 	}
 }
-
+/*
+===================
+CG_Postdecorate
+===================
+*/
 static void CG_Postdecorate ( void ) {
 	int i;
-	hudElements_t hudelement;
+	//hudElements_t hudelement;
 	for ( i = 0; i < 8; i++ ) {
-		hudelement = cgs.hud[HUD_POSTDECORATE1 + i];
-		if ( !hudelement.inuse )
+		//hudelement = cgs.hud[HUD_POSTDECORATE1 + i];
+		if ( !cgs.hud[HUD_POSTDECORATE1 + i].inuse )
 			continue;
 		CG_DrawHudIcon ( HUD_POSTDECORATE1+i, qtrue, ( qhandle_t ) NULL );
 		CG_DrawStringHud ( HUD_POSTDECORATE1+i, qtrue, "" );
@@ -3602,7 +3556,7 @@ static void CG_DrawMVDhud ( stereoFrame_t stereoFrame ) {
 	
 
 	if ( stereoFrame == STEREO_CENTER )
-		CG_DrawCrosshair();
+		CG_DrawCrosshair();		//TODO: thirdPersonView removes the CH from mv 
 		
 	if ( !cg.showScores ) {
 			CG_Predecorate();
@@ -3778,11 +3732,14 @@ void CG_DrawActive ( stereoFrame_t stereoView, qboolean draw2d ) {
 		CG_DrawInformation();
 		return;
 	}
-
+	
 	// optionally draw the tournement scoreboard instead
 	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR &&
 	     ( cg.snap->ps.pm_flags & PMF_SCOREBOARD ) ) {
+		cg.showScores = qtrue;
 		CG_DrawTourneyScoreboard();
+		CG_DrawChat ( qtrue );
+		CG_DrawTeamInfo();
 		return;
 	}
 

@@ -483,32 +483,40 @@ static void CG_CenterGiantLine( float y, const char *string ) {
 CG_DrawTourneyScoreboard
 
 Draw the oversize scoreboard for tournements
+TODO: rename and remove old unused functions
 =================
 */
 void CG_DrawOldTourneyScoreboard( void ) {
-	const char		*s;
+	//const char		*s;
 	vec4_t			color;
-	int				min, tens, ones;
+	/*int				min, tens, ones;
 	clientInfo_t	*ci;
 	int				y;
-	int				i;
+	int				i;*/
 
 	// request more scores regularly
-	if ( cg.scoresRequestTime + 2000 < cg.time ) {
+	if ( cg.scoresRequestTime + 5000 < cg.time ) {  //5 secs will prevent scoreboard clients to time items using information shown in scoreboard
 		cg.scoresRequestTime = cg.time;
 		trap_SendClientCommand( "score" );
 	}
 
-	color[0] = 1;
+	/*color[0] = 1;	//what? why ID-software....why?
 	color[1] = 1;
 	color[2] = 1;
-	color[3] = 1;
+	color[3] = 1;*/
 
 	// draw the dialog background
 	color[0] = color[1] = color[2] = 0;
 	color[3] = 1;
 	CG_FillRect( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, color );
-
+	
+	CG_DrawOldScoreboard();
+	/*
+	color[0] = 1;
+	color[1] = 1;
+	color[2] = 1;
+	color[3] = 1;
+	
 	// print the mesage of the day
 	s = CG_ConfigString( CS_MOTD );
 	if ( !s[0] ) {
@@ -563,7 +571,7 @@ void CG_DrawOldTourneyScoreboard( void ) {
 			CG_DrawStringExt( 632 - GIANT_WIDTH * strlen(s), y, s, color, qtrue, qtrue, GIANT_WIDTH, GIANT_HEIGHT, 0 );
 			y += 64;
 		}
-	}
+	}*/
 
 
 }

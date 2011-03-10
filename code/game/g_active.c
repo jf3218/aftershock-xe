@@ -368,14 +368,15 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
     //KK-OAX Changed to keep followcycle functional
 	// attack button cycles through spectators
 	if ( ( client->buttons & BUTTON_ATTACK ) && ! ( client->oldbuttons & BUTTON_ATTACK ) ) {
+		//G_Printf("cycle!\n");
 		Cmd_FollowCycle_f( ent );
 	}
 
 	if ( ( client->buttons & BUTTON_USE_HOLDABLE ) && ! ( client->oldbuttons & BUTTON_USE_HOLDABLE ) ) {
 		if ( ( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION) &&
-                g_elimination_lockspectator.integer>1 &&
-                ent->client->sess.sessionTeam != TEAM_SPECTATOR ) {
-                    return;
+			g_elimination_lockspectator.integer>1 &&
+			ent->client->sess.sessionTeam != TEAM_SPECTATOR ) {
+				return;
                 }
 		StopFollowing(ent);
 	}
@@ -780,6 +781,7 @@ void ClientThink_real( gentity_t *ent ) {
 	int			oldEventSequence;
 	int			msec;
 	usercmd_t	*ucmd;
+	int i;
 	
 	if( level.timeout )
 		return;
@@ -1241,22 +1243,25 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 		}
 		if ( clientNum >= 0 ) {
 			cl = &level.clients[ clientNum ];
-			if ( cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR ) {
+			if ( ( cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR ) || cl->pers.demoClient ) {
 				flags = (cl->ps.eFlags & ~(EF_VOTED | EF_TEAMVOTED)) | (ent->client->ps.eFlags & (EF_VOTED | EF_TEAMVOTED));
 				//this is here LMS/Elimination goes wrong with player follow
 				if(ent->client->sess.sessionTeam!=TEAM_SPECTATOR){
+				  
 					for(i = 0; i < MAX_PERSISTANT; i++)
 						preservedScore[i] = ent->client->ps.persistant[i];
+					
 					ent->client->ps = cl->ps;
 					for(i = 0; i < MAX_PERSISTANT; i++)
 						ent->client->ps.persistant[i] = preservedScore[i];
+					
 					ent->client->ps.persistant[PERS_HITS] = cl->ps.persistant[PERS_HITS];
 					ent->client->ps.persistant[PERS_DAMAGE_DONE] = cl->ps.persistant[PERS_DAMAGE_DONE];
 				}
 				else
 					ent->client->ps = cl->ps;
-				ent->client->ps.pm_flags |= PMF_FOLLOW;
-				ent->client->ps.eFlags = flags;
+					ent->client->ps.pm_flags |= PMF_FOLLOW;
+					ent->client->ps.eFlags = flags;
 				return;
 			} else {
 				// drop them to free spectators unless they are dedicated camera followers

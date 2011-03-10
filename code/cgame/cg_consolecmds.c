@@ -29,7 +29,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 extern menuDef_t *menuScoreboard;
 #endif
 
-
+/*
+=================
+CG_TargetCommand_f
+=================
+*/
 
 void CG_TargetCommand_f( void ) {
 	int		targetNum;
@@ -43,8 +47,6 @@ void CG_TargetCommand_f( void ) {
 	trap_Argv( 1, test, 4 );
 	trap_SendConsoleCommand( va( "gc %i %i", targetNum, atoi( test ) ) );
 }
-
-
 
 /*
 =================
@@ -83,7 +85,14 @@ static void CG_Viewpos_f (void) {
 		(int)cg.refdefViewAngles[YAW]);
 }
 
+/*
+=============
+CG_ScoresDown_f
 
+Function is called when the 
+scores button is pressed
+=============
+*/
 static void CG_ScoresDown_f( void ) {
 
 #ifdef MISSIONPACK
@@ -108,13 +117,28 @@ static void CG_ScoresDown_f( void ) {
 	}
 }
 
+/*
+=============
+CG_ScoresUp_f
+
+Function is called when the 
+scores button is released
+=============
+*/
 static void CG_ScoresUp_f( void ) {
 	if ( cg.showScores ) {
 		cg.showScores = qfalse;
 		cg.scoreFadeTime = cg.time;
 	}
 }
+/*
+=============
+CG_AccDown_f
 
+Function is called when the 
+acc button is pressed
+=============
+*/
 static void CG_AccDown_f( void ) {
 
 	if ( cg.accRequestTime + 2000 < cg.time ) {
@@ -130,7 +154,14 @@ static void CG_AccDown_f( void ) {
 		cg.showAcc = qtrue;
 	}
 }
+/*
+=============
+CG_AccUp_f
 
+Function is called when the 
+acc button is released
+=============
+*/
 static void CG_AccUp_f( void ) {
 	if ( cg.showAcc ) {
 		cg.showAcc = qfalse;
@@ -169,7 +200,14 @@ char	*ConcatArgs( int start ) {
 
 	return line;
 }
+/*
+==================
+CG_Echo_f
 
+Adds a message to chat
+without a beep
+==================
+*/
 static void CG_Echo_f( void ) {
 	char* string;
 
@@ -178,7 +216,13 @@ static void CG_Echo_f( void ) {
 	CG_AddToChat( string );
 	CG_Printf( string );
 }
+/*
+==================
+CG_Currenttime_f
 
+Prints out the current tim
+==================
+*/
 static void CG_Currenttime_f( void ) {
 	qtime_t	now;
 
@@ -193,6 +237,7 @@ static void CG_Currenttime_f( void ) {
 			now.tm_sec);
 }
 
+//TODO: remove all the MISSIONPACK things, AfterShock will never have a missionpack
 #ifdef MISSIONPACK
 extern menuDef_t *menuScoreboard;
 void Menu_Reset( void );			// FIXME: add to right include file
@@ -584,8 +629,8 @@ static consoleCommand_t	commands[] = {
 	{ "secho", CG_Echo_f },
 	{ "currenttime", CG_Currenttime_f },
 	{ "hudedit", CG_HudEdit_f },
-	{ "saveHud", CG_WriteHudFile_f }
-
+	{ "saveHud", CG_WriteHudFile_f },
+	{ "recordGame", CG_StartOfGame }
 };
 
 

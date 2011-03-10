@@ -310,6 +310,11 @@ typedef struct {
 	int			specOnly;
 	int			deathCount;
 	int			frags;
+	int				airrocketCount;
+	int				airgrenadeCount;
+	int				fullshotgunCount;
+	int				itemDeniedCount;
+	int				rocketRailCount;
 } score_t;
 
 // each client has an associated clientInfo_t
@@ -588,21 +593,6 @@ enum{
 	HUD_MAX
 };
 
-typedef enum {
-	TOT_LPAREN,
-	TOT_RPAREN,
-	TOT_WORD,
-	TOT_NUMBER,
-	TOT_NIL,
-	TOT_MAX
-} tokenType_t;
-
-#define TOKENVALUE_SIZE 64
-
-typedef struct {
-	char value[TOKENVALUE_SIZE];
-	int type;
-} token_t;
 //=========================SUPERHUD END==================================
 
 #define MAX_MULTIVIEW 4
@@ -1876,12 +1866,6 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 void CG_DrawWeaponSelect( void );
 
 void CG_DrawWeaponBar(int count, int bits, float *color);
-void CG_DrawWeaponBar0(int count, int bits, float *color);
-void CG_DrawWeaponBar1(int count, int bits, float *color);
-void CG_DrawWeaponBar2(int count, int bits, float *color);
-void CG_DrawWeaponBar3(int count, int bits, float *color);
-void CG_DrawWeaponBar4(int count, int bits, float *color);
-void CG_DrawWeaponBar5(int count, int bits, float *color);
 
 qboolean CG_DrawAccboard( void );
 
@@ -1985,6 +1969,7 @@ void CG_SetConfigValues( void );
 void CG_ShaderStateChanged(void);
 void CG_AddToChat(const char *str);
 void CG_AddToConsole(const char *str);
+void CG_StartOfGame( void );
 
 //
 // cg_playerstate.c

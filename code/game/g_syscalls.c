@@ -228,6 +228,10 @@ void trap_SnapVector( float *v ) {
 	return;
 }
 
+void trap_DemoCommand ( demoCommand_t cmd, const char *string ) {
+	syscall( G_DEMO_COMMAND, cmd, string );
+}
+
 // BotLib traps start here
 int trap_BotLibSetup( void ) {
 	return syscall( BOTLIB_SETUP );
@@ -788,3 +792,5 @@ int trap_PC_ReadToken( int handle, pc_token_t *pc_token ) {
 int trap_PC_SourceFileAndLine( int handle, char *filename, int *line ) {
 	return syscall( BOTLIB_PC_SOURCE_FILE_AND_LINE, handle, filename, line );
 }
+
+
