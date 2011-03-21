@@ -166,7 +166,7 @@ static void CG_TransitionSnapshot( void ) {
 		cg.AccelTime = cg.time;
 	}
 	
-	//Com_Printf("accelx %f, accely %f\n", cg.accel[0], cg.accel[1]);
+	cg.speed = sqrt ( cg.snap->ps.velocity[0] * cg.snap->ps.velocity[0] + cg.snap->ps.velocity[1] * cg.snap->ps.velocity[1] );
 
 	BG_PlayerStateToEntityState( &cg.snap->ps, &cg_entities[ cg.snap->ps.clientNum ].currentState, qfalse );
 	cg_entities[ cg.snap->ps.clientNum ].interpolate = qfalse;

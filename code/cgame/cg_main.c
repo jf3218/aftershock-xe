@@ -352,17 +352,19 @@ vmCvar_t	cg_multiview2_xpos;
 vmCvar_t	cg_multiview2_ypos;
 vmCvar_t	cg_multiview2_width;
 vmCvar_t	cg_multiview2_height;
+vmCvar_t	cg_multiview2_client;
 
 vmCvar_t	cg_multiview3_xpos;
 vmCvar_t	cg_multiview3_ypos;
 vmCvar_t	cg_multiview3_width;
 vmCvar_t	cg_multiview3_height;
+vmCvar_t	cg_multiview3_client;
 
 vmCvar_t	cg_multiview4_xpos;
 vmCvar_t	cg_multiview4_ypos;
 vmCvar_t	cg_multiview4_width;
 vmCvar_t	cg_multiview4_height;
-
+vmCvar_t	cg_multiview4_client;
 
 
 typedef struct {
@@ -577,7 +579,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&ref_password, "ref_password", "", CVAR_USERINFO | CVAR_TEMP },
 	{&cg_hud, "cg_hud", "hud/default.txt", CVAR_ARCHIVE },
 	{&cg_consoleTime, "cg_consoleTime", "3000", CVAR_ARCHIVE },
-	{&cg_multiview, "cg_multiview", "2", CVAR_ARCHIVE | CVAR_USERINFO },
+	{&cg_multiview, "cg_multiview", "4", CVAR_ARCHIVE | CVAR_USERINFO },
 	
 	{&cg_multiview1_xpos, "cg_multiview1_xpos", "0", CVAR_CHEAT },
 	{&cg_multiview1_ypos, "cg_multiview1_ypos", "0", CVAR_CHEAT },
@@ -588,16 +590,20 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_multiview2_ypos, "cg_multiview2_ypos", "160", CVAR_ARCHIVE },
 	{&cg_multiview2_width, "cg_multiview2_width", "200", CVAR_ARCHIVE },
 	{&cg_multiview2_height, "cg_multiview2_height", "160", CVAR_ARCHIVE },
+	{&cg_multiview2_client, "cg_multiview2_client", "-1", CVAR_TEMP },
+	
 	
 	{&cg_multiview3_xpos, "cg_multiview3_xpos", "440", CVAR_ARCHIVE },
 	{&cg_multiview3_ypos, "cg_multiview3_ypos", "0", CVAR_ARCHIVE },
 	{&cg_multiview3_width, "cg_multiview3_width", "200", CVAR_ARCHIVE },
 	{&cg_multiview3_height, "cg_multiview3_height", "160", CVAR_ARCHIVE },
+	{&cg_multiview3_client, "cg_multiview2_client", "-1", CVAR_TEMP },
 	
 	{&cg_multiview4_xpos, "cg_multiview4_xpos", "440", CVAR_ARCHIVE },
 	{&cg_multiview4_ypos, "cg_multiview4_ypos", "320", CVAR_ARCHIVE },
 	{&cg_multiview4_width, "cg_multiview4_width", "200", CVAR_ARCHIVE },
 	{&cg_multiview4_height, "cg_multiview4_height", "160", CVAR_ARCHIVE },
+	{&cg_multiview4_client, "cg_multiview2_client", "-1", CVAR_TEMP },
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -1397,6 +1403,13 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.medalRocketrail = trap_R_RegisterShaderNoMip( "medal_rocketrail" );
 	
 	cgs.media.accBackground = trap_R_RegisterShaderNoMip( "acc_background" );
+	
+	cgs.media.sbBackground = trap_R_RegisterShaderNoMip( "sb_background" );
+	cgs.media.sbClock = trap_R_RegisterShaderNoMip( "sb_clock" );
+	cgs.media.sbPing = trap_R_RegisterShaderNoMip( "sb_ping" );
+	cgs.media.sbReady = trap_R_RegisterShaderNoMip( "sb_ready" );
+	cgs.media.sbNotReady = trap_R_RegisterShaderNoMip( "sb_notready" );
+	cgs.media.sbSkull = trap_R_RegisterShaderNoMip( "sb_skull" );
 
 
 	memset( cg_items, 0, sizeof( cg_items ) );

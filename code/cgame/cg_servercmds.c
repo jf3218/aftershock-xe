@@ -222,7 +222,7 @@ static void CG_ParseScores ( void ) {
 
 	memset ( cg.scores, 0, sizeof ( cg.scores ) );
 
-#define NUM_DATA 20
+#define NUM_DATA 46
 #define FIRST_DATA 4
 
 	for ( i = 0 ; i < cg.numScores ; i++ ) {
@@ -247,7 +247,34 @@ static void CG_ParseScores ( void ) {
 		cg.scores[i].specOnly = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 18 ) );
 		cg.scores[i].deathCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 19 ) );
 		cg.scores[i].frags = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 20 ) );
+		cg.scores[i].airrocketCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 21 ) );
+		cg.scores[i].airgrenadeCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 22 ) );
+		cg.scores[i].fullshotgunCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 23 ) );
+		cg.scores[i].rocketRailCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 24 ) );
+		cg.scores[i].itemDeniedCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 25 ) );
+		cg.scores[i].health = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 26 ) );
+		cg.scores[i].armor = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 27 ) );
+		cg.scores[i].yellowArmor = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 28 ) );
+		cg.scores[i].redArmor = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 29 ) );
+		cg.scores[i].megaHealth = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 30 ) );
+		cg.scores[i].accuracys[0][0] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 31 ) );
+		cg.scores[i].accuracys[0][1] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 32 ) );
+		cg.scores[i].accuracys[1][0] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 33 ) );
+		cg.scores[i].accuracys[1][1] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 34 ) );
+		cg.scores[i].accuracys[2][0] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 35 ) );
+		cg.scores[i].accuracys[2][1] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 36 ) );
+		cg.scores[i].accuracys[3][0] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 37 ) );
+		cg.scores[i].accuracys[3][1] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 38 ) );
+		cg.scores[i].accuracys[4][0] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 39 ) );
+		cg.scores[i].accuracys[4][1] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 40 ) );
+		cg.scores[i].accuracys[5][0] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 41 ) );
+		cg.scores[i].accuracys[5][1] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 42 ) );
+		cg.scores[i].accuracys[6][0] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 43 ) );
+		cg.scores[i].accuracys[6][1] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 44 ) );
+		cg.scores[i].accuracys[7][0] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 45 ) );
+		cg.scores[i].accuracys[7][1] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 46 ) );
 		//cgs.roundStartTime =
+		
 
 		if ( cg.scores[i].client < 0 || cg.scores[i].client >= MAX_CLIENTS ) {
 			cg.scores[i].client = 0;

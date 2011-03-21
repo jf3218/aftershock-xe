@@ -629,7 +629,7 @@ void CG_ClearHud( void ){
 		cgs.hud[i].text = (char*)"";
 		cgs.hud[i].textAlign = 1;
 		cgs.hud[i].textstyle = 1;
-		cgs.hud[i].time = 1500;
+		cgs.hud[i].time = 0;
 		cgs.hud[i].xpos = 0;
 		cgs.hud[i].ypos = 0;
 	}

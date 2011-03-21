@@ -869,24 +869,24 @@ CG_DrawSpeedMeter
 ================
 */
 static void CG_DrawSpeedMeter ( void ) {
-	const char        *s;
-	vec_t       *vel;
+	//const char        *s;
+	/*vec_t       *vel;
 	int         speed;
-
+*/
 	/* speed meter can get in the way of the scoreboard */
 	if ( cg.scoreBoardShowing ) {
 		return;
 	}
 
-	vel = cg.snap->ps.velocity;
+	//vel = cg.snap->ps.velocity;
 	/* ignore vertical component of velocity */
 	//TODO: test to calculate it once when receiving a snapshot and use this value. 
 	//This will reduce calculation ~ 1/3 with snaps 40 and fps 125
-	speed = sqrt ( vel[0] * vel[0] + vel[1] * vel[1] );
+	//speed = sqrt ( vel[0] * vel[0] + vel[1] * vel[1] );
 
-	s = va ( "%iu/s", speed );
+	//s = va ( "%iu/s", speed );
 
-	CG_DrawStringHud ( HUD_SPEED, qtrue, s );
+	CG_DrawStringHud ( HUD_SPEED, qtrue, va ( "%iu/s", cg.speed ) );
 
 	return;
 }
@@ -3232,7 +3232,11 @@ static qboolean CG_DrawScoreboard ( void ) {
 
 	return qtrue;
 #else
-	return CG_DrawOldScoreboard();
+	if( cgs.gametype == GT_TOURNAMENT ){
+		return CG_DrawOldTourneyScoreboard();
+	}else{
+		return CG_DrawOldScoreboard();
+	}
 #endif
 }
 
@@ -3563,7 +3567,6 @@ static void CG_DrawMVDhud ( stereoFrame_t stereoFrame ) {
 			CG_DrawStatusBar();
 			//CG_DrawPowerups(); //TODO
 			CG_Postdecorate();
-			//TODO: SpecName
 	}
 }
 

@@ -315,6 +315,12 @@ typedef struct {
 	int				fullshotgunCount;
 	int				itemDeniedCount;
 	int				rocketRailCount;
+	int			health;
+	int			armor;
+	int			yellowArmor;
+	int			redArmor;
+	int			megaHealth;
+	int				accuracys[8][2];
 } score_t;
 
 // each client has an associated clientInfo_t
@@ -835,6 +841,8 @@ typedef struct {
 	int AccelTime;
 	int lastAccelTime;
 	
+	int speed;
+	
 	char fragMessage[512];
 	int  fragMessageTime;
 	char rankMessage[512];
@@ -1224,6 +1232,13 @@ typedef struct {
 	qhandle_t	redMarker;
 	
 	qhandle_t	accBackground;
+	
+	qhandle_t	sbBackground;
+	qhandle_t	sbClock;
+	qhandle_t	sbPing;
+	qhandle_t	sbReady;
+	qhandle_t	sbNotReady;
+	qhandle_t	sbSkull;
 
 } cgMedia_t;
 
@@ -1656,16 +1671,19 @@ extern vmCvar_t			cg_multiview2_xpos;
 extern vmCvar_t			cg_multiview2_ypos;
 extern vmCvar_t			cg_multiview2_width;
 extern vmCvar_t			cg_multiview2_height;
+extern vmCvar_t			cg_multiview2_client;
 
 extern vmCvar_t			cg_multiview3_xpos;
 extern vmCvar_t			cg_multiview3_ypos;
 extern vmCvar_t			cg_multiview3_width;
 extern vmCvar_t			cg_multiview3_height;
+extern vmCvar_t			cg_multiview3_client;
 
 extern vmCvar_t			cg_multiview4_xpos;
 extern vmCvar_t			cg_multiview4_ypos;
 extern vmCvar_t			cg_multiview4_width;
 extern vmCvar_t			cg_multiview4_height;
+extern vmCvar_t			cg_multiview4_client;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
@@ -1944,7 +1962,7 @@ void CG_DrawInformation( void );
 // cg_scoreboard.c
 //
 qboolean CG_DrawOldScoreboard( void );
-void CG_DrawOldTourneyScoreboard( void );
+qboolean CG_DrawOldTourneyScoreboard( void );
 
 //
 // cg_challenges.c
