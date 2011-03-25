@@ -1033,6 +1033,12 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
     }
     // clear around the rendered view if sized down
     CG_TileClear();
+    
+    // optionally draw the info screen instead
+    if ( !cg.snap ) {
+	    CG_DrawInformation();
+	    return;
+    }
 
     //---------------------Multiview-------------------------------
 

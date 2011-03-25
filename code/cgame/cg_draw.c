@@ -3729,12 +3729,8 @@ Perform all drawing needed to completely fill the screen
 =====================
 */
 void CG_DrawActive ( stereoFrame_t stereoView, qboolean draw2d ) {
-	int i;
-	// optionally draw the info screen instead
-	if ( !cg.snap ) {
-		CG_DrawInformation();
-		return;
-	}
+	//int i;
+	
 	
 	// optionally draw the tournement scoreboard instead
 	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR &&

@@ -124,7 +124,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 	    }
         }
         else {*/
-	if( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime ){
+	if( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ){
             Com_sprintf (entry, sizeof(entry),
                          " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
                          cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
@@ -312,7 +312,7 @@ G_StartServerDemo
 void G_StartServerDemo( void ) {
     int i;
     char buffer[ MAX_INFO_STRING ] = "";
-    if( qtrue ){
+    if( qfalse ){
 	    trap_SendConsoleCommand( EXEC_APPEND, "demo_record\n" );
 	    level.demoStarted = level.time;
 	    for ( i = 0; i < level.maxclients; i++ ) {
@@ -334,7 +334,7 @@ G_StartServerDemo
 ==================
 */
 void G_StopServerDemo( void ) {
-    if( qtrue ){
+    if( qfalse ){
 	    trap_SendConsoleCommand( EXEC_APPEND, "demo_stoprecord\n" );
     }
 }
@@ -1483,12 +1483,12 @@ void Cmd_FollowCycle_f( gentity_t *ent ) {
     int     dir;
     int i;
     
-    for( i = 0 ; i < level.numConnectedClients; i++ ){
+    /*for( i = 0 ; i < level.numConnectedClients; i++ ){
 	  if( level.clients[i].pers.demoClient )
 		  G_Printf("DEMO LIST %s, %i, %i\n", level.clients[i].pers.netname, level.clients[i].sess.sessionTeam, level.clients[i].sess.spectatorState );  
 	  else
 		  G_Printf("NODEMO LIST %s, %i, %i\n", level.clients[i].pers.netname, level.clients[i].sess.sessionTeam, level.clients[i].sess.spectatorState );  
-    }
+    }*/
 
     if ( ent->client->sess.sessionTeam == TEAM_NONE ) {
         dir = 1;
