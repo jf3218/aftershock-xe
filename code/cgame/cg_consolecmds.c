@@ -250,7 +250,11 @@ Prints out the current revision
 ==================
 */
 static void CG_Revision_f( void ) {
-	CG_Printf("revision: $Revision$\n");	   
+	char* revision = "$Revision$";
+	int length = CG_DrawStrlen(revision);
+	revision[length-1] = '\n';
+	revision += 11;
+	CG_Printf("revision: %s\n", revision);	   
 }
 
 //TODO: remove all the MISSIONPACK things, AfterShock will never have a missionpack
