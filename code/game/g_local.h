@@ -1282,6 +1282,7 @@ extern vmCvar_t	    g_mapcycle;
 extern vmCvar_t	    g_useMapcycle;
 
 extern vmCvar_t	    g_allowMultiview;
+extern vmCvar_t	    g_disableSpecs;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

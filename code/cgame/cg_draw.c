@@ -3735,8 +3735,14 @@ void CG_DrawActive ( stereoFrame_t stereoView, qboolean draw2d ) {
 	// optionally draw the tournement scoreboard instead
 	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR &&
 	     ( cg.snap->ps.pm_flags & PMF_SCOREBOARD ) ) {
+		if ( cg.scoresRequestTime + 5000 < cg.time ) {
+			cg.scoresRequestTime = cg.time;
+			trap_SendClientCommand( "score" );
+		}
+	  
+		CG_FillRect(0, 0, 640, 480, colorBlack);
 		cg.showScores = qtrue;
-		CG_DrawTourneyScoreboard();
+		CG_DrawScoreboard();
 		CG_DrawChat ( qtrue );
 		CG_DrawTeamInfo();
 		return;

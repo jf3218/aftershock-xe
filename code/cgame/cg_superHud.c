@@ -425,6 +425,9 @@ void CG_WriteHudFile_f( void ){
 	int len;
 	const char* filename = CG_Argv(1);
 	
+	//disable
+	return;
+	
 	if( trap_Argc() < 2 ){
 		CG_Printf("error: Missing filename\n");
 		return;

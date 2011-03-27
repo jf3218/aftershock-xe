@@ -1044,7 +1044,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 
     // actually issue the rendering calls
     CG_DrawActive( stereoView, qtrue );
-
+    
     if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR &&
             ( cg.snap->ps.pm_flags & PMF_SCOREBOARD ) )
         return;

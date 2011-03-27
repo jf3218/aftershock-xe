@@ -1228,6 +1228,13 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 			}
 		}
 	}
+	
+	if ( ent->client->sess.spectatorState == SPECTATOR_SCOREBOARD || ( ( ent->client->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR ) && g_disableSpecs.integer && !level.warmupTime )) {
+		ent->client->ps.pm_flags |= PMF_SCOREBOARD;
+		return;
+	} else {
+		ent->client->ps.pm_flags &= ~PMF_SCOREBOARD;
+	}
 
 	// if we are doing a chase cam or a remote view, grab the latest info
 	if ( ent->client->sess.spectatorState == SPECTATOR_FOLLOW ) {
@@ -1274,12 +1281,6 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 	
 		
 			
-	}
-
-	if ( ent->client->sess.spectatorState == SPECTATOR_SCOREBOARD ) {
-		ent->client->ps.pm_flags |= PMF_SCOREBOARD;
-	} else {
-		ent->client->ps.pm_flags &= ~PMF_SCOREBOARD;
 	}
 }
 

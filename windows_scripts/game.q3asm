@@ -29,6 +29,7 @@ g_killspree
 g_misc
 g_missile
 g_mover
+g_mapcycle
 g_playerstore
 g_serverstats
 g_session

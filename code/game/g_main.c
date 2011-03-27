@@ -236,6 +236,8 @@ vmCvar_t     g_useMapcycle;
 
 vmCvar_t     g_allowMultiview;
 vmCvar_t     g_demoState;
+
+vmCvar_t     g_disableSpecs;
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -474,6 +476,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_allowMultiview, "g_allowMultiview", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 	// demo state
 	{ &g_demoState, "sv_demoState", "", 0, 0, qfalse },
+	{ &g_disableSpecs, "g_disableSpecs", "0", CVAR_ARCHIVE, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing

@@ -43,6 +43,7 @@ cd windows\build\game
 %cc%  ../../../code/game/g_killspree.c
 %cc%  ../../../code/game/g_misc.c
 %cc%  ../../../code/game/g_missile.c
+%cc%  ../../../code/game/g_mapcycle.c
 %cc%  ../../../code/game/g_mover.c
 %cc%  ../../../code/game/g_playerstore.c
 rem %cc%  ../../../code/game/g_rankings.c
