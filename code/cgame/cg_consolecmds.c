@@ -250,7 +250,7 @@ Prints out the current revision
 ==================
 */
 static void CG_Revision_f( void ) {
-	CG_Printf("revision: %s\n", AFTERSHOCK_REVISION );	   
+	CG_Printf("revision: $Revision$\n");	   
 }
 
 //TODO: remove all the MISSIONPACK things, AfterShock will never have a missionpack
