@@ -237,6 +237,22 @@ static void CG_Currenttime_f( void ) {
 			now.tm_sec);
 }
 
+#ifndef AFTERSHOCK_REVISION
+#define AFTERSHOCK_REVISION 118
+#endif
+
+
+/*
+==================
+CG_Revision_f
+
+Prints out the current revision
+==================
+*/
+static void CG_Revision_f( void ) {
+	CG_Printf("revision: %s\n", AFTERSHOCK_REVISION );	   
+}
+
 //TODO: remove all the MISSIONPACK things, AfterShock will never have a missionpack
 #ifdef MISSIONPACK
 extern menuDef_t *menuScoreboard;
@@ -630,7 +646,8 @@ static consoleCommand_t	commands[] = {
 	{ "currenttime", CG_Currenttime_f },
 	{ "hudedit", CG_HudEdit_f },
 	{ "saveHud", CG_WriteHudFile_f },
-	{ "recordGame", CG_StartOfGame }
+	{ "recordGame", CG_StartOfGame },
+	{ "revision", CG_Revision_f }
 };
 
 

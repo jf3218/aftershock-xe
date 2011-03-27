@@ -4,6 +4,10 @@
 # GNU Make required
 #
 
+SVNDEV := -D'AFTERSHOCK_REVISION="$(shell svnversion -n .)"'
+CFLAGS := $(SVNDEV)
+
+
 COMPILE_PLATFORM=$(shell uname|sed -e s/_.*//|tr '[:upper:]' '[:lower:]')
 
 COMPILE_ARCH=$(shell uname -m | sed -e s/i.86/i386/)
