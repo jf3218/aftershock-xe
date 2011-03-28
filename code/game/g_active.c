@@ -1224,7 +1224,7 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 		for( i = 0 ; i < MAX_GENTITIES; i++ ){
 			if( g_entities[i].inuse ){
 				g_entities[i].r.svFlags |= SVF_CLIENTMASKVISIBLE;
-				g_entities[i].r.singleClient |= (1 << ent->client->ps.clientNum);
+				g_entities[i].r.singleClient |= (1 << ent->s.clientNum );
 			}
 		}
 	}

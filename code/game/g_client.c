@@ -1878,7 +1878,7 @@ void motd (gentity_t *ent)
 ClientBegin
 
 called when a client has finished connecting, and is ready
-to be placed into the level.  This will happen every level load,
+to be placed into the level.  This will happen every level load( and map_restart),
 and on transition between teams, but doesn't happen on respawns
 ============
 */
@@ -1890,7 +1890,9 @@ void ClientBegin( int clientNum ) {
 	int		countRed, countBlue, countFree;
         char		userinfo[MAX_INFO_STRING];
 	char      buffer[ MAX_INFO_STRING ] = "";
-
+	
+	G_Printf("BEGIN!!\n");
+	
         trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 
 	ent = g_entities + clientNum;
@@ -2036,6 +2038,8 @@ void ClientBegin( int clientNum ) {
 	}
 	
 	G_toSmallCaps(ent->client->aftershock_hash);
+	
+	G_Printf("BEGIN! %s\n", ent->client->pers.netname);
 	
 	//G_SendAllItems();
 	
