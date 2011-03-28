@@ -1220,11 +1220,11 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 	gclient_t	*cl;
 	int i, preservedScore[MAX_PERSISTANT]; //for keeping in elimination
 
-	if( ent->client->pers.multiview >= 2 && g_allowMultiview.integer ){
+	if( ent->client->pers.multiview >= 2 && g_allowMultiview.integer && ent->client->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR ){
 		for( i = 0 ; i < MAX_GENTITIES; i++ ){
 			if( g_entities[i].inuse ){
 				g_entities[i].r.svFlags |= SVF_CLIENTMASKVISIBLE;
-				g_entities[i].r.singleClient |= (1 << ent->s.clientNum );
+				g_entities[i].r.singleClient |= (1 << ( ent - g_entities ) );
 			}
 		}
 	}
