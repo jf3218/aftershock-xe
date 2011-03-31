@@ -163,7 +163,7 @@ typedef enum {
 } weaponstate_t;
 
 // pmove->pm_flags
-#define	PMF_DUCKED			1
+#define	PMF_DUCKED		1
 #define	PMF_JUMP_HELD		2
 #define	PMF_BACKWARDS_JUMP	8		// go into backwards land
 #define	PMF_BACKWARDS_RUN	16		// coast down to backwards run
@@ -237,7 +237,8 @@ typedef enum {
 	STAT_ARMOR,				
 	STAT_DEAD_YAW,					// look this direction when dead (FIXME: get rid of?)
 	STAT_CLIENTS_READY,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
-	STAT_MAX_HEALTH					// health / armor limit, changable by handicap
+	STAT_MAX_HEALTH,					// health / armor limit, changable by handicap
+	STAT_JUMPTIME					//rampjump
 } statIndex_t;
 
 

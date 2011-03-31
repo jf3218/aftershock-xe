@@ -41,6 +41,7 @@ void G_ResetHistory( gentity_t *ent ) {
 		VectorCopy( ent->r.mins, ent->client->history[i].mins );
 		VectorCopy( ent->r.maxs, ent->client->history[i].maxs );
 		VectorCopy( ent->r.currentOrigin, ent->client->history[i].currentOrigin );
+		//VectorCopy( ent->client->ps.viewangles, ent->client->history[i].angles );
 		ent->client->history[i].leveltime = time;
 	}
 }
@@ -70,6 +71,8 @@ void G_StoreHistory( gentity_t *ent ) {
 	VectorCopy( ent->r.maxs, ent->client->history[head].maxs );
 	VectorCopy( ent->s.pos.trBase, ent->client->history[head].currentOrigin );
 	SnapVector( ent->client->history[head].currentOrigin );
+	//VectorCopy( ent->client->ps.viewangles, ent->client->history[head].angles );
+	//SnapVector( ent->client->history[head].angles );
 	ent->client->history[head].leveltime = level.time;
 }
 
@@ -160,6 +163,7 @@ void G_TimeShiftClient( gentity_t *ent, int time, qboolean debug, gentity_t *deb
 			VectorCopy( ent->r.mins, ent->client->saved.mins );
 			VectorCopy( ent->r.maxs, ent->client->saved.maxs );
 			VectorCopy( ent->r.currentOrigin, ent->client->saved.currentOrigin );
+			//VectorCopy( ent->client->ps.viewangles, ent->client->saved.angles );
 			ent->client->saved.leveltime = level.time;
 		}
 
@@ -182,6 +186,10 @@ void G_TimeShiftClient( gentity_t *ent, int time, qboolean debug, gentity_t *deb
 			TimeShiftLerp( frac,
 				ent->client->history[j].maxs, ent->client->history[k].maxs,
 				ent->r.maxs );
+				
+			//TimeShiftLerp( frac,
+			//	ent->client->history[j].angles, ent->client->history[k].angles,
+			//	ent->client->ps.viewangles );
 
 			/*if ( debug && debugger != NULL ) {
 				// print some debugging stuff exactly like what the client does
@@ -213,6 +221,7 @@ void G_TimeShiftClient( gentity_t *ent, int time, qboolean debug, gentity_t *deb
 			VectorCopy( ent->client->history[k].currentOrigin, ent->r.currentOrigin );
 			VectorCopy( ent->client->history[k].mins, ent->r.mins );
 			VectorCopy( ent->client->history[k].maxs, ent->r.maxs );
+			//VectorCopy( ent->client->history[k].angles, ent->client->ps.viewangles );
 
 			// this will recalculate absmin and absmax
 			trap_LinkEntity( ent );
@@ -230,6 +239,17 @@ void G_TimeShiftClient( gentity_t *ent, int time, qboolean debug, gentity_t *deb
 	}
 }
 
+/*
+=====================
+G_TimeShiftAllClients
+=====================
+*/
+
+void G_TimeShiftOneClient( gentity_t *ent ){
+	int time;
+	time = ent->client->attackTime + ent->client->pers.cmdTimeNudge;
+	G_TimeShiftClient( ent, time, qfalse, NULL );
+}
 
 /*
 =====================
@@ -278,9 +298,9 @@ void G_DoTimeShiftFor( gentity_t *ent ) {
 		// do the full lag compensation, except what the client nudges
 		time = ent->client->attackTime + ent->client->pers.cmdTimeNudge;
                 //Give the lightning gun some handicap (lag was part of weapon balance in VQ3)
-                if(ent->client->ps.weapon == WP_LIGHTNING && g_lagLightning.integer)
+                /*if(ent->client->ps.weapon == WP_LIGHTNING && g_lagLightning.integer)
 			time+=25;
-			//time+=50;
+			//time+=50;*/
 	}
 	else {
 		// do just 50ms
@@ -305,6 +325,7 @@ void G_UnTimeShiftClient( gentity_t *ent ) {
 		VectorCopy( ent->client->saved.mins, ent->r.mins );
 		VectorCopy( ent->client->saved.maxs, ent->r.maxs );
 		VectorCopy( ent->client->saved.currentOrigin, ent->r.currentOrigin );
+		//VectorCopy( ent->client->saved.angles, ent->client->ps.viewangles );
 		ent->client->saved.leveltime = 0;
 
 		// this will recalculate absmin and absmax

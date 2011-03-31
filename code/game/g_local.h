@@ -339,6 +339,7 @@ typedef struct {
 	vec3_t		mins, maxs;
 	vec3_t		currentOrigin;
 	int			leveltime;
+	//vec3_t		angles;
 } clientHistory_t;
 //unlagged - backward reconciliation #1
 
@@ -845,6 +846,7 @@ void G_DoTimeShiftFor( gentity_t *ent );
 void G_UndoTimeShiftFor( gentity_t *ent );
 void G_UnTimeShiftClient( gentity_t *client );
 void G_PredictPlayerMove( gentity_t *ent, float frametime );
+void G_TimeShiftOneClient( gentity_t *ent );
 //unlagged - g_unlagged.c
 
 //
@@ -1283,6 +1285,8 @@ extern vmCvar_t	    g_useMapcycle;
 
 extern vmCvar_t	    g_allowMultiview;
 extern vmCvar_t	    g_disableSpecs;
+
+extern vmCvar_t	    g_aftershockPhysic;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

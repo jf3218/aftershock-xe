@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "bg_public.h"
 #include "bg_local.h"
 
+extern vmCvar_t g_aftershockPhysic;
+
 pmove_t		*pm;
 pml_t		pml;
 
@@ -45,6 +47,8 @@ float	pm_friction = 6.0f;
 float	pm_waterfriction = 1.0f;
 float	pm_flightfriction = 3.0f;
 float	pm_spectatorfriction = 5.0f;
+float   pm_slidefriction = 1.0f;
+float	pm_slideminspeed = 400.0f;
 
 int		c_pmove = 0;
 
@@ -196,8 +200,12 @@ static void PM_Friction( void ) {
 		if ( pml.walking && !(pml.groundTrace.surfaceFlags & SURF_SLICK) ) {
 			// if getting knocked back, no friction
 			if ( ! (pm->ps->pm_flags & PMF_TIME_KNOCKBACK) ) {
-				control = speed < pm_stopspeed ? pm_stopspeed : speed;
-				drop += control*pm_friction*pml.frametime;
+				if( g_aftershockPhysic.integer && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed) ){
+					drop += speed*pm_slidefriction*pml.frametime;
+				} else {
+					control = speed < pm_stopspeed ? pm_stopspeed : speed;
+					drop += control*pm_friction*pml.frametime;
+				}
 			}
 		}
 	}
@@ -387,7 +395,19 @@ static qboolean PM_CheckJump( void ) {
 	pm->ps->pm_flags |= PMF_JUMP_HELD;
 
 	pm->ps->groundEntityNum = ENTITYNUM_NONE;
-	pm->ps->velocity[2] = JUMP_VELOCITY;
+	
+	if ( g_aftershockPhysic.integer && (pm->ps->velocity[2] > 0) ) {
+		if (pm->ps->stats[STAT_JUMPTIME] > 0) {
+			pm->ps->velocity[2] += JUMP_VELOCITY + 100;
+		} else {
+			pm->ps->velocity[2] += JUMP_VELOCITY;
+		}
+	} else {
+		pm->ps->velocity[2] = JUMP_VELOCITY;
+	}
+	pm->ps->stats[STAT_JUMPTIME] = 400;
+	
+	//pm->ps->velocity[2] = JUMP_VELOCITY;
 	PM_AddEvent( EV_JUMP );
 
 	if ( pm->cmd.forwardmove >= 0 ) {
@@ -758,8 +778,23 @@ static void PM_WalkMove( void ) {
 
 	// clamp the speed lower if ducking
 	if ( pm->ps->pm_flags & PMF_DUCKED ) {
-		if ( wishspeed > pm->ps->speed * pm_duckScale ) {
-			wishspeed = pm->ps->speed * pm_duckScale;
+		float* velocity = pm->ps->velocity;
+		vec3_t vec;
+		float speed;
+		VectorCopy( velocity, vec );
+		if ( pml.walking ) {
+			vec[2] = 0;	// ignore slope movement
+		}
+
+		speed = VectorLength(vec);
+		if( g_aftershockPhysic.integer && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed) ){
+			if ( wishspeed > pm->ps->speed * pm_duckScale * 2 ) {
+				wishspeed = pm->ps->speed * pm_duckScale * 2;
+			}
+		} else {
+			if ( wishspeed > pm->ps->speed * pm_duckScale ) {
+				wishspeed = pm->ps->speed * pm_duckScale;
+			}
 		}
 	}
 
@@ -2003,6 +2038,10 @@ void PmoveSingle (pmove_t *pmove) {
 	}
 
 	PM_DropTimers();
+	
+	if (pm->ps->stats[STAT_JUMPTIME] > 0) {
+		pm->ps->stats[STAT_JUMPTIME] -= pml.msec;
+	}
 
 	if ( pm->ps->powerups[PW_INVULNERABILITY] ) {
 		PM_InvulnerabilityMove();

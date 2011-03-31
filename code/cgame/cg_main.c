@@ -366,6 +366,8 @@ vmCvar_t	cg_multiview4_width;
 vmCvar_t	cg_multiview4_height;
 vmCvar_t	cg_multiview4_client;
 
+vmCvar_t	g_aftershockPhysic;
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -604,6 +606,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_multiview4_width, "cg_multiview4_width", "200", CVAR_ARCHIVE },
 	{&cg_multiview4_height, "cg_multiview4_height", "160", CVAR_ARCHIVE },
 	{&cg_multiview4_client, "cg_multiview2_client", "-1", CVAR_TEMP },
+	{&g_aftershockPhysic, "g_aftershockPhysic", "0", CVAR_SYSTEMINFO }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

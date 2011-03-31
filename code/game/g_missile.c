@@ -929,7 +929,7 @@ This does the anti lag stuff for projectiles.
 
 int lagNudge(gentity_t *myself) {
 	if (trap_Cvar_VariableValue( "sv_running" ) == 0) return 0; // the server deals with the nudge, not clients
-	if (g_delagprojectiles.integer <= 0) {
+	if (g_delagprojectiles.integer <= 0 ) {
 		return 0; // old behavior
 	} else if (g_delagprojectiles.integer == 1) {
 		return 50; // less old behavior, unlagged versions use this

@@ -1008,12 +1008,12 @@ void FireWeapon( gentity_t *ent ) {
 			ent->client->accuracy[ent->s.weapon][0]++;
 		}
 	}
-
-	// set aiming directions
+	
+	  
 	AngleVectors (ent->client->ps.viewangles, forward, right, up);
-
 	CalcMuzzlePointOrigin ( ent, ent->client->oldOrigin, forward, right, up, muzzle );
 
+	
 	// fire the specific weapon
 	switch( ent->s.weapon ) {
 	case WP_GAUNTLET:

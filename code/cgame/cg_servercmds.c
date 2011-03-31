@@ -1013,6 +1013,9 @@ void CG_ParseServerinfo ( void ) {
 	
 	if ( cg_autosnaps.integer )
 		trap_Cvar_Set ( "snaps", va ( "%i", atoi ( Info_ValueForKey ( info, "sv_fps" ) ) ) );
+	
+	trap_Cvar_Set ( "g_aftershockPhysic",va("%i",atoi (Info_ValueForKey ( info, "g_aftershockPhysic" ))) );
+	
 }
 
 /*
