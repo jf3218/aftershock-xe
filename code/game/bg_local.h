@@ -51,6 +51,7 @@ typedef struct {
 	vec3_t		previous_origin;
 	vec3_t		previous_velocity;
 	int			previous_waterlevel;
+	float		preJumpHeight;
 } pml_t;
 
 extern	pmove_t		*pm;

@@ -396,15 +396,22 @@ static qboolean PM_CheckJump( void ) {
 
 	pm->ps->groundEntityNum = ENTITYNUM_NONE;
 	
-	if ( g_aftershockPhysic.integer && (pm->ps->velocity[2] > 0) ) {
+	if ( g_aftershockPhysic.integer && /*( pm->ps->origin[2] > pml.preJumpHeight ) &&*/ (pm->ps->velocity[2] >= 0) ) {
 		if (pm->ps->stats[STAT_JUMPTIME] > 0) {
+			float speed = sqrt(pml.forward[0]*pml.forward[0] + pml.forward[1]*pml.forward[1]);
 			pm->ps->velocity[2] += JUMP_VELOCITY + 100;
+			//pm->ps->velocity[2] += JUMP_VELOCITY + ((JUMP_VELOCITY-100)*pm->ps->stats[STAT_JUMPTIME])/400 + 100;
+			pm->ps->velocity[0] += (pml.forward[0]/speed)*80;
+			pm->ps->velocity[1] += (pml.forward[1]/speed)*80;
+			
+			pml.preJumpHeight = pm->ps->origin[2];
 		} else {
 			pm->ps->velocity[2] += JUMP_VELOCITY;
 		}
 	} else {
 		pm->ps->velocity[2] = JUMP_VELOCITY;
 	}
+	
 	pm->ps->stats[STAT_JUMPTIME] = 400;
 	
 	//pm->ps->velocity[2] = JUMP_VELOCITY;
