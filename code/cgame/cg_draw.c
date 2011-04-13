@@ -2111,6 +2111,7 @@ static void CG_DrawReward ( void ) {
 	float	*color;
 	int		i;
 	float	x, y;
+	int maxRewards;
 	//char	buf[32];  //TODO:aha, 32 digits are useful? 
 
 	if ( !cg_drawRewards.integer ) {
@@ -2138,8 +2139,13 @@ static void CG_DrawReward ( void ) {
 	}
 
 	trap_R_SetColor ( color );
+	
+	maxRewards = (cgs.hud[HUD_REWARD].width - cgs.hud[HUD_REWARD].xpos)/cgs.hud[HUD_REWARD].height;
+	for( i=0; i < maxRewards && i <= cg.rewardStack; i++ ){
+		CG_DrawPic( cgs.hud[HUD_REWARD].xpos + i*cgs.hud[HUD_REWARD].height - (cg.rewardStack + 1) * cgs.hud[HUD_REWARD].height/2 + cgs.hud[HUD_REWARD].width/2, cgs.hud[HUD_REWARD].ypos, cgs.hud[HUD_REWARD].height, cgs.hud[HUD_REWARD].height, cg.rewardShader[i]);
+	}
 
-	CG_DrawHudIcon ( HUD_REWARD, qfalse, cg.rewardShader[0] );
+	//CG_DrawHudIcon ( HUD_REWARD, qfalse, cg.rewardShader[0] );
 
 	//Com_sprintf ( buf, sizeof ( buf ), "%i", cg.rewardCount[0] );
 
