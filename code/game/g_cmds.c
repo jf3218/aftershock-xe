@@ -3278,6 +3278,9 @@ void Cmd_DropWeapon_f( gentity_t *ent ) {
 
     if ( !( g_itemDrop.integer & 2 ) )
         return;
+    
+    if( ent->client->ps.pm_type == PM_DEAD )
+	return;
 
     weapon = ent->s.weapon;
 
@@ -3294,6 +3297,9 @@ void Cmd_DropFlag_f( gentity_t *other ) {
 
     if ( !( g_itemDrop.integer & 1 ) )
         return;
+    
+    if( other->client->ps.pm_type == PM_DEAD )
+	return;
 
     if ( other->client->ps.powerups[PW_NEUTRALFLAG] ) {
         Drop_Item_Flag( other, BG_FindItemForPowerup( PW_NEUTRALFLAG ), 0 );

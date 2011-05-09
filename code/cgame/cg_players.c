@@ -2909,9 +2909,14 @@ void CG_Player( centity_t *cent, int otherClient ) {
 	memset( &legs, 0, sizeof(legs) );
 	memset( &torso, 0, sizeof(torso) );
 	memset( &head, 0, sizeof(head) );
-
-	CG_setColor( ci, &head, &torso, &legs, cent->currentState.eFlags );
-
+	
+	if( ( cent->currentState.powerups & ( 1 << PW_INVIS ) ) ){
+		
+	}
+	else{
+		CG_setColor( ci, &head, &torso, &legs, cent->currentState.eFlags );
+	}
+	
 	// get the rotation information
 	CG_PlayerAngles( cent, legs.axis, torso.axis, head.axis );
 	
