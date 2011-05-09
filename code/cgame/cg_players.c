@@ -2447,7 +2447,10 @@ static void CG_PlayerSprites( centity_t *cent ) {
 		cg.snap->ps.persistant[PERS_TEAM] == team &&
 		cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
 		if (cg_drawFriend.integer) {
-			CG_PlayerFloatSprite( cent, cgs.media.friendShader );
+			if( cgs.friendsThroughWalls )
+				CG_PlayerFloatSprite(cent, cgs.media.friendShaderVisible);
+			else
+				CG_PlayerFloatSprite( cent, cgs.media.friendShader );
 		}
 		return;
 	}

@@ -1016,6 +1016,9 @@ void CG_ParseServerinfo ( void ) {
 	
 	trap_Cvar_Set ( "g_aftershockPhysic",va("%i",atoi (Info_ValueForKey ( info, "g_aftershockPhysic" ))) );
 	
+	cgs.friendsThroughWalls = atoi ( Info_ValueForKey ( info, "g_friendsThroughWalls" ) );
+	trap_Cvar_Set ( "g_friendsThroughWalls", va ( "%i", cgs.friendsThroughWalls ) );
+	
 }
 
 /*

@@ -1325,6 +1325,7 @@ static void CG_RegisterGraphics( void ) {
 		cg_buildScript.integer ) {
 
 		cgs.media.friendShader = trap_R_RegisterShader( "sprites/foe" );
+		cgs.media.friendShaderVisible = trap_R_RegisterShader( "sprites/foe2.tga" );
 		cgs.media.redQuadShader = trap_R_RegisterShader("powerups/blueflag" );
 		cgs.media.teamStatusBar = trap_R_RegisterShader( "gfx/2d/colorbar.tga" );
 #ifdef MISSIONPACK

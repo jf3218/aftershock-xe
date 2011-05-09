@@ -947,6 +947,7 @@ typedef struct {
 	qhandle_t	lightningShaderColor[MAX_LGSTYLES];
 
 	qhandle_t	friendShader;
+	qhandle_t	friendShaderVisible;
 
 	qhandle_t	balloonShader;
 	qhandle_t	connectionShader;
@@ -1409,6 +1410,8 @@ typedef struct {
 	hudElements_t   hud[HUD_MAX];
 	
 	int 		allowMultiview;
+	
+	int 		friendsThroughWalls;
 } cgs_t;
 
 //==============================================================================
