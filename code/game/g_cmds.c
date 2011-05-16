@@ -3360,7 +3360,7 @@ void Cmd_Listplayers_f( gentity_t *ent ) {
     while ( i < MAX_CLIENTS ) {
         cl = (g_entities+i)->client;
         if ((g_entities+i)->client->pers.connected == CON_CONNECTED) { //Only numbers <128 is clients
-            strcat(buffer, va("%i   %s^7   %i   %s\n", cl->ps.clientNum, cl->pers.netname, cl->ps.persistant[PERS_SCORE], TeamName(cl->sess.sessionTeam) ) );
+            strcat(buffer, va("%i   %s^7   %i   %s\n", (g_entities+i)->s.clientNum, cl->pers.netname, cl->ps.persistant[PERS_SCORE], TeamName(cl->sess.sessionTeam) ) );
         }
         i++;
     }
