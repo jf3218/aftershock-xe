@@ -1690,6 +1690,8 @@ extern vmCvar_t			cg_multiview4_client;
 
 extern vmCvar_t			g_aftershockPhysic;
 
+extern vmCvar_t			cg_inverseTimer;
+
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
 //void CG_AddBoundingBox( centity_t *cent );

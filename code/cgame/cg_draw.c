@@ -1044,6 +1044,12 @@ void CG_DrawTimer ( void ) {
 	seconds -= tens * 10;
 
 	//CG_DrawBigString( 320 - w/2, 10, s, 1.0F);
+	
+	if( cg_inverseTimer.integer && cgs.timelimit ){
+		mins = cgs.timelimit - mins - 1;
+		tens = 5 - tens;
+		seconds = (10 - seconds)%10;
+	}
 
 	s = va ( "%i:%i%i", mins, tens, seconds );  //FIXME: why not use %02i, is it slower?
 	CG_DrawStringHud ( HUD_GAMETIME, qtrue, s );
