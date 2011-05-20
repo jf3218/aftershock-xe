@@ -1098,6 +1098,9 @@ Cmd_Ready_f
 */
 void Cmd_Ready_f( gentity_t *ent ) {
 
+    if( level.warmupTime != -1 )
+	return;
+    
     if ( g_startWhenReady.integer == 3 ) {
         trap_SendServerCommand(ent-g_entities,va("screenPrint \"only a referee can start the game\"" ) );
         trap_SendServerCommand(ent-g_entities,va("print \"only a referee can start the game\"" ) );
