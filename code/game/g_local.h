@@ -479,6 +479,7 @@ struct gclient_s {
 	
 	qboolean		referee;
 	
+	int 		spawnTime;
 };
 
 

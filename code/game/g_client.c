@@ -2090,6 +2090,7 @@ void ClientSpawn(gentity_t *ent) {
 
 	index = ent - g_entities;
 	client = ent->client;
+	
 
 	//In Elimination the player should not spawn if he have already spawned in the round (but not for spectators)
 	// N_G: You've obviously wanted something ELSE
@@ -2551,6 +2552,8 @@ else
 	
 	/*if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
 		G_SendLivingCount();*/
+	
+	client->spawnTime = level.time;
 }
 
 

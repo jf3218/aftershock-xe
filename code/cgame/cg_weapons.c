@@ -1798,7 +1798,7 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 		CG_AddWeaponWithPowerups( &barrel, cent->currentState.powerups );
 	}
 	
-	if ( ( cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION ) && cg.time < cgs.roundStartTime ){
+	if ( ( cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION ) && ( cg.time < cgs.roundStartTime && cg.warmup == 0)   ){
 		return;
 	}
 
@@ -1900,7 +1900,7 @@ void CG_AddViewWeapon( playerState_t *ps ) {
 	if ( !cg_drawGun.integer ) {
 		vec3_t		origin;
 
-		if ( ( cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION ) && cg.time < cgs.roundStartTime )
+		if ( ( cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION ) && ( cg.time < cgs.roundStartTime && cg.warmup == 0 ) )
 			return;
 		
 		if ( cg.predictedPlayerState.eFlags & EF_FIRING ) {

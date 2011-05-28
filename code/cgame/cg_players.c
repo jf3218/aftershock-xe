@@ -458,7 +458,7 @@ static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t
 		charactersFolder = "characters/";
 	}
 
-	team = "default";
+	/*team = "default";
 	charactersFolder = "";
 
 	while(1) {
@@ -506,7 +506,7 @@ static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t
 			break;
 		}
 		charactersFolder = "characters/";
-	}
+	}*/
 
 	return qfalse;
 }
@@ -663,7 +663,7 @@ static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t 
 	}
 	
 
-	if ( headModelName[0] == '*' ) {
+	/*if ( headModelName[0] == '*' ) {
 		headsFolder = "heads/";
 		headModelName++;
 	}
@@ -711,7 +711,7 @@ static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t 
 			break;
 		}
 		headsFolder = "heads/";
-	}
+	}*/
 
 	return qfalse;
 }
@@ -2615,6 +2615,12 @@ void CG_AddRefEntityWithPowerups( refEntity_t *ent, entityState_t *state, int te
 
 	if ( state->powerups & ( 1 << PW_INVIS ) ) {
 		ent->customShader = cgs.media.invisShader;
+		ent->customSkin = cgs.media.invisShader;
+		/*ent->shaderRGBA[0]=255;
+		ent->shaderRGBA[1]=255;
+		ent->shaderRGBA[2]=255;
+		ent->shaderRGBA[3]=0;*/
+		
 		trap_R_AddRefEntityToScene( ent );
 	} else {
 		/*
@@ -2912,13 +2918,9 @@ void CG_Player( centity_t *cent, int otherClient ) {
 	memset( &legs, 0, sizeof(legs) );
 	memset( &torso, 0, sizeof(torso) );
 	memset( &head, 0, sizeof(head) );
-	
-	if( ( cent->currentState.powerups & ( 1 << PW_INVIS ) ) ){
-		
-	}
-	else{
-		CG_setColor( ci, &head, &torso, &legs, cent->currentState.eFlags );
-	}
+
+	CG_setColor( ci, &head, &torso, &legs, cent->currentState.eFlags );
+
 	
 	// get the rotation information
 	CG_PlayerAngles( cent, legs.axis, torso.axis, head.axis );
