@@ -318,17 +318,17 @@ typedef struct {
     
     int multiview;
     
-    qboolean    demoClient;
+    //qboolean    demoClient;
     
 } clientPersistant_t;
 
 // demo commands
-typedef enum
+/*typedef enum
 {
     DC_SERVER_COMMAND = -1,
     DC_CLIENT_SET = 0,
     DC_CLIENT_REMOVE
-} demoCommand_t;
+} demoCommand_t;*/
 
 //unlagged - backward reconciliation #1
 // the size of history we'll keep
@@ -627,9 +627,9 @@ typedef struct {
     int		disconnectedClientsNumber;
     struct gclient_s disconnectedClients[MAX_DISCONNECTEDCLIENTS];
     
-    demoState_t demoState;
+    /*demoState_t demoState;
     
-    int demoStarted;
+    int demoStarted;*/
     
 } level_locals_t;
 
@@ -938,7 +938,7 @@ void QDECL G_Error( const char *fmt, ... );
 //KK-OAX Made Accessible for g_admin.c
 void LogExit( const char *string ); 
 void CheckTeamVote( int team );
-void G_DemoCommand( demoCommand_t cmd, const char *string );
+//void G_DemoCommand( demoCommand_t cmd, const char *string );
 
 //
 // g_client.c
@@ -1495,7 +1495,7 @@ void	trap_BotResetWeaponState(int weaponstate);
 int		trap_GeneticParentsAndChildSelection(int numranks, float *ranks, int *parent1, int *parent2, int *child);
 
 void	trap_SnapVector( float *v );
-void    trap_DemoCommand( demoCommand_t cmd, const char *string );
+//void    trap_DemoCommand( demoCommand_t cmd, const char *string );
 
 //KK-OAX
 //These enable the simplified command handling. 

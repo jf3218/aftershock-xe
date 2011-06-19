@@ -368,7 +368,6 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
     //KK-OAX Changed to keep followcycle functional
 	// attack button cycles through spectators
 	if ( ( client->buttons & BUTTON_ATTACK ) && ! ( client->oldbuttons & BUTTON_ATTACK ) ) {
-		//G_Printf("cycle!\n");
 		Cmd_FollowCycle_f( ent );
 	}
 
@@ -1251,7 +1250,7 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 		}
 		if ( clientNum >= 0 ) {
 			cl = &level.clients[ clientNum ];
-			if ( ( cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR ) || cl->pers.demoClient ) {
+			if ( ( cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR ) /*|| cl->pers.demoClient*/ ) {
 				flags = (cl->ps.eFlags & ~(EF_VOTED | EF_TEAMVOTED)) | (ent->client->ps.eFlags & (EF_VOTED | EF_TEAMVOTED));
 				//this is here LMS/Elimination goes wrong with player follow
 				if(ent->client->sess.sessionTeam!=TEAM_SPECTATOR){

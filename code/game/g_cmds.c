@@ -309,7 +309,7 @@ G_StartServerDemo
 
 ==================
 */
-void G_StartServerDemo( void ) {
+/*void G_StartServerDemo( void ) {
     int i;
     char buffer[ MAX_INFO_STRING ] = "";
     if( qfalse ){
@@ -317,15 +317,15 @@ void G_StartServerDemo( void ) {
 	    level.demoStarted = level.time;
 	    for ( i = 0; i < level.maxclients; i++ ) {
 		    if ( level.clients[ i ].pers.connected == CON_CONNECTED ){
-			    /*Info_SetValueForKey( buffer, "name", level.clients[ i ].pers.netname );
+			    Info_SetValueForKey( buffer, "name", level.clients[ i ].pers.netname );
 			    Info_SetValueForKey( buffer, "ip", level.clients[ i ].pers.ip );
 			    Info_SetValueForKey( buffer, "team", va( "%d", level.clients[ i ].sess.sessionTeam ) );
-			    G_DemoCommand( DC_CLIENT_SET, va( "%d %s", i, buffer ) );*/
+			    G_DemoCommand( DC_CLIENT_SET, va( "%d %s", i, buffer ) );
 			    ClientUserinfoChanged(i);
 		    }
 	    }
     }
-}
+}*/
 
 /*
 ==================
@@ -333,11 +333,11 @@ G_StartServerDemo
 
 ==================
 */
-void G_StopServerDemo( void ) {
+/*void G_StopServerDemo( void ) {
     if( qfalse ){
 	    trap_SendConsoleCommand( EXEC_APPEND, "demo_stoprecord\n" );
     }
-}
+}*/
 
 /*
 ==================
@@ -1155,7 +1155,7 @@ void SetTeam( gentity_t *ent, char *s ) {
     int				specOnly;
     char	            userinfo[MAX_INFO_STRING];
     qboolean            force;
-    char    buf[ MAX_INFO_STRING ];
+    //char    buf[ MAX_INFO_STRING ];
 
     force = G_admin_permission(ent, ADMF_FORCETEAMCHANGE);
 
@@ -1167,7 +1167,7 @@ void SetTeam( gentity_t *ent, char *s ) {
     trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
     specClient = 0;
     specState = SPECTATOR_NOT;
-    specOnly = client->sess.specOnly;
+    //specOnly = client->sess.specOnly;
     
     G_Printf("%s -> %s\n", ent->client->pers.netname, s);
 
@@ -1325,8 +1325,8 @@ void SetTeam( gentity_t *ent, char *s ) {
     ClientUserinfoChanged( clientNum );
     
     // log team changes to demo
-    Info_SetValueForKey( buf, "team", va( "%d", ent->client->sess.sessionTeam ) );
-    G_DemoCommand( DC_CLIENT_SET, va( "%d %s", (int)(ent - g_entities), buf ) );
+    /*Info_SetValueForKey( buf, "team", va( "%d", ent->client->sess.sessionTeam ) );
+    G_DemoCommand( DC_CLIENT_SET, va( "%d %s", (int)(ent - g_entities), buf ) );*/
 
     ClientBegin( clientNum );
 }
@@ -1397,11 +1397,11 @@ void Cmd_Team_f( gentity_t *ent ) {
         }
     }
     
-    if( level.demoState == DS_PLAYBACK ) {
+    /*if( level.demoState == DS_PLAYBACK ) {
 	    trap_SendServerCommand( ent-g_entities, "print \"You cannot join a team "
 	      "while a demo is being played\n\"" );
 	    return;
-    }
+    }*/
 
     // if they are playing a tournement game, count as a loss
     if ( (g_gametype.integer == GT_TOURNAMENT )
@@ -1465,8 +1465,8 @@ void Cmd_Follow_f( gentity_t *ent ) {
     }
 
     // first set them to spectator
-    if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR ) {
-    //if ( ent->client->sess.spectatorState == SPECTATOR_NOT ) {
+    //if ( ent->client->sess.sessionTeam != TEAM_SPECTATOR ) {
+    if ( ent->client->sess.spectatorState == SPECTATOR_NOT ) {
         SetTeam( ent, "spectator" );
     }
 
@@ -1538,18 +1538,18 @@ void Cmd_FollowCycle_f( gentity_t *ent ) {
 	}
 
         //if (count>level.maxclients) //We have looked at all clients at least once and found nothing
-	if( count > MAX_CLIENTS )
+	if( count > level.maxclients )
             return; //We might end up in an infinite loop here. Stop it!*/
 
         // can only follow connected clients
-        if ( level.clients[ clientnum ].pers.connected != CON_CONNECTED && !level.clients[ clientnum ].pers.demoClient ) {
-	    G_Printf("1.%s, %i, %i\n", level.clients[ clientnum ].pers.netname, level.clients[ clientnum ].sess.sessionTeam, level.clients[ clientnum ].sess.spectatorState );
+        if ( level.clients[ clientnum ].pers.connected != CON_CONNECTED /*&& !level.clients[ clientnum ].pers.demoClient*/ ) {
+	    //G_Printf("1.%s, %i, %i\n", level.clients[ clientnum ].pers.netname, level.clients[ clientnum ].sess.sessionTeam, level.clients[ clientnum ].sess.spectatorState );
             continue;
         }
 
         // can't follow another spectator
-        if ( ((level.clients[ clientnum ].sess.sessionTeam == TEAM_SPECTATOR) && !level.clients[ clientnum ].pers.demoClient )|| level.clients[ clientnum ].isEliminated) {
-	  G_Printf("2.%s, %i, %i\n", level.clients[ clientnum ].pers.netname, level.clients[ clientnum ].sess.sessionTeam, level.clients[ clientnum ].sess.spectatorState );
+        if ( ((level.clients[ clientnum ].sess.sessionTeam == TEAM_SPECTATOR) /*&& !level.clients[ clientnum ].pers.demoClient*/ )|| level.clients[ clientnum ].isEliminated) {
+	  //G_Printf("2.%s, %i, %i\n", level.clients[ clientnum ].pers.netname, level.clients[ clientnum ].sess.sessionTeam, level.clients[ clientnum ].sess.spectatorState );
             continue;
         }
 
@@ -1563,7 +1563,7 @@ void Cmd_FollowCycle_f( gentity_t *ent ) {
         // this is good, we can use it
         ent->client->sess.spectatorClient = clientnum;
         ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
-	G_Printf("%i %i\n", ent->client->sess.spectatorClient, ent->client->sess.spectatorState );
+	//G_Printf("%i %i\n", ent->client->sess.spectatorClient, ent->client->sess.spectatorState );
         return;
     } while ( clientnum != original );
 
@@ -1647,7 +1647,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
         G_LogPrintf( "say: %s: %s\n", ent->client->pers.netname, chatText );
         Com_sprintf (name, sizeof(name), "%s%c%c"EC": ", ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
         color = COLOR_GREEN;
-	G_DemoCommand( DC_SERVER_COMMAND, va( "chat \"%s^2%s\"", name, chatText ) );
+	//G_DemoCommand( DC_SERVER_COMMAND, va( "chat \"%s^2%s\"", name, chatText ) );
         break;
     case SAY_TEAM:
         G_LogPrintf( "sayteam: %s: %s\n", ent->client->pers.netname, chatText );
@@ -1658,7 +1658,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
             Com_sprintf (name, sizeof(name), EC"(%s%c%c"EC")"EC": ",
                          ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE );
         color = COLOR_CYAN;
-	G_DemoCommand( DC_SERVER_COMMAND, va( "tchat \"%s^5%s\"", name, chatText ) );
+	//G_DemoCommand( DC_SERVER_COMMAND, va( "tchat \"%s^5%s\"", name, chatText ) );
         break;
     case SAY_TELL:
         if (target && g_gametype.integer >= GT_TEAM && g_ffa_gt != 1 &&

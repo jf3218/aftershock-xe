@@ -141,7 +141,7 @@ void G_TeamCommand( team_t team, char *cmd ) {
 			}
 		}
 	}
-	G_DemoCommand( DC_SERVER_COMMAND, cmd );
+	//G_DemoCommand( DC_SERVER_COMMAND, cmd );
 }
 
 

@@ -775,9 +775,9 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 			attacker->client->lastKillTime = level.time;
 			self->client->lastKilledTime = level.time;
 			
-			if( self->client->spawnTime + 4000 > level.time ){
-				attacker->client->rewards[REWARD_AIRGRENADE]++;
-				RewardMessage(attacker, REWARD_AIRGRENADE, attacker->client->rewards[REWARD_AIRGRENADE]);
+			if( self->client->spawnTime + 1000 > level.time ){
+				attacker->client->rewards[REWARD_SPAWNKILL]++;
+				RewardMessage(attacker, REWARD_SPAWNKILL, attacker->client->rewards[REWARD_SPAWNKILL]);
 
 				attacker->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP | EF_AWARD_AIRROCKET 
 					| EF_AWARD_AIRGRENADE );

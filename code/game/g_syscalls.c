@@ -228,9 +228,9 @@ void trap_SnapVector( float *v ) {
 	return;
 }
 
-void trap_DemoCommand ( demoCommand_t cmd, const char *string ) {
+/*void trap_DemoCommand ( demoCommand_t cmd, const char *string ) {
 	syscall( G_DEMO_COMMAND, cmd, string );
-}
+}*/
 
 // BotLib traps start here
 int trap_BotLibSetup( void ) {

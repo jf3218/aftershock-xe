@@ -98,11 +98,11 @@ typedef struct {
 	entityShared_t	r;				// shared by both the server system and game
 } sharedEntity_t;
 
-typedef enum {
+/*typedef enum {
 	DS_NONE,
 	DS_RECORDING,
 	DS_PLAYBACK
-} demoState_t;
+} demoState_t;*/
 
 
 //===============================================================
@@ -235,7 +235,7 @@ typedef enum {
 	
 	// 1.32
 	G_FS_SEEK,
-	G_DEMO_COMMAND,
+	//G_DEMO_COMMAND,
 
 	BOTLIB_SETUP = 200,				// ( void );
 	BOTLIB_SHUTDOWN,				// ( void );
@@ -433,6 +433,6 @@ typedef enum {
 	// and parameters.  Return qfalse if the game doesn't recognize it as a command.
 
 	BOTAI_START_FRAME,				// ( int time );
-	GAME_DEMO_COMMAND
+	//GAME_DEMO_COMMAND
 } gameExport_t;
 
