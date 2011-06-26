@@ -165,10 +165,9 @@ static qboolean G_MapAvailable ( char* map ) {
 	fileHandle_t	file;           //To check that the map actually exists.
 
 
-	trap_FS_FOpenFile ( va ( "maps/%s.bsp",map ),&file,FS_READ );
-	if ( !file )
+	if( !trap_FS_FOpenFile ( va ( "maps/%s.bsp",map ), NULL,FS_READ ) )
 		return qfalse; //maps/MAPNAME.bsp does not exist
-	trap_FS_FCloseFile ( file );
+	
 	return qtrue;
 }
 
