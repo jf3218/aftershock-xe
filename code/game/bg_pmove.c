@@ -40,7 +40,7 @@ float	pm_wadeScale = 0.70f;
 
 float	pm_accelerate = 10.0f;
 float	pm_airaccelerate = 1.0f;
-float  pm_airaccelerateas = 2.0f;
+float  pm_airaccelerateas = 1.0f;
 float	pm_wateraccelerate = 4.0f;
 float	pm_flyaccelerate = 8.0f;
 

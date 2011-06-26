@@ -43,18 +43,18 @@ static void CG_DrawLoadingIcons( void ) {
 	int		x, y;
 
 	for( n = 0; n < loadingPlayerIconCount; n++ ) {
-		x = 16 + n * 78;
+		x = 16 + n * 46;
 		y = 324-40;
-		CG_DrawPic( x, y, 64, 64, loadingPlayerIcons[n] );
+		CG_DrawPic( x, y, 32, 32, loadingPlayerIcons[n] );
 	}
 
 	for( n = 0; n < loadingItemIconCount; n++ ) {
-		y = 400-40;
+		y = 400-20;
 		if( n >= 13 ) {
-			y += 40;
+			y += 20;
 		}
-		x = 16 + n % 13 * 48;
-		CG_DrawPic( x, y, 32, 32, loadingItemIcons[n] );
+		x = 16 + n % 13 * 24;
+		CG_DrawPic( x, y, 16, 16, loadingItemIcons[n] );
 	}
 }
 
@@ -154,6 +154,11 @@ void CG_DrawInformation( void ) {
 	qhandle_t	levelshot;
 	qhandle_t	detail;
 	char		buf[1024];
+	
+	cg.refdef.x = 0;
+        cg.refdef.y = 0;
+        cg.refdef.width = 640 * cgs.screenXScale;
+        cg.refdef.height = 480 * cgs.screenYScale;
 
 	info = CG_ConfigString( CS_SERVERINFO );
 	sysInfo = CG_ConfigString( CS_SYSTEMINFO );

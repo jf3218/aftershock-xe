@@ -3359,6 +3359,7 @@ void Cmd_Listplayers_f( gentity_t *ent ) {
     int i = 0;
     char buffer[1024];
     gclient_t *cl;
+    buffer[0] = '\0';
     strcat(buffer, va("<clientNum>   <name>   <score>   <team>\n" ) );
     while ( i < MAX_CLIENTS ) {
         cl = (g_entities+i)->client;

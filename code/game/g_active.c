@@ -162,12 +162,14 @@ void P_WorldEffects( gentity_t *ent ) {
 			} else {
 				if (ent->watertype & CONTENTS_LAVA) {
 					G_Damage (ent, NULL, NULL, NULL, NULL, 
-						30*waterlevel, 0, MOD_LAVA);
+						//30*waterlevel, 0, MOD_LAVA);
+						  15*waterlevel, 0, MOD_LAVA);
 				}
 
 				if (ent->watertype & CONTENTS_SLIME) {
 					G_Damage (ent, NULL, NULL, NULL, NULL, 
-						10*waterlevel, 0, MOD_SLIME);
+						//10*waterlevel, 0, MOD_SLIME);
+						  5*waterlevel, 0, MOD_SLIME);
 				}
 			}
 		}

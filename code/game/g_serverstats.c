@@ -120,6 +120,7 @@ static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnec
 	writeToFile ( va ( "\t\t\t<stat name=\"DamageTaken\" value=\"%i\"/>\n", cl->dmgtaken ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"HealthTotal\" value=\"%i\"/>\n", cl->stats[STATS_HEALTH] ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"ArmorTotal\" value=\"%i\"/>\n", cl->stats[STATS_ARMOR] ), f );
+	writeToFile ( va ( "\t\t\t<stat name=\"IsBot\" value=\"%s\"/>\n", boolToChar( g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT ) ), f );
 
 	if ( cl->accuracy_shots ) {
 		writeToFile ( va ( "\t\t\t<stat name=\"Accuracy\" value=\"%i\"/>\n", cl->accuracy_hits * 100 / cl->accuracy_shots ), f );
@@ -223,8 +224,8 @@ void G_WriteXMLStats ( void ) {
 	trap_FS_FOpenFile ( va ( "%s/%s.xml", g_statsPath.string,gameString ), &f, FS_WRITE );
 
 	writeToFile ( "<?xml version=\"1.0\"?><?xml-stylesheet type=\"text/xsl\"?>\n", &f );
-	writeToFile ( va ( "<match datetime=\"%i/%02i/%02i %02i:%02i:%02i\" map=\"%s\" type=\"%s\" isTeamGame=\"%s\" instagib=\"%s\" rocketsOnly=\"%s\" reducedLightning=\"%s\" reducedRail=\"%s\" >\n\n",
-	                   1900 + now.tm_year, 1 + now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec, mapname, gameShortNames[g_gametype.integer], boolToChar ( isTeamGame ),
+	writeToFile ( va ( "<match datetime=\"%i/%02i/%02i %02i:%02i:%02i\" duration=\"%i\" map=\"%s\" type=\"%s\" isTeamGame=\"%s\" instagib=\"%s\" rocketsOnly=\"%s\" reducedLightning=\"%s\" reducedRail=\"%s\" >\n\n",
+	                   1900 + now.tm_year, 1 + now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec, level.time, mapname, gameShortNames[g_gametype.integer], boolToChar ( isTeamGame ),
 	                   boolToChar ( g_instantgib.integer == 1 ), boolToChar ( g_rockets.integer == 1 ), boolToChar( g_reduceLightningDamage.integer == 1 ), boolToChar( g_reduceRailDamage.integer == 1 ) ), &f );
 
 	if ( isTeamGame ) {

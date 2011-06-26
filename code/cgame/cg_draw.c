@@ -1038,18 +1038,15 @@ void CG_DrawTimer ( void ) {
 		msec = cgs.timeoutTime - cgs.levelStartTime;
 
 	seconds = msec / 1000;
+	if( cg_inverseTimer.integer && cgs.timelimit ){
+	  seconds = cgs.timelimit * 60 - seconds;
+	}
 	mins = seconds / 60;
 	seconds -= mins * 60;
 	tens = seconds / 10;
 	seconds -= tens * 10;
 
 	//CG_DrawBigString( 320 - w/2, 10, s, 1.0F);
-	
-	if( cg_inverseTimer.integer && cgs.timelimit ){
-		mins = cgs.timelimit - mins - 1;
-		tens = 5 - tens;
-		seconds = (10 - seconds)%10;
-	}
 
 	s = va ( "%i:%i%i", mins, tens, seconds );  //FIXME: why not use %02i, is it slower?
 	CG_DrawStringHud ( HUD_GAMETIME, qtrue, s );
@@ -3742,7 +3739,10 @@ Perform all drawing needed to completely fill the screen
 */
 void CG_DrawActive ( stereoFrame_t stereoView, qboolean draw2d ) {
 	//int i;
-	
+	if ( !cg.snap ) {
+	    CG_DrawInformation();
+	    return;
+	}
 	
 	// optionally draw the tournement scoreboard instead
 	if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR &&
