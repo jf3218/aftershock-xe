@@ -1891,8 +1891,6 @@ void ClientBegin( int clientNum ) {
         char		userinfo[MAX_INFO_STRING];
 	//char      buffer[ MAX_INFO_STRING ] = "";
 	
-	G_Printf("BEGIN!!\n");
-	
         trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 
 	ent = g_entities + clientNum;
@@ -2038,8 +2036,6 @@ void ClientBegin( int clientNum ) {
 	}
 	
 	G_toSmallCaps(ent->client->aftershock_hash);
-	
-	G_Printf("BEGIN! %s\n", ent->client->pers.netname);
 	
 	//G_SendAllItems();
 	

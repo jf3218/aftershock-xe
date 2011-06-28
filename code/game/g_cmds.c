@@ -284,7 +284,7 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
     if ( type == IT_HEALTH && quantity != 100 )
         return;
 
-    G_Printf("type %i, quantity %i\n", type, quantity );
+    //G_Printf("type %i, quantity %i\n", type, quantity );
 
     if ( G_ItemCount(type, quantity, g_entities[entityNum].item->giTag) )
         nextItemEntityNum = -1;
