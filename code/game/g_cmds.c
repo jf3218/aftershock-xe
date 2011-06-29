@@ -1044,20 +1044,20 @@ void Cmd_Timeout_f( gentity_t *player ) {
     gentity_t *ent;
 
     if ( !g_timeoutAllowed.integer ) {
-        trap_SendServerCommand(player-g_entities,va("g_lockteam \"" S_COLOR_CYAN "timeout not allowed\"" ) );
+        trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout not allowed\"" ) );
         return;
     }
     if ( level.warmupTime ) {
-        trap_SendServerCommand(player-g_entities,va("g_lockteam \"" S_COLOR_CYAN "timeout not allowed in warmup\"" ) );
+        trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout not allowed in warmup\"" ) );
         return;
     }
 
     if ( player->client->sess.sessionTeam == TEAM_SPECTATOR && !player->client->referee) {
-        trap_SendServerCommand(player-g_entities,va("g_lockteam \"" S_COLOR_CYAN "timeout not allowed as spectator\"" ) );
+        trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout not allowed as spectator\"" ) );
         return;
     }
     if ( !(player->client->timeouts < g_timeoutAllowed.integer) ) {
-        trap_SendServerCommand(player-g_entities,va("g_lockteam \"" S_COLOR_CYAN "timeout limit reached\"" ) );
+        trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout limit reached\"" ) );
         return;
     }
 
@@ -1081,7 +1081,7 @@ void Cmd_Timeout_f( gentity_t *player ) {
                     ent->eventTime += level.timeoutAdd;
             }
         }
-        trap_SendServerCommand(-1,va("g_lockteam \"%s" S_COLOR_CYAN " called a timeout\"", player->client->pers.netname ) );
+        trap_SendServerCommand(-1,va("screenPrint \"%s" S_COLOR_CYAN " called a timeout\"", player->client->pers.netname ) );
         trap_SendServerCommand( -1, va("timeout %i %i", level.timeoutTime, level.timeoutAdd ) );
     }
 }
@@ -1102,7 +1102,7 @@ void Cmd_Ready_f( gentity_t *ent ) {
 	return;
     
     if ( g_startWhenReady.integer == 3 ) {
-        trap_SendServerCommand(ent-g_entities,va("g_lockteam \"only a referee can start the game\"" ) );
+        trap_SendServerCommand(ent-g_entities,va("screenPrint \"only a referee can start the game\"" ) );
         trap_SendServerCommand(ent-g_entities,va("print \"only a referee can start the game\"" ) );
         return;
     }
@@ -1177,7 +1177,7 @@ void SetTeam( gentity_t *ent, char *s ) {
     /*if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) ){
     	team =  TEAM_SPECTATOR;
     	specState = SPECTATOR_FREE;
-    	trap_SendServerCommand( ent-g_entities, va("g_lockteam \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
+    	trap_SendServerCommand( ent-g_entities, va("screenPrint \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
     	trap_SendServerCommand( ent-g_entities, va("print \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
     }
     else*/
@@ -2350,7 +2350,7 @@ void Cmd_Ref_f( gentity_t *ent ) {
 
     if ( !ent->client->referee ) {
         trap_SendServerCommand( ent-g_entities, "print \"You are not referee.\n\"" );
-        trap_SendServerCommand(ent-g_entities,va("g_lockteam \"" S_COLOR_CYAN "You are not referee\"" ) );
+        trap_SendServerCommand(ent-g_entities,va("screenPrint \"" S_COLOR_CYAN "You are not referee\"" ) );
         return;
     }
 
