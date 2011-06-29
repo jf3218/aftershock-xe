@@ -34,7 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ID_JOINGAME		102
 #define ID_SPECTATE		103
 
-
 typedef struct
 {
 	menuframework_s	menu;
@@ -190,6 +189,12 @@ void TeamMain_MenuInit( void ) {
 	case GT_CTF_ELIMINATION:
 		//s_teammain.joingame.generic.flags |= QMF_GRAYED;
 		s_teammain.joingame.string           = "AUTO JOIN GAME";
+		if( trap_Cvar_VariableValue("g_redLocked") > 0 )
+		  s_teammain.joinred.generic.flags  |= QMF_GRAYED;
+		if( trap_Cvar_VariableValue("g_blueLocked") > 0 )
+		  s_teammain.joinblue.generic.flags |= QMF_GRAYED;
+		if( trap_Cvar_VariableValue("g_blueLocked") > 0 && trap_Cvar_VariableValue("g_redLocked") > 0 )
+		  s_teammain.joingame.generic.flags |= QMF_GRAYED;
 		break;
 	}
 

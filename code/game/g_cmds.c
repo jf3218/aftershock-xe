@@ -1044,20 +1044,20 @@ void Cmd_Timeout_f( gentity_t *player ) {
     gentity_t *ent;
 
     if ( !g_timeoutAllowed.integer ) {
-        trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout not allowed\"" ) );
+        trap_SendServerCommand(player-g_entities,va("g_lockteam \"" S_COLOR_CYAN "timeout not allowed\"" ) );
         return;
     }
     if ( level.warmupTime ) {
-        trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout not allowed in warmup\"" ) );
+        trap_SendServerCommand(player-g_entities,va("g_lockteam \"" S_COLOR_CYAN "timeout not allowed in warmup\"" ) );
         return;
     }
 
     if ( player->client->sess.sessionTeam == TEAM_SPECTATOR && !player->client->referee) {
-        trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout not allowed as spectator\"" ) );
+        trap_SendServerCommand(player-g_entities,va("g_lockteam \"" S_COLOR_CYAN "timeout not allowed as spectator\"" ) );
         return;
     }
     if ( !(player->client->timeouts < g_timeoutAllowed.integer) ) {
-        trap_SendServerCommand(player-g_entities,va("screenPrint \"" S_COLOR_CYAN "timeout limit reached\"" ) );
+        trap_SendServerCommand(player-g_entities,va("g_lockteam \"" S_COLOR_CYAN "timeout limit reached\"" ) );
         return;
     }
 
@@ -1081,7 +1081,7 @@ void Cmd_Timeout_f( gentity_t *player ) {
                     ent->eventTime += level.timeoutAdd;
             }
         }
-        trap_SendServerCommand(-1,va("screenPrint \"%s" S_COLOR_CYAN " called a timeout\"", player->client->pers.netname ) );
+        trap_SendServerCommand(-1,va("g_lockteam \"%s" S_COLOR_CYAN " called a timeout\"", player->client->pers.netname ) );
         trap_SendServerCommand( -1, va("timeout %i %i", level.timeoutTime, level.timeoutAdd ) );
     }
 }
@@ -1102,7 +1102,7 @@ void Cmd_Ready_f( gentity_t *ent ) {
 	return;
     
     if ( g_startWhenReady.integer == 3 ) {
-        trap_SendServerCommand(ent-g_entities,va("screenPrint \"only a referee can start the game\"" ) );
+        trap_SendServerCommand(ent-g_entities,va("g_lockteam \"only a referee can start the game\"" ) );
         trap_SendServerCommand(ent-g_entities,va("print \"only a referee can start the game\"" ) );
         return;
     }
@@ -1124,17 +1124,20 @@ Let everyone know about a team change
 */
 void BroadcastTeamChange( gclient_t *client, int oldTeam )
 {
+    if( level.time -level.startTime < 1000 )
+      return;
+    
     if ( client->sess.sessionTeam == TEAM_RED ) {
-        trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE " joined the red team.\n\"",
+        trap_SendServerCommand( -1, va("screenPrint \"%s" S_COLOR_WHITE " joined the " S_COLOR_RED "red team.\"",
                                        client->pers.netname) );
     } else if ( client->sess.sessionTeam == TEAM_BLUE ) {
-        trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE " joined the blue team.\n\"",
+        trap_SendServerCommand( -1, va("screenPrint \"%s" S_COLOR_WHITE " joined the " S_COLOR_BLUE "blue team.\"",
                                        client->pers.netname));
     } else if ( client->sess.sessionTeam == TEAM_SPECTATOR && oldTeam != TEAM_SPECTATOR ) {
-        trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE " joined the spectators.\n\"",
+        trap_SendServerCommand( -1, va("screenPrint \"%s" S_COLOR_WHITE " joined the spectators.\"",
                                        client->pers.netname));
     } else if ( client->sess.sessionTeam == TEAM_FREE ) {
-        trap_SendServerCommand( -1, va("cp \"%s" S_COLOR_WHITE " joined the battle.\n\"",
+        trap_SendServerCommand( -1, va("screenPrint \"%s" S_COLOR_WHITE " joined the battle.\"",
                                        client->pers.netname));
     }
 }
@@ -1174,7 +1177,7 @@ void SetTeam( gentity_t *ent, char *s ) {
     /*if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) ){
     	team =  TEAM_SPECTATOR;
     	specState = SPECTATOR_FREE;
-    	trap_SendServerCommand( ent-g_entities, va("screenPrint \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
+    	trap_SendServerCommand( ent-g_entities, va("g_lockteam \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
     	trap_SendServerCommand( ent-g_entities, va("print \"" S_COLOR_YELLOW "Invalid playername, please choose a different name\"") );
     }
     else*/
@@ -1256,12 +1259,12 @@ void SetTeam( gentity_t *ent, char *s ) {
     }
     //KK-OAX Check to make sure the team is not locked from Admin
     if ( !force ) {
-        if ( team == TEAM_RED && level.RedTeamLocked ) {
+        if ( team == TEAM_RED && g_redLocked.integer ) {
             trap_SendServerCommand( ent->client->ps.clientNum,
                                     "cp \"The Red Team has been locked! \n\"" );
             return;
         }
-        if ( team == TEAM_BLUE && level.BlueTeamLocked ) {
+        if ( team == TEAM_BLUE && g_blueLocked.integer ) {
             trap_SendServerCommand( ent->client->ps.clientNum,
                                     "cp \"The Blue Team has been locked! \n\"" );
             return;
@@ -2347,7 +2350,7 @@ void Cmd_Ref_f( gentity_t *ent ) {
 
     if ( !ent->client->referee ) {
         trap_SendServerCommand( ent-g_entities, "print \"You are not referee.\n\"" );
-        trap_SendServerCommand(ent-g_entities,va("screenPrint \"" S_COLOR_CYAN "You are not referee\"" ) );
+        trap_SendServerCommand(ent-g_entities,va("g_lockteam \"" S_COLOR_CYAN "You are not referee\"" ) );
         return;
     }
 
@@ -2603,9 +2606,12 @@ void Cmd_Ref_f( gentity_t *ent ) {
     } else if ( !Q_stricmp( arg1, "lock" ) ) {
         if ( g_teamLock.integer ) {
             if ( g_gametype.integer >= GT_TEAM ) {
-                level.RedTeamLocked = qtrue;
-                level.BlueTeamLocked = qtrue;
+                //level.RedTeamLocked = qtrue;
+                //level.BlueTeamLocked = qtrue;
+		trap_Cvar_Set("g_redLocked","1");
+		trap_Cvar_Set("g_blueLocked","1");
                 trap_SendServerCommand( ent-g_entities, "print \"Teams are locked now.\n\"" );
+		trap_SendServerCommand( -1, "screenPrint \"Teams are locked now.\n\"" );
                 return;
             }
             trap_SendServerCommand( ent-g_entities, "print \"Teamlock not allowed in this gametype.\n\"" );
@@ -2615,9 +2621,12 @@ void Cmd_Ref_f( gentity_t *ent ) {
     } else if ( !Q_stricmp( arg1, "unlock" ) ) {
         if ( g_teamLock.integer ) {
             if ( g_gametype.integer >= GT_TEAM ) {
-                level.RedTeamLocked = qfalse;
-                level.BlueTeamLocked = qfalse;
+                //level.RedTeamLocked = qfalse;
+                //level.BlueTeamLocked = qfalse;
+		trap_Cvar_Set("g_redLocked","0");
+		trap_Cvar_Set("g_blueLocked","0");
                 trap_SendServerCommand( ent-g_entities, "print \"Teams are unlocked now.\n\"" );
+		trap_SendServerCommand( -1, "screenPrint \"Teams are unlocked now.\n\"" );
                 return;
             }
             trap_SendServerCommand( ent-g_entities, "print \"Teamlock not allowed in this gametype.\n\"" );
@@ -3332,11 +3341,15 @@ void Cmd_Lock_f( gentity_t *ent ) {
     if ( g_teamLock.integer != 1 )
         return;
 
-    if ( ent->client->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-        level.RedTeamLocked = qtrue;
+    if ( ent->client->ps.persistant[PERS_TEAM] == TEAM_RED && !g_redLocked.integer ) {
+        //level.RedTeamLocked = qtrue;
+	trap_Cvar_Set("g_redLocked","1");
+	trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_RED "Red team" S_COLOR_YELLOW" locked\"") );
     }
-    if ( ent->client->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
-        level.BlueTeamLocked = qtrue;
+    if ( ent->client->ps.persistant[PERS_TEAM] == TEAM_BLUE && !g_blueLocked.integer ) {
+        //level.BlueTeamLocked = qtrue;
+	trap_Cvar_Set("g_blueLocked","1");
+	trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_BLUE "Blue team" S_COLOR_YELLOW" locked\"") );
     }
 
 }
@@ -3346,11 +3359,15 @@ void Cmd_Unlock_f( gentity_t *ent ) {
     if ( g_teamLock.integer != 1 )
         return;
 
-    if ( ent->client->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-        level.RedTeamLocked = qfalse;
+    if ( ent->client->ps.persistant[PERS_TEAM] == TEAM_RED && g_redLocked.integer ) {
+        //level.RedTeamLocked = qfalse;
+	trap_Cvar_Set("g_redLocked","0");
+	trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_RED "Red team" S_COLOR_YELLOW" unlocked\"") );
     }
-    if ( ent->client->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
-        level.BlueTeamLocked = qfalse;
+    if ( ent->client->ps.persistant[PERS_TEAM] == TEAM_BLUE && g_blueLocked.integer ) {
+        //level.BlueTeamLocked = qfalse;
+	trap_Cvar_Set("g_blueLocked","0");
+	trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_BLUE "Blue team" S_COLOR_YELLOW" unlocked\"") );
     }
 
 }

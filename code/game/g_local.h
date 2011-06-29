@@ -609,8 +609,8 @@ typedef struct {
 //KK-OAX Storing g_spreeDiv to avoid dividing by 0.    
     int         spreeDivisor;
 
-    qboolean    RedTeamLocked;
-    qboolean    BlueTeamLocked;
+    /*qboolean    RedTeamLocked;
+    qboolean    BlueTeamLocked;*/
     qboolean    FFALocked;
     int		readyMask;
     
@@ -1270,6 +1270,8 @@ extern vmCvar_t	    g_writeStats;
 extern vmCvar_t	    g_statsPath;
 
 extern vmCvar_t	    g_teamLock;
+extern vmCvar_t     g_redLocked;
+extern vmCvar_t	    g_blueLocked;
 
 extern vmCvar_t	    g_reduceRailDamage;
 extern vmCvar_t	    g_reduceLightningDamage;

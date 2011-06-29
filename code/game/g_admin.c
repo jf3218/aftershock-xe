@@ -2972,20 +2972,20 @@ qboolean G_admin_lock( gentity_t *ent, int skiparg )
 
   if( team == TEAM_RED )
   {
-    if( level.RedTeamLocked )
+    if( g_redLocked.integer )
     {
       ADMP( "^3!lock: ^7the Red team is already locked\n" );
       return qfalse;
     }
-    level.RedTeamLocked = qtrue;
+    trap_Cvar_Set("g_redLocked","1");
   }
   else if( team == TEAM_BLUE ) {
-    if( level.BlueTeamLocked )
+    if( g_blueLocked.integer )
     {
       ADMP( "^3!lock: ^7the Blue team is already locked\n" );
       return qfalse;
     }
-    level.BlueTeamLocked = qtrue;
+    trap_Cvar_Set("g_blueLocked","1");
   }
   else if(team == TEAM_FREE ) {
     if( level.FFALocked )
@@ -3022,20 +3022,20 @@ qboolean G_admin_unlock( gentity_t *ent, int skiparg )
 
   if( team == TEAM_RED )
   {
-    if( !level.RedTeamLocked )
+    if( !g_redLocked.integer )
     {
       ADMP( "^3!unlock: ^7the Red team is not currently locked\n" );
       return qfalse;
     }
-    level.RedTeamLocked = qfalse;
+    trap_Cvar_Set("g_redLocked","0");
   }
   else if( team == TEAM_BLUE ) {
-    if( !level.BlueTeamLocked )
+    if( !g_blueLocked.integer )
     {
       ADMP( "^3!unlock: ^7the Blue team is not currently locked\n" );
       return qfalse;
     }
-    level.BlueTeamLocked = qfalse;
+    trap_Cvar_Set("g_blueLocked","0");
   }
   else if( team == TEAM_FREE ) {
     if( !level.FFALocked )

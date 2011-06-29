@@ -1240,6 +1240,7 @@ typedef struct {
 	qhandle_t	sbReady;
 	qhandle_t	sbNotReady;
 	qhandle_t	sbSkull;
+	qhandle_t       sbLocked;
 
 } cgMedia_t;
 
@@ -1412,6 +1413,8 @@ typedef struct {
 	int 		allowMultiview;
 	
 	int 		friendsThroughWalls;
+	int 		redLocked;
+	int 		blueLocked;
 } cgs_t;
 
 //==============================================================================

@@ -1014,10 +1014,18 @@ void CG_ParseServerinfo ( void ) {
 	if ( cg_autosnaps.integer )
 		trap_Cvar_Set ( "snaps", va ( "%i", atoi ( Info_ValueForKey ( info, "sv_fps" ) ) ) );
 	
+	
+	
 	trap_Cvar_Set ( "g_aftershockPhysic",va("%i",atoi (Info_ValueForKey ( info, "g_aftershockPhysic" ))) );
 	
 	cgs.friendsThroughWalls = atoi ( Info_ValueForKey ( info, "g_friendsThroughWalls" ) );
 	trap_Cvar_Set ( "g_friendsThroughWalls", va ( "%i", cgs.friendsThroughWalls ) );
+	
+	cgs.redLocked = atoi ( Info_ValueForKey ( info, "g_redLocked" ) );
+	trap_Cvar_Set ( "g_redLocked", va ( "%i", cgs.redLocked ) );
+	
+	cgs.blueLocked = atoi ( Info_ValueForKey ( info, "g_blueLocked" ) );
+	trap_Cvar_Set ( "g_blueLocked", va ( "%i", cgs.blueLocked ) );
 	
 }
 

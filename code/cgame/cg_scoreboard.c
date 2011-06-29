@@ -388,6 +388,8 @@ qboolean CG_DrawOldScoreboard( void ){
 		color[ 2 ] = 0;
 		color[ 3 ] = 0.25;
 		CG_TeamScoreboard( SB_TEAM_RED_X, SB_TEAM_Y + 65, SB_TEAM_WIDTH, SB_TEAM_HEIGHT, TEAM_RED, color, SB_MAXDISPLAY );
+		if( cgs.redLocked )
+		  CG_DrawPic( 0, SB_TEAM_Y, 32, 32, cgs.media.sbLocked );
 		
 		// team blue
 		strcpy( string, "Team blue" );
@@ -397,7 +399,8 @@ qboolean CG_DrawOldScoreboard( void ){
 		color[ 2 ] = 1;
 		color[ 3 ] = 0.25;
 		CG_TeamScoreboard( SB_TEAM_BLUE_X, SB_TEAM_Y + 65, SB_TEAM_WIDTH, SB_TEAM_HEIGHT, TEAM_BLUE, color, SB_MAXDISPLAY );
-		
+		if( cgs.blueLocked )
+		  CG_DrawPic( 640-32, SB_TEAM_Y, 32, 32, cgs.media.sbLocked );
 	}else{
 		
 		// current rank

@@ -220,6 +220,8 @@ vmCvar_t     g_writeStats;
 vmCvar_t     g_statsPath;
 
 vmCvar_t     g_teamLock;
+vmCvar_t     g_redLocked;
+vmCvar_t     g_blueLocked;
 
 vmCvar_t     g_reduceRailDamage;
 vmCvar_t     g_reduceLightningDamage;
@@ -467,6 +469,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_statsPath, "g_statsPath", "serverstats", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	
 	{ &g_teamLock, "g_teamLock", "0", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
+	{ &g_redLocked, "g_redLocked", "0", CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_NORESTART, 0, qfalse },
+	{ &g_blueLocked, "g_blueLocked", "0", CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_NORESTART, 0, qfalse },
 
 	{ &g_reduceRailDamage, "g_reduceRailDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_reduceLightningDamage, "g_reduceLightningDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
@@ -814,10 +818,15 @@ G_InitGame
 */
 void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	int					i;
+	qboolean 			blueLocked, redLocked;
 	/*char buffer[ MAX_CVAR_VALUE_STRING ];
 	int a, b;*/
-
-        
+	
+	if( restart == 0 ){
+		trap_Cvar_Set("g_redLocked","0");
+		trap_Cvar_Set("g_blueLocked","0");
+	}
+	
         G_Printf ("------- Game Initialization -------\n");
         G_Printf ("gamename: %s\n", GAMEVERSION);
         G_Printf ("gamedate: %s\n", __DATE__);
@@ -1016,8 +1025,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	
 	if( g_useMapcycle.integer )
 		G_LoadMapcycle();
-        
-        
 }
 
 
@@ -3044,12 +3051,12 @@ void G_RunFrame( int levelTime ) {
             trap_Cvar_Set("elimflags",va("%i",g_elimflags.integer&(~EF_ONEWAY) ) );
         }
         
-        if( level.RedTeamLocked && ( TeamCount( -1, TEAM_RED ) == 0 ) ){
-		level.RedTeamLocked = qfalse;
+        if( g_redLocked.integer && ( TeamCount( -1, TEAM_RED ) == 0 ) && (level.time-level.startTime) > 1000){
+		trap_Cvar_Set("g_redLocked","0");
 	}
 	
-	if( level.BlueTeamLocked && ( TeamCount( -1, TEAM_BLUE ) == 0 ) ){
-		level.BlueTeamLocked = qfalse;
+	if( g_blueLocked.integer && ( TeamCount( -1, TEAM_BLUE ) == 0 ) && (level.time-level.startTime) > 1000){
+		trap_Cvar_Set("g_blueLocked","0");
 	}
 	
 	if( ( ( level.warmupTime == 0 ) && ( level.time - level.startTime > 2000 ) && !level.intermissionQueued && ( g_gametype.integer != GT_FFA ) ) && g_doWarmup.integer ){

@@ -970,21 +970,21 @@ team_t PickTeam( int ignoreClientNum ) {
 	counts[TEAM_RED] = TeamCount( ignoreClientNum, TEAM_RED );
     
     //KK-OAX Both Teams locked...forget about it, print an error message, keep as spec
-    if ( level.RedTeamLocked && level.BlueTeamLocked ) {
+    if ( g_redLocked.integer && g_blueLocked.integer ) {
         G_Printf( "Both teams have been locked by the Admin! \n" );
         return TEAM_NONE;
     }	
-	if ( ( counts[TEAM_BLUE] > counts[TEAM_RED] ) && ( !level.RedTeamLocked ) ) {
+	if ( ( counts[TEAM_BLUE] > counts[TEAM_RED] ) && ( !g_redLocked.integer ) ) {
 		return TEAM_RED;
 	}
-	if ( ( counts[TEAM_RED] > counts[TEAM_BLUE] ) && ( !level.BlueTeamLocked ) ) {
+	if ( ( counts[TEAM_RED] > counts[TEAM_BLUE] ) && ( !g_blueLocked.integer ) ) {
 		return TEAM_BLUE;
 	}
 	// equal team count, so join the team with the lowest score
-	if ( ( level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED] ) && ( !level.RedTeamLocked ) ) {
+	if ( ( level.teamScores[TEAM_BLUE] > level.teamScores[TEAM_RED] ) && ( !g_redLocked.integer ) ) {
 		return TEAM_RED;
 	}
-	if ( ( level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE] ) && ( !level.BlueTeamLocked ) ) {  
+	if ( ( level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE] ) && ( !g_blueLocked.integer ) ) {  
 	    return TEAM_BLUE;
     }
     //KK-OAX Force Team Blue?
@@ -2564,7 +2564,7 @@ This should NOT be called directly by any game logic,
 call trap_DropClient(), which will call this and do
 server system housekeeping.
 TODO: Add flagdrop(done)
-TODO: Add disconnected Players to statsfile
+TODO: Add disconnected Players to statsfile(done)
 ============
 */
 void ClientDisconnect( int clientNum ) {
@@ -2587,7 +2587,7 @@ void ClientDisconnect( int clientNum ) {
         trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	
 	
-	if( ( level.disconnectedClientsNumber < MAX_DISCONNECTEDCLIENTS ) && ( ent->client->pers.connected == CON_CONNECTED ) && ( level.warmupTime == 0 ) ){
+	if( ( level.disconnectedClientsNumber < MAX_DISCONNECTEDCLIENTS ) && ( ent->client->pers.connected == CON_CONNECTED ) && ( level.warmupTime == 0 ) && ( ( ent->client->dmgdone + ent->client->dmgtaken ) > 300 )){
 		level.disconnectedClients[level.disconnectedClientsNumber] = *ent->client;
 		level.disconnectedClients[level.disconnectedClientsNumber].pers.enterTime = (level.time - level.disconnectedClients[level.disconnectedClientsNumber].pers.enterTime);
 		level.disconnectedClientsNumber++;
