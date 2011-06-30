@@ -1171,8 +1171,6 @@ void SetTeam( gentity_t *ent, char *s ) {
     specClient = 0;
     specState = SPECTATOR_NOT;
     //specOnly = client->sess.specOnly;
-    
-    G_Printf("%s -> %s\n", ent->client->pers.netname, s);
 
     /*if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) ){
     	team =  TEAM_SPECTATOR;

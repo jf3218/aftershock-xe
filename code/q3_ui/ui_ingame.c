@@ -34,7 +34,7 @@ INGAME MENU
 
 #define INGAME_FRAME					"menu/art_blueish/addbotframe"
 //#define INGAME_FRAME					"menu/art_blueish/cut_frame"
-#define INGAME_MENU_VERTICAL_SPACING	28
+#define INGAME_MENU_VERTICAL_SPACING	25
 
 #define ID_TEAM					10
 #define ID_ADDBOTS				11
@@ -47,6 +47,8 @@ INGAME MENU
 #define ID_RESUME				18
 #define ID_TEAMORDERS			19
 #define ID_VOTE                         20
+#define ID_LOCKGAME				21
+#define ID_UNLOCKGAME			22
 
 
 typedef struct {
@@ -54,6 +56,7 @@ typedef struct {
 
 	menubitmap_s	frame;
 	menutext_s		team;
+	menutext_s		lockGame;
 	menutext_s		setup;
 	menutext_s		server;
 	menutext_s		leave;
@@ -153,6 +156,14 @@ void InGame_Event( void *ptr, int notification ) {
         case ID_VOTE:
                 UI_VoteMenuMenu();
                 break;
+	case ID_LOCKGAME:
+		trap_Cmd_ExecuteText( EXEC_APPEND, "lock\n" );
+		UI_PopMenu();
+		break;
+	case ID_UNLOCKGAME:
+		trap_Cmd_ExecuteText( EXEC_APPEND, "unlock\n" );
+		UI_PopMenu();
+		break;
 	}
 }
 
@@ -194,6 +205,38 @@ void InGame_MenuInit( void ) {
 	s_ingame.team.string				= "START";
 	s_ingame.team.color					= color_red;
 	s_ingame.team.style					= UI_CENTER|UI_SMALLFONT;
+	
+	y += INGAME_MENU_VERTICAL_SPACING;
+	s_ingame.lockGame.generic.type			= MTYPE_PTEXT;
+	
+	if( trap_Cvar_VariableValue( "g_gametype" ) >= GT_TEAM && trap_Cvar_VariableValue( "g_teamLock" ) == 1 ){
+		s_ingame.lockGame.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+		trap_GetClientState( &cs );
+		trap_GetConfigString( CS_PLAYERS + cs.clientNum, info, MAX_INFO_STRING );
+		team = atoi( Info_ValueForKey( info, "t" ) );
+	}
+	else
+		s_ingame.lockGame.generic.flags			= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS|QMF_GRAYED;
+	
+	s_ingame.lockGame.generic.x				= 320;
+	s_ingame.lockGame.generic.y				= y;
+	
+	if( ( team == TEAM_BLUE && trap_Cvar_VariableValue("g_blueLocked") == 0 ) || ( team == TEAM_RED && trap_Cvar_VariableValue("g_redLocked") == 0 ) ){
+		s_ingame.lockGame.generic.id			= ID_LOCKGAME;
+		s_ingame.lockGame.string				= "LOCK TEAM";
+	} else if( ( team == TEAM_BLUE && trap_Cvar_VariableValue("g_blueLocked") == 1 ) || ( team == TEAM_RED && trap_Cvar_VariableValue("g_redLocked") == 1 ) ){ 
+		s_ingame.lockGame.generic.id			= ID_UNLOCKGAME;
+		s_ingame.lockGame.string				= "UNLOCK TEAM";
+	}
+	else{	
+		s_ingame.lockGame.generic.flags |= QMF_GRAYED;
+		s_ingame.lockGame.generic.id			= ID_LOCKGAME;
+		s_ingame.lockGame.string				= "LOCK TEAM";
+	}
+	
+	s_ingame.lockGame.generic.callback		= InGame_Event; 
+	s_ingame.lockGame.color					= color_red;
+	s_ingame.lockGame.style					= UI_CENTER|UI_SMALLFONT;
 
 	y += INGAME_MENU_VERTICAL_SPACING;
 	s_ingame.addbots.generic.type		= MTYPE_PTEXT;
@@ -331,6 +374,7 @@ void InGame_MenuInit( void ) {
 
 	Menu_AddItem( &s_ingame.menu, &s_ingame.frame );
 	Menu_AddItem( &s_ingame.menu, &s_ingame.team );
+	Menu_AddItem( &s_ingame.menu, &s_ingame.lockGame );
 	Menu_AddItem( &s_ingame.menu, &s_ingame.addbots );
 	Menu_AddItem( &s_ingame.menu, &s_ingame.removebots );
 	Menu_AddItem( &s_ingame.menu, &s_ingame.teamorders );

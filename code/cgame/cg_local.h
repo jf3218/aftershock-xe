@@ -1415,6 +1415,7 @@ typedef struct {
 	int 		friendsThroughWalls;
 	int 		redLocked;
 	int 		blueLocked;
+	int 		teamLock;
 } cgs_t;
 
 //==============================================================================
