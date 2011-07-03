@@ -447,6 +447,11 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 	refEntity_t   *re;
 
 	clientInfo_t *local, *other;
+	
+	if ( cg_noProjectileTrail.integer ) {
+		return;
+	}
+	
   	local = &cgs.clientinfo[cg.clientNum];
 	other = &cgs.clientinfo[cg_entities[ent->currentState.otherEntityNum].currentState.number];
 
@@ -485,15 +490,11 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 		alpha = 0.33f;
 	}
 
-	if ( cg_noProjectileTrail.integer ) {
-		return;
-	}
-
 	up[0] = 0;
 	up[1] = 0;
 	up[2] = 0;
 
-	step = 5;
+	step = 20;
 
 	es = &ent->currentState;
 	startTime = ent->trailTime;
@@ -521,7 +522,7 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 	}
 	BG_EvaluateTrajectory( &es->pos, t, lastPos );
 	for ( ; t <= ent->trailTime ; t += step ) {
-		BG_EvaluateTrajectory( &es->pos, t-step, lastPosSaved );
+		BG_EvaluateTrajectory( &es->pos, t+step, lastPosSaved );
 		BG_EvaluateTrajectory( &es->pos, t, lastPos );
 		if( wi->item->giTag == WP_GRENADE_LAUNCHER ){
 			if( cg_grenadeTrail.integer == TRAIL_SMOKE ){
@@ -535,6 +536,46 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 					  cgs.media.smokePuffShader );
 				// use the optimized local entity add
 				smoke->leType = LE_SCALE_FADE;
+			} else if( cg_grenadeTrail.integer == TRAIL_PARTICLESMOKE ) {
+				smoke = CG_SmokePuff( lastPos, up, 
+					  cg_rocketTrailRadius.integer, 
+					  red, green, blue, alpha,
+					  wi->wiTrailTime, 
+					  t,
+					  0,
+					  0, 
+					  cgs.media.smokePuffShader );
+				// use the optimized local entity add
+				smoke->leType = LE_SCALE_FADE;
+				CG_LaunchParticleTrail(lastPos );
+			} else if( cg_grenadeTrail.integer == TRAIL_PARTICLE ) {
+				CG_LaunchParticleTrail(lastPos );
+			} else if( cg_grenadeTrail.integer == TRAIL_TRACER ){
+				le = CG_AllocLocalEntity();
+				re = &le->refEntity;
+ 
+				le->leType = LE_FADE_RGB;
+				le->startTime = cg.time;
+				le->endTime = cg.time + 300;
+				le->lifeRate = 1.0 / (le->endTime - le->startTime);
+ 
+				re->shaderTime = cg.time / 1000.0f;
+				re->reType = RT_RAIL_CORE;
+				re->customShader = cgs.media.railCoreShader;
+				
+				re->shaderRGBA[0] = 1.0 * 255;
+				re->shaderRGBA[1] = 1.0 * 255;
+				re->shaderRGBA[2] = 0.0 * 255;
+				re->shaderRGBA[3] = 255;
+
+				le->color[0] = 1.0 * 1.0;
+				le->color[1] = 1.0 * 1.0;
+				le->color[2] = 0.0 * 1.0;
+				le->color[3] = 1.0f;
+ 
+				VectorCopy(lastPosSaved, re->origin);
+				VectorCopy(lastPos, re->oldorigin);
+				
 			}
 		}
 		else if( wi->item->giTag == WP_ROCKET_LAUNCHER ){
@@ -569,21 +610,21 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
  
 				le->leType = LE_FADE_RGB;
 				le->startTime = cg.time;
-				le->endTime = cg.time + cg_railTrailTime.value;
+				le->endTime = cg.time + 300;
 				le->lifeRate = 1.0 / (le->endTime - le->startTime);
  
 				re->shaderTime = cg.time / 1000.0f;
 				re->reType = RT_RAIL_CORE;
 				re->customShader = cgs.media.railCoreShader;
 				
-				re->shaderRGBA[0] = 1.0*255;
-				re->shaderRGBA[1] = 0.3 * 255;
-				re->shaderRGBA[2] = 0.3 * 255;
+				re->shaderRGBA[0] = 1.0 * 255;
+				re->shaderRGBA[1] = 1.0 * 255;
+				re->shaderRGBA[2] = 0.0 * 255;
 				re->shaderRGBA[3] = 255;
 
 				le->color[0] = 1.0 * 1.0;
-				le->color[1] = 0.3 * 1.0;
-				le->color[2] = 0.3 * 1.0;
+				le->color[1] = 1.0 * 1.0;
+				le->color[2] = 0.0 * 1.0;
 				le->color[3] = 1.0f;
  
 				VectorCopy(lastPosSaved, re->origin);

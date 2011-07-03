@@ -468,9 +468,9 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_writeStats, "g_writeStats", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_statsPath, "g_statsPath", "serverstats", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	
-	{ &g_teamLock, "g_teamLock", "0", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
-	{ &g_redLocked, "g_redLocked", "0", CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_NORESTART, 0, qfalse },
-	{ &g_blueLocked, "g_blueLocked", "0", CVAR_ARCHIVE | CVAR_SERVERINFO | CVAR_NORESTART, 0, qfalse },
+	{ &g_teamLock, "g_teamLock", "0", CVAR_SERVERINFO |CVAR_NORESTART, 0, qfalse },
+	{ &g_redLocked, "g_redLocked", "0", CVAR_SERVERINFO | CVAR_NORESTART, 0, qfalse },
+	{ &g_blueLocked, "g_blueLocked", "0", CVAR_SERVERINFO | CVAR_NORESTART, 0, qfalse },
 
 	{ &g_reduceRailDamage, "g_reduceRailDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_reduceLightningDamage, "g_reduceLightningDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
@@ -822,11 +822,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	/*char buffer[ MAX_CVAR_VALUE_STRING ];
 	int a, b;*/
 	
-	if( restart == 0 ){
-		trap_Cvar_Set("g_redLocked","0");
-		trap_Cvar_Set("g_blueLocked","0");
-	}
-	
         G_Printf ("------- Game Initialization -------\n");
         G_Printf ("gamename: %s\n", GAMEVERSION);
         G_Printf ("gamedate: %s\n", __DATE__);
@@ -834,6 +829,11 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	srand( randomSeed );
 
 	G_RegisterCvars();
+	
+	if( restart == 0 ){
+		trap_Cvar_Set("g_redLocked","0");
+		trap_Cvar_Set("g_blueLocked","0");
+	}
         
         //disable unwanted cvars
         if( g_gametype.integer == GT_SINGLE_PLAYER )

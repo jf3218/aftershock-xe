@@ -252,7 +252,7 @@ void CG_LaunchParticleTrail( vec3_t origin ) {
 		return;
 
 	// set defaults
-	number = 10;
+	number = 3;
 	jump = 0;
 	speed = 30;
 	light = 50;
@@ -278,7 +278,7 @@ void CG_LaunchParticleTrail( vec3_t origin ) {
 		re->shaderTime = cg.time / 1000.0f;
 		re->reType = RT_SPRITE;
 		re->rotation = 0;
-		re->radius = 5*random();
+		re->radius = 10*random();
 		re->customShader = shader;
 		re->shaderRGBA[0] = 0xff;
 		re->shaderRGBA[1] = 0xff;
