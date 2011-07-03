@@ -238,6 +238,15 @@ typedef enum {
 } leType_t;
 
 typedef enum {
+	TRAIL_OFF,
+	TRAIL_SMOKE,
+	TRAIL_PARTICLESMOKE,
+	TRAIL_PARTICLE,
+	TRAIL_TRACER,
+	TRAIL_MAX
+} trailType_t;
+
+typedef enum {
 	LEF_PUFF_DONT_SCALE  = 0x0001,			// do not scale size over time
 	LEF_TUMBLE			 = 0x0002,			// tumble over time, used for ejecting shells
 	LEF_SOUND1			 = 0x0004,			// sound 1 for kamikaze
@@ -1695,6 +1704,10 @@ extern vmCvar_t			cg_multiview4_client;
 extern vmCvar_t			g_aftershockPhysic;
 
 extern vmCvar_t			cg_inverseTimer;
+
+extern vmCvar_t			cg_grenadeTrail;
+extern vmCvar_t			cg_rocketTrail;
+extern vmCvar_t			cg_plasmaTrail;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

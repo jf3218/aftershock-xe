@@ -1040,7 +1040,7 @@ Cmd_Timeout_f
 =================
 */
 void Cmd_Timeout_f( gentity_t *player ) {
-    int i;
+    int i,j;
     gentity_t *ent;
 
     if ( !g_timeoutAllowed.integer ) {
@@ -1073,7 +1073,7 @@ void Cmd_Timeout_f( gentity_t *player ) {
             player->client->timeouts++;
 
         ent = &g_entities[0];
-        for (i=0 ; i<level.num_entities ; i++, ent++) {
+        for (i=0 ; i < level.num_entities ; i++, ent++) {
             if ( ent->inuse ) {
                 if ( ent->nextthink > 0 )
                     ent->nextthink += level.timeoutAdd;
@@ -1081,6 +1081,16 @@ void Cmd_Timeout_f( gentity_t *player ) {
                     ent->eventTime += level.timeoutAdd;
             }
         }
+        
+        //TODO: POWERUPS
+        
+        for( i = 0; i < level.numConnectedClients ;i++){
+		for( j = 0; j < MAX_POWERUPS; j++ ){
+			if( level.clients[i].ps.powerups[j] > 0 )
+				level.clients->ps.powerups[j] += level.timeoutAdd;
+		}
+	}
+        
         trap_SendServerCommand(-1,va("screenPrint \"%s" S_COLOR_CYAN " called a timeout\"", player->client->pers.netname ) );
         trap_SendServerCommand( -1, va("timeout %i %i", level.timeoutTime, level.timeoutAdd ) );
     }

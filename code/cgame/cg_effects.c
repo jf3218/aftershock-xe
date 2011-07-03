@@ -235,6 +235,77 @@ void CG_LaunchSparks( vec3_t origin ) {
 
 /*
 ==================
+CG_LaunchSparks
+==================
+*/
+void CG_LaunchParticleTrail( vec3_t origin ) {
+	int number; // number of particles
+	int jump; // amount to nudge the particles trajectory vector up by
+	int speed; // speed of particles
+	int light; // amount of light for each particle
+	vec4_t lColor; // color of light for each particle
+	qhandle_t shader; // shader to use for the particles
+	int index;
+	vec3_t randVec, tempVec;
+	
+	if( !cg_particles.integer )
+		return;
+
+	// set defaults
+	number = 10;
+	jump = 0;
+	speed = 30;
+	light = 50;
+	lColor[0] = 1.0f;
+	lColor[1] = 0.3f;
+	lColor[2] = 0.3f;
+	lColor[3] = 1.0f; // alpha
+	
+	shader = cgs.media.particleSpark;
+
+	for( index = 0; index < number; index++ ) {
+		localEntity_t *le;
+		refEntity_t *re;
+
+		le = CG_AllocLocalEntity(); //allocate a local entity
+		re = &le->refEntity;
+		le->leFlags = LEF_PUFF_DONT_SCALE; //don't change the particle size
+		le->leType = LE_MOVE_SCALE_FADE;// particle should fade over time
+		le->startTime = cg.time; // set the start time of the particle to the current time
+		le->endTime = cg.time + 500 + random() * 300; //set the end time
+		le->lifeRate = 1.0 / ( le->endTime - le->startTime );
+		re = &le->refEntity;
+		re->shaderTime = cg.time / 1000.0f;
+		re->reType = RT_SPRITE;
+		re->rotation = 0;
+		re->radius = 5*random();
+		re->customShader = shader;
+		re->shaderRGBA[0] = 0xff;
+		re->shaderRGBA[1] = 0xff;
+		re->shaderRGBA[2] = 0xff;
+		re->shaderRGBA[3] = 0xff;
+		le->light = light;
+		VectorCopy( lColor, le->lightColor );
+		le->color[3] = 1.0;
+		le->pos.trType = TR_LINEAR; // moves in a gravity affected arc
+		le->pos.trTime = cg.time;
+		le->bounceFactor = 0.0f;
+		VectorCopy( origin, le->pos.trBase );
+		VectorCopy( origin, re->origin );
+
+		tempVec[0] = crandom(); //between 1 and -1
+		tempVec[1] = crandom();
+		tempVec[2] = crandom();	
+		
+		VectorNormalize(tempVec);
+		VectorScale(tempVec, speed, randVec);
+		randVec[2] += jump; //nudge the particles up a bit
+		VectorCopy( randVec, le->pos.trDelta );
+	}
+}
+
+/*
+==================
 CG_SpawnEffect
 
 Player teleporting in or out
