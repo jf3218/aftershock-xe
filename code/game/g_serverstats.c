@@ -39,22 +39,20 @@ static const char *gameShortNames[] = {
 	"D"
 };
 
-static char *cleanString( const char *instring ){
+void cleanString( char *dest, size_t max, const char *instring ){
 	int i;
 	int count = 0;
-	char		*playerName;
 	
-	for ( i = 0; i < strlen(instring) ; i++ ) {
+	for ( i = 0; i < max ; i++ ) {
 		if ( instring[i] == '&' ) {
 		  continue;
 		}
 		else {
-			playerName[count] = instring[i];
+			dest[count] = instring[i];
 			count++;
 		}
 	}
-	playerName[count] = '\0';
-	return playerName;
+	dest[count] = '\0';
 }
 
 static void G_SetGameString ( void ) {
@@ -124,13 +122,18 @@ static char *boolToChar ( qboolean in ) {
 static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnected ) {
 	int time;
 	int count;
+	char cleanName[36], cleanAftershockName[36], cleanAftershockHash[36];
 
 	if ( !disconnected )
 		time = ( level.time - cl->pers.enterTime ) /60000;
 	else
 		time = cl->pers.enterTime/60000;
 
-	writeToFile ( cleanString (va ( "\n\t\t<player name=\"%s\" time=\"%i\" aftershock_login=\"%s\" aftershock_hash=\"%s\">\n", cl->pers.netname , time, cl->aftershock_name , cl->aftershock_hash )), f );
+	cleanString( cleanName, sizeof(cleanName), cl->pers.netname);
+	cleanString( cleanAftershockName, sizeof(cleanAftershockName), cl->aftershock_name);
+	cleanString( cleanAftershockHash, sizeof(cleanAftershockHash), cl->aftershock_hash);
+	
+	writeToFile ( va ( "\n\t\t<player name=\"%s\" time=\"%i\" aftershock_login=\"%s\" aftershock_hash=\"%s\">\n", cleanName , time, cleanAftershockName , cleanAftershockHash ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Score\" value=\"%i\"/>\n", cl->ps.persistant[PERS_SCORE] ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Kills\" value=\"%i\"/>\n", cl->kills ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Death\" value=\"%i\"/>\n", cl->ps.persistant[PERS_KILLED] ), f );
