@@ -215,6 +215,15 @@ medal_itemdenied
 	}
 }
 
+medal_spawnkill
+{
+	nopicmip
+	{
+		clampmap menu/medals/medal_spawnkill.tga
+		blendFunc blend
+	}
+}
+
 icons/iconw_gauntlet
 {
 	nopicmip

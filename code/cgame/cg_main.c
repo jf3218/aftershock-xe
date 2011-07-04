@@ -1008,6 +1008,8 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.defendSound = trap_S_RegisterSound( "sound/feedback/defense.wav", qtrue );
 	cgs.media.airrocketSound = trap_S_RegisterSound( "sound/feedback/accuracy.wav", qtrue );
 	cgs.media.airgrenadeSound = trap_S_RegisterSound( "sound/feedback/voc_holyshit.wav", qtrue );
+	cgs.media.spawnkillSound = trap_S_RegisterSound( "sound/feedback/impressive.wav", qtrue );
+	
 
 #ifdef MISSIONPACK
 	cgs.media.firstImpressiveSound = trap_S_RegisterSound( "sound/feedback/first_impressive.wav", qtrue );
@@ -1372,6 +1374,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.smoke2 = trap_R_RegisterModel( "models/weapons2/shells/s_shell.md3" );
 
 	cgs.media.balloonShader = trap_R_RegisterShaderNoMip( "sprites/balloon3" );
+	cgs.media.balloonShaderVisible = trap_R_RegisterShaderNoMip( "sprites/balloon4.tga" );
 
 	if( cg_nomip.integer & 256 )
 		cgs.media.bloodExplosionShader = trap_R_RegisterShader( "bloodExplosion_nomip" );
@@ -1415,6 +1418,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.medalItemdenied = trap_R_RegisterShaderNoMip( "medal_itemdenied" );
 	cgs.media.medalCapture = trap_R_RegisterShaderNoMip( "medal_capture" );
 	cgs.media.medalRocketrail = trap_R_RegisterShaderNoMip( "medal_rocketrail" );
+	cgs.media.medalSpawnkill = trap_R_RegisterShaderNoMip( "medal_spawnkill" );
 	
 	cgs.media.accBackground = trap_R_RegisterShaderNoMip( "acc_background" );
 	

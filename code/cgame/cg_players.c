@@ -2397,7 +2397,16 @@ static void CG_PlayerSprites( centity_t *cent ) {
 		return;
 	}
 
+	team = cgs.clientinfo[ cent->currentState.clientNum ].team;
+	
 	if ( cent->currentState.eFlags & EF_TALK ) {
+		if ( !(cent->currentState.eFlags & EF_DEAD) && 
+		cg.snap->ps.persistant[PERS_TEAM] == team &&
+		cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cgs.friendsThroughWalls
+		) {
+			CG_PlayerFloatSprite( cent, cgs.media.balloonShaderVisible );
+			return;
+		}
 		CG_PlayerFloatSprite( cent, cgs.media.balloonShader );
 		return;
 	}
@@ -2442,7 +2451,6 @@ static void CG_PlayerSprites( centity_t *cent ) {
 		return;
 	}
 
-	team = cgs.clientinfo[ cent->currentState.clientNum ].team;
 	if ( !(cent->currentState.eFlags & EF_DEAD) && 
 		cg.snap->ps.persistant[PERS_TEAM] == team &&
 		cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {

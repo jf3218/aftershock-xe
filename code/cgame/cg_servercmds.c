@@ -886,6 +886,8 @@ static void CG_ParseRewards ( void ) {
 		pushReward ( cgs.media.airrocketSound, cgs.media.medalFullsg, rewardCount );
 	} else if ( reward == REWARD_ITEMDENIED ) {
 		pushReward ( cgs.media.deniedSound, cgs.media.medalItemdenied, rewardCount );
+	} else if ( reward == REWARD_SPAWNKILL ) {
+		pushReward ( cgs.media.spawnkillSound, cgs.media.medalSpawnkill, rewardCount );
 	}
 }
 

@@ -959,6 +959,7 @@ typedef struct {
 	qhandle_t	friendShaderVisible;
 
 	qhandle_t	balloonShader;
+	qhandle_t	balloonShaderVisible;
 	qhandle_t	connectionShader;
 
 	qhandle_t	selectShader;
@@ -1068,6 +1069,7 @@ typedef struct {
 	qhandle_t	medalItemdenied;
 	qhandle_t	medalCapture;
 	qhandle_t	medalRocketrail;
+	qhandle_t 	medalSpawnkill;
 
 	// sounds
 	sfxHandle_t	quadSound;
@@ -1146,6 +1148,7 @@ typedef struct {
 	sfxHandle_t defendSound;
 	sfxHandle_t airrocketSound;
 	sfxHandle_t airgrenadeSound;
+	sfxHandle_t spawnkillSound;
 
 	sfxHandle_t firstImpressiveSound;
 	sfxHandle_t firstExcellentSound;
