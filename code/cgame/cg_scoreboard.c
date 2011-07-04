@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define SB_INFO_HEIGHT			20
 #define SB_INFO_X				( SCREEN_WIDTH/2 )
 #define SB_INFO_Y				335
-#define SB_INFO_MAXNUM			12
+#define SB_INFO_MAXNUM			13
 
 #define SB_FFA_WIDTH			( SB_WIDTH - 190 )
 #define SB_FFA_HEIGHT			20
@@ -478,6 +478,10 @@ qboolean CG_DrawOldScoreboard( void ){
 			picBar[ infoCount ].percent = qfalse;
 			infoCount++;
 		}
+		picBar[ infoCount ].pic = cgs.media.medalSpawnkill;
+		picBar[ infoCount ].val = score->spawnkillCount;
+		picBar[ infoCount ].percent = qfalse;
+		infoCount++;
 		CG_DrawPicBar( picBar, infoCount, SB_INFO_X, SB_INFO_Y, SB_INFO_WIDTH, SB_INFO_HEIGHT );
 	}
 	

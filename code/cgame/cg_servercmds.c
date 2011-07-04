@@ -222,7 +222,7 @@ static void CG_ParseScores ( void ) {
 
 	memset ( cg.scores, 0, sizeof ( cg.scores ) );
 
-#define NUM_DATA 46
+#define NUM_DATA 47
 #define FIRST_DATA 4
 
 	for ( i = 0 ; i < cg.numScores ; i++ ) {
@@ -273,6 +273,7 @@ static void CG_ParseScores ( void ) {
 		cg.scores[i].accuracys[6][1] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 44 ) );
 		cg.scores[i].accuracys[7][0] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 45 ) );
 		cg.scores[i].accuracys[7][1] = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 46 ) );
+		cg.scores[i].spawnkillCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 47 ) );
 		//cgs.roundStartTime =
 		
 
@@ -363,6 +364,7 @@ typedef enum {
 	STATS_FULLSG,
 	STATS_RLRG,
 	STATS_ITEMDENIED,
+	STATS_SPAWNKILL,
 	STATISTIC_MAX
 } statistic_t;
 
@@ -511,7 +513,7 @@ static void CG_ParseStatistics ( void ) {
 		len = strlen ( string );
 		trap_FS_Write ( string, len, f );
 
-		string = va ( "<p align=center><table border=\"1\"><tr><td>Impressive</td> <td>Excellent</td> <td>Airgrenade</td> <td>Airrocket</td> <td>FullSG</td> <td>RocketRail</td> <td>Item Denied</td>" );
+		string = va ( "<p align=center><table border=\"1\"><tr><td>Impressive</td> <td>Excellent</td> <td>Airgrenade</td> <td>Airrocket</td> <td>FullSG</td> <td>RocketRail</td> <td>Item Denied</td> <td>Spawnkill</td>" );
 		len = strlen ( string );
 		trap_FS_Write ( string, len, f );
 
@@ -525,8 +527,8 @@ static void CG_ParseStatistics ( void ) {
 		len = strlen ( string );
 		trap_FS_Write ( string, len, f );
 
-		string = va ( "<tr><td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td>", clientStats[i][STATS_IMPESSIVE], clientStats[i][STATS_EXCELLENT],
-		              clientStats[i][STATS_AIRGRENADE], clientStats[i][STATS_AIRROCKET], clientStats[i][STATS_FULLSG], clientStats[i][STATS_RLRG], clientStats[i][STATS_ITEMDENIED] );
+		string = va ( "<tr><td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td>", clientStats[i][STATS_IMPESSIVE], clientStats[i][STATS_EXCELLENT],
+		              clientStats[i][STATS_AIRGRENADE], clientStats[i][STATS_AIRROCKET], clientStats[i][STATS_FULLSG], clientStats[i][STATS_RLRG], clientStats[i][STATS_ITEMDENIED], clientStats[i][STATS_SPAWNKILL] );
 		len = strlen ( string );
 		trap_FS_Write ( string, len, f );
 

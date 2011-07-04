@@ -212,6 +212,8 @@ static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnec
 			writeToFile ( va ( "\t\t\t\t<reward name=\"Rocket2Rail\" value=\"%i\"/>\n", cl->rewards[REWARD_RLRG] ), f );
 		if ( cl->rewards[REWARD_ITEMDENIED] )
 			writeToFile ( va ( "\t\t\t\t<reward name=\"Itemdenied\" value=\"%i\"/>\n", cl->rewards[REWARD_ITEMDENIED] ), f );
+		if ( cl->rewards[REWARD_SPAWNKILL] )
+			writeToFile ( va ( "\t\t\t\t<reward name=\"Spawnkill\" value=\"%i\"/>\n", cl->rewards[REWARD_SPAWNKILL] ), f );
 		writeToFile ( "\t\t\t</rewards>\n", f );
 	}
 	writeToFile ( "\t\t</player>\n", f );

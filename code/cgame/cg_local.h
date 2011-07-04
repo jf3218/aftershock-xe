@@ -324,6 +324,7 @@ typedef struct {
 	int				fullshotgunCount;
 	int				itemDeniedCount;
 	int				rocketRailCount;
+	int 				spawnkillCount;
 	int			health;
 	int			armor;
 	int			yellowArmor;

@@ -126,7 +126,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
         else {*/
 	if( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ){
             Com_sprintf (entry, sizeof(entry),
-                         " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
+                         " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
                          cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
                          scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
                          cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
@@ -159,11 +159,13 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
                          cl->accuracy[WP_LIGHTNING][0], cl->accuracy[WP_LIGHTNING][1],
                          cl->accuracy[WP_RAILGUN][0], cl->accuracy[WP_RAILGUN][1],
                          cl->accuracy[WP_PLASMAGUN][0], cl->accuracy[WP_PLASMAGUN][1],
-                         cl->accuracy[WP_BFG][0], cl->accuracy[WP_BFG][1]);
+                         cl->accuracy[WP_BFG][0], cl->accuracy[WP_BFG][1],
+			 cl->rewards[REWARD_SPAWNKILL]
+			);
 	}
         else {
 	    Com_sprintf (entry, sizeof(entry),
-                         " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ", level.sortedClients[i],
+                         " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 %i ", level.sortedClients[i],
                          cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
                          scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
                          cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
@@ -183,7 +185,9 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 			 cl->rewards[REWARD_AIRGRENADE],
 			 cl->rewards[REWARD_FULLSG],
 			 cl->rewards[REWARD_RLRG],
-			 cl->rewards[REWARD_ITEMDENIED]);
+			 cl->rewards[REWARD_ITEMDENIED],
+			 cl->rewards[REWARD_SPAWNKILL]
+			);
 	}
         j = strlen(entry);
         if (stringlength + j > 1024)
@@ -408,7 +412,7 @@ void G_SendStats( gentity_t *ent ) {
         cl = &level.clients[level.sortedClients[i]];
 
         Com_sprintf (entry, sizeof(entry),
-                     " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i", level.sortedClients[i], cl->accuracy[WP_GAUNTLET][2], cl->accuracy[WP_GAUNTLET][3], cl->accuracy[WP_GAUNTLET][4],
+                     " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i", level.sortedClients[i], cl->accuracy[WP_GAUNTLET][2], cl->accuracy[WP_GAUNTLET][3], cl->accuracy[WP_GAUNTLET][4],
                      cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1], cl->accuracy[WP_MACHINEGUN][2], cl->accuracy[WP_MACHINEGUN][3], cl->accuracy[WP_MACHINEGUN][4],
                      cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1], cl->accuracy[WP_SHOTGUN][2], cl->accuracy[WP_SHOTGUN][3], cl->accuracy[WP_SHOTGUN][4],
                      cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1], cl->accuracy[WP_GRENADE_LAUNCHER][2], cl->accuracy[WP_GRENADE_LAUNCHER][3], cl->accuracy[WP_GRENADE_LAUNCHER][4],
@@ -431,7 +435,9 @@ void G_SendStats( gentity_t *ent ) {
                      cl->rewards[REWARD_AIRROCKET],
                      cl->rewards[REWARD_FULLSG],
                      cl->rewards[REWARD_RLRG],
-                     cl->rewards[REWARD_ITEMDENIED]);
+                     cl->rewards[REWARD_ITEMDENIED],
+		     cl->rewards[REWARD_SPAWNKILL]
+		    );
 
         j = strlen(entry);
         if (stringlength + j > 2048)
