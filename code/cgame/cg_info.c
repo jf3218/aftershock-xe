@@ -26,6 +26,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define MAX_LOADING_PLAYER_ICONS	16
 #define MAX_LOADING_ITEM_ICONS		26
+#define HEADER_X	200
+#define HEADER_Y	30
+#define DETAILS_X	400
+#define DETAILS_Y	180
+#define INFOBAR_X	30
+#define INFOBAR_Y	390
 
 static int			loadingPlayerIconCount;
 static int			loadingItemIconCount;
@@ -151,6 +157,7 @@ void CG_DrawInformation( void ) {
 	const char	*sysInfo;
 	int			y;
 	int			value;
+	qhandle_t 	background;
 	qhandle_t	levelshot;
 	qhandle_t	detail;
 	char		buf[1024];
@@ -165,11 +172,19 @@ void CG_DrawInformation( void ) {
 
 	s = Info_ValueForKey( info, "mapname" );
 	levelshot = trap_R_RegisterShaderNoMip( va( "levelshots/%s.tga", s ) );
-	if ( !levelshot ) {
-		levelshot = trap_R_RegisterShaderNoMip( "menu/art/unknownmap" );
+	background = trap_R_RegisterShaderNoMip( "levelshots/background.tga" );
+	CG_DrawPic( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, background );
+	if ( levelshot ) {
+		CG_DrawPic( 20, 120, 320, 240, levelshot );
 	}
+	
+	/*if ( !levelshot ) {
+		//levelshot = trap_R_RegisterShaderNoMip( "menu/art/unknownmap" );
+	}*/
+	
+	
 	trap_R_SetColor( NULL );
-	CG_DrawPic( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, levelshot );
+	//CG_DrawPic( 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, levelshot );
 
 	// blend a detail texture over it
 	detail = trap_R_RegisterShader( "levelShotDetail" );
@@ -198,25 +213,25 @@ void CG_DrawInformation( void ) {
 		// server hostname
 		Q_strncpyz(buf, Info_ValueForKey( info, "sv_hostname" ), 1024);
 		Q_CleanStr(buf);
-		UI_DrawProportionalString( 320, y, buf,
-			UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, colorWhite );
+		UI_DrawProportionalString( HEADER_X, HEADER_Y, buf,
+			UI_LEFT|UI_SMALLFONT|UI_DROPSHADOW, colorWhite );
 		y += PROP_HEIGHT;
 
 		// pure server
 		s = Info_ValueForKey( sysInfo, "sv_pure" );
 		if ( s[0] == '1' ) {
 			UI_DrawProportionalString( 320, y, "Pure Server",
-				UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, colorWhite );
+				UI_LEFT|UI_BIGFONT|UI_DROPSHADOW, colorWhite );
 			y += PROP_HEIGHT;
 		}
 
 		// server-specific message of the day
-		s = CG_ConfigString( CS_MOTD );
+		/*s = CG_ConfigString( CS_MOTD );
 		if ( s[0] ) {
 			UI_DrawProportionalString( 320, y, s,
-				UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, colorWhite );
+				UI_LEFT|UI_SMALLFONT|UI_DROPSHADOW, colorWhite );
 			y += PROP_HEIGHT;
-		}
+		}*/
 
 		// some extra space after hostname and motd
 		y += 10;
@@ -226,7 +241,7 @@ void CG_DrawInformation( void ) {
 	s = CG_ConfigString( CS_MESSAGE );
 	if ( s[0] ) {
 		UI_DrawProportionalString( 320, y, s,
-			UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, colorWhite );
+			UI_LEFT|UI_SMALLFONT|UI_DROPSHADOW, colorWhite );
 		y += PROP_HEIGHT;
 	}
 
@@ -234,7 +249,7 @@ void CG_DrawInformation( void ) {
 	s = Info_ValueForKey( sysInfo, "sv_cheats" );
 	if ( s[0] == '1' ) {
 		UI_DrawProportionalString( 320, y, "CHEATS ARE ENABLED",
-			UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, colorWhite );
+			UI_LEFT|UI_SMALLFONT|UI_DROPSHADOW, colorWhite );
 		y += PROP_HEIGHT;
 	}
 
@@ -286,7 +301,7 @@ void CG_DrawInformation( void ) {
 		break;
 	}
 	UI_DrawProportionalString( 320, y, s,
-		UI_CENTER|UI_SMALLFONT|UI_DROPSHADOW, colorWhite );
+		UI_LEFT|UI_SMALLFONT|UI_DROPSHADOW, colorWhite );
 	y += PROP_HEIGHT;
 		
 	value = atoi( Info_ValueForKey( info, "timelimit" ) );

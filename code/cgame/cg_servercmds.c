@@ -364,7 +364,6 @@ typedef enum {
 	STATS_FULLSG,
 	STATS_RLRG,
 	STATS_ITEMDENIED,
-	STATS_SPAWNKILL,
 	STATISTIC_MAX
 } statistic_t;
 
@@ -513,7 +512,7 @@ static void CG_ParseStatistics ( void ) {
 		len = strlen ( string );
 		trap_FS_Write ( string, len, f );
 
-		string = va ( "<p align=center><table border=\"1\"><tr><td>Impressive</td> <td>Excellent</td> <td>Airgrenade</td> <td>Airrocket</td> <td>FullSG</td> <td>RocketRail</td> <td>Item Denied</td> <td>Spawnkill</td>" );
+		string = va ( "<p align=center><table border=\"1\"><tr><td>Impressive</td> <td>Excellent</td> <td>Airgrenade</td> <td>Airrocket</td> <td>FullSG</td> <td>RocketRail</td> <td>Item Denied</td>" );
 		len = strlen ( string );
 		trap_FS_Write ( string, len, f );
 
@@ -527,8 +526,8 @@ static void CG_ParseStatistics ( void ) {
 		len = strlen ( string );
 		trap_FS_Write ( string, len, f );
 
-		string = va ( "<tr><td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td>", clientStats[i][STATS_IMPESSIVE], clientStats[i][STATS_EXCELLENT],
-		              clientStats[i][STATS_AIRGRENADE], clientStats[i][STATS_AIRROCKET], clientStats[i][STATS_FULLSG], clientStats[i][STATS_RLRG], clientStats[i][STATS_ITEMDENIED], clientStats[i][STATS_SPAWNKILL] );
+		string = va ( "<tr><td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td> <td>%i</td>", clientStats[i][STATS_IMPESSIVE], clientStats[i][STATS_EXCELLENT],
+		              clientStats[i][STATS_AIRGRENADE], clientStats[i][STATS_AIRROCKET], clientStats[i][STATS_FULLSG], clientStats[i][STATS_RLRG], clientStats[i][STATS_ITEMDENIED] );
 		len = strlen ( string );
 		trap_FS_Write ( string, len, f );
 

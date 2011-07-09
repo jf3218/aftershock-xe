@@ -120,12 +120,12 @@ static char *boolToChar ( qboolean in ) {
 }
 
 static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnected ) {
-	int time;
+	float time;
 	int count;
 	char cleanName[36], cleanAftershockName[36], cleanAftershockHash[36];
 
 	if ( !disconnected )
-		time = ( level.time - cl->pers.enterTime ) /60000;
+		time = (level.time - cl->pers.enterTime)/60000;
 	else
 		time = cl->pers.enterTime/60000;
 
@@ -133,7 +133,7 @@ static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnec
 	cleanString( cleanAftershockName, sizeof(cleanAftershockName), cl->aftershock_name);
 	cleanString( cleanAftershockHash, sizeof(cleanAftershockHash), cl->aftershock_hash);
 	
-	writeToFile ( va ( "\n\t\t<player name=\"%s\" time=\"%i\" aftershock_login=\"%s\" aftershock_hash=\"%s\">\n", cleanName , time, cleanAftershockName , cleanAftershockHash ), f );
+	writeToFile ( va ( "\n\t\t<player name=\"%s\" time=\"%i\" aftershock_login=\"%s\" aftershock_hash=\"%s\">\n", cleanName , (int)time, cleanAftershockName , cleanAftershockHash ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Score\" value=\"%i\"/>\n", cl->ps.persistant[PERS_SCORE] ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Kills\" value=\"%i\"/>\n", cl->kills ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Death\" value=\"%i\"/>\n", cl->ps.persistant[PERS_KILLED] ), f );
