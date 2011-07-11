@@ -330,12 +330,13 @@ static void CG_OffsetFirstPersonView( void ) {
 
     // if dead, fix the angle and don't add any kick
     if ( cg.snap->ps.stats[STAT_HEALTH] <= 0 ) {
-        angles[ROLL] = 40;
-        angles[PITCH] = -15;
+        angles[ROLL] = 0;
+        angles[PITCH] = 0;
         angles[YAW] = cg.snap->ps.stats[STAT_DEAD_YAW];
         origin[2] += cg.predictedPlayerState.viewheight;
         return;
     }
+	
 
     if (!cg_nokick.integer) {
         // add angles based on weapon kick
@@ -930,6 +931,7 @@ Generates and draws a game scene and status information at the given time.
 void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback ) {
     int		inwater;
     int i;
+    vec4_t color;
 
     cg.time = serverTime;
 
@@ -1039,6 +1041,23 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 
     // actually issue the rendering calls
     CG_DrawActive( stereoView, qtrue );
+    
+    if( cg.snap->ps.stats[STAT_HEALTH] <= 0 ){
+	    if( cg.deathtime == 0 )
+		    cg.deathtime = cg.time;
+	    if( !( cgs.allowMultiview && ( cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR ) && cg_multiview.integer > 1 ) ){
+		    color[0] = colorBlack[0];
+		    color[1] = colorBlack[1];
+		    color[2] = colorBlack[2];
+		    color[3] = (cg.time - cg.deathtime)/5000.0f;
+		    if( color[3] > 1.0 )
+			    color[3] = 1.0;
+		    CG_FillRect(0, 0, 640, 480, color);
+	    }
+	    
+    }
+    else
+	      cg.deathtime = 0;
     
     if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR &&
             ( cg.snap->ps.pm_flags & PMF_SCOREBOARD ) )

@@ -1213,6 +1213,7 @@ void SetTeam( gentity_t *ent, char *s ) {
     } else if ( !Q_stricmp( s, "spectator" ) || !Q_stricmp( s, "s" ) ) {
         team = TEAM_SPECTATOR;
         specState = SPECTATOR_FREE;
+	specOnly = 0;
     } else if ( g_gametype.integer >= GT_TEAM && g_ffa_gt!=1) {
         // if running a team game, assign player to one of the teams
         specState = SPECTATOR_NOT;
@@ -1972,6 +1973,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
     }
 
     if ( target ) {
+      if( !target->client->mute[ent->s.clientNum] )
         G_SayTo( ent, target, mode, color, name, text );
         return;
     }
@@ -1984,7 +1986,8 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
     // send it to all the apropriate clients
     for (j = 0; j < level.maxclients; j++) {
         other = &g_entities[j];
-        G_SayTo( ent, other, mode, color, name, text );
+	if( !other->client->mute[ent->s.clientNum] )
+		G_SayTo( ent, other, mode, color, name, text );
     }
     //KK-OAX Admin Command Check from Say/SayTeam line
     if ( g_adminParseSay.integer )
@@ -3394,7 +3397,12 @@ void Cmd_Listplayers_f( gentity_t *ent ) {
     while ( i < MAX_CLIENTS ) {
         cl = (g_entities+i)->client;
         if ((g_entities+i)->client->pers.connected == CON_CONNECTED) { //Only numbers <128 is clients
-            strcat(buffer, va("%i   %s^7   %i   %s\n", (g_entities+i)->s.clientNum, cl->pers.netname, cl->ps.persistant[PERS_SCORE], TeamName(cl->sess.sessionTeam) ) );
+            strcat(buffer, va("%i   %s^7   %i   %s   ", (g_entities+i)->s.clientNum, cl->pers.netname, cl->ps.persistant[PERS_SCORE], TeamName(cl->sess.sessionTeam) ) );
+	    
+	    if( ent->client->mute[(g_entities+i)->s.clientNum] )
+		      strcat(buffer, "^1MUTED^7\n");
+	    else      
+		      strcat(buffer,"\n");
         }
         i++;
     }
@@ -3404,6 +3412,74 @@ void Cmd_Listplayers_f( gentity_t *ent ) {
 void Cmd_Listmapcycle_f( gentity_t *ent ) {
     G_drawMapcycle( ent );
 }
+
+static qboolean isNumber( char *arg1 ){
+  int i;
+  for( i = 0; i < strlen(arg1); i++ ){
+	  if( arg1[i] < '0' || arg1[i] > '9' )
+	    return qfalse;
+  }
+  return qtrue;
+}
+
+void Cmd_Mute_f( gentity_t *ent ) {
+    int num = -1;
+    char arg1[MAX_STRING_TOKENS];
+    
+    if( trap_Argc() == 1 || trap_Argc() > 2 )
+	   trap_SendServerCommand( ent-g_entities, "print \"usage: mute [clientnum]\n\""); 
+    
+    trap_Argv( 1, arg1, sizeof( arg1 ) );
+    
+    if( !isNumber(arg1) ){
+	      trap_SendServerCommand( ent-g_entities, "print \"usage: mute [clientnum]\n\""); 
+	      return;
+    }
+    
+    num = atoi(arg1);
+    if( num >=0 && num < MAX_CLIENTS ) {
+	    if( level.clients[num].pers.connected != CON_DISCONNECTED ){
+		    ent->client->mute[num] = qtrue;
+		    trap_SendServerCommand( ent-g_entities, va("print \"muted %s\n\"",level.clients[num].pers.netname ));
+	    }
+	    else{
+		    trap_SendServerCommand( ent-g_entities, va("print \"client with clientnumber %i not connected\n\"", num ));
+	    }
+	    
+    }
+    else
+	    trap_SendServerCommand( ent-g_entities, "print \"Clientnumber out of Range\n\"");
+}
+
+void Cmd_Unmute_f( gentity_t *ent ) {
+    int num = -1;
+    char arg1[MAX_STRING_TOKENS];
+    
+    if( trap_Argc() == 1 || trap_Argc() > 2 )
+	   trap_SendServerCommand( ent-g_entities, "print \"usage: unmute [clientnum]\n\""); 
+    
+    trap_Argv( 1, arg1, sizeof( arg1 ) );
+    
+    if( !isNumber(arg1) ){
+	      trap_SendServerCommand( ent-g_entities, "print \"usage: unmute [clientnum]\n\""); 
+	      return;
+    }
+    
+    num = atoi(arg1);
+    if( num >=0 && num < MAX_CLIENTS ) {
+	    if( level.clients[num].pers.connected != CON_DISCONNECTED ){
+		    ent->client->mute[num] = qfalse;
+		    trap_SendServerCommand( ent-g_entities, va("print \"unmuted %s\n\"",level.clients[num].pers.netname ));
+	    }
+	    else{
+		    trap_SendServerCommand( ent-g_entities, va("print \"client with clientnumber %i not connected\n\"", num ));
+	    }
+	    
+    }
+    else
+	    trap_SendServerCommand( ent-g_entities, "print \"Clientnumber out of Range\n\"");
+}
+
 
 
 
@@ -3473,6 +3549,8 @@ commands_t cmds[ ] =
     { "ref", 0, Cmd_Ref_f },
     { "listplayers", 0, Cmd_Listplayers_f },
     { "mapcycle", 0, Cmd_Listmapcycle_f },
+    { "mute", 0, Cmd_Mute_f },
+    { "unmute", 0, Cmd_Unmute_f },
 
 };
 

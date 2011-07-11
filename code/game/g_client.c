@@ -2082,6 +2082,7 @@ void ClientSpawn(gentity_t *ent) {
 	char		aftershock_name[33];
 	char		aftershock_hash[33];
 	qboolean	referee;
+	qboolean 	mute[MAX_CLIENTS];
  
 
 	index = ent - g_entities;
@@ -2265,6 +2266,9 @@ void ClientSpawn(gentity_t *ent) {
 	lastKiller = client->lastKiller;
 	lastTarget = client->lastTarget;
 	lastKilledTime = client->lastKilledTime;
+	
+	for ( i = 0; i < MAX_CLIENTS ; i++ )
+		mute[i] = client->mute[i];
 
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		persistant[i] = client->ps.persistant[i];
@@ -2323,6 +2327,9 @@ void ClientSpawn(gentity_t *ent) {
 	
 	client->lastkilled_client = -1;
 	client->lastKilledTime = lastKilledTime;
+	
+	for ( i = 0; i < MAX_CLIENTS ; i++ )
+		client->mute[i] = mute[i];
 
 	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
 		client->ps.persistant[i] = persistant[i];
@@ -2581,6 +2588,10 @@ void ClientDisconnect( int clientNum ) {
 	if ( !ent->client ) {
 		return;
 	}
+	
+	for( i = 0; i < MAX_CLIENTS ; i++ )
+		level.clients[i].mute[clientNum] = qfalse;
+	
     //KK-OAX Admin
     G_admin_namelog_update( ent->client, qtrue );
     

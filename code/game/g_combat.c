@@ -775,7 +775,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 			attacker->client->lastKillTime = level.time;
 			self->client->lastKilledTime = level.time;
 			
-			if( self->client->spawnTime + 1500 > level.time ){
+			if( self->client->spawnTime + 1000 > level.time ){
 				attacker->client->rewards[REWARD_SPAWNKILL]++;
 				RewardMessage(attacker, REWARD_SPAWNKILL, attacker->client->rewards[REWARD_SPAWNKILL]);
 

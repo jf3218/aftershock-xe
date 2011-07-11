@@ -857,6 +857,7 @@ typedef struct {
 	int  fragMessageTime;
 	char rankMessage[512];
 	int  rankMessageTime;
+	int  deathtime;
 
 } cg_t;
 

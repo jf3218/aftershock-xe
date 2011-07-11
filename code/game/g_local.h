@@ -480,6 +480,8 @@ struct gclient_s {
 	qboolean		referee;
 	
 	int 		spawnTime;
+	
+	qboolean 		mute[MAX_CLIENTS];
 };
 
 

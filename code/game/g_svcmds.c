@@ -461,6 +461,51 @@ void	ClientKick_f( void ) {
         
 }
 
+void Matchinfo_f( void ) {
+	int i;
+	gclient_t *cl;
+	char	str[MAX_INFO_VALUE];
+	G_Printf("\\fraglimit\\%i", g_fraglimit.integer);
+	G_Printf("\\timelimit\\%i", g_timelimit.integer);
+	G_Printf("\\leveltime\\%i", level.time);
+	G_Printf("\\starttime\\%i", level.startTime);
+	G_Printf("\\g_gametype\\%i", g_gametype.integer);
+	trap_Cvar_VariableStringBuffer( "sv_mapname", str, sizeof(str) );
+	G_Printf("\\mapname\\%s", str);
+	trap_Cvar_VariableStringBuffer( "sv_hostname", str, sizeof(str) );
+	G_Printf("\\sv_hostname\\%s", str);
+	trap_Cvar_VariableStringBuffer( "sv_maxclients", str, sizeof(str) );
+	G_Printf("\\sv_maxclients\\%s", str);
+	trap_Cvar_VariableStringBuffer( "sv_fps", str, sizeof(str) );
+	G_Printf("\\sv_fps\\%s", str);
+	G_Printf("\\g_dowarmup\\%i", g_doWarmup.integer);
+	G_Printf("\\g_instantgib\\%i", g_instantgib.integer);
+	G_Printf("\\capturelimit\\%i", g_capturelimit.integer);
+	G_Printf("\\g_needpass\\%i", g_needpass.integer);
+	G_Printf("\\g_rockets\\%i", g_rockets.integer);
+	G_Printf("\\g_aftershockPhysic\\%i", g_aftershockPhysic.integer);
+	G_Printf("\\g_reduceLightningDamage\\%i", g_reduceLightningDamage.integer);
+	G_Printf("\\g_reduceRailDamage\\%i", g_reduceRailDamage.integer);
+	
+	if( g_gametype.integer >= GT_TEAM ){
+		G_Printf("\\scores_red\\%i", level.teamScores[TEAM_RED]);
+		G_Printf("\\scores_blue\\%i", level.teamScores[TEAM_BLUE]);
+	}
+	if( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
+		G_Printf("\\roundnumber\\%i", level.roundNumberStarted);
+	
+	G_Printf("\\");
+	for( i = 0, cl = level.clients; i < level.maxclients; i++, cl++ ) {
+		if( cl->pers.connected == CON_DISCONNECTED )
+			continue;
+
+		G_Printf(" \"%s\" \"%s\" \"%s\" %i %i %i %i %i", 
+			  cl->pers.netname, cl->aftershock_name, cl->aftershock_hash, cl->ps.persistant[ PERS_TEAM ], cl->ps.persistant[ PERS_SCORE ], 
+			  cl->kills, cl->ps.persistant[ PERS_KILLED ], (int)((level.time - cl->pers.enterTime)/60000) );
+	} 
+	G_Printf("\n");
+}
+
 //KK-OAX Moved this Declaration to g_local.h
 //char	*ConcatArgs( int start );
 
@@ -504,6 +549,7 @@ struct
   { "shuffle", qfalse, ShuffleTeams },
   //Kicks a player by number in the game logic rather than the server number
   { "clientkick_game", qfalse, ClientKick_f },
+  { "matchinfo", qfalse, Matchinfo_f },
 };
 
 /*
