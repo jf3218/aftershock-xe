@@ -487,14 +487,13 @@ void Matchinfo_f( void ) {
 	G_Printf("\\g_reduceLightningDamage\\%i", g_reduceLightningDamage.integer);
 	G_Printf("\\g_reduceRailDamage\\%i", g_reduceRailDamage.integer);
 	
-	if( g_gametype.integer >= GT_TEAM ){
-		G_Printf("\\scores_red\\%i", level.teamScores[TEAM_RED]);
-		G_Printf("\\scores_blue\\%i", level.teamScores[TEAM_BLUE]);
-	}
-	if( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
-		G_Printf("\\roundnumber\\%i", level.roundNumberStarted);
 	
-	G_Printf("\\");
+	G_Printf("\\scores_red\\%i", level.teamScores[TEAM_RED]);
+	G_Printf("\\scores_blue\\%i", level.teamScores[TEAM_BLUE]);
+	
+	G_Printf("\\roundnumber\\%i", level.roundNumberStarted);
+	
+	
 	for( i = 0, cl = level.clients; i < level.maxclients; i++, cl++ ) {
 		if( cl->pers.connected == CON_DISCONNECTED )
 			continue;
