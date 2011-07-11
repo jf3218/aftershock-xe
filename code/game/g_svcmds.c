@@ -493,6 +493,7 @@ void Matchinfo_f( void ) {
 	
 	G_Printf("\\roundnumber\\%i", level.roundNumberStarted);
 	
+	G_Printf("\\");
 	
 	for( i = 0, cl = level.clients; i < level.maxclients; i++, cl++ ) {
 		if( cl->pers.connected == CON_DISCONNECTED )
