@@ -1645,6 +1645,7 @@ Q3CGOBJ_ = \
   $(B)/baseq3/cgame/cg_playerstate.o \
   $(B)/baseq3/cgame/cg_predict.o \
   $(B)/baseq3/cgame/cg_scoreboard.o \
+  $(B)/baseq3/cgame/cg_oldScoreboard.o \
   $(B)/baseq3/cgame/cg_servercmds.o \
   $(B)/baseq3/cgame/cg_snapshot.o \
   $(B)/baseq3/cgame/cg_unlagged.o \
@@ -1691,6 +1692,7 @@ MPCGOBJ_ = \
   $(B)/missionpack/cgame/cg_playerstate.o \
   $(B)/missionpack/cgame/cg_predict.o \
   $(B)/missionpack/cgame/cg_scoreboard.o \
+  $(B)/missionpack/cgame/cg_oldScoreboard.o \
   $(B)/missionpack/cgame/cg_servercmds.o \
   $(B)/missionpack/cgame/cg_snapshot.o \
   $(B)/missionpack/cgame/cg_unlagged.o \

@@ -468,9 +468,14 @@ void Matchinfo_f( void ) {
 	G_Printf("\\fraglimit\\%i", g_fraglimit.integer);
 	G_Printf("\\timelimit\\%i", g_timelimit.integer);
 	G_Printf("\\leveltime\\%i", level.time);
-	G_Printf("\\starttime\\%i", level.startTime);
+	
+	if( level.warmupTime != -1 )
+		G_Printf("\\starttime\\%i", level.startTime);
+	else	
+		G_Printf("\\starttime\\0");
+	
 	G_Printf("\\g_gametype\\%i", g_gametype.integer);
-	trap_Cvar_VariableStringBuffer( "sv_mapname", str, sizeof(str) );
+	trap_Cvar_VariableStringBuffer( "mapname", str, sizeof(str) );
 	G_Printf("\\mapname\\%s", str);
 	trap_Cvar_VariableStringBuffer( "sv_hostname", str, sizeof(str) );
 	G_Printf("\\sv_hostname\\%s", str);
@@ -500,7 +505,7 @@ void Matchinfo_f( void ) {
 			continue;
 
 		G_Printf(" \"%s\" \"%s\" \"%s\" %i %i %i %i %i", 
-			  cl->pers.netname, cl->aftershock_name, cl->aftershock_hash, cl->ps.persistant[ PERS_TEAM ], cl->ps.persistant[ PERS_SCORE ], 
+			  cl->pers.netname, cl->aftershock_name, cl->aftershock_hash, cl->sess.sessionTeam, cl->ps.persistant[ PERS_SCORE ], 
 			  cl->kills, cl->ps.persistant[ PERS_KILLED ], (int)((level.time - cl->pers.enterTime)/60000) );
 	} 
 	G_Printf("\n");

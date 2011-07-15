@@ -3789,8 +3789,12 @@ static qboolean CG_DrawScoreboard ( void ) {
 	return qtrue;
 #else
 	if( cgs.gametype == GT_TOURNAMENT ){
+		if( cg_oldScoreboard.integer )
+			return CG_DrawOldTourneyScoreboardOld();
 		return CG_DrawOldTourneyScoreboard();
 	}else{
+		if( cg_oldScoreboard.integer )
+			return CG_DrawOldScoreboardOld();
 		return CG_DrawOldScoreboard();
 	}
 #endif
@@ -4273,7 +4277,10 @@ static void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 static void CG_DrawTourneyScoreboard ( void ) {
 #ifdef MISSIONPACK
 #else
-	CG_DrawOldTourneyScoreboard();
+	if( cg_oldScoreboard.integer )
+		CG_DrawOldTourneyScoreboardOld();
+	else
+		CG_DrawOldTourneyScoreboard();
 #endif
 }
 

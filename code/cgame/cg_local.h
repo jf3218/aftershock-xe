@@ -1714,6 +1714,8 @@ extern vmCvar_t			cg_grenadeTrail;
 extern vmCvar_t			cg_rocketTrail;
 extern vmCvar_t			cg_plasmaTrail;
 
+extern vmCvar_t 		cg_oldScoreboard;
+
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
 //void CG_AddBoundingBox( centity_t *cent );
@@ -1992,6 +1994,12 @@ void CG_DrawInformation( void );
 //
 qboolean CG_DrawOldScoreboard( void );
 qboolean CG_DrawOldTourneyScoreboard( void );
+
+//
+// cg_oldScoreboard.c
+//
+qboolean CG_DrawOldScoreboardOld( void );
+qboolean CG_DrawOldTourneyScoreboardOld( void );
 
 //
 // cg_challenges.c

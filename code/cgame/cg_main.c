@@ -374,6 +374,8 @@ vmCvar_t 	cg_grenadeTrail;
 vmCvar_t 	cg_rocketTrail;
 vmCvar_t 	cg_plasmaTrail;
 
+vmCvar_t 	cg_oldScoreboard;
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -616,7 +618,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_inverseTimer, "cg_inverseTimer", "0", CVAR_ARCHIVE },
 	{&cg_grenadeTrail, "cg_grenadeTrail", "1", CVAR_ARCHIVE },
 	{&cg_rocketTrail, "cg_rocketTrail", "1", CVAR_ARCHIVE },
-	{&cg_plasmaTrail, "cg_plasmaTrail", "0", CVAR_ARCHIVE }
+	{&cg_plasmaTrail, "cg_plasmaTrail", "0", CVAR_ARCHIVE },
+	{&cg_oldScoreboard, "cg_oldScoreboard", "0", CVAR_ARCHIVE }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
