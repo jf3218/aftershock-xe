@@ -1195,9 +1195,15 @@ void SetTeam( gentity_t *ent, char *s ) {
     }
     else*/
     if ( !Q_stricmp( s, "speconly" ) || !Q_stricmp( s, "so" ) ) {
-        team =  TEAM_SPECTATOR;
-        specState = SPECTATOR_FREE;
-        specOnly = 1;
+	if( g_gametype.integer == GT_TOURNAMENT ){
+		team =  TEAM_SPECTATOR;
+		specState = SPECTATOR_FREE;
+		specOnly = 1;
+	} else {
+		team =  TEAM_SPECTATOR;
+		specState = SPECTATOR_FREE;
+		specOnly = 0;
+	}
     } else if ( !Q_stricmp( s, "scoreboard" ) || !Q_stricmp( s, "score" )  ) {
         team = TEAM_SPECTATOR;
         specState = SPECTATOR_SCOREBOARD;

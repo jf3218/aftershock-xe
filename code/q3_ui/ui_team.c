@@ -86,11 +86,11 @@ static void TeamMain_MenuEvent( void* ptr, int event ) {
 		break;
 
 	case ID_SPECTATE:
-		gametype = atoi( Info_ValueForKey( info,"g_gametype" ) );
-		if( gametype == GT_TOURNAMENT )
+		//gametype = atoi( Info_ValueForKey( info,"g_gametype" ) );
+		//if( gametype == GT_TOURNAMENT )
 			trap_Cmd_ExecuteText( EXEC_APPEND, "cmd team speconly\n" );	
-		else
-			trap_Cmd_ExecuteText( EXEC_APPEND, "cmd team spectator\n" );
+		//else
+		//	trap_Cmd_ExecuteText( EXEC_APPEND, "cmd team spectator\n" );
 		UI_ForceMenuOff();
 		break;
 	}
