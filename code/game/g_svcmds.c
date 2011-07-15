@@ -472,7 +472,7 @@ void Matchinfo_f( void ) {
 	if( level.warmupTime != -1 )
 		G_Printf("\\starttime\\%i", level.startTime);
 	else	
-		G_Printf("\\starttime\\0");
+		G_Printf("\\starttime\\-1");
 	
 	G_Printf("\\g_gametype\\%i", g_gametype.integer);
 	trap_Cvar_VariableStringBuffer( "mapname", str, sizeof(str) );

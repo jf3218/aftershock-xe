@@ -1042,7 +1042,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
     // actually issue the rendering calls
     CG_DrawActive( stereoView, qtrue );
     
-    if( cg.snap->ps.stats[STAT_HEALTH] <= 0 ){
+    if( cg.snap->ps.stats[STAT_HEALTH] <= 0 && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR ){
 	    if( cg.deathtime == 0 )
 		    cg.deathtime = cg.time;
 	    if( !( cgs.allowMultiview && ( cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR ) && cg_multiview.integer > 1 ) ){

@@ -3790,7 +3790,7 @@ static qboolean CG_DrawScoreboard ( void ) {
 #else
 	if( cgs.gametype == GT_TOURNAMENT ){
 		if( cg_oldScoreboard.integer )
-			return CG_DrawOldTourneyScoreboardOld();
+			return CG_DrawOldScoreboardOld();
 		return CG_DrawOldTourneyScoreboard();
 	}else{
 		if( cg_oldScoreboard.integer )
