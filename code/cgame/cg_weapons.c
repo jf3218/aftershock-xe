@@ -538,7 +538,7 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 				smoke->leType = LE_SCALE_FADE;
 			} else if( cg_grenadeTrail.integer == TRAIL_PARTICLESMOKE ) {
 				smoke = CG_SmokePuff( lastPos, up, 
-					  cg_rocketTrailRadius.integer, 
+					  4, 
 					  red, green, blue, alpha,
 					  wi->wiTrailTime, 
 					  t,
@@ -592,7 +592,7 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 				smoke->leType = LE_SCALE_FADE;
 			} else if( cg_rocketTrail.integer == TRAIL_PARTICLESMOKE ) {
 				smoke = CG_SmokePuff( lastPos, up, 
-					  cg_rocketTrailRadius.integer, 
+					  4, 
 					  red, green, blue, alpha,
 					  wi->wiTrailTime, 
 					  t,
