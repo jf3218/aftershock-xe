@@ -1033,6 +1033,16 @@ int allowedRef(char *commandStr);
 void CheckVote( void );
 void CountVotes( void );
 
+//
+// g_mapcycle.c
+//
+char *G_GetNextMap ( char *map );
+qboolean G_mapIsVoteable ( char* map );
+void G_drawAllowedMaps ( gentity_t *ent );
+void G_drawMapcycle ( gentity_t *ent );
+void G_sendMapcycle( void );
+void G_LoadMapcycle ( void );
+
 #define MAX_MAPNAME 32
 #define MAPS_PER_PAGE 10
 #define MAX_MAPNAME_BUFFER MAX_MAPNAME*600

@@ -555,6 +555,7 @@ struct
   //Kicks a player by number in the game logic rather than the server number
   { "clientkick_game", qfalse, ClientKick_f },
   { "matchinfo", qfalse, Matchinfo_f },
+  { "getmapcycle", qfalse, G_sendMapcycle }
 };
 
 /*

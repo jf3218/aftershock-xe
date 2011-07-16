@@ -356,6 +356,35 @@ void G_drawMapcycle ( gentity_t *ent ) {
 
 /*
 =================
+G_sendMapcycle
+prints the current working mapcycle
+with original structure
+useful for rcon and serverowners
+=================
+*/
+void G_sendMapcycle( void ){
+	int i;
+	char buffer[MAX_MAPCYCLELENGTH];
+	strcat ( buffer,va ( "mapcycle {\n" ) );
+
+	for ( i = 0; i < mapcycle.mapcycleCount; i++ ) {
+		strcat ( buffer, va ( "\t%s\n", mapcycle.maps[i] ) );
+	}
+	
+	strcat ( buffer, "}\n\nallowed {\n");
+	
+	for ( i = 0; i < mapcycle.allowedMapsCount; i++ ) {
+		strcat ( buffer, va ( "\t%s\n", mapcycle.allowedMaps[i] ) );
+	}
+
+	strcat ( buffer, va ( "}\n" ) );
+	
+	G_Printf("%s", buffer);
+  
+}
+
+/*
+=================
 G_initMapcycle
 set the init values
 minplayers 0, maxplayers 64
