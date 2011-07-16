@@ -366,18 +366,28 @@ void G_sendMapcycle( void ){
 	int i;
 	char buffer[MAX_MAPCYCLELENGTH];
 	strcat ( buffer,va ( "mapcycle {\n" ) );
+	
+	if( !g_useMapcycle.integer ){
+		G_Printf("no mapcycle set on this server\n");
+		return;
+	}
 
 	for ( i = 0; i < mapcycle.mapcycleCount; i++ ) {
-		strcat ( buffer, va ( "\t%s\n", mapcycle.maps[i] ) );
+		strcat ( buffer, va ( "    %s\n", mapcycle.maps[i] ) );
 	}
 	
-	strcat ( buffer, "}\n\nallowed {\n");
+	strcat( buffer, "}\n" );
 	
-	for ( i = 0; i < mapcycle.allowedMapsCount; i++ ) {
-		strcat ( buffer, va ( "\t%s\n", mapcycle.allowedMaps[i] ) );
-	}
+	if( !mapcycle.allAllowed ){
+	
+		strcat ( buffer, "\nallowed {\n");
+	
+		for ( i = 0; i < mapcycle.allowedMapsCount; i++ ) {
+			strcat ( buffer, va ( "    %s\n", mapcycle.allowedMaps[i] ) );
+		}
 
-	strcat ( buffer, va ( "}\n" ) );
+		strcat ( buffer, va ( "}\n" ) );
+	}
 	
 	G_Printf("%s", buffer);
   
