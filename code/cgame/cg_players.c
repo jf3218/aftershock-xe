@@ -1001,6 +1001,7 @@ static void CG_LoadClientInfo( int clientNum, clientInfo_t *ci ) {
 			CG_ResetPlayerEntity( &cg_entities[i] );
 		}
 	}
+	
 }
 
 /*
@@ -1519,6 +1520,7 @@ void CG_NewClientInfo( int clientNum ) {
 	// replace whatever was there with the new one
 	newInfo.infoValid = qtrue;
 	*ci = newInfo;
+	
 }
 
 

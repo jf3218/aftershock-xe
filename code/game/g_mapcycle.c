@@ -441,7 +441,7 @@ void G_LoadMapcycle ( void ) {
 	}
 
 	if ( len > MAX_MAPCYCLELENGTH ) {
-		G_Printf ( "Mapcycle file too large, %s is %i, max allowed is %i\n", g_mapcycle.string, len, MAX_MAPCYCLELENGTH );
+		G_Printf ( "Mapcycle file too large, %s contains %i chars, max allowed is %i\n", g_mapcycle.string, len, MAX_MAPCYCLELENGTH );
 		return;
 	}
 

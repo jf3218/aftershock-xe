@@ -206,8 +206,7 @@ void CG_Respawn( void ) {
 
 	// select the weapon the server says we are using
 	cg.weaponSelect = cg.snap->ps.weapon;
-	if( cg_forceModel.integer )
-		CG_ForceModelChange();
+	
 }
 
 extern char *eventnames[];
@@ -548,6 +547,13 @@ void CG_TransitionPlayerState( playerState_t *ps, playerState_t *ops ) {
 	if ( ps->persistant[PERS_SPAWN_COUNT] != ops->persistant[PERS_SPAWN_COUNT] ) {
 		CG_Respawn();
 	}
+	
+	/*if ( ps->persistant[PERS_TEAM] != ops->persistant[PERS_TEAM] ){
+		if( cg_forceModel.integer ){
+			CG_ForceModelChange();
+			CG_Printf("never ever?\n");
+		}
+	}*/
 
 	if ( cg.mapRestart ) {
 		CG_Respawn();

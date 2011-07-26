@@ -212,7 +212,7 @@ vmCvar_t     g_autoReady;
 vmCvar_t     g_timeoutAllowed;
 vmCvar_t     g_timeoutTime;
 
-vmCvar_t        g_delagprojectiles;
+vmCvar_t     g_delagprojectiles;
 
 vmCvar_t     g_itemDrop;
 

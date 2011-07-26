@@ -98,8 +98,13 @@ void G_ExplodeMissile( gentity_t *ent ) {
 			, ent->splashMethodOfDeath ) ) {
 			g_entities[ent->r.ownerNum].client->accuracy_hits++;
 			g_entities[ent->r.ownerNum].client->accuracy[ent->s.weapon][1]++;
+			G_AddHitHistory (g_entities[ent->r.ownerNum].client, qtrue );
 		}
+		else
+			G_AddHitHistory (g_entities[ent->r.ownerNum].client, qfalse );
 	}
+	
+	G_Printf("LastHits: %i\n", G_LastHitStreak(ent->client) );
 
 	trap_LinkEntity( ent );
 }
@@ -506,9 +511,17 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 			if( !hitClient ) {
 				g_entities[ent->r.ownerNum].client->accuracy_hits++;
 				g_entities[ent->r.ownerNum].client->accuracy[ent->s.weapon][1]++;
+				hitClient = qtrue;
 			}
 		}
 	}
+	
+	if( hitClient ){
+		  G_AddHitHistory(g_entities[ent->r.ownerNum].client, qtrue );
+	} else	
+		  G_AddHitHistory(g_entities[ent->r.ownerNum].client, qfalse );
+	
+	G_Printf("LastHits: %i\n", G_LastHitStreak(ent->client) );
 
 	trap_LinkEntity( ent );
 }
@@ -600,6 +613,7 @@ gentity_t *fire_plasma (gentity_t *self, vec3_t start, vec3_t dir) {
 	bolt->s.eType = ET_MISSILE;
 	bolt->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 	bolt->s.weapon = WP_PLASMAGUN;
+	//bolt->s.eFlags = EF_BOUNCE;
 	bolt->r.ownerNum = self->s.number;
 //unlagged - projectile nudge
 	// we'll need this for nudging projectiles later

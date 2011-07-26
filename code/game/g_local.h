@@ -343,6 +343,8 @@ typedef struct {
 } clientHistory_t;
 //unlagged - backward reconciliation #1
 
+
+#define MAX_HITS 20
 // this structure is cleared on each ClientSpawn(),
 // except for 'client->pers' and 'client->sess'
 struct gclient_s {
@@ -482,6 +484,7 @@ struct gclient_s {
 	int 		spawnTime;
 	
 	qboolean 		mute[MAX_CLIENTS];
+	qboolean		lastHits[MAX_HITS];
 };
 
 
@@ -830,6 +833,7 @@ void DropPortalDestination( gentity_t *ent );
 //
 // g_weapon.c
 //
+void G_AddHitHistory( gclient_t *client, qboolean hit );
 qboolean LogAccuracyHit( gentity_t *target, gentity_t *attacker );
 void CalcMuzzlePoint ( gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, vec3_t muzzlePoint );
 //unlagged - attack prediction #3

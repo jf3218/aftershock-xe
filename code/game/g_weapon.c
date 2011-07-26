@@ -33,6 +33,45 @@ static	vec3_t	muzzle;
 
 /*
 ================
+G_AddHitHistory
+================
+*/
+void G_AddHitHistory( gclient_t *client, qboolean hit ) {
+	int i;
+	for( i = MAX_HITS-1; i > 0; i-- )
+		client->lastHits[i] = client->lastHits[i-1];
+	client->lastHits[0] = hit;	
+}
+
+/*
+================
+G_ClearHitHistory
+================
+*/
+void G_ClearHitHistory( gclient_t *client ) {
+	int i;
+	for( i = 0; i < MAX_HITS; i++ )
+		client->lastHits[i] = qfalse;
+}
+
+/*
+================
+G_AddHitAccuracy
+================
+*/
+int G_LastHitStreak( gclient_t *client ){
+	int count;
+	for( count = 0; count < MAX_HITS; ){
+		if( !client->lastHits[count] )
+			break;
+		else
+			count++;
+	}
+	return count;
+}
+
+/*
+================
 G_BounceProjectile
 ================
 */
@@ -850,6 +889,9 @@ void Weapon_LightningFire( gentity_t *ent ) {
 			tent->s.otherEntityNum = traceEnt->s.number;
 			tent->s.eventParm = DirToByte( tr.plane.normal );
 			tent->s.weapon = ent->s.weapon;
+			
+			G_AddHitHistory( ent->client, qtrue );
+			
 			if( LogAccuracyHit( traceEnt, ent ) ) {
 				ent->client->accuracy_hits++;
 				ent->client->accuracy[WP_LIGHTNING][1]++;
@@ -857,6 +899,15 @@ void Weapon_LightningFire( gentity_t *ent ) {
 		} else if ( !( tr.surfaceFlags & SURF_NOIMPACT ) ) {
 			tent = G_TempEntity( tr.endpos, EV_MISSILE_MISS );
 			tent->s.eventParm = DirToByte( tr.plane.normal );
+			G_AddHitHistory( ent->client, qfalse );
+		}
+		
+		G_Printf("LastHits: %i\n", G_LastHitStreak(ent->client) );
+		
+		if( G_LastHitStreak(ent->client) == 20 ){
+			  ent->client->rewards[REWARD_LGACCURACY]++;
+			  RewardMessage( ent, REWARD_AIRGRENADE, ent->client->rewards[REWARD_LGACCURACY] );
+			  G_ClearHitHistory( ent->client );
 		}
 
 		break;
