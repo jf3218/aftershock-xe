@@ -344,7 +344,7 @@ typedef struct {
 //unlagged - backward reconciliation #1
 
 
-#define MAX_HITS 20
+#define MAX_HITS 30
 // this structure is cleared on each ClientSpawn(),
 // except for 'client->pers' and 'client->sess'
 struct gclient_s {

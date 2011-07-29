@@ -1778,7 +1778,7 @@ void CG_FillRect( float x, float y, float width, float height, const float *colo
 void CG_DrawPic( float x, float y, float width, float height, qhandle_t hShader );
 void CG_DrawString( float x, float y, const char *string, 
 				   float charWidth, float charHeight, const float *modulate );
-void CG_DrawStringHud( int hudnumber, qboolean colorize, char* text );
+//void CG_DrawStringHud( int hudnumber, qboolean colorize, char* text );
 
 
 void CG_DrawStringExt( int x, int y, const char *string, const float *setColor, 

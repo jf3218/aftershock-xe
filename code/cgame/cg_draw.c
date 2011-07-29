@@ -4211,57 +4211,49 @@ static void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 	CG_DrawVote();
 	CG_DrawTeamVote();
 
-	CG_DrawLagometer();
-
-	CG_DrawTimeout();
-
 	//CG_DrawUpperRight();
 
 	if ( stereoFrame == STEREO_CENTER || stereoFrame == STEREO_RIGHT ) {
 		CG_DrawFPS();
 	}
-	if ( cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS ) {
-		CG_DrawEliminationTimer();
-	}
-
-	CG_DrawAttacker();
-
-	if ( cg_drawSpeed.integer ) {
-		CG_DrawSpeedMeter();
-	}
-	if ( cg_drawAccel.integer ) {
-		CG_DrawAccelMeter();
-	}
 
 	CG_DrawLivingCount();
-
-	CG_DrawTimer();
-
-#ifndef MISSIONPACK
-
-	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cg_drawTeamOverlay.integer ) {
-		CG_DrawTeamOverlay ( qtrue, qfalse );
-	}
-
-	CG_DrawScores();
-	CG_DrawPowerups();
-
-//	CG_DrawLowerRight();
-//	CG_DrawLowerLeft();
-#endif
-
-	if ( !CG_DrawFollow() ) {
-		CG_DrawWarmup();
-	}
 
 	// don't draw center string if scoreboard is up
 	cg.scoreBoardShowing = CG_DrawScoreboard();
 	if ( !cg.scoreBoardShowing ) {
+		if ( cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS ) {
+		      CG_DrawEliminationTimer();
+		}
+	  
+		CG_DrawLagometer();
+		CG_DrawTimeout();
+		CG_DrawTimer();
 		CG_DrawCenterDDString();
 		CG_DrawCenter1FctfString();
 		CG_DrawCenterString();
 		CG_DrawFragMessage();
 		CG_DrawRankMessage();
+		CG_DrawScores();
+		CG_DrawPowerups();
+		
+		CG_DrawAttacker();
+
+		if ( cg_drawSpeed.integer ) {
+			CG_DrawSpeedMeter();
+		}
+		if ( cg_drawAccel.integer ) {
+			CG_DrawAccelMeter();
+		}
+		
+		if ( !CG_DrawFollow() ) {
+			CG_DrawWarmup();
+		}
+		
+		if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cg_drawTeamOverlay.integer ) {
+			CG_DrawTeamOverlay ( qtrue, qfalse );
+		}
+
 		if ( cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR )
 			CG_DrawRespawnTimers();
 
