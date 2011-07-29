@@ -327,6 +327,7 @@ vmCvar_t	cg_lightningExplosion;
 vmCvar_t	cg_noAmmoChange;
 vmCvar_t	cg_lgHitSfx;
 vmCvar_t	cg_crosshairHitColor;
+vmCvar_t 	cg_crosshairHitColorTime;
 
 vmCvar_t	cg_itemFX;
 
@@ -581,7 +582,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_lightningExplosion, "cg_lightningExplosion", "0", CVAR_ARCHIVE},
 	{&cg_noAmmoChange, "cg_noAmmoChange", "1", CVAR_ARCHIVE},
 	{&cg_lgHitSfx, "cg_lgHitSfx", "1", CVAR_ARCHIVE},
-	{&cg_crosshairHitColor, "cg_crosshairHitColor", "0", CVAR_ARCHIVE},
+	{&cg_crosshairHitColor, "cg_crosshairHitColor", "1", CVAR_ARCHIVE},
+	{&cg_crosshairHitColorTime, "cg_crosshairHitColorTime", "0", CVAR_ARCHIVE},
 	{&cg_itemFX, "cg_itemFX", "7", CVAR_ARCHIVE},
 	{&aftershock_login, "aftershock_login", "", CVAR_USERINFO },
 	{&aftershock_password, "aftershock_password", "", CVAR_USERINFO },

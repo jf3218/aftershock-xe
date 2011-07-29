@@ -3317,6 +3317,30 @@ CROSSHAIR
 ================================================================================
 */
 
+static void CG_GetHitColor( float *color ){
+	float hitcolor[3];
+	float factor = ((float)(cg.lastHitDamage)/100.0f);
+	
+	if( factor > 1 )
+		factor = 1.0f;
+	
+	if( strlen(cg_crosshairHitColor.string) == 1 && ColorIndex(*(cg_crosshairHitColor.string)) >= 0 && ColorIndex(*(cg_crosshairHitColor.string)) < MAX_CCODES ){
+		hitcolor[0] = (g_color_table[ColorIndex(*(cg_crosshairHitColor.string))][0]);
+		hitcolor[1] = (g_color_table[ColorIndex(*(cg_crosshairHitColor.string))][1]);
+		hitcolor[2] = (g_color_table[ColorIndex(*(cg_crosshairHitColor.string))][2]);
+	}
+	else{
+		hitcolor[0] = 1.0f;
+		hitcolor[1] = 0.0f;
+		hitcolor[2] = 0.0f;
+	}
+	
+	color[0] = cg_crosshairColorRed.value + factor*(hitcolor[0]-cg_crosshairColorRed.value);
+	color[1] = cg_crosshairColorGreen.value + factor*(hitcolor[1]-cg_crosshairColorGreen.value);
+	color[2] = cg_crosshairColorBlue.value + factor*(hitcolor[2]-cg_crosshairColorBlue.value);
+	color[3] = 1.0f;
+}
+
 
 /*
 =================
@@ -3346,19 +3370,20 @@ static void CG_DrawCrosshair ( void ) {
 		return;
 	}
 
-	if ( cg_crosshairHitColor.integer ) {
-		if ( cg.time - cg.lastHitTime < 500 ) {
-			color[0] = 1.0f;
+	if ( cg_crosshairHitColorTime.integer > 0 ) {
+		if ( cg.time - cg.lastHitTime < cg_crosshairHitColorTime.integer ) {
+			CG_GetHitColor(color);
+			/*color[0] = 1.0f;
 			color[1] = 1.0f-cg.lastHitDamage/100.0f;
 			if ( color[1] < 0.0f )
 				color[1] = 0.0f;
 			color[2] = 0.0f;
-			color[3] = 1.0f;
+			color[3] = 1.0f;*/
 		} else {
-			color[0] = 1.0f;
-			color[1] = 1.0f;
-			color[2] = 1.0f;
-			color[3] = 1.0f;
+			color[0]=cg_crosshairColorRed.value;
+			color[1]=cg_crosshairColorGreen.value;
+			color[2]=cg_crosshairColorBlue.value;
+			color[3]=1.0f;
 		}
 	}
 	// set color based on health

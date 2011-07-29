@@ -32,7 +32,7 @@ DeathmatchScoreboardMessage
 */
 void DeathmatchScoreboardMessage( gentity_t *ent ) {
     char		entry[2048];
-    char		string[4096];
+    char		string[4*4096];
     int			stringlength;
     int			i, j;
     gclient_t	*cl;
@@ -190,7 +190,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 			);
 	}
         j = strlen(entry);
-        if (stringlength + j > 1024)
+        if (stringlength + j > 2*1024)
             break;
         strcpy (string + stringlength, entry);
         stringlength += j;
