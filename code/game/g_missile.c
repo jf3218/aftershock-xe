@@ -104,7 +104,7 @@ void G_ExplodeMissile( gentity_t *ent ) {
 			G_AddHitHistory (g_entities[ent->r.ownerNum].client, qfalse );
 	}
 	
-	G_Printf("LastHits: %i\n", G_LastHitStreak(ent->client) );
+	//G_Printf("LastHits: %i\n", G_LastHitStreak(ent->client) );
 
 	trap_LinkEntity( ent );
 }
@@ -521,7 +521,7 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 	} else	
 		  G_AddHitHistory(g_entities[ent->r.ownerNum].client, qfalse );
 	
-	G_Printf("LastHits: %i\n", G_LastHitStreak(ent->client) );
+	//G_Printf("LastHits: %i\n", G_LastHitStreak(ent->client) );
 
 	trap_LinkEntity( ent );
 }

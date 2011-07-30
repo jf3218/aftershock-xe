@@ -902,7 +902,7 @@ void Weapon_LightningFire( gentity_t *ent ) {
 			G_AddHitHistory( ent->client, qfalse );
 		}
 		
-		G_Printf("LastHits: %i\n", G_LastHitStreak(ent->client) );
+		//G_Printf("LastHits: %i\n", G_LastHitStreak(ent->client) );
 		
 		if( G_LastHitStreak(ent->client) == 20 ){
 			  ent->client->rewards[REWARD_LGACCURACY]++;

@@ -32,7 +32,7 @@ DeathmatchScoreboardMessage
 */
 void DeathmatchScoreboardMessage( gentity_t *ent ) {
     char		entry[2048];
-    char		string[4*4096];
+    char		string[4096];
     int			stringlength;
     int			i, j;
     gclient_t	*cl;
@@ -190,8 +190,15 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 			);
 	}
         j = strlen(entry);
-        if (stringlength + j > 2*1024)
-            break;
+        if (stringlength + j > sizeof(string) ){
+            G_Printf("Too many clients connected for scoreboard info!\n");
+	    trap_SendServerCommand( ent-g_entities, va("scores %i %i %i %i%s", i,
+                            level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE], level.roundStartTime,
+                            string ) );
+	    stringlength = 0;
+	    string[0] = 0;
+	    return;
+	}
         strcpy (string + stringlength, entry);
         stringlength += j;
     }
