@@ -1717,6 +1717,9 @@ extern vmCvar_t			cg_plasmaTrail;
 
 extern vmCvar_t 		cg_oldScoreboard;
 
+extern vmCvar_t			cg_chatBeep;
+extern vmCvar_t			cg_teamChatBeep;
+
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
 //void CG_AddBoundingBox( centity_t *cent );

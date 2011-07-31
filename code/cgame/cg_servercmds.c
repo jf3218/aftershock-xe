@@ -1925,7 +1925,8 @@ static void CG_ServerCommand ( void ) {
 	}
 	if ( !strcmp ( cmd, "chat" ) ) {
 		if ( !cg_teamChatsOnly.integer && !cg_noChat.integer ) {
-			trap_S_StartLocalSound ( cgs.media.talkSound, CHAN_LOCAL_SOUND );
+			if( cg_chatBeep.integer )
+				trap_S_StartLocalSound ( cgs.media.talkSound, CHAN_LOCAL_SOUND );
 			Q_strncpyz ( text, CG_Argv ( 1 ), MAX_SAY_TEXT );
 			CG_RemoveChatEscapeChar ( text );
 			CG_AddToChat ( text );
@@ -1936,7 +1937,8 @@ static void CG_ServerCommand ( void ) {
 
 	if ( !strcmp ( cmd, "tchat" ) ) {
 		if ( !cg_noChat.integer ) {
-			trap_S_StartLocalSound ( cgs.media.talkSound, CHAN_LOCAL_SOUND );
+			if( cg_teamChatBeep.integer )
+				trap_S_StartLocalSound ( cgs.media.talkSound, CHAN_LOCAL_SOUND );
 			Q_strncpyz ( text, CG_Argv ( 1 ), MAX_SAY_TEXT );
 			CG_RemoveChatEscapeChar ( text );
 			CG_AddToTeamChat ( text );
