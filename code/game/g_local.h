@@ -1309,6 +1309,8 @@ extern vmCvar_t	    g_aftershockPhysic;
 
 extern vmCvar_t	    g_friendsThroughWalls;
 
+extern vmCvar_t	    g_allowKill;
+
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
 int		trap_Milliseconds( void );

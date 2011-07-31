@@ -1031,6 +1031,12 @@ Cmd_Kill_f
 =================
 */
 void Cmd_Kill_f( gentity_t *ent ) {
+    if( !g_allowKill.integer ){
+	trap_SendServerCommand( ent-g_entities,
+                                "print \"Selfkill not allowed on this server\n\"" );
+	return;
+    }
+    
     if ( (ent->client->sess.sessionTeam == TEAM_SPECTATOR) || ent->client->isEliminated ) {
         return;
     }

@@ -244,6 +244,8 @@ vmCvar_t     g_disableSpecs;
 vmCvar_t     g_aftershockPhysic;
 
 vmCvar_t     g_friendsThroughWalls;
+vmCvar_t     g_allowKill;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -487,6 +489,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_disableSpecs, "g_disableSpecs", "0", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_aftershockPhysic, "g_aftershockPhysic", "0", CVAR_SERVERINFO, 0, qfalse },
 	{ &g_friendsThroughWalls, "g_friendsThroughWalls", "0", CVAR_SERVERINFO, 0, qfalse },
+	
+	{ &g_allowKill, "g_allowKill", "1", CVAR_SERVERINFO, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing
