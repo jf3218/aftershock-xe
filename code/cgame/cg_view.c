@@ -448,14 +448,25 @@ static void CG_OffsetFirstPersonView( void ) {
 //======================================================================
 
 void CG_ZoomDown_f( void ) {
-    if ( cg.zoomed ) {
-        return;
+    if( cg_zoomToggle.integer ){
+	if( cg.zoomed )
+	    cg.zoomed = qfalse;
+	else
+	    cg.zoomed = qtrue;
+	cg.zoomTime = cg.time;
     }
-    cg.zoomed = qtrue;
-    cg.zoomTime = cg.time;
+    else{
+	if ( cg.zoomed ) {
+	    return;
+	}
+	cg.zoomed = qtrue;
+	cg.zoomTime = cg.time;
+    }
 }
 
 void CG_ZoomUp_f( void ) {
+    if( cg_zoomToggle.integer )
+	return;
     if ( !cg.zoomed ) {
         return;
     }
@@ -521,14 +532,21 @@ static int CG_CalcFov( void ) {
         }
 
         if ( cg.zoomed ) {
-            f = ( cg.time - cg.zoomTime ) / (float)ZOOM_TIME;
+	    if( cg_zoomScaling.value > 0 )
+		f = ( cg.time - cg.zoomTime ) / (float)(cg_zoomScaling.value * ZOOM_TIME);
+	    else
+		f = 2.0;
             if ( f > 1.0 ) {
                 fov_x = zoomFov;
             } else {
                 fov_x = fov_x + f * ( zoomFov - fov_x );
             }
         } else {
-            f = ( cg.time - cg.zoomTime ) / (float)ZOOM_TIME;
+	    if( cg_zoomScaling.value > 0 )
+		f = ( cg.time - cg.zoomTime ) / (float)(cg_zoomScaling.value * ZOOM_TIME);
+	    else
+		f = 2.0;
+          
             if ( f > 1.0 ) {
                 fov_x = fov_x;
             } else {
