@@ -1291,6 +1291,7 @@ static float CG_DrawTeamOverlay ( qboolean right, qboolean upper ) {
 	gitem_t	*item;
 	int count;
 	hudElements_t hudelement;
+	int 	hudoffset = 0;
 
 	/*if ( !cg_drawTeamOverlay.integer ) {
 		return y;
@@ -1336,10 +1337,17 @@ static float CG_DrawTeamOverlay ( qboolean right, qboolean upper ) {
 		lwidth = TEAM_OVERLAY_MAXLOCATION_WIDTH;
 
 	for ( i = 0; i < count; i++ ) {
-		hudelement = cgs.hud[HUD_TEAMOVERLAY1+i];
+		hudelement = cgs.hud[HUD_TEAMOVERLAY1+i-hudoffset];
 
 		if ( !hudelement.inuse )
 			continue;
+		
+		ci = cgs.clientinfo + sortedTeamPlayers[i];
+		
+		if( !cg_selfOnTeamOverlay.integer && sortedTeamPlayers[i] == 0 ){
+			hudoffset = 1;
+			continue;
+		}
 
 		if ( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 1 ) {
 			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
@@ -1370,9 +1378,6 @@ static float CG_DrawTeamOverlay ( qboolean right, qboolean upper ) {
 
 		CG_FillRect ( hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, color );
 
-
-
-		ci = cgs.clientinfo + sortedTeamPlayers[i];
 		if ( ci->infoValid && ci->team == cg.snap->ps.persistant[PERS_TEAM] ) {
 
 			color[0] = color[1] = color[2] = color[3] = 1.0;
