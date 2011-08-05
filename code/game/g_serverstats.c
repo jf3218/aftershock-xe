@@ -214,6 +214,8 @@ static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnec
 			writeToFile ( va ( "\t\t\t\t<reward name=\"Itemdenied\" value=\"%i\"/>\n", cl->rewards[REWARD_ITEMDENIED] ), f );
 		if ( cl->rewards[REWARD_SPAWNKILL] )
 			writeToFile ( va ( "\t\t\t\t<reward name=\"Spawnkill\" value=\"%i\"/>\n", cl->rewards[REWARD_SPAWNKILL] ), f );
+		if ( cl->rewards[REWARD_LGACCURACY] )
+			writeToFile ( va ( "\t\t\t\t<reward name=\"LightningAccuracy\" value=\"%i\"/>\n", cl->rewards[REWARD_LGACCURACY] ), f );
 		writeToFile ( "\t\t\t</rewards>\n", f );
 	}
 	writeToFile ( "\t\t</player>\n", f );
@@ -247,9 +249,9 @@ void G_WriteXMLStats ( void ) {
 	trap_FS_FOpenFile ( va ( "%s/%s.xml", g_statsPath.string,gameString ), &f, FS_WRITE );
 
 	writeToFile ( "<?xml version=\"1.0\"?><?xml-stylesheet type=\"text/xsl\"?>\n", &f );
-	writeToFile ( va ( "<match datetime=\"%i/%02i/%02i %02i:%02i:%02i\" duration=\"%i\" map=\"%s\" type=\"%s\" isTeamGame=\"%s\" instagib=\"%s\" rocketsOnly=\"%s\" reducedLightning=\"%s\" reducedRail=\"%s\" >\n\n",
+	writeToFile ( va ( "<match datetime=\"%i/%02i/%02i %02i:%02i:%02i\" duration=\"%i\" map=\"%s\" type=\"%s\" isTeamGame=\"%s\" instagib=\"%s\" rocketsOnly=\"%s\" reducedLightning=\"%s\" reducedRail=\"%s\" aftershockRevision=\"%s\">\n\n",
 	                   1900 + now.tm_year, 1 + now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec, level.time-level.startTime, mapname, gameShortNames[g_gametype.integer], boolToChar ( isTeamGame ),
-	                   boolToChar ( g_instantgib.integer == 1 ), boolToChar ( g_rockets.integer == 1 ), boolToChar( g_reduceLightningDamage.integer == 1 ), boolToChar( g_reduceRailDamage.integer == 1 ) ), &f );
+	                   boolToChar ( g_instantgib.integer == 1 ), boolToChar ( g_rockets.integer == 1 ), boolToChar( g_reduceLightningDamage.integer == 1 ), boolToChar( g_reduceRailDamage.integer == 1 ), "$Rev$" ), &f );
 
 	if ( isTeamGame ) {
 		writeToFile ( va ( "\t<team name=\"Blue\" score=\"%i\">\n", level.teamScores[TEAM_BLUE] ), &f );

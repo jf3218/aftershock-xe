@@ -253,15 +253,6 @@ static void CG_Obituary( entityState_t *ent ) {
                 cg.fragMessageTime = cg.time;
             }
         }
-        /*#ifdef MISSIONPACK
-        		if (!(cg_singlePlayerActive.integer && cg_cameraOrbit.integer)) {
-        			CG_CenterPrint( s, SCREEN_HEIGHT * 0.30, (int)(BIGCHAR_WIDTH * cg_fragmsgsize.value) );
-        		}
-        #else
-        		//CG_CenterPrint( s, SCREEN_HEIGHT * 0.30, (int)(BIGCHAR_WIDTH * cg_fragmsgsize.value) );
-        #endif*/
-
-        // print the text message as well
     }
 
     // check for double client messages

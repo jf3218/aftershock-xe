@@ -1572,9 +1572,6 @@ extern  vmCvar_t                cg_vote_custom_commands;
 
 extern  vmCvar_t                cg_autovertex;
 
-//Cvar to adjust the size of the fragmessage
-extern	vmCvar_t		cg_fragmsgsize;
-
 extern	vmCvar_t		cg_crosshairPulse;
 extern	vmCvar_t		cg_differentCrosshairs;
 extern	vmCvar_t		cg_ch1;
