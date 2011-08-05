@@ -393,6 +393,15 @@ Returns qfalse if the client is dropped
 =================
 */
 qboolean ClientInactivityTimer( gclient_t *client ) {
+  
+	if ( client->pers.cmd.forwardmove || 
+		client->pers.cmd.rightmove || 
+		client->pers.cmd.upmove ||
+		(client->pers.cmd.buttons & BUTTON_ATTACK) ) {
+		client->lastActive = level.time;
+	}
+  
+  
 	if ( ! g_inactivity.integer ) {
 		// give everyone some time, so if the operator sets g_inactivity during
 		// gameplay, everyone isn't kicked

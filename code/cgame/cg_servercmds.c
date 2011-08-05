@@ -931,6 +931,8 @@ static void CG_ParseRewards ( void ) {
         pushReward ( cgs.media.deniedSound, cgs.media.medalItemdenied, rewardCount );
     } else if ( reward == REWARD_SPAWNKILL ) {
         pushReward ( cgs.media.spawnkillSound, cgs.media.medalSpawnkill, rewardCount );
+    } else if ( reward == REWARD_LGACCURACY ) {
+        pushReward ( cgs.media.lgaccuracySound , cgs.media.medalLgaccuracy, rewardCount );
     }
 }
 
@@ -1923,6 +1925,11 @@ static void CG_ServerCommand ( void ) {
 
     if ( !cmd[0] ) {
         // server claimed the command
+        return;
+    }
+    
+    if ( !strcmp ( cmd, "loadModel" ) ) {
+        CG_ForceModelChange();
         return;
     }
 

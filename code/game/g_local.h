@@ -485,6 +485,7 @@ struct gclient_s {
 	
 	qboolean 		mute[MAX_CLIENTS];
 	qboolean		lastHits[MAX_HITS];
+	int 			lastActive;
 };
 
 

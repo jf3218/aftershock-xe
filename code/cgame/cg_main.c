@@ -1028,6 +1028,7 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.airrocketSound = trap_S_RegisterSound( "sound/feedback/accuracy.wav", qtrue );
 	cgs.media.airgrenadeSound = trap_S_RegisterSound( "sound/feedback/voc_holyshit.wav", qtrue );
 	cgs.media.spawnkillSound = trap_S_RegisterSound( "sound/feedback/impressive.wav", qtrue );
+	cgs.media.lgaccuracySound = trap_S_RegisterSound( "sound/feedback/accuracy.wav", qtrue );
 	
 
 #ifdef MISSIONPACK
@@ -1438,6 +1439,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.medalCapture = trap_R_RegisterShaderNoMip( "medal_capture" );
 	cgs.media.medalRocketrail = trap_R_RegisterShaderNoMip( "medal_rocketrail" );
 	cgs.media.medalSpawnkill = trap_R_RegisterShaderNoMip( "medal_spawnkill" );
+	cgs.media.medalLgaccuracy = trap_R_RegisterShaderNoMip( "medal_lgaccuracy" );
 	
 	cgs.media.accBackground = trap_R_RegisterShaderNoMip( "acc_background" );
 	

@@ -1409,6 +1409,9 @@ void SetTeam( gentity_t *ent, char *s ) {
     G_DemoCommand( DC_CLIENT_SET, va( "%d %s", (int)(ent - g_entities), buf ) );*/
 
     ClientBegin( clientNum );
+    
+    trap_SendServerCommand( ent->client->ps.clientNum,
+                                    "loadModel" );
 }
 
 /*

@@ -1551,6 +1551,8 @@ void CG_LoadDeferredPlayers( void ) {
 //			break;
 		}
 	}
+	
+	CG_ForceModelChange();
 }
 
 /*

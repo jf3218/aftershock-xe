@@ -890,7 +890,8 @@ void Weapon_LightningFire( gentity_t *ent ) {
 			tent->s.eventParm = DirToByte( tr.plane.normal );
 			tent->s.weapon = ent->s.weapon;
 			
-			G_AddHitHistory( ent->client, qtrue );
+			if( level.time - traceEnt->client->lastActive < 500 )
+				G_AddHitHistory( ent->client, qtrue );
 			
 			if( LogAccuracyHit( traceEnt, ent ) ) {
 				ent->client->accuracy_hits++;
@@ -906,7 +907,7 @@ void Weapon_LightningFire( gentity_t *ent ) {
 		
 		if( G_LastHitStreak(ent->client) == 20 ){
 			  ent->client->rewards[REWARD_LGACCURACY]++;
-			  RewardMessage( ent, REWARD_AIRGRENADE, ent->client->rewards[REWARD_LGACCURACY] );
+			  RewardMessage( ent, REWARD_LGACCURACY, ent->client->rewards[REWARD_LGACCURACY] );
 			  G_ClearHitHistory( ent->client );
 		}
 

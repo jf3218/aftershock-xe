@@ -1072,6 +1072,7 @@ typedef struct {
 	qhandle_t	medalCapture;
 	qhandle_t	medalRocketrail;
 	qhandle_t 	medalSpawnkill;
+	qhandle_t	medalLgaccuracy;
 
 	// sounds
 	sfxHandle_t	quadSound;
@@ -1152,6 +1153,7 @@ typedef struct {
 	sfxHandle_t airrocketSound;
 	sfxHandle_t airgrenadeSound;
 	sfxHandle_t spawnkillSound;
+	sfxHandle_t lgaccuracySound;
 
 	sfxHandle_t firstImpressiveSound;
 	sfxHandle_t firstExcellentSound;

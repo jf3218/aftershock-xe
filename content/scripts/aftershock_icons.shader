@@ -224,6 +224,15 @@ medal_spawnkill
 	}
 }
 
+medal_lgaccuracy
+{
+	nopicmip
+	{
+		clampmap menu/medals/medal_lgaccuracy.tga
+		blendFunc blend
+	}
+}
+
 icons/iconw_gauntlet
 {
 	nopicmip
