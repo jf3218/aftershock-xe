@@ -251,7 +251,7 @@ void G_WriteXMLStats ( void ) {
 	writeToFile ( "<?xml version=\"1.0\"?><?xml-stylesheet type=\"text/xsl\"?>\n", &f );
 	writeToFile ( va ( "<match datetime=\"%i/%02i/%02i %02i:%02i:%02i\" duration=\"%i\" map=\"%s\" type=\"%s\" isTeamGame=\"%s\" instagib=\"%s\" rocketsOnly=\"%s\" reducedLightning=\"%s\" reducedRail=\"%s\" aftershockRevision=\"%s\">\n\n",
 	                   1900 + now.tm_year, 1 + now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec, level.time-level.startTime, mapname, gameShortNames[g_gametype.integer], boolToChar ( isTeamGame ),
-	                   boolToChar ( g_instantgib.integer == 1 ), boolToChar ( g_rockets.integer == 1 ), boolToChar( g_reduceLightningDamage.integer == 1 ), boolToChar( g_reduceRailDamage.integer == 1 ), "$Rev$" ), &f );
+	                   boolToChar ( g_instantgib.integer == 1 ), boolToChar ( g_rockets.integer == 1 ), boolToChar( g_reduceLightningDamage.integer == 1 ), boolToChar( g_reduceRailDamage.integer == 1 ), "168" ), &f );
 
 	if ( isTeamGame ) {
 		writeToFile ( va ( "\t<team name=\"Blue\" score=\"%i\">\n", level.teamScores[TEAM_BLUE] ), &f );

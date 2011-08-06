@@ -1519,6 +1519,7 @@ void CG_NewClientInfo( int clientNum ) {
 
 	// replace whatever was there with the new one
 	newInfo.infoValid = qtrue;
+	newInfo.isDead = ci->isDead;
 	*ci = newInfo;
 	
 }

@@ -857,6 +857,7 @@ void Weapon_LightningFire( gentity_t *ent ) {
 			VectorCopy( end, tent->s.origin2 );
 		}
 		if ( tr.entityNum == ENTITYNUM_NONE ) {
+			G_AddHitHistory( ent->client, qfalse );
 			return;
 		}
 

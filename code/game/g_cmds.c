@@ -238,6 +238,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
                             );
             }
 	}
+	
         j = strlen(entry);
         if (stringlength + j > 1024 ) {
             G_Printf("Too many clients connected for scoreboard info!\n");
@@ -1582,7 +1583,7 @@ void Cmd_FollowCycle_f( gentity_t *ent ) {
         dir = 1;
     }
 
-    G_Printf("%s, %i, %i\n", ent->client->pers.netname, ent->client->sess.sessionTeam, ent->client->sess.spectatorState );
+    //G_Printf("%s, %i, %i\n", ent->client->pers.netname, ent->client->sess.sessionTeam, ent->client->sess.spectatorState );
 
     trap_Argv( 0, args, sizeof( args ) );
     if ( Q_stricmp( args, "followprev" ) == 0 ) {
