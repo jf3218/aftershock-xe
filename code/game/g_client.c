@@ -2511,6 +2511,8 @@ else
 	// set default animations
 	client->ps.torsoAnim = TORSO_STAND;
 	client->ps.legsAnim = LEGS_IDLE;
+	
+	client->quadKills = 0;
 
 	if ( level.intermissiontime ) {
 		MoveClientToIntermission( ent );

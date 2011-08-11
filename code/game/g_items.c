@@ -56,6 +56,12 @@ int Pickup_Powerup( gentity_t *ent, gentity_t *other ) {
 		// count in sync
 		other->client->ps.powerups[ent->item->giTag] = 
 			level.time - ( level.time % 1000 );
+			
+		if( ent->item->giTag == PW_QUAD ){
+			other->client->quadKills = 0;
+			trap_SendServerCommand( other-g_entities, va( "quadKill %i", other->client->quadKills ) );
+		}
+	
 	}
 
 	if ( ent->count ) {

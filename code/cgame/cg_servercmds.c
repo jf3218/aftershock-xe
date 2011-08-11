@@ -1073,7 +1073,10 @@ void CG_ParseServerinfo ( void ) {
 
     cgs.blueLocked = atoi ( Info_ValueForKey ( info, "g_blueLocked" ) );
     trap_Cvar_Set ( "g_blueLocked", va ( "%i", cgs.blueLocked ) );
-
+    
+    cgs.fadeToBlack = atoi ( Info_ValueForKey ( info, "g_fadeToBlack" ) );
+    trap_Cvar_Set ( "g_fadeToBlack", va ( "%i", cgs.fadeToBlack ) );
+    
 }
 
 /*
@@ -1930,6 +1933,11 @@ static void CG_ServerCommand ( void ) {
     
     if ( !strcmp ( cmd, "loadModel" ) ) {
         CG_ForceModelChange();
+        return;
+    }
+    
+    if ( !strcmp ( cmd, "quadKill" ) ) {
+        cg.quadKills = atoi( CG_Argv(1) );
         return;
     }
 

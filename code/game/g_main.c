@@ -245,6 +245,7 @@ vmCvar_t     g_aftershockPhysic;
 
 vmCvar_t     g_friendsThroughWalls;
 vmCvar_t     g_allowKill;
+vmCvar_t     g_fadeToBlack;
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -491,6 +492,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_friendsThroughWalls, "g_friendsThroughWalls", "0", CVAR_SERVERINFO, 0, qfalse },
 	
 	{ &g_allowKill, "g_allowKill", "1", CVAR_SERVERINFO, 0, qfalse },
+	{ &g_fadeToBlack, "g_fadeToBlack", "0", CVAR_SERVERINFO, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing

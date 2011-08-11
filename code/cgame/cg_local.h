@@ -858,6 +858,7 @@ typedef struct {
 	char rankMessage[512];
 	int  rankMessageTime;
 	int  deathtime;
+	int  quadKills;
 
 } cg_t;
 
@@ -1433,6 +1434,7 @@ typedef struct {
 	int 		redLocked;
 	int 		blueLocked;
 	int 		teamLock;
+	int 		fadeToBlack;
 } cgs_t;
 
 //==============================================================================

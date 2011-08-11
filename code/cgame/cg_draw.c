@@ -1816,7 +1816,11 @@ static void CG_DrawPowerups ( void ) {
 			if ( i < 4 ) {
 				CG_DrawFieldHud ( sortedTime[ i ] / 1000, HUD_PU1+i );
 				CG_DrawHudIcon ( HUD_PU1ICON + i, qfalse, trap_R_RegisterShader ( item->icon ) );
+				if( sorted[i] == PW_QUAD ){
+					CG_DrawFieldFontsize(cgs.hud[HUD_PU1ICON + i].xpos, cgs.hud[HUD_PU1ICON + i].ypos, 2, cg.quadKills, 10, 10);
+				}
 			}
+			
 		}
 	}
 	trap_R_SetColor ( NULL );

@@ -486,6 +486,7 @@ struct gclient_s {
 	qboolean 		mute[MAX_CLIENTS];
 	qboolean		lastHits[MAX_HITS];
 	int 			lastActive;
+	int 			quadKills;
 };
 
 
@@ -1311,6 +1312,7 @@ extern vmCvar_t	    g_aftershockPhysic;
 extern vmCvar_t	    g_friendsThroughWalls;
 
 extern vmCvar_t	    g_allowKill;
+extern vmCvar_t     g_fadeToBlack;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
