@@ -1435,6 +1435,8 @@ typedef struct {
 	int 		blueLocked;
 	int 		teamLock;
 	int 		fadeToBlack;
+	
+	int 		fovs[ WP_NUM_WEAPONS ];
 } cgs_t;
 
 //==============================================================================

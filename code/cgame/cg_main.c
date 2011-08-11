@@ -38,6 +38,8 @@ int forceTeamModelsModificationCount = -1;
 
 int hudModificationCount = -1;
 
+int fovModificationCount = -1;
+
 
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
 void CG_Shutdown( void );
@@ -759,12 +761,17 @@ void CG_UpdateCvars( void ) {
 	}
 	
 	if( hudModificationCount != cg_hud.modificationCount ){
-		for( i = 0; i < HUD_MAX ; i++ ){
+		//for( i = 0; i < HUD_MAX ; i++ ){
 			
-		}
+		//}
 		hudModificationCount = cg_hud.modificationCount;
 		CG_ClearHud();
 		CG_LoadHudFile( cg_hud.string );
+	}
+	
+	if( fovModificationCount != cg_fov.modificationCount ){
+		fovModificationCount = cg_fov.modificationCount;
+		CG_ParseFov();
 	}
 }
 
@@ -2485,6 +2492,7 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	cgs.respawnTimerNumber = 0;
 	
 	CG_LoadHudFile(cg_hud.string);
+	CG_ParseFov();
 }
 
 /*
@@ -2573,6 +2581,39 @@ void CG_oaUnofficialCvars( void ) {
 	}
 
         trap_Cvar_Set("con_notifytime", "-1");
+}
+
+void CG_ParseFov( void ) {
+	char fov[256];
+	char *buffer;
+	int counter = WP_GAUNTLET, counter2=0;
+	int i;
+	
+	strcpy(fov, cg_fov.string);
+	for ( i = 0; i <= strlen(fov); i++ ){
+		if( fov[i] != '/' && i != strlen(fov)){
+		  buffer[counter2] = fov[i];
+		  counter2++;
+		}
+		else {
+		  buffer[counter2]='\0';
+		  cgs.fovs[counter] = atoi(buffer);
+		  counter2=0;
+		  buffer[counter2] = '\0';
+		  
+		  counter++;
+		  if( counter == WP_NUM_WEAPONS )
+			    return;
+		}
+	}
+	for( i = counter; i < WP_NUM_WEAPONS; i++ ){
+		cgs.fovs[i] = cgs.fovs[counter-1];
+	}
+	cgs.fovs[WP_NONE] = cgs.fovs[WP_GAUNTLET];
+	
+	//for( i = WP_GAUNTLET; i < WP_NUM_WEAPONS; i++ ){
+	//	CG_Printf("%i/", cgs.fovs[i]);
+	//}
 }
 
 	

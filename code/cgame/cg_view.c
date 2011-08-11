@@ -474,7 +474,6 @@ void CG_ZoomUp_f( void ) {
     cg.zoomTime = cg.time;
 }
 
-
 /*
 ====================
 CG_CalcFov
@@ -504,14 +503,14 @@ static int CG_CalcFov( void ) {
             // dmflag to prevent wide fov for all clients
             fov_x = 90;
         } else {
-            fov_x = cg_fov.value;
+            fov_x = cgs.fovs[cg.predictedPlayerState.weapon];//cg_fov.value;
             if ( fov_x < 1 ) {
                 fov_x = 1;
             } else if ( fov_x > 160 ) {
                 fov_x = 160;
             }
-            if ( (cgs.fairflags & FF_LOCK_CVARS_BASIC) && fov_x>140 )
-                fov_x = 140;
+            /*if ( (cgs.fairflags & FF_LOCK_CVARS_BASIC) && fov_x>140 )
+                fov_x = 140;*/
 
         }
 
@@ -527,8 +526,8 @@ static int CG_CalcFov( void ) {
                 zoomFov = 160;
             }
 
-            if ( (cgs.fairflags & FF_LOCK_CVARS_BASIC) && zoomFov>140 )
-                zoomFov = 140;
+            /*if ( (cgs.fairflags & FF_LOCK_CVARS_BASIC) && zoomFov>140 )
+                zoomFov = 140;*/
         }
 
         if ( cg.zoomed ) {
