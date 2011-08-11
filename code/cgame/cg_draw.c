@@ -3404,8 +3404,8 @@ static void CG_DrawCrosshair ( void ) {
 		color[2]=cg_crosshairColorBlue.value;
 		color[3]=1.0f;
 	}
-	//TODO: there must be a better solution, maybe only two cvars with 9 numbers?
-	if ( cg_differentCrosshairs.integer == 1 ) {
+	//TODO: there must be a better solution, maybe only two cvars with 9 numbers? DONE
+	/*if ( cg_differentCrosshairs.integer == 1 ) {
 		switch ( currentWeapon ) {
 		case 1:
 			w = h = cg_ch1size.value;
@@ -3447,7 +3447,10 @@ static void CG_DrawCrosshair ( void ) {
 	} else {
 		w = h = cg_crosshairSize.value;
 		ca = cg_drawCrosshair.integer;
-	}
+	}*/
+	
+	ca = cgs.crosshair[currentWeapon];
+	w = h =cgs.crosshairSize[currentWeapon];
 
 	if ( cgs.screenXScale > cgs.screenYScale ) {
 		w = w * cgs.screenYScale / cgs.screenXScale;

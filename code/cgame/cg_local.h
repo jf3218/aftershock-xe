@@ -1437,6 +1437,9 @@ typedef struct {
 	int 		fadeToBlack;
 	
 	int 		fovs[ WP_NUM_WEAPONS ];
+	int 		zoomfovs[ WP_NUM_WEAPONS ];
+	int 		crosshair[ WP_NUM_WEAPONS ];
+	int 		crosshairSize[ WP_NUM_WEAPONS ];
 } cgs_t;
 
 //==============================================================================
@@ -1577,7 +1580,7 @@ extern  vmCvar_t                cg_vote_custom_commands;
 extern  vmCvar_t                cg_autovertex;
 
 extern	vmCvar_t		cg_crosshairPulse;
-extern	vmCvar_t		cg_differentCrosshairs;
+/*extern	vmCvar_t		cg_differentCrosshairs;
 extern	vmCvar_t		cg_ch1;
 extern	vmCvar_t		cg_ch1size;
 extern	vmCvar_t		cg_ch2;
@@ -1595,7 +1598,7 @@ extern	vmCvar_t		cg_ch7size;
 extern	vmCvar_t		cg_ch8;
 extern	vmCvar_t		cg_ch8size;
 extern	vmCvar_t		cg_ch9;
-extern	vmCvar_t		cg_ch9size;
+extern	vmCvar_t		cg_ch9size;*/
 
 extern	vmCvar_t                cg_crosshairColorRed;
 extern	vmCvar_t                cg_crosshairColorGreen;

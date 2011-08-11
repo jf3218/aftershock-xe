@@ -519,7 +519,7 @@ static int CG_CalcFov( void ) {
             zoomFov = 22.5;
         } else {
             // account for zooms
-            zoomFov = cg_zoomFov.value;
+            zoomFov = cgs.zoomfovs[cg.predictedPlayerState.weapon];//cg_zoomFov.value;
             if ( zoomFov < 1 ) {
                 zoomFov = 1;
             } else if ( zoomFov > 160 ) {

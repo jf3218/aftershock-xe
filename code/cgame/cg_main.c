@@ -39,6 +39,10 @@ int forceTeamModelsModificationCount = -1;
 int hudModificationCount = -1;
 
 int fovModificationCount = -1;
+int zoomfovModificationCount = -1;
+
+int crosshairModificationCount = -1;
+int crosshairsizeModificationCount = -1;
 
 
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
@@ -233,8 +237,8 @@ vmCvar_t        cg_vote_custom_commands;
 vmCvar_t                cg_autovertex;
 
 vmCvar_t	cg_crosshairPulse;
-//TODO: merge that to less cvars
-vmCvar_t	cg_differentCrosshairs;
+//TODO: merge that to less cvars DONE
+/*vmCvar_t	cg_differentCrosshairs;
 vmCvar_t	cg_ch1;
 vmCvar_t	cg_ch1size;
 vmCvar_t	cg_ch2;
@@ -252,7 +256,7 @@ vmCvar_t	cg_ch7size;
 vmCvar_t	cg_ch8;
 vmCvar_t	cg_ch8size;
 vmCvar_t	cg_ch9;
-vmCvar_t	cg_ch9size;
+vmCvar_t	cg_ch9size;*/
 
 vmCvar_t	cg_crosshairColorRed;
 vmCvar_t	cg_crosshairColorGreen;
@@ -523,7 +527,7 @@ static cvarTable_t cvarTable[] = { // bk001129
         { &cg_music, "cg_music", "", CVAR_ARCHIVE},
 //	{ &cg_pmove_fixed, "cg_pmove_fixed", "0", CVAR_USERINFO | CVAR_ARCHIVE }
 	{ &cg_crosshairPulse, "cg_crosshairPulse", "1", CVAR_ARCHIVE},
-	{ &cg_differentCrosshairs, "cg_differentCrosshairs", "0", CVAR_ARCHIVE},
+	/*{ &cg_differentCrosshairs, "cg_differentCrosshairs", "0", CVAR_ARCHIVE},
 	{ &cg_ch1, "cg_ch1", "1", CVAR_ARCHIVE},
 	{ &cg_ch1size, "cg_ch1size", "24", CVAR_ARCHIVE},
 	{ &cg_ch2, "cg_ch2", "1", CVAR_ARCHIVE},
@@ -541,7 +545,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_ch8, "cg_ch8", "1", CVAR_ARCHIVE},
 	{ &cg_ch8size, "cg_ch8size", "24", CVAR_ARCHIVE},
 	{ &cg_ch9, "cg_ch9", "1", CVAR_ARCHIVE},
-	{ &cg_ch9size, "cg_ch9size", "24", CVAR_ARCHIVE},
+	{ &cg_ch9size, "cg_ch9size", "24", CVAR_ARCHIVE},*/
 	{ &cg_crosshairColorRed, "cg_crosshairColorRed", "1.0", CVAR_ARCHIVE},
         { &cg_crosshairColorGreen, "cg_crosshairColorGreen", "1.0", CVAR_ARCHIVE},
         { &cg_crosshairColorBlue, "cg_crosshairColorBlue", "1.0", CVAR_ARCHIVE},
@@ -772,6 +776,21 @@ void CG_UpdateCvars( void ) {
 	if( fovModificationCount != cg_fov.modificationCount ){
 		fovModificationCount = cg_fov.modificationCount;
 		CG_ParseFov();
+	}
+	
+	if( zoomfovModificationCount != cg_zoomFov.modificationCount ){
+		zoomfovModificationCount = cg_zoomFov.modificationCount;
+		CG_ParseZoomFov();
+	}
+	
+	if( crosshairModificationCount != cg_drawCrosshair.modificationCount ){
+		crosshairModificationCount = cg_drawCrosshair.modificationCount;
+		CG_ParseCrosshair();
+	}
+	
+	if( crosshairsizeModificationCount != cg_crosshairSize.modificationCount ){
+		crosshairsizeModificationCount = cg_crosshairSize.modificationCount;
+		CG_ParseCrosshairSize();
 	}
 }
 
@@ -2493,6 +2512,9 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	
 	CG_LoadHudFile(cg_hud.string);
 	CG_ParseFov();
+	CG_ParseZoomFov();
+	CG_ParseCrosshair();
+	CG_ParseCrosshairSize();
 }
 
 /*
@@ -2610,11 +2632,96 @@ void CG_ParseFov( void ) {
 		cgs.fovs[i] = cgs.fovs[counter-1];
 	}
 	cgs.fovs[WP_NONE] = cgs.fovs[WP_GAUNTLET];
-	
-	//for( i = WP_GAUNTLET; i < WP_NUM_WEAPONS; i++ ){
-	//	CG_Printf("%i/", cgs.fovs[i]);
-	//}
 }
+
+void CG_ParseZoomFov( void ) {
+	char fov[256];
+	char *buffer;
+	int counter = WP_GAUNTLET, counter2=0;
+	int i;
+	
+	strcpy(fov, cg_zoomFov.string);
+	for ( i = 0; i <= strlen(fov); i++ ){
+		if( fov[i] != '/' && i != strlen(fov)){
+		  buffer[counter2] = fov[i];
+		  counter2++;
+		}
+		else {
+		  buffer[counter2]='\0';
+		  cgs.zoomfovs[counter] = atoi(buffer);
+		  counter2=0;
+		  buffer[counter2] = '\0';
+		  
+		  counter++;
+		  if( counter == WP_NUM_WEAPONS )
+			    return;
+		}
+	}
+	for( i = counter; i < WP_NUM_WEAPONS; i++ ){
+		cgs.zoomfovs[i] = cgs.zoomfovs[counter-1];
+	}
+	cgs.zoomfovs[WP_NONE] = cgs.zoomfovs[WP_GAUNTLET];
+}
+
+void CG_ParseCrosshair( void ) {
+	char crosshair[256];
+	char *buffer;
+	int counter = WP_GAUNTLET, counter2=0;
+	int i;
+	
+	strcpy(crosshair, cg_drawCrosshair.string);
+	for ( i = 0; i <= strlen(crosshair); i++ ){
+		if( crosshair[i] != '/' && i != strlen(crosshair)){
+		  buffer[counter2] = crosshair[i];
+		  counter2++;
+		}
+		else {
+		  buffer[counter2]='\0';
+		  cgs.crosshair[counter] = atoi(buffer);
+		  counter2=0;
+		  buffer[counter2] = '\0';
+		  
+		  counter++;
+		  if( counter == WP_NUM_WEAPONS )
+			    return;
+		}
+	}
+	for( i = counter; i < WP_NUM_WEAPONS; i++ ){
+		cgs.crosshair[i] = cgs.crosshair[counter-1];
+	}
+	cgs.crosshair[WP_NONE] = cgs.crosshair[WP_GAUNTLET];
+}
+
+void CG_ParseCrosshairSize( void ) {
+	char crosshair[256];
+	char *buffer;
+	int counter = WP_GAUNTLET, counter2=0;
+	int i;
+	
+	strcpy(crosshair, cg_crosshairSize.string);
+	for ( i = 0; i <= strlen(crosshair); i++ ){
+		if( crosshair[i] != '/' && i != strlen(crosshair)){
+		  buffer[counter2] = crosshair[i];
+		  counter2++;
+		}
+		else {
+		  buffer[counter2]='\0';
+		  cgs.crosshairSize[counter] = atoi(buffer);
+		  counter2=0;
+		  buffer[counter2] = '\0';
+		  
+		  counter++;
+		  if( counter == WP_NUM_WEAPONS )
+			    return;
+		}
+	}
+	for( i = counter; i < WP_NUM_WEAPONS; i++ ){
+		cgs.crosshairSize[i] = cgs.crosshairSize[counter-1];
+	}
+	cgs.crosshairSize[WP_NONE] = cgs.crosshairSize[WP_GAUNTLET];
+}
+
+
 
 	
 
