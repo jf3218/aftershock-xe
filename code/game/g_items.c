@@ -791,6 +791,8 @@ gentity_t *Drop_Item_Armor( gentity_t *ent, gitem_t *item, float angle ) {
 	
 	dropTime = level.time;
 	
+	ent->client->lastDrop = item->shortPickup_name;
+	
 	return LaunchItemTime( item, position, velocity, dropTime );
 }
 
@@ -821,6 +823,8 @@ gentity_t *Drop_Item_Health( gentity_t *ent, gitem_t *item, float angle ) {
 	
 	dropTime = level.time;
 	
+	ent->client->lastDrop = item->shortPickup_name;
+	
 	return LaunchItemTime( item, position, velocity, dropTime );
 }
 
@@ -849,6 +853,8 @@ gentity_t *Drop_Item_Ammo( gentity_t *ent, gitem_t *item, float angle ) {
 	ent->client->ps.ammo[item->giTag/*ent->s.weapon*/] -= item->quantity;
 	
 	dropTime = level.time;
+	
+	ent->client->lastDrop = item->shortPickup_name;
 	
 	return LaunchItemTime( item, position, velocity, dropTime );
 }
@@ -881,6 +887,8 @@ gentity_t *Drop_Item_Weapon( gentity_t *ent, gitem_t *item, float angle ) {
 	
 	dropTime = level.time;
 	
+	ent->client->lastDrop = item->shortPickup_name;
+	
 	return LaunchItemWeapon( item, position, velocity, ammoCount, dropTime );
 }
 
@@ -902,6 +910,8 @@ gentity_t *Drop_Item_Flag( gentity_t *ent, gitem_t *item, float angle ) {
 	velocity[2] += 200 + crandom() * 50;
 	
 	item->lastDrop = level.time;
+	
+	ent->client->lastDrop = item->shortPickup_name;
 	
 	
 	return LaunchItem( item, position, velocity );

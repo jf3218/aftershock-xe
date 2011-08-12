@@ -1788,6 +1788,11 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
                     else
                         Com_sprintf( text, sizeof(text), text, "");
                 }
+                else if ( text[counter + 1] == 'd' ) {
+                    text[counter] = '%';
+                    text[counter + 1] = 's';
+                    Com_sprintf( text, sizeof(text), text, ent->client->lastDrop );
+                }
                 else if ( text[counter + 1] == 'D' ) {
                     text[counter] = '%';
                     text[counter + 1] = 's';

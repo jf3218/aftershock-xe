@@ -487,6 +487,7 @@ struct gclient_s {
 	qboolean		lastHits[MAX_HITS];
 	int 			lastActive;
 	int 			quadKills;
+	char			*lastDrop;
 };
 
 
