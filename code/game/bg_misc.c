@@ -1320,6 +1320,25 @@ gitem_t	*BG_FindItemForWeapon( weapon_t weapon ) {
 
 /*
 ===============
+BG_FindAmmoForWeapon
+
+===============
+*/
+gitem_t	*BG_FindAmmoForWeapon( weapon_t weapon ) {
+	gitem_t	*it;
+	
+	for ( it = bg_itemlist + 1 ; it->classname ; it++) {
+		if ( it->giType == IT_AMMO && it->giTag == weapon ) {
+			return it;
+		}
+	}
+
+	Com_Error( ERR_DROP, "Couldn't find item for weapon %i", weapon);
+	return NULL;
+}
+
+/*
+===============
 BG_FindItem
 
 ===============

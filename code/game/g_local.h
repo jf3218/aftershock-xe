@@ -719,6 +719,7 @@ void PrecacheItem (gitem_t *it);
 gentity_t *Drop_Item( gentity_t *ent, gitem_t *item, float angle );
 gentity_t *LaunchItem( gitem_t *item, vec3_t origin, vec3_t velocity );
 gentity_t *LaunchItemWeapon( gitem_t *item, vec3_t origin, vec3_t velocity, int ammoCount, int dropTime );
+gentity_t *Drop_Item_Ammo( gentity_t *ent, gitem_t *item, float angle );
 gentity_t *Drop_Item_Weapon( gentity_t *ent, gitem_t *item, float angle );
 gentity_t *Drop_Item_Flag( gentity_t *ent, gitem_t *item, float angle );
 

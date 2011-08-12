@@ -3366,24 +3366,56 @@ void Cmd_GetMappage_f( gentity_t *ent ) {
     trap_SendServerCommand( ent-g_entities, string );
 }
 
+void Cmd_DropAmmo_f( gentity_t *ent ) {
+    gitem_t		*item;
+    gentity_t	*out;
+    int			weapon;
+    char arg1[128];
+
+    if ( !( g_itemDrop.integer & 4 ) )
+        return;
+
+    if ( ent->client->ps.pm_type == PM_DEAD )
+        return;
+    
+    if( trap_Argc() > 1 ){
+	trap_Argv( 1, arg1, sizeof( arg1 ) );
+	weapon = atoi(arg1);     
+    } else
+	weapon = ent->s.weapon;
+  
+    if ( weapon <= WP_GAUNTLET || weapon >= WP_NUM_WEAPONS )
+        return;
+    
+    item = BG_FindAmmoForWeapon( weapon );
+    if ( ( ent->client->ps.stats[STAT_WEAPONS] & ( 1 << item->giTag ) ) ) {
+        out = Drop_Item_Ammo( ent, item, 0 );
+    }
+}
+
 void Cmd_DropWeapon_f( gentity_t *ent ) {
     gitem_t		*item;
     gentity_t	*out;
     int			weapon;
+    char arg1[128];
 
     if ( !( g_itemDrop.integer & 2 ) )
         return;
 
     if ( ent->client->ps.pm_type == PM_DEAD )
         return;
-
-    weapon = ent->s.weapon;
-
-    if ( weapon <= WP_NONE || weapon >= WP_NUM_WEAPONS )
+    
+    if( trap_Argc() > 1 ){
+	trap_Argv( 1, arg1, sizeof( arg1 ) );
+	weapon = atoi(arg1);     
+    } else
+	weapon = ent->s.weapon;
+  
+    if ( weapon <= WP_GAUNTLET || weapon >= WP_NUM_WEAPONS )
         return;
 
     item = BG_FindItemForWeapon( weapon );
-    if ( ( ent->client->ps.stats[STAT_WEAPONS] & ( 1 << item->giTag ) ) && ( weapon != WP_GAUNTLET ) ) {
+    if ( ( ent->client->ps.stats[STAT_WEAPONS] & ( 1 << item->giTag ) ) ) {
         out = Drop_Item_Weapon( ent, item, 0 );
     }
 }
@@ -3608,6 +3640,7 @@ commands_t cmds[ ] =
     { "gc", 0, Cmd_GameCommand_f },
     { "timeout", 0, Cmd_Timeout_f },
     { "ready", 0, Cmd_Ready_f },
+    { "dropammo", 0, Cmd_DropAmmo_f },
     { "dropweapon", 0, Cmd_DropWeapon_f },
     { "dropflag", 0, Cmd_DropFlag_f },
     { "drop", 0, Cmd_Drop_f },
