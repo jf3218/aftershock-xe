@@ -765,6 +765,65 @@ gentity_t *Drop_Item( gentity_t *ent, gitem_t *item, float angle ) {
 	return LaunchItem( item, ent->s.pos.trBase, velocity );
 }
 
+gentity_t *Drop_Item_Armor( gentity_t *ent, gitem_t *item, float angle ) {
+	vec3_t	velocity;
+	vec3_t	angles;
+	vec3_t position;
+	int 	ammoCount;
+	int	dropTime;
+
+	VectorCopy( ent->s.apos.trBase, angles );
+	angles[YAW] += angle;
+	angles[PITCH] = 0;	// always forward
+
+	AngleVectors( angles, velocity, NULL, NULL );
+	VectorScale( velocity, 0, velocity );
+	VectorAdd( velocity, ent->s.pos.trBase, position );
+	
+	AngleVectors( angles, velocity, NULL, NULL );
+	VectorScale( velocity, 150, velocity );
+	velocity[2] += 200 + crandom() * 50;
+	
+	if( ent->client->ps.stats[STAT_ARMOR] < item->quantity )
+	    return;
+	
+	ent->client->ps.stats[STAT_ARMOR] -= item->quantity;
+	
+	dropTime = level.time;
+	
+	return LaunchItemTime( item, position, velocity, dropTime );
+}
+
+gentity_t *Drop_Item_Health( gentity_t *ent, gitem_t *item, float angle ) {
+	vec3_t	velocity;
+	vec3_t	angles;
+	vec3_t position;
+	int 	ammoCount;
+	int	dropTime;
+
+	VectorCopy( ent->s.apos.trBase, angles );
+	angles[YAW] += angle;
+	angles[PITCH] = 0;	// always forward
+
+	AngleVectors( angles, velocity, NULL, NULL );
+	VectorScale( velocity, 0, velocity );
+	VectorAdd( velocity, ent->s.pos.trBase, position );
+	
+	AngleVectors( angles, velocity, NULL, NULL );
+	VectorScale( velocity, 150, velocity );
+	velocity[2] += 200 + crandom() * 50;
+	
+	if( ent->client->ps.stats[STAT_HEALTH] <= item->quantity || ent->health <= item->quantity)
+	    return;
+	
+	ent->client->ps.stats[STAT_HEALTH] -= item->quantity;
+	ent->health -= item->quantity;
+	
+	dropTime = level.time;
+	
+	return LaunchItemTime( item, position, velocity, dropTime );
+}
+
 gentity_t *Drop_Item_Ammo( gentity_t *ent, gitem_t *item, float angle ) {
 	vec3_t	velocity;
 	vec3_t	angles;

@@ -3366,6 +3366,70 @@ void Cmd_GetMappage_f( gentity_t *ent ) {
     trap_SendServerCommand( ent-g_entities, string );
 }
 
+void Cmd_DropArmor_f( gentity_t *ent ) {
+    gitem_t		*item;
+    gentity_t	*out;
+    char arg1[128];
+    int amount;
+
+    if ( !( g_itemDrop.integer & 16 ) )
+        return;
+
+    if ( ent->client->ps.pm_type == PM_DEAD )
+        return;
+    
+    if( trap_Argc() > 1 ){
+	trap_Argv( 1, arg1, sizeof( arg1 ) );
+	amount = atoi(arg1);     
+    } else
+	amount = 50;
+  
+    if( amount >= 100 )
+	amount = 100;
+    else if( amount >= 50 )
+	amount = 50;
+    //else if( amount >= 25 )
+	 //amount = 25;
+    else if( amount >= 5 )
+	amount = 5;
+    
+    item = BG_FindArmorForQuantity( amount );
+    
+    out = Drop_Item_Armor( ent, item, 0 );
+}
+
+void Cmd_DropHealth_f( gentity_t *ent ) {
+    gitem_t		*item;
+    gentity_t	*out;
+    char arg1[128];
+    int amount;
+
+    if ( !( g_itemDrop.integer & 8 ) )
+        return;
+
+    if ( ent->client->ps.pm_type == PM_DEAD )
+        return;
+    
+    if( trap_Argc() > 1 ){
+	trap_Argv( 1, arg1, sizeof( arg1 ) );
+	amount = atoi(arg1);     
+    } else
+	amount = 25;
+  
+    if( amount >= 100 )
+	amount = 100;
+    else if( amount >= 50 )
+	amount = 50;
+    else if( amount >= 25 )
+	amount = 25;
+    else if( amount >= 5 )
+	amount = 5;
+    
+    item = BG_FindHealthForQuantity( amount );
+    
+    out = Drop_Item_Health( ent, item, 0 );
+}
+
 void Cmd_DropAmmo_f( gentity_t *ent ) {
     gitem_t		*item;
     gentity_t	*out;
@@ -3641,6 +3705,8 @@ commands_t cmds[ ] =
     { "timeout", 0, Cmd_Timeout_f },
     { "ready", 0, Cmd_Ready_f },
     { "dropammo", 0, Cmd_DropAmmo_f },
+    { "droparmor", 0, Cmd_DropArmor_f },
+    { "drophealth", 0, Cmd_DropHealth_f },
     { "dropweapon", 0, Cmd_DropWeapon_f },
     { "dropflag", 0, Cmd_DropFlag_f },
     { "drop", 0, Cmd_Drop_f },
