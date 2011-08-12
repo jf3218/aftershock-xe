@@ -1729,6 +1729,7 @@ extern vmCvar_t			cg_teamChatBeep;
 extern vmCvar_t			cg_zoomScaling;
 extern vmCvar_t 		cg_zoomToggle;
 extern vmCvar_t			cg_selfOnTeamOverlay;
+extern vmCvar_t 		cg_smoke_SG;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
