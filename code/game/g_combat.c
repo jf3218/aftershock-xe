@@ -1111,6 +1111,11 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	if (!targ->takedamage) {
 		return;
 	}
+	
+	if( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ){
+		if( !level.roundRespawned && level.warmupTime != -1 )
+			return;
+	}
 
 	// the intermission has allready been qualified for, so don't
 	// allow any extra scoring

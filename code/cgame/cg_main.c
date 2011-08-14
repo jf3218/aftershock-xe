@@ -2519,6 +2519,10 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	CG_ParseZoomFov();
 	CG_ParseCrosshair();
 	CG_ParseCrosshairSize();
+	
+	cg.lastFov = 90;
+	cg.currentFov = 90;
+	cg.fovTime = -1000;
 }
 
 /*
