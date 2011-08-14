@@ -891,10 +891,10 @@ void Weapon_LightningFire( gentity_t *ent ) {
 			tent->s.eventParm = DirToByte( tr.plane.normal );
 			tent->s.weapon = ent->s.weapon;
 			
-			if( level.time - traceEnt->client->lastActive < 500 )
-				G_AddHitHistory( ent->client, qtrue );
-			
 			if( LogAccuracyHit( traceEnt, ent ) ) {
+				if( level.time - traceEnt->client->lastActive < 500 )
+					G_AddHitHistory( ent->client, qtrue );
+			  
 				ent->client->accuracy_hits++;
 				ent->client->accuracy[WP_LIGHTNING][1]++;
 			}
