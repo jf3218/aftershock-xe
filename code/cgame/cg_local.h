@@ -859,6 +859,10 @@ typedef struct {
 	int  rankMessageTime;
 	int  deathtime;
 	int  quadKills;
+	
+	int currentFov;
+	int lastFov;
+	int fovTime;
 
 } cg_t;
 
@@ -1730,6 +1734,7 @@ extern vmCvar_t			cg_zoomScaling;
 extern vmCvar_t 		cg_zoomToggle;
 extern vmCvar_t			cg_selfOnTeamOverlay;
 extern vmCvar_t 		cg_smoke_SG;
+extern vmCvar_t 		cg_smoothFovChange;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

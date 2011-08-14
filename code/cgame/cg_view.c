@@ -509,9 +509,11 @@ static int CG_CalcFov( void ) {
             } else if ( fov_x > 160 ) {
                 fov_x = 160;
             }
-            /*if ( (cgs.fairflags & FF_LOCK_CVARS_BASIC) && fov_x>140 )
-                fov_x = 140;*/
-
+            if( cg.currentFov != fov_x && cg_smoothFovChange.integer ){
+		cg.lastFov = cg.currentFov;
+		cg.currentFov = fov_x;
+		cg.fovTime = cg.time;
+	    }
         }
 
         if ( cgs.dmflags & DF_FIXED_FOV ) {
@@ -547,7 +549,16 @@ static int CG_CalcFov( void ) {
 		f = 2.0;
           
             if ( f > 1.0 ) {
-                fov_x = fov_x;
+                //fov_x = fov_x;
+		
+		if( cg_smoothFovChange.integer )
+		    f = ( cg.time - cg.fovTime ) / (float)(cg_zoomScaling.value * ZOOM_TIME);
+		else
+		    f = 2.0;
+		
+		if( f <= 1.0 )
+		    fov_x = cg.lastFov + f * ( fov_x - cg.lastFov );
+		
             } else {
                 fov_x = zoomFov + f * ( fov_x - zoomFov );
             }

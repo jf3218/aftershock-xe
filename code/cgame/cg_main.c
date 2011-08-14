@@ -388,6 +388,7 @@ vmCvar_t 	cg_zoomScaling;
 vmCvar_t 	cg_zoomToggle;
 vmCvar_t 	cg_selfOnTeamOverlay;
 vmCvar_t 	cg_smoke_SG;
+vmCvar_t 	cg_smoothFovChange;
 
 
 
@@ -639,7 +640,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_zoomScaling, "cg_zoomScaling", "1", CVAR_ARCHIVE },
 	{&cg_zoomToggle, "cg_zoomToggle", "0", CVAR_ARCHIVE },
 	{&cg_selfOnTeamOverlay, "cg_selfOnTeamOverlay", "1", CVAR_ARCHIVE },
-	{&cg_smoke_SG, "cg_smoke_SG", "1", CVAR_ARCHIVE }
+	{&cg_smoke_SG, "cg_smoke_SG", "1", CVAR_ARCHIVE },
+	{&cg_smoothFovChange, "cg_smoothFovChange", "0", CVAR_ARCHIVE }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
