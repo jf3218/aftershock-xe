@@ -568,9 +568,11 @@ static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t 
 					}
 					else
 						team = "blue";
+					break;
 				}
 				else
 						team = "blue";
+					break;
 			}
 			default: {
 				if( cg_forceteammodels.integer && cg_forceModel.integer ){
@@ -596,9 +598,11 @@ static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t 
 					}
 					else
 						team = "red";
+					break;
 				}
 				else
 						team = "red";
+				break;
 			}
 		}
 	}
