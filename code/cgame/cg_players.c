@@ -2638,7 +2638,7 @@ void CG_AddRefEntityWithPowerups( refEntity_t *ent, entityState_t *state, int te
 		ent->shaderRGBA[2]=255;
 		ent->shaderRGBA[3]=0;*/
 		
-		trap_R_AddRefEntityToScene( ent );
+		//trap_R_AddRefEntityToScene( ent );
 	} else {
 		/*
 		if ( state->eFlags & EF_KAMIKAZE ) {
