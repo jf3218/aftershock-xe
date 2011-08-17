@@ -509,7 +509,7 @@ static int CG_CalcFov( void ) {
             } else if ( fov_x > 160 ) {
                 fov_x = 160;
             }
-            if( cg.currentFov != fov_x && cg_smoothFovChange.integer ){
+            if( cg.currentFov != fov_x && cg_smoothFovChange.integer  && cg_zoomScaling.value > 0.0 ){
 		cg.lastFov = cg.currentFov;
 		cg.currentFov = fov_x;
 		cg.fovTime = cg.time;

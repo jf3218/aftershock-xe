@@ -392,7 +392,9 @@ ClientInactivityTimer
 Returns qfalse if the client is dropped
 =================
 */
-qboolean ClientInactivityTimer( gclient_t *client ) {
+qboolean ClientInactivityTimer( gentity_t *ent ) {
+  
+	gclient_t *client = ent->client;
   
 	if ( client->pers.cmd.forwardmove || 
 		client->pers.cmd.rightmove || 
@@ -402,7 +404,7 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 	}
   
   
-	if ( ! g_inactivity.integer ) {
+	if ( !g_inactivity.integer || level.warmupTime == -1 ) {
 		// give everyone some time, so if the operator sets g_inactivity during
 		// gameplay, everyone isn't kicked
 		client->inactivityTime = level.time + 60 * 1000;
@@ -415,7 +417,9 @@ qboolean ClientInactivityTimer( gclient_t *client ) {
 		client->inactivityWarning = qfalse;
 	} else if ( !client->pers.localClient ) {
 		if ( level.time > client->inactivityTime ) {
-			trap_DropClient( client - level.clients, "Dropped due to inactivity" );
+			//trap_DropClient( client - level.clients, "Dropped due to inactivity" );
+			SetTeam( ent, "speconly" );
+			
 			return qfalse;
 		}
 		if ( level.time > client->inactivityTime - 10000 && !client->inactivityWarning ) {
@@ -968,7 +972,7 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 
 	// check for inactivity timer, but never drop the local client of a non-dedicated server
-	if ( !ClientInactivityTimer( client ) ) {
+	if ( !ClientInactivityTimer( ent ) ) {
 		return;
 	}
 
