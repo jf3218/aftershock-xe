@@ -262,6 +262,25 @@ yellowArmor
 	}
 }
 
+greenArmor
+{
+	{
+		map models/powerups/armor/greenarmor.tga
+		rgbGen lightingDiffuse
+	}
+	{
+		map textures/sfx/specular.tga
+		blendfunc add
+		rgbGen lightingDiffuse
+		tcGen environment 
+	}
+	{
+		map models/powerups/armor/greenarmor.tga
+		blendfunc blend
+		rgbGen lightingDiffuse
+	}
+}
+
 textures/base_floor/metfloor1
 {
 	surfaceparm metalsteps

@@ -404,6 +404,15 @@ icons/iconr_shard
 	}
 }
 
+icons/iconr_green
+{
+	nopicmip
+	{
+		map icons/iconr_green.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+	}
+}
+
 icons/iconr_yellow
 {
 	nopicmip
