@@ -3395,7 +3395,7 @@ void Cmd_DropArmor_f( gentity_t *ent ) {
 	amount = 50;
     //else if( amount >= 25 )
 	 //amount = 25;
-    else if( amount >= 5 )
+    else 
 	amount = 5;
     
     item = BG_FindArmorForQuantity( amount );
@@ -3427,7 +3427,7 @@ void Cmd_DropHealth_f( gentity_t *ent ) {
 	amount = 50;
     else if( amount >= 25 )
 	amount = 25;
-    else if( amount >= 5 )
+    else 
 	amount = 5;
     
     item = BG_FindHealthForQuantity( amount );

@@ -252,6 +252,8 @@ static void CG_Item( centity_t *cent ) {
 		if( ent.radius > 28 )
 			ent.radius = 28;
 		
+		ent.origin[2] += ( ent.radius - 14 );
+		
 		ent.customShader = cg_items[es->modelindex].icon;
 		ent.shaderRGBA[0] = 255;
 		ent.shaderRGBA[1] = 255;
