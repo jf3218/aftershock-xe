@@ -2399,6 +2399,7 @@ if(g_gametype.integer != GT_ELIMINATION && g_gametype.integer != GT_CTF_ELIMINAT
 				client->ps.ammo[i] = BG_FindItemForWeapon(i)->quantity/*BG_FindAmmoForWeapon(i)->quantity*/;
 			}
 		}
+		client->ps.stats[STAT_ARMOR] = client->ps.stats[STAT_MAX_HEALTH];
 	}
 }
 else
