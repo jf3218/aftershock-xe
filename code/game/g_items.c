@@ -1194,6 +1194,10 @@ void SaveRegisteredItems( void ) {
 	trap_SetConfigstring(CS_ITEMS, string);
 }
 
+qboolean G_WeaponRegistered( int weapon ){
+	return itemRegistered[ITEM_INDEX(BG_FindItemForWeapon( weapon ))];
+}
+
 /*
 ============
 G_ItemDisabled

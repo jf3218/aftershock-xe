@@ -737,6 +737,7 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace);
 void ClearRegisteredItems( void );
 void RegisterItem( gitem_t *item );
 void SaveRegisteredItems( void );
+qboolean G_WeaponRegistered( int weapon );
 
 int G_ItemTeam( int entityNum );
 int G_FindNearestItem( gentity_t *ent );

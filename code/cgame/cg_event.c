@@ -237,8 +237,6 @@ static void CG_Obituary( entityState_t *ent ) {
     if ( attacker == cg.snap->ps.clientNum ) {
 
         if ( cgs.gametype < GT_TEAM ) {
-	    
-	    CG_Printf( cgs.hud[HUD_FRAGMSG].text );
 	  
 	    if ( strlen( cgs.hud[HUD_FRAGMSG].text ) )
 		    Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,cgs.hud[HUD_FRAGMSG].text, targetName );  

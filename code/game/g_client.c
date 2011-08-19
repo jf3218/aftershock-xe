@@ -2391,6 +2391,15 @@ if(g_gametype.integer != GT_ELIMINATION && g_gametype.integer != GT_CTF_ELIMINAT
 
 	// health will count down towards max_health
 	ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH] + 25;
+	
+	if( level.warmupTime == -1 ){
+		for ( i = WP_SHOTGUN; i <= WP_BFG; i++ ){
+			if( G_WeaponRegistered( i ) ){
+				client->ps.stats[STAT_WEAPONS] |= ( 1 << i );
+				client->ps.ammo[i] = BG_FindItemForWeapon(i)->quantity/*BG_FindAmmoForWeapon(i)->quantity*/;
+			}
+		}
+	}
 }
 else
 {
