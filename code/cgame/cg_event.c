@@ -237,7 +237,14 @@ static void CG_Obituary( entityState_t *ent ) {
     if ( attacker == cg.snap->ps.clientNum ) {
 
         if ( cgs.gametype < GT_TEAM ) {
-            Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,"You fragged %s", targetName );
+	    
+	    CG_Printf( cgs.hud[HUD_FRAGMSG].text );
+	  
+	    if ( strlen( cgs.hud[HUD_FRAGMSG].text ) )
+		    Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,cgs.hud[HUD_FRAGMSG].text, targetName );  
+	    else
+		    Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,"You fragged %s", targetName );
+	    
             Com_sprintf(cg.rankMessage, sizeof( cg.rankMessage ) ,"%s place with %i", CG_PlaceString( cg.snap->ps.persistant[PERS_RANK] + 1 ),
                         cg.snap->ps.persistant[PERS_SCORE] );
 
@@ -247,11 +254,18 @@ static void CG_Obituary( entityState_t *ent ) {
 		      trap_S_StartLocalSound( cgs.media.killSound, CHAN_LOCAL_SOUND );
         } else {
             if (ent->generic1) {
-                Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,"You fragged your ^1TEAMMATE^7 %s", targetName );
+		if ( strlen( cgs.hud[HUD_FRAGMSG].text ) )
+		    Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,cgs.hud[HUD_FRAGMSG].text, va("your ^1TEAMMATE^7 %s",targetName ) );  
+		else
+		    Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,"You fragged %s", va("your ^1TEAMMATE^7 %s",targetName ) );
+                //Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,"You fragged your ^1TEAMMATE^7 %s", targetName );
                 cg.fragMessageTime = cg.time;
             }
             else {
-                Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,"You fragged %s", targetName );
+                if ( strlen( cgs.hud[HUD_FRAGMSG].text ) )
+		    Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,cgs.hud[HUD_FRAGMSG].text, targetName );  
+		else
+		    Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,"You fragged %s", targetName );
                 cg.fragMessageTime = cg.time;
 		if( cg_killBeep.integer )
 		      trap_S_StartLocalSound( cgs.media.killSound, CHAN_LOCAL_SOUND );

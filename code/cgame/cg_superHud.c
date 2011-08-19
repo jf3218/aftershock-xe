@@ -86,7 +86,12 @@ static void CG_SetHudImage( int hudnumber, char* arg1, char* arg2, char* arg3, c
 }
 
 static void CG_SetHudText( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
+	int i;
 	cgs.hud[hudnumber].text = arg1;
+	for( i = 0; i < strlen(cgs.hud[hudnumber].text); i++ ){
+		if( cgs.hud[hudnumber].text[i] == '_' )
+			cgs.hud[hudnumber].text[i] = ' ';
+	}
 }
 
 static void CG_SetHudFill( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
@@ -521,8 +526,8 @@ void CG_LoadHudFile( const char* hudFile ){
 	fileHandle_t	f;
 	
 	// Default hud init
-	cgs.hud[HUD_DEFAULT].text = (char*)" ";
-	cgs.hud[HUD_DEFAULT].image = (char*)" ";
+	cgs.hud[HUD_DEFAULT].text = (char*)"";
+	cgs.hud[HUD_DEFAULT].image = (char*)"";
 	cgs.hud[HUD_DEFAULT].textAlign = 1;
 	
 	len = trap_FS_FOpenFile ( hudFile, &f, FS_READ );

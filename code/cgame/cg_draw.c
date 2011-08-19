@@ -3173,13 +3173,12 @@ CG_DrawFragMessage
 ===================
 */
 static void CG_DrawFragMessage ( void ) {
-	hudElements_t hudelement = cgs.hud[HUD_FRAGMSG]; //TODO: do we really need to define this here, for 2 calls?
 
-	if ( !hudelement.inuse )  //In CG_DrawStringHud is a check too, and most ppl will activate fragMessages
+	if ( !cgs.hud[HUD_FRAGMSG].inuse )  //In CG_DrawStringHud is a check too, and most ppl will activate fragMessages
 		return;
 	if ( !cg.fragMessageTime )
 		return;
-	if ( cg.time - cg.fragMessageTime > hudelement.time ) {
+	if ( cg.time - cg.fragMessageTime > cgs.hud[HUD_FRAGMSG].time ) {
 		cg.fragMessageTime = 0;
 		return;
 	}
