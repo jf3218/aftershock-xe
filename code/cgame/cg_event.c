@@ -243,6 +243,8 @@ static void CG_Obituary( entityState_t *ent ) {
 
             cg.fragMessageTime = cg.time;
             cg.rankMessageTime = cg.time;
+	    if( cg_killBeep.integer )
+		      trap_S_StartLocalSound( cgs.media.killSound, CHAN_LOCAL_SOUND );
         } else {
             if (ent->generic1) {
                 Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,"You fragged your ^1TEAMMATE^7 %s", targetName );
@@ -251,6 +253,8 @@ static void CG_Obituary( entityState_t *ent ) {
             else {
                 Com_sprintf(cg.fragMessage, sizeof( cg.fragMessage ) ,"You fragged %s", targetName );
                 cg.fragMessageTime = cg.time;
+		if( cg_killBeep.integer )
+		      trap_S_StartLocalSound( cgs.media.killSound, CHAN_LOCAL_SOUND );
             }
         }
     }

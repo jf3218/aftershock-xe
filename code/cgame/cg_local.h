@@ -1149,6 +1149,7 @@ typedef struct {
 	sfxHandle_t hitSoundHighArmor;
 	sfxHandle_t hitSoundLowArmor;
 	sfxHandle_t hitTeamSound;
+	sfxHandle_t killSound;
 	sfxHandle_t impressiveSound;
 	sfxHandle_t excellentSound;
 	sfxHandle_t deniedSound;
@@ -1735,6 +1736,7 @@ extern vmCvar_t 		cg_zoomToggle;
 extern vmCvar_t			cg_selfOnTeamOverlay;
 extern vmCvar_t 		cg_smoke_SG;
 extern vmCvar_t 		cg_smoothFovChange;
+extern vmCvar_t 		cg_killBeep;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

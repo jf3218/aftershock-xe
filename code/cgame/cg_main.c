@@ -390,6 +390,8 @@ vmCvar_t 	cg_selfOnTeamOverlay;
 vmCvar_t 	cg_smoke_SG;
 vmCvar_t 	cg_smoothFovChange;
 
+vmCvar_t 	cg_killBeep;
+
 
 
 typedef struct {
@@ -641,7 +643,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_zoomToggle, "cg_zoomToggle", "0", CVAR_ARCHIVE },
 	{&cg_selfOnTeamOverlay, "cg_selfOnTeamOverlay", "1", CVAR_ARCHIVE },
 	{&cg_smoke_SG, "cg_smoke_SG", "1", CVAR_ARCHIVE },
-	{&cg_smoothFovChange, "cg_smoothFovChange", "0", CVAR_ARCHIVE }
+	{&cg_smoothFovChange, "cg_smoothFovChange", "0", CVAR_ARCHIVE },
+	{&cg_killBeep, "cg_killBeep", "0", CVAR_ARCHIVE }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -1040,6 +1043,7 @@ static void CG_RegisterSounds( void ) {
 	cgs.media.hitSound2 = trap_S_RegisterSound( "sound/feedback/hit.wav", qfalse );
 	cgs.media.hitSound3 = trap_S_RegisterSound( "sound/feedback/hithigh.wav", qfalse );
 	cgs.media.hitSound4 = trap_S_RegisterSound( "sound/feedback/hithigher.wav", qfalse );
+	cgs.media.killSound = trap_S_RegisterSound( "sound/feedback/killbeep1.wav", qfalse );
 
 #ifdef MISSIONPACK
 	cgs.media.hitSoundHighArmor = trap_S_RegisterSound( "sound/feedback/hithi.wav", qfalse );
