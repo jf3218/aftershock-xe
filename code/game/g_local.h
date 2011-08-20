@@ -1318,6 +1318,7 @@ extern vmCvar_t	    g_friendsThroughWalls;
 
 extern vmCvar_t	    g_allowKill;
 extern vmCvar_t     g_fadeToBlack;
+extern vmCvar_t     g_spawnProtection;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
