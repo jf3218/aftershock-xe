@@ -1320,6 +1320,8 @@ extern vmCvar_t	    g_allowKill;
 extern vmCvar_t     g_fadeToBlack;
 extern vmCvar_t     g_spawnProtection;
 
+extern vmCvar_t     g_disableVotingTime;
+
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
 int		trap_Milliseconds( void );

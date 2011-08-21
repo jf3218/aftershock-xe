@@ -2771,6 +2771,10 @@ void Cmd_CallVote_f( gentity_t *ent ) {
         trap_SendServerCommand( ent-g_entities, "print \"Not allowed to call a vote as spectator.\n\"" );
         return;
     }
+    if( level.time < g_disableVotingTime.integer * 1000 ) {
+        trap_SendServerCommand( ent-g_entities, va( "print \"You have to wait %i seconds to call a vote .\n\"", g_disableVotingTime.integer ) );
+        return;
+    }
 
     // make sure it is a valid command to vote on
     trap_Argv( 1, arg1, sizeof( arg1 ) );

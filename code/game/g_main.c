@@ -249,6 +249,8 @@ vmCvar_t     g_fadeToBlack;
 
 vmCvar_t     g_spawnProtection;
 
+vmCvar_t     g_disableVotingTime;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -496,6 +498,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_allowKill, "g_allowKill", "1", CVAR_SERVERINFO, 0, qfalse },
 	{ &g_fadeToBlack, "g_fadeToBlack", "0", CVAR_SERVERINFO, 0, qfalse },
 	{ &g_spawnProtection, "g_spawnProtection", "0", CVAR_ARCHIVE, 0, qfalse },
+	{ &g_disableVotingTime, "g_disableVotingTime", "0", CVAR_ARCHIVE, 0 ,qfalse }
 };
 
 // bk001129 - made static to avoid aliasing
