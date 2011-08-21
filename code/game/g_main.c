@@ -3020,6 +3020,13 @@ void G_RunFrame( int levelTime ) {
 		return;
 	}
 	
+	if( level.numConnectedClients == 0 && g_timelimit.integer &&( level.time - level.startTime ) > g_timelimit.integer * 1000 ) {
+		trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
+		G_Printf( "leveltime %i\n", level.time );
+		G_Printf( "levelStarttime %i\n", level.startTime );
+	}
+	  
+	
 	/*if( level.timeout && ( ( levelTime- level.timeoutAdd ) < level.timeoutTime ) )
 		return;*/
 	level.framenum++;

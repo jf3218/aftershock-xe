@@ -255,7 +255,15 @@ static void CG_DrawSpecs( void ){
 		
 			if( CG_DrawStrlen( string ) + CG_DrawStrlen( ci->name ) + 3 > SB_SPEC_MAXCHAR && strlen( string ) ){
 				CG_DrawStringExt( SB_SPEC_X, y, string, colorWhite, qfalse, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 0 );
-				strcpy( string, ci->name );
+				if( cgs.gametype == GT_TOURNAMENT ){
+					if( score->specOnly )
+						strcpy( string, va("^7%s^7(^1s^7)", ci->name ) );
+					else
+						strcpy( string, va("^7%s^7(^2q^7)", ci->name ) );
+				}
+				else
+					strcpy( string, ci->name );
+				
 				y += SB_MEDCHAR_HEIGHT;
 				numLine++;
 				if( numLine >= 2 ){
@@ -264,7 +272,15 @@ static void CG_DrawSpecs( void ){
 				}
 			}else{
 				if( strlen( string ) )strcat( string, "   " );
-				strcat( string, ci->name );
+				
+				if( cgs.gametype == GT_TOURNAMENT ){
+					if( score->specOnly )
+						strcpy( string, va("^7%s^7(^1s^7)", ci->name ) );
+					else
+						strcpy( string, va("^7%s^7(^2q^7)", ci->name ) );
+				}
+				else
+					strcpy( string, ci->name );
 			}
 			
 		}
