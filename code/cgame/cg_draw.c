@@ -3327,7 +3327,7 @@ CROSSHAIR
 
 static void CG_GetHitColor( float *color ){
 	float hitcolor[3];
-	float factor = ((float)(cg.lastHitDamage)/100.0f);
+	float factor = ((float)(cg.lastHitDamage)/200.0f)+0.5f;
 	
 	if( factor > 1 )
 		factor = 1.0f;
