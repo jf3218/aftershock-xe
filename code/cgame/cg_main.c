@@ -450,7 +450,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_tracerLength, "cg_tracerlength", "100", CVAR_CHEAT },
 	{ &cg_thirdPersonRange, "cg_thirdPersonRange", "40", CVAR_CHEAT },
 	{ &cg_thirdPersonAngle, "cg_thirdPersonAngle", "0", CVAR_CHEAT },
-	{ &cg_thirdPerson, "cg_thirdPerson", "0", 0 },
+	{ &cg_thirdPerson, "cg_thirdPerson", "0", CVAR_CHEAT },
 	{ &cg_teamChatTime, "cg_teamChatTime", "5000", CVAR_ARCHIVE  },
 	{ &cg_chatTime, "cg_chatTime", "5000", CVAR_ARCHIVE},
 	{ &cg_forceModel, "cg_forceModel", "1", CVAR_ARCHIVE  },
