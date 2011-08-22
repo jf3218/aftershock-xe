@@ -228,6 +228,7 @@ static void CG_DrawSpecs( void ){
 	clientInfo_t *ci;
 	qboolean notEnough;
 	score_t *localClient;
+	int queueNumber=1;
 	
 	strcpy( string, "Spectators" );
 	CG_DrawStringExt( SB_SPEC_X + SB_SPEC_WIDTH/2 - SMALLCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_SPEC_Y, string, colorYellow, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0 );
@@ -258,8 +259,10 @@ static void CG_DrawSpecs( void ){
 				if( cgs.gametype == GT_TOURNAMENT ){
 					if( score->specOnly )
 						strcpy( string, va("^7%s^7(^1s^7)", ci->name ) );
-					else
-						strcpy( string, va("^7%s^7(^2q^7)", ci->name ) );
+					else{
+						strcpy( string, va("^7%s^7(^2%i^7)", ci->name, queueNumber ) );
+						queueNumber++;
+					}
 				}
 				else
 					strcpy( string, ci->name );
@@ -271,16 +274,19 @@ static void CG_DrawSpecs( void ){
 					if( score->client == cg.clientNum )localClient = score;
 				}
 			}else{
-				if( strlen( string ) )strcat( string, "   " );
+				if( strlen( string ) )
+					strcat( string, "   " );
 				
 				if( cgs.gametype == GT_TOURNAMENT ){
 					if( score->specOnly )
-						strcpy( string, va("^7%s^7(^1s^7)", ci->name ) );
-					else
-						strcpy( string, va("^7%s^7(^2q^7)", ci->name ) );
+						strcat( string, va("^7%s^7(^1s^7)", ci->name ) );
+					else{
+						strcat( string, va("^7%s^7(^2%i^7)", ci->name, queueNumber ) );
+						queueNumber++;
+					}
 				}
 				else
-					strcpy( string, ci->name );
+					strcat( string, ci->name );
 			}
 			
 		}
