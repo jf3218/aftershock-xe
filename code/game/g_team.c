@@ -1206,6 +1206,7 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
     gclient_t	*cl = other->client;
     int			enemy_flag;
     int 		mins,secs,msecs;
+    int 		capIndex, maxIndex, maxDuration;
 
     if ( g_gametype.integer == GT_1FCTF ) {
         enemy_flag = PW_NEUTRALFLAG;
@@ -1259,26 +1260,68 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
             G_LogPrintf( "CTF_ELIMINATION: %i %i %i %i: %s captured the %s flag!\n", level.roundNumber, cl->ps.clientNum, OtherTeam(team), 1, cl->pers.netname, TeamName(OtherTeam(team)) );
 
         if ( team == TEAM_RED ) {
-            msecs = level.time - level.blueFlagTaken;
-            secs = msecs/1000;
-            msecs -= secs*1000;
-            mins = secs/60;
-            secs -= mins*60;
+			capIndex = -1;
+	    		if( cl->captureCount < MAX_CAPTURES ){
+				capIndex = cl->captureCount;
+				cl->captureCount++;
+			}else{
+				maxDuration = 0;
+				for( i=0; i<MAX_CAPTURES; i++ ){
+					if( cl->captures[ i ].duration > 0 && cl->captures[ i ].duration >= maxDuration ){
+						maxDuration = cl->captures[ i ].duration;
+						maxIndex = i;
+					}
+				}
+				if( level.time - level.blueFlagTaken < maxDuration )capIndex = maxIndex;
+			}
+			if( capIndex >= 0 ){
+				cl->captures[ capIndex ].team = TEAM_RED;
+				cl->captures[ capIndex ].perfect = level.captureBlueFlagPerfect;
+				cl->captures[ capIndex ].duration = level.time - level.blueFlagTaken;
+				cl->captures[ capIndex ].gametime = level.time - level.startTime;
+			}
+			
+			msecs = level.time - level.blueFlagTaken;
+			secs = msecs/1000;
+			msecs -= secs*1000;
+			mins = secs/60;
+			secs -= mins*60;
 
-            PrintMsg( NULL, "Flag held for %i:%02i:%03i\n", mins, secs, msecs );
-            trap_SendServerCommand( -1, va("screenPrint \"^3Red captured the flag in %i:%02i:%03i\"", mins, secs, msecs) );
-            level.blueFlagTaken = -1;
+			PrintMsg( NULL, "Flag held for %i:%02i:%03i\n", mins, secs, msecs );
+			trap_SendServerCommand( -1, va("screenPrint \"^3Red captured the flag in %i:%02i:%03i\"", mins, secs, msecs) );
+			level.blueFlagTaken = -1;
         }
         else if ( team == TEAM_BLUE ) {
-            msecs = level.time - level.redFlagTaken;
-            secs = msecs/1000;
-            msecs -= secs*1000;
-            mins = secs/60;
-            secs -= mins*60;
+			capIndex = -1;
+			if( cl->captureCount < MAX_CAPTURES ){
+				capIndex = cl->captureCount;
+				cl->captureCount++;
+			}else{
+				maxDuration = 0;
+				for( i=0; i<MAX_CAPTURES; i++ ){
+					if( cl->captures[ i ].duration > 0 && cl->captures[ i ].duration >= maxDuration ){
+						maxDuration = cl->captures[ i ].duration;
+						maxIndex = i;
+					}
+				}
+				if( level.time - level.redFlagTaken < maxDuration )capIndex = maxIndex;
+			}
+			if( capIndex >= 0 ){
+				cl->captures[ capIndex ].team = TEAM_BLUE;
+				cl->captures[ capIndex ].perfect = level.captureRedFlagPerfect;
+				cl->captures[ capIndex ].duration = level.time - level.redFlagTaken;
+				cl->captures[ capIndex ].gametime = level.time - level.startTime;
+			}
+	  
+			msecs = level.time - level.redFlagTaken;
+			secs = msecs/1000;
+			msecs -= secs*1000;
+			mins = secs/60;
+			secs -= mins*60;
 
-            PrintMsg( NULL, "Flag held for %i:%03i:%03i\n", mins, secs, msecs );
-            trap_SendServerCommand( -1, va("screenPrint \"^3Blue captured the flag in %i:%02i:%03i\"", mins, secs, msecs) );
-            level.redFlagTaken = -1;
+			PrintMsg( NULL, "Flag held for %i:%03i:%03i\n", mins, secs, msecs );
+			trap_SendServerCommand( -1, va("screenPrint \"^3Blue captured the flag in %i:%02i:%03i\"", mins, secs, msecs) );
+			level.redFlagTaken = -1;
         }
 
     }
@@ -1398,9 +1441,18 @@ int Team_TouchEnemyFlag( gentity_t *ent, gentity_t *other, int team ) {
     if ( !( ent->flags & FL_DROPPED_ITEM ) ) {
         if ( team == TEAM_RED ) {
             level.redFlagTaken = level.time;
+	    level.captureRedFlagPerfect = qtrue;
         }
         else if ( team == TEAM_BLUE ) {
             level.blueFlagTaken = level.time;
+	    level.captureBlueFlagPerfect = qtrue;
+        }
+    }else{
+	if ( team == TEAM_RED ) {
+           level.captureRedFlagPerfect = qfalse;
+        }
+        else if ( team == TEAM_BLUE ) {
+            level.captureBlueFlagPerfect = qfalse;
         }
     }
 

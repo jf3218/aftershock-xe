@@ -343,6 +343,13 @@ typedef struct {
 } clientHistory_t;
 //unlagged - backward reconciliation #1
 
+#define MAX_CAPTURES 8
+typedef struct{
+	int team;
+	qboolean perfect;
+	int duration;
+	int gametime;
+} gcapture_t;
 
 #define MAX_HITS 30
 // this structure is cleared on each ClientSpawn(),
@@ -488,6 +495,8 @@ struct gclient_s {
 	int 			lastActive;
 	int 			quadKills;
 	char			*lastDrop;
+	gcapture_t captures[ MAX_CAPTURES ];
+	int captureCount;
 };
 
 
@@ -638,6 +647,8 @@ typedef struct {
     /*demoState_t demoState;
     
     int demoStarted;*/
+    qboolean captureBlueFlagPerfect;
+    qboolean captureRedFlagPerfect;
     
 } level_locals_t;
 

@@ -2083,6 +2083,9 @@ void ClientSpawn(gentity_t *ent) {
 	char		aftershock_hash[33];
 	qboolean	referee;
 	qboolean 	mute[MAX_CLIENTS];
+	
+	gcapture_t captures[ MAX_CAPTURES ];
+	int captureCount;
  
 
 	index = ent - g_entities;
@@ -2277,6 +2280,11 @@ void ClientSpawn(gentity_t *ent) {
 	for ( i = 0 ; i < MAX_REWARDS ; i++ ) {
 		rewards[i] = client->rewards[i];
 	}
+	
+	for( i=0; i<MAX_CAPTURES; i++ ){
+		captures[ i ] = client->captures[ i ];
+	}
+	captureCount = client->captureCount;
 
 	eventSequence = client->ps.eventSequence;
 
@@ -2338,6 +2346,11 @@ void ClientSpawn(gentity_t *ent) {
 	for ( i = 0 ; i < MAX_REWARDS ; i++ ) {
 		client->rewards[i] = rewards[i];
 	}
+	
+	for( i=0; i<MAX_CAPTURES; i++ ){
+		client->captures[ i ] = captures[ i ];
+	}
+	client->captureCount = captureCount;
 
 	client->ps.eventSequence = eventSequence;
 	// increment the spawncount so the client will detect the respawn

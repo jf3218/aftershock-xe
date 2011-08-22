@@ -123,6 +123,7 @@ static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnec
 	float time;
 	int count;
 	char cleanName[36], cleanAftershockName[36], cleanAftershockHash[36];
+	int i;
 
 	if ( !disconnected )
 		time = (level.time - cl->pers.enterTime)/60000;
@@ -217,6 +218,14 @@ static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnec
 		if ( cl->rewards[REWARD_LGACCURACY] )
 			writeToFile ( va ( "\t\t\t\t<reward name=\"LightningAccuracy\" value=\"%i\"/>\n", cl->rewards[REWARD_LGACCURACY] ), f );
 		writeToFile ( "\t\t\t</rewards>\n", f );
+	}
+	
+	if( g_gametype.integer == GT_CTF && cl->captureCount ){
+		writeToFile( "\t\t\t<captures>\n", f );
+		for( i=0; i<cl->captureCount; i++ ){
+			writeToFile( va( "\t\t\t\t<capture team=\"%s\" perfect=\"%s\" duration=\"%i\" gametime=\"%i\"/>\n", cl->captures[ i ].team == TEAM_RED? "Red" : "Blue", boolToChar( cl->captures[ i ].perfect ), cl->captures[ i ].duration, cl->captures[ i ].gametime ), f );
+		}
+		writeToFile( "\t\t\t</captures>\n", f );
 	}
 	writeToFile ( "\t\t</player>\n", f );
 }
