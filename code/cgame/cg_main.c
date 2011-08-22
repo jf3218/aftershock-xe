@@ -391,7 +391,7 @@ vmCvar_t 	cg_smoke_SG;
 vmCvar_t 	cg_smoothFovChange;
 
 vmCvar_t 	cg_killBeep;
-
+vmCvar_t 	cg_lowAmmoWarningPercentile;
 
 
 typedef struct {
@@ -644,7 +644,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_selfOnTeamOverlay, "cg_selfOnTeamOverlay", "1", CVAR_ARCHIVE },
 	{&cg_smoke_SG, "cg_smoke_SG", "1", CVAR_ARCHIVE },
 	{&cg_smoothFovChange, "cg_smoothFovChange", "0", CVAR_ARCHIVE },
-	{&cg_killBeep, "cg_killBeep", "0", CVAR_ARCHIVE }
+	{&cg_killBeep, "cg_killBeep", "0", CVAR_ARCHIVE },
+	{&cg_lowAmmoWarningPercentile, "cg_lowAmmoWarningPercentile", "0.4", CVAR_ARCHIVE }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -739,6 +740,9 @@ void CG_UpdateCvars( void ) {
 //unlagged - client options
                 else if ( cv->vmCvar == &cg_errorDecay ) {
 			CG_Cvar_ClampInt( cv->cvarName, cv->vmCvar, 0, 250 );
+		}
+		else if ( cv->vmCvar == &cg_lowAmmoWarningPercentile ) {
+			CG_Cvar_ClampFloat( cv->cvarName, cv->vmCvar, 0.0, 1.0 );
 		}
 		trap_Cvar_Update( cv->vmCvar );
 	}

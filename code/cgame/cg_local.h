@@ -1737,11 +1737,13 @@ extern vmCvar_t			cg_selfOnTeamOverlay;
 extern vmCvar_t 		cg_smoke_SG;
 extern vmCvar_t 		cg_smoothFovChange;
 extern vmCvar_t 		cg_killBeep;
+extern vmCvar_t 		cg_lowAmmoWarningPercentile;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
 //void CG_AddBoundingBox( centity_t *cent );
 qboolean CG_Cvar_ClampInt( const char *name, vmCvar_t *vmCvar, int min, int max );
+qboolean CG_Cvar_ClampFloat( const char *name, vmCvar_t *vmCvar, float min, float max );
 //unlagged - cg_unlagged.c
 
 //

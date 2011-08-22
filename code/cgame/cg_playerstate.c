@@ -53,7 +53,7 @@ void CG_CheckAmmo( void ) {
 	if( weapon == WP_GRAPPLING_HOOK || weapon == WP_GAUNTLET || weapon == WP_NONE )
 		return;
 		
-	switch ( weapon ) {
+/*	switch ( weapon ) {
 		case WP_ROCKET_LAUNCHER:
 		case WP_GRENADE_LAUNCHER:
 		case WP_RAILGUN:
@@ -70,15 +70,18 @@ void CG_CheckAmmo( void ) {
 	if ( total >= 5000 ) {
 		cg.lowAmmoWarning = 0;
 		return;
-	}
+	}*/
 
+	total = cg.snap->ps.ammo[weapon];
 
 	previous = cg.lowAmmoWarning;
 
 	if ( total == 0 ) {
 		cg.lowAmmoWarning = 2;
-	} else {
+	} else if ( total <= BG_FindItemForWeapon(weapon)->quantity * cg_lowAmmoWarningPercentile.value ){
 		cg.lowAmmoWarning = 1;
+	} else {
+		cg.lowAmmoWarning = 0;
 	}
 
 	if( !( cg_ammoWarningSound.integer ) )
