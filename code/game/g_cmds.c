@@ -359,6 +359,37 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
     }
 }
 
+void G_SendSpawnpoints( gentity_t *ent ){
+	gentity_t *spot;
+	int spotnumber = 0;
+	char entry[16];
+	char string[1024];
+	
+	if( level.warmupTime != -1 )
+		return;
+	
+	if( g_gametype.integer < GT_CTF || g_gametype.integer == GT_ELIMINATION ){
+		while(( spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != NULL ) {
+			Com_sprintf( entry, sizeof(entry), "%i %i %i ", (int)spot->s.origin[0], (int)spot->s.origin[1], (int)spot->s.origin[2] );
+			spotnumber++;
+			strcat( string, entry );
+		}
+	}
+	else{
+		while(( spot = G_Find (spot, FOFS(classname), "team_CTF_redspawn")) != NULL ) {
+			Com_sprintf( entry, sizeof(entry), "%i %i %i ", (int)spot->s.origin[0], (int)spot->s.origin[1], (int)spot->s.origin[2] );
+			spotnumber++;
+			strcat( string, entry );
+		}
+		while(( spot = G_Find (spot, FOFS(classname), "team_CTF_bluespawn")) != NULL ) {
+			Com_sprintf( entry, sizeof(entry), "%i %i %i ", (int)spot->s.origin[0], (int)spot->s.origin[1], (int)spot->s.origin[2] );
+			spotnumber++;
+			strcat( string, entry );
+		}
+	}
+	trap_SendServerCommand( ent-g_entities, va( "spawnPoints %i %s", spotnumber, string ));
+}
+
 /*
 ==================
 G_StartServerDemo

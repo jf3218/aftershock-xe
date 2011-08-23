@@ -183,6 +183,7 @@ struct gentity_s {
 	
 	int		dropTime;
 	int		ammoCount;
+	qboolean	sendSpawnpoints;
 };
 
 typedef struct gitemInfos_s gitemInfos_t;

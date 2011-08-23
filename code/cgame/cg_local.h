@@ -626,6 +626,7 @@ enum{
 //unlagged - optimized prediction
 #define NUM_SAVED_STATES (CMD_BACKUP + 2)
 //unlagged - optimized prediction
+#define MAX_SPAWNPOINTS 32
  
 typedef struct {
 	int			clientFrame;		// incremented each frame
@@ -863,6 +864,9 @@ typedef struct {
 	int currentFov;
 	int lastFov;
 	int fovTime;
+	
+	vec3_t spawnOrg[MAX_SPAWNPOINTS];
+	int numSpawnpoints;
 
 } cg_t;
 

@@ -949,6 +949,23 @@ static void CG_AddMultiviewWindow( stereoFrame_t stereoView ) {
 
 }
 
+void CG_AddSpawnpoints( void ){
+	refEntity_t re;
+	vec3_t angles;
+	int i;
+	memset( &re, 0, sizeof(re));
+	re.hModel = trap_R_RegisterModel("models/flags/r_flag.md3");
+	angles[PITCH] = 0;
+	angles[YAW] = 180;
+	angles[ROLL] = 0;
+
+	AnglesToAxis( angles, re.axis );
+	for( i=0; i < cg.numSpawnpoints; i++ ){
+	    VectorCopy( cg.spawnOrg[i], re.origin);
+	    trap_R_AddRefEntityToScene(&re);
+	}
+}
+
 /*
 =================
 CG_DrawActiveFrame
@@ -960,6 +977,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
     int		inwater;
     int i;
     vec4_t color;
+    refEntity_t re;
 
     cg.time = serverTime;
 
@@ -1020,6 +1038,9 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
         CG_AddLocalEntities();
     }
     CG_AddViewWeapon( &cg.predictedPlayerState );
+    
+    /*if ( cg.warmup < 0 )
+	    CG_AddSpawnpoints();*/
 
     // add buffered sounds
     CG_PlayBufferedSounds();

@@ -1912,6 +1912,16 @@ static void CG_RemoveChatEscapeChar ( char *text ) {
     text[l] = '\0';
 }
 
+static void CG_ParseSpawnpoints( void ){
+    int i;
+    cg.numSpawnpoints = atoi( CG_Argv(1) );
+    for( i = 0; i < cg.numSpawnpoints ; i++ ){
+	cg.spawnOrg[i][0] = atof(CG_Argv( 2 + i*3 ));
+	cg.spawnOrg[i][1] = atof(CG_Argv( 3 + i*3 ));
+	cg.spawnOrg[i][2] = atof(CG_Argv( 4 + i*3 ));
+    }
+}
+
 /*
 =================
 CG_ServerCommand
@@ -2120,6 +2130,11 @@ static void CG_ServerCommand ( void ) {
 
     if ( !strcmp ( cmd, "reward" ) ) {
         CG_ParseRewards();
+        return;
+    }
+    
+    if ( !strcmp ( cmd, "spawnPoints" ) ) {
+        CG_ParseSpawnpoints();
         return;
     }
 
