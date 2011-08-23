@@ -180,6 +180,9 @@ void AddTeamScore(vec3_t origin, int team, int score) {
     if ( g_gametype.integer != GT_DOMINATION ) {
         te = G_TempEntity(origin, EV_GLOBAL_TEAM_SOUND );
         te->r.svFlags |= SVF_BROADCAST;
+	
+	if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0  && score == 1 )
+		te->r.svFlags = 0;
 
 
 
