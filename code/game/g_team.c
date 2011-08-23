@@ -1218,7 +1218,7 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
             enemy_flag = PW_REDFLAG;
         }
 
-        if ( ent->flags & FL_DROPPED_ITEM ) {
+        if ( ( ent->flags & FL_DROPPED_ITEM ) && !( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 ) ) {
             // hey, its not home.  return it by teleporting it back
             PrintMsg( NULL, "%s" S_COLOR_WHITE " returned the %s flag!\n",
                       cl->pers.netname, TeamName(team));
@@ -1332,7 +1332,10 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
     teamgame.last_capture_team = team;
 
     // Increase the team's score
-    AddTeamScore(ent->s.pos.trBase, other->client->sess.sessionTeam, 1);
+    if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 )
+	AddTeamScore(ent->s.pos.trBase, other->client->sess.sessionTeam, 2);
+    else
+	AddTeamScore(ent->s.pos.trBase, other->client->sess.sessionTeam, 1);
     Team_ForceGesture(other->client->sess.sessionTeam);
     //If CTF Elimination, stop the round:
     if (g_gametype.integer==GT_CTF_ELIMINATION) {
@@ -1405,6 +1408,13 @@ int Team_TouchOurFlag( gentity_t *ent, gentity_t *other, int team ) {
 
 int Team_TouchEnemyFlag( gentity_t *ent, gentity_t *other, int team ) {
     gclient_t *cl = other->client;
+    
+    if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 ) {
+	if( (other->client->sess.sessionTeam == TEAM_RED) && !( ent->flags & FL_DROPPED_ITEM ) && (level.eliminationSides+level.roundNumber)%2 == 0 )
+	  AddTeamScore(level.intermission_origin, TEAM_RED, 1);
+	if( (other->client->sess.sessionTeam == TEAM_BLUE) && !( ent->flags & FL_DROPPED_ITEM ) && (level.eliminationSides+level.roundNumber)%2 != 0 )
+	  AddTeamScore(level.intermission_origin, TEAM_BLUE, 1);
+    }
 
     if ( g_gametype.integer == GT_1FCTF ) {
         PrintMsg (NULL, "%s" S_COLOR_WHITE " got the flag!\n", other->client->pers.netname );

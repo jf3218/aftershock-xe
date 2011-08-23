@@ -383,7 +383,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_elimination_mine, "elimination_mine", "0", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 	{ &g_elimination_nail, "elimination_nail", "0", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
 #endif
-	{ &g_elimination_ctf_oneway, "elimination_ctf_oneway", "0", CVAR_ARCHIVE| CVAR_NORESTART, 0, qtrue },
+	{ &g_elimination_ctf_oneway, "elimination_ctf_oneway", "1", CVAR_CHEAT| CVAR_NORESTART, 0, qtrue },
 
         { &g_elimination_lockspectator, "elimination_lockspectator", "2", CVAR_NORESTART, 0, qtrue },
         
@@ -1539,6 +1539,20 @@ void SendEliminationMessageToAllClients( void ) {
 	}
 }
 
+void SendCaptureStrikeMessage( void ) {
+	int		i;
+
+	for ( i = 0 ; i < level.maxclients ; i++ ) {
+		if ( level.clients[ i ].pers.connected == CON_CONNECTED ) {
+			if( ( level.clients[i].sess.sessionTeam == TEAM_RED && (level.eliminationSides+level.roundNumber)%2 == 0 ) || 
+			  ( level.clients[i].sess.sessionTeam == TEAM_BLUE && (level.eliminationSides+level.roundNumber)%2 != 0 ) )
+				trap_SendServerCommand( i, "cp \"^2Capture!\"");
+			else if ( level.clients[i].sess.sessionTeam != TEAM_SPECTATOR )	
+				trap_SendServerCommand( i, "cp \"^1Defend!\"");
+		}
+	}
+}
+
 /*
 ========================
 SendDDtimetakenMessageToAllClients
@@ -2085,6 +2099,16 @@ void CheckExitRules( void ) {
 		// always wait for sudden death
 		return;
 	}
+	
+	if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 ){
+	  if( (level.eliminationSides+level.roundNumber)%2 != 0 )
+		return;
+	}
+	
+	if( g_gametype.integer == GT_CTF_ELIMINATION || g_gametype.integer == GT_ELIMINATION ) {
+	  if( level.roundNumber == level.roundNumberStarted )
+		return;
+	}
 
 	if ( g_timelimit.integer && !level.warmupTime ) {
 		if ( level.time - level.startTime - level.timeoutDelay >= g_timelimit.integer*60000 ) {
@@ -2470,7 +2494,16 @@ void CheckElimination(void) {
 			{
 				//Blue team has been eliminated!
 				trap_SendServerCommand( -1, "print \"Blue Team eliminated!\n\"");
-				AddTeamScore(level.intermission_origin,TEAM_RED,1);
+				
+				if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 ){
+				  if( (level.eliminationSides+level.roundNumber)%2 == 0 ){
+				      AddTeamScore(level.intermission_origin, TEAM_RED, 2);
+				  }
+				}
+				else {
+				  AddTeamScore(level.intermission_origin,TEAM_RED,1);
+				}
+				
                                 if(g_gametype.integer == GT_ELIMINATION) {
                                     G_LogPrintf( "ELIMINATION: %i %i %i: %s wins round %i by eleminating the enemy team!\n", level.roundNumber, TEAM_RED, 1, TeamName(TEAM_RED), level.roundNumber );
                                 } else {
@@ -2483,7 +2516,16 @@ void CheckElimination(void) {
 			{
 				//Red team eliminated!
 				trap_SendServerCommand( -1, "print \"Red Team eliminated!\n\"");
-				AddTeamScore(level.intermission_origin,TEAM_BLUE,1);
+				
+				if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 ){
+				  if( (level.eliminationSides+level.roundNumber)%2 != 0 ){
+				      AddTeamScore(level.intermission_origin, TEAM_BLUE, 2);
+				  }
+				}
+				else {
+				  AddTeamScore(level.intermission_origin,TEAM_BLUE,1);
+				}
+				
                                 if(g_gametype.integer == GT_ELIMINATION) {
                                     G_LogPrintf( "ELIMINATION: %i %i %i: %s wins round %i by eleminating the enemy team!\n", level.roundNumber, TEAM_BLUE, 1, TeamName(TEAM_BLUE), level.roundNumber );
                                 } else {
@@ -2502,14 +2544,14 @@ void CheckElimination(void) {
 			if(level.roundBluePlayers != 0 && level.roundRedPlayers != 0) {//We don't want to divide by zero. (should not be possible)
 				if(g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer) {
 					//One way CTF, make defensice team the winner.
-					if ( (level.eliminationSides+level.roundNumber)%2 == 0 ) { //Red was attacking
+					/*if ( (level.eliminationSides+level.roundNumber)%2 == 0 ) { //Red was attacking
 						trap_SendServerCommand( -1, "print \"Blue team defended the base\n\"");
 						AddTeamScore(level.intermission_origin,TEAM_BLUE,1);
 					}
 					else {
 						trap_SendServerCommand( -1, "print \"Red team defended the base\n\"");
 						AddTeamScore(level.intermission_origin,TEAM_RED,1);
-					}
+					}*/
 				}
 				else if(((double)countsLiving[TEAM_RED])/((double)level.roundRedPlayers)>((double)countsLiving[TEAM_BLUE])/((double)level.roundBluePlayers))
 				{
@@ -2585,8 +2627,11 @@ void CheckElimination(void) {
 		}
 			
 
-		if((level.roundNumber>level.roundNumberStarted)&&(level.time>=level.roundStartTime))
+		if((level.roundNumber>level.roundNumberStarted)&&(level.time>=level.roundStartTime)){
 			StartEliminationRound();
+			if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 )
+				SendCaptureStrikeMessage();
+		}
 	
 		if(level.time+1000*g_elimination_warmup.integer-500>level.roundStartTime)
 		if(counts[TEAM_BLUE]<1 || counts[TEAM_RED]<1)

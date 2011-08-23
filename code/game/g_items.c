@@ -1232,8 +1232,12 @@ void G_SpawnItem (gentity_t *ent, gitem_t *item) {
 		if (g_gametype.integer != GT_ELIMINATION && g_gametype.integer != GT_CTF_ELIMINATION && g_gametype.integer != GT_LMS)
 			RegisterItem( item );
 		//Registrer flags anyway in CTF Elimination:
-		if (g_gametype.integer == GT_CTF_ELIMINATION && item->giType == IT_TEAM)
+		if (g_gametype.integer == GT_CTF_ELIMINATION && item->giType == IT_TEAM){
+			/*if( strcmp(ent->classname, "team_CTF_redflag"))
+				item = BG_FindItem("Neutral Flag");*/
+				
 			RegisterItem( item );
+		}
 		if ( G_ItemDisabled(item) )
 			return;
 	}

@@ -2415,7 +2415,7 @@ if(g_gametype.integer != GT_ELIMINATION && g_gametype.integer != GT_CTF_ELIMINAT
 		client->ps.stats[STAT_ARMOR] = client->ps.stats[STAT_MAX_HEALTH];
 	}
 }
-else
+else if (g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_LMS || g_elimination_allgametypes.integer )
 {
 	client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
 	client->ps.ammo[WP_GAUNTLET] = -1;
@@ -2469,9 +2469,40 @@ else
 		client->ps.ammo[WP_CHAINGUN] = g_elimination_chain.integer;
 	}
 #endif
+}
+else
+{
+	client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
+	client->ps.ammo[WP_GAUNTLET] = -1;
+	client->ps.ammo[WP_GRAPPLING_HOOK] = -1;
 	
-	ent->health = client->ps.stats[STAT_ARMOR] = g_elimination_startArmor.integer; //client->ps.stats[STAT_MAX_HEALTH]*2;
-	ent->health = client->ps.stats[STAT_HEALTH] = g_elimination_startHealth.integer; //client->ps.stats[STAT_MAX_HEALTH]*2;	
+		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MACHINEGUN );
+		client->ps.ammo[WP_MACHINEGUN] = 200;
+	
+		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SHOTGUN );
+		client->ps.ammo[WP_SHOTGUN] = 30;
+			
+		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GRENADE_LAUNCHER );
+		client->ps.ammo[WP_GRENADE_LAUNCHER] = 10;
+		
+		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_ROCKET_LAUNCHER );
+		client->ps.ammo[WP_ROCKET_LAUNCHER] = 30;
+	
+	
+		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_LIGHTNING );
+		client->ps.ammo[WP_LIGHTNING] = 150;
+	
+	
+		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_RAILGUN );
+		client->ps.ammo[WP_RAILGUN] = 30;
+	
+	
+		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_PLASMAGUN );
+		client->ps.ammo[WP_PLASMAGUN] = 125;
+	
+	
+	ent->health = client->ps.stats[STAT_ARMOR] = 100; //client->ps.stats[STAT_MAX_HEALTH]*2;
+	ent->health = client->ps.stats[STAT_HEALTH] = 100; //client->ps.stats[STAT_MAX_HEALTH]*2;	
 	
 	
 	//	ent->health = client->ps.stats[STAT_HEALTH] = 0;

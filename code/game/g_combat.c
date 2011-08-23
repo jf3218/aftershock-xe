@@ -1390,7 +1390,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		damage = 1;
 	}
 
-	if ((g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION || g_gametype.integer == GT_LMS || g_elimination_allgametypes.integer)
+	if ((g_gametype.integer == GT_ELIMINATION || /*g_gametype.integer == GT_CTF_ELIMINATION ||*/ g_gametype.integer == GT_LMS || g_elimination_allgametypes.integer)
 				&& g_elimination_selfdamage.integer<1 && ( targ == attacker ||  mod == MOD_FALLING )) {
 		damage = 0;
 	}
@@ -1458,6 +1458,9 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		if(attacker->health>g_vampireMaxHealth.integer)
 			attacker->health = g_vampireMaxHealth.integer;
 	}
+	
+	if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 && targ == attacker)
+		return;
 
 	// do the damage
 	if (take) {
