@@ -2469,6 +2469,8 @@ else if (g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_LMS ||
 		client->ps.ammo[WP_CHAINGUN] = g_elimination_chain.integer;
 	}
 #endif
+	ent->health = client->ps.stats[STAT_ARMOR] = client->ps.stats[STAT_MAX_HEALTH];
+	ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH]*2;
 }
 else
 {
