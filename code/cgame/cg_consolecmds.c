@@ -238,7 +238,7 @@ static void CG_Currenttime_f( void ) {
 }
 
 #ifndef AFTERSHOCK_REVISION
-#define AFTERSHOCK_REVISION 182
+#define AFTERSHOCK_REVISION 202
 #endif
 
 

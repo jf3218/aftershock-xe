@@ -1929,6 +1929,7 @@ PmoveSingle
 void trap_SnapVector( float *v );
 
 void PmoveSingle (pmove_t *pmove) {
+	char buf[32];
 	pm = pmove;
 
 	// this counter lets us debug movement problems with a journal
@@ -2065,6 +2066,14 @@ void PmoveSingle (pmove_t *pmove) {
 	
 	if (pm->ps->stats[STAT_JUMPTIME] > 0) {
 		pm->ps->stats[STAT_JUMPTIME] -= pml.msec;
+	}
+	
+	trap_Cvar_VariableStringBuffer( "g_gametype", buf, sizeof(buf));
+	
+	if( atoi(buf) == GT_CTF_ELIMINATION && pm->ps->pm_flags & PMF_ELIMWARMUP ){
+		pm->cmd.forwardmove = 0;
+		pm->cmd.rightmove = 0;
+		pm->cmd.upmove = 0;
 	}
 
 	if ( pm->ps->powerups[PW_INVULNERABILITY] ) {

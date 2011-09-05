@@ -856,7 +856,7 @@ void DisableWeapons(void)
 		client->client->ps.pm_flags |= PMF_ELIMWARMUP;
 	}
         ProximityMine_RemoveAll(); //Remove all the prox mines
-	Grenade_RemoveAll(); //Remove all the prox mines
+	Grenade_RemoveAll(); //Remove all the grenades
 	return;
 }
 
