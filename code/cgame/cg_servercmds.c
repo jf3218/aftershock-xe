@@ -1963,6 +1963,10 @@ static void CG_ServerCommand ( void ) {
 
     if ( !strcmp ( cmd, "cp" ) ) {
         CG_CenterPrint ( CG_Argv ( 1 ), SCREEN_HEIGHT * 0.30, BIGCHAR_WIDTH );
+	if( !strcmp ( cmd, "^1Defend!" ) )
+		cgs.csStatus = 1;
+	if( !strcmp ( cmd, "^2Capture!" ) )
+		cgs.csStatus = 2;
         return;
     }
 

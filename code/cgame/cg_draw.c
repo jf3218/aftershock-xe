@@ -732,6 +732,11 @@ static void CG_DrawStatusBar ( void ) {
 		CG_DrawHudIcon ( HUD_STATUSBARFLAG, qfalse, cgs.media.blueFlagShader[0] );
 	} else if ( cg.predictedPlayerState.powerups[PW_NEUTRALFLAG] ) {
 		CG_DrawHudIcon ( HUD_STATUSBARFLAG, qfalse, cgs.media.neutralFlagShader[0] );
+	} else if( cgs.gametype == GT_CTF_ELIMINATION ) {
+		if( cgs.csStatus == 1 )
+			CG_DrawHudIcon ( HUD_STATUSBARFLAG, qfalse, cgs.media.medalDefend );
+		else if( cgs.csStatus == 2 )
+			CG_DrawHudIcon ( HUD_STATUSBARFLAG, qfalse, cgs.media.medalCapture );
 	}
 
 	//

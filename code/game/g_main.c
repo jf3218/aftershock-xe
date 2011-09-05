@@ -2619,6 +2619,8 @@ void CheckElimination(void) {
 			level.roundRespawned = qtrue;
 			RespawnAll();
 			SendEliminationMessageToAllClients();
+			if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 )
+				SendCaptureStrikeMessage();
 		}
 
 		if(level.time<=level.roundStartTime && level.time>level.roundStartTime-1000*g_elimination_activewarmup.integer)
@@ -2629,8 +2631,7 @@ void CheckElimination(void) {
 
 		if((level.roundNumber>level.roundNumberStarted)&&(level.time>=level.roundStartTime)){
 			StartEliminationRound();
-			if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 )
-				SendCaptureStrikeMessage();
+			
 		}
 	
 		if(level.time+1000*g_elimination_warmup.integer-500>level.roundStartTime)

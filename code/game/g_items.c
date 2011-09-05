@@ -1229,13 +1229,15 @@ void G_SpawnItem (gentity_t *ent, gitem_t *item) {
 	//if((item->giType == IT_TEAM && g_instantgib.integer) || !g_instantgib.integer)
 	{
 		//Don't load pickups in Elimination (or maybe... gives warnings)
-		if (g_gametype.integer != GT_ELIMINATION && g_gametype.integer != GT_CTF_ELIMINATION && g_gametype.integer != GT_LMS)
+		if (g_gametype.integer != GT_ELIMINATION /*&& g_gametype.integer != GT_CTF_ELIMINATION */&& g_gametype.integer != GT_LMS)
 			RegisterItem( item );
 		//Registrer flags anyway in CTF Elimination:
 		if (g_gametype.integer == GT_CTF_ELIMINATION && item->giType == IT_TEAM){
-			/*if( strcmp(ent->classname, "team_CTF_redflag"))
-				item = BG_FindItem("Neutral Flag");*/
-				
+			/*if( strcmp(ent->classname, "team_CTF_blueflag") && (level.eliminationSides+level.roundNumber)%2 != 0 )
+				item = BG_FindItem("Neutral Flag");
+			else if( strcmp(ent->classname, "team_CTF_redflag") && (level.eliminationSides+level.roundNumber)%2 == 0 ) 
+				item = BG_FindItem("Neutral Flag");
+			*/	
 			RegisterItem( item );
 		}
 		if ( G_ItemDisabled(item) )

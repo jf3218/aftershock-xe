@@ -178,11 +178,15 @@ void AddTeamScore(vec3_t origin, int team, int score) {
         return;
 
     if ( g_gametype.integer != GT_DOMINATION ) {
-        te = G_TempEntity(origin, EV_GLOBAL_TEAM_SOUND );
-        te->r.svFlags |= SVF_BROADCAST;
+	if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0  && score == 1 ){
+	    te = G_TempEntity(origin, EV_NONE );
+	}
+	else{
+	    te = G_TempEntity(origin, EV_GLOBAL_TEAM_SOUND );
+	    te->r.svFlags |= SVF_BROADCAST;
+	}
+        
 	
-	if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0  && score == 1 )
-		te->r.svFlags = 0;
 
 
 
@@ -925,7 +929,9 @@ void Team_ResetFlags( void ) {
 
 void Team_ReturnFlagSound( gentity_t *ent, int team ) {
     gentity_t	*te;
-
+    
+    if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 )
+	  return;
     if (ent == NULL) {
         G_Printf ("Warning:  NULL passed to Team_ReturnFlagSound\n");
         return;
@@ -1043,7 +1049,10 @@ Flags are unique in that if they are dropped, the base flag must be respawned wh
 */
 void Team_DroppedFlagThink(gentity_t *ent) {
     int		team = TEAM_FREE;
-
+    
+    if( g_gametype.integer == GT_CTF_ELIMINATION && g_elimination_ctf_oneway.integer != 0 )
+	return;
+    
     if ( ent->item->giTag == PW_REDFLAG ) {
         team = TEAM_RED;
     }
@@ -1523,6 +1532,10 @@ int Pickup_Team( gentity_t *ent, gentity_t *other ) {
     }
     if ( g_gametype.integer == GT_DOUBLE_D) {
         return Team_TouchDoubleDominationPoint( ent, other, team );
+    }
+    if ( g_gametype.integer == GT_CTF_ELIMINATION ){
+	if( team == TEAM_FREE )
+	      return Team_TouchOurFlag( ent, other, team);
     }
     // GT_CTF
     if ( team == cl->sess.sessionTeam) {

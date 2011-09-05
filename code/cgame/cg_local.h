@@ -1449,6 +1449,7 @@ typedef struct {
 	int 		zoomfovs[ WP_NUM_WEAPONS ];
 	int 		crosshair[ WP_NUM_WEAPONS ];
 	int 		crosshairSize[ WP_NUM_WEAPONS ];
+	int 		csStatus;
 } cgs_t;
 
 //==============================================================================
