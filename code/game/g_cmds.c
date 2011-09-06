@@ -3110,6 +3110,12 @@ void Cmd_CallVote_f( gentity_t *ent ) {
     for ( i = 0 ; i < level.maxclients ; i++ ) {
         level.clients[i].ps.eFlags &= ~EF_VOTED;
         level.clients[i].vote = 0;
+	
+	if( i == ent->s.clientNum ){
+		G_Printf("%s\n", level.clients[i].pers.netname );
+		level.clients[i].ps.eFlags |= EF_VOTED;
+		level.clients[i].vote = 1;
+	}
     }
     ent->client->ps.eFlags |= EF_VOTED;
     ent->client->vote = 1;

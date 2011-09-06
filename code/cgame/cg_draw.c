@@ -4259,6 +4259,7 @@ static void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 	}
 
 	CG_DrawLivingCount();
+	CG_DrawTimer();
 
 	// don't draw center string if scoreboard is up
 	cg.scoreBoardShowing = CG_DrawScoreboard();
@@ -4269,7 +4270,6 @@ static void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 	  
 		CG_DrawLagometer();
 		CG_DrawTimeout();
-		CG_DrawTimer();
 		CG_DrawCenterDDString();
 		CG_DrawCenter1FctfString();
 		CG_DrawCenterString();
