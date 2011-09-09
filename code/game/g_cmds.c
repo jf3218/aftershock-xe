@@ -3117,8 +3117,10 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 		level.clients[i].vote = 1;
 	}
     }
-    ent->client->ps.eFlags |= EF_VOTED;
-    ent->client->vote = 1;
+    if( ent->s.clientNum == ent->client->ps.clientNum ){
+	    ent->client->ps.eFlags |= EF_VOTED;
+	    ent->client->vote = 1;
+    }
     //Do a first count to make sure that numvotingclients is correct!
     CountVotes();
 

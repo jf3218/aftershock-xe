@@ -257,6 +257,23 @@ static void CG_Revision_f( void ) {
 	CG_Printf("Aftershock revision%s\n", revision);	   
 }
 
+static void CG_CvarAdd_f( void ){
+	char cvarName[MAX_STRING_CHARS];
+	char add[MAX_STRING_CHARS];
+	char info[128];
+	
+	if( trap_Argc() < 3 ){
+	  CG_Printf( "cvarAdd <cvar> <value>\n");
+	  return;
+	}
+	trap_Argv( 1, cvarName, sizeof(cvarName) );
+	trap_Argv( 2, add, sizeof(add) );
+	
+	trap_Cvar_VariableStringBuffer(cvarName, info, sizeof(info));
+	
+	trap_Cvar_Set(cvarName, va( "%f", atof( info ) + atof( add ) ) );
+}
+
 //TODO: remove all the MISSIONPACK things, AfterShock will never have a missionpack
 #ifdef MISSIONPACK
 extern menuDef_t *menuScoreboard;
@@ -279,7 +296,6 @@ static void CG_LoadHud_f( void) {
 	CG_LoadMenus(hudSet);
   menuScoreboard = NULL;
 }
-
 
 static void CG_scrollScoresDown_f( void) {
 	if (menuScoreboard && cg.scoreBoardShowing) {
@@ -652,7 +668,9 @@ static consoleCommand_t	commands[] = {
 	{ "hudedit", CG_HudEdit_f },
 	{ "saveHud", CG_WriteHudFile_f },
 	{ "autorecord", CG_StartOfGame },
-	{ "revision", CG_Revision_f }
+	{ "revision", CG_Revision_f },
+	{ "cvarAdd", CG_CvarAdd_f }
+	
 };
 
 
