@@ -577,7 +577,7 @@ static void CG_StartOrbit_f( void ) {
 
 	trap_Cvar_VariableStringBuffer( "developer", var, sizeof( var ) );
 	if ( !atoi(var) ) {
-		return;
+		returrase
 	}
 	if (cg_cameraOrbit.value != 0) {
 		trap_Cvar_Set ("cg_cameraOrbit", "0");
