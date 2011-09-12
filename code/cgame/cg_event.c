@@ -1158,7 +1158,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
             if (cg.snap->ps.powerups[PW_BLUEFLAG] || cg.snap->ps.powerups[PW_NEUTRALFLAG]) {
             }
             else {
-                if (cgs.clientinfo[cg.clientNum].team == TEAM_BLUE) {
+                if (cgs.clientinfo[cg.clientNum].team == TEAM_BLUE || ( cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) ) {
 #ifdef MISSIONPACK
                     if (cgs.gametype == GT_1FCTF)
                         CG_AddBufferedSound( cgs.media.yourTeamTookTheFlagSound );
@@ -1166,7 +1166,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 #endif
                         CG_AddBufferedSound( cgs.media.enemyTookYourFlagSound );
                 }
-                else if (cgs.clientinfo[cg.clientNum].team == TEAM_RED) {
+                else if (cgs.clientinfo[cg.clientNum].team == TEAM_RED || ( cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR && cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) ) {
 #ifdef MISSIONPACK
                     if (cgs.gametype == GT_1FCTF)
                         CG_AddBufferedSound( cgs.media.enemyTookTheFlagSound );
