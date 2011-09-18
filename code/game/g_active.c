@@ -808,6 +808,23 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 	// mark the time, so the connection sprite can be removed
 	ucmd = &ent->client->pers.cmd;
+	
+	if( g_maxWarp.integer > 0 && client->warping )
+	{
+	    int frames = ( level.framenum - client->lastUpdateFrame );
+	    int maxtime = 0;
+
+	    if( frames > g_maxWarp.integer )
+		frames = g_maxWarp.integer;
+
+	    maxtime = ( frames  * ( level.time - level.previousTime ) );
+	    //ucmd->serverTime = client->ps.commandTime + maxtime;
+	    ucmd->serverTime = level.previousTime;
+	    client->ps.commandTime = level.previousTime - maxtime;
+	    client->warped = qtrue;
+	}
+	client->warping = qfalse;
+	client->lastUpdateFrame = level.framenum;
 
 	// sanity check the command time to prevent speedup cheating
 	if ( ucmd->serverTime > level.time + 200 ) {
@@ -1299,6 +1316,58 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 	}
 }
 
+ /*
+ ==============
+ G_PredictPmove
+
+ Make use of the 'Pmove' functions to figure out where a player
+ would have moved on their present course in frametime seconds.
+ Link them at this predicted location and send it out in the next
+ snapshot, BUT don't alter their location so subsequent cmds from
+ this client process as though nothing has happened.
+==============
+*/
+static void G_PredictPmove( gentity_t *ent, float frametime )
+{
+  pmove_t pm;
+  //pmoveExt_t pmext;
+  playerState_t ps;
+  vec3_t currentOrigin;
+
+  if( !ent || !ent->inuse || !ent->r.linked || !ent->client ||
+      ent->health < 1 || ent->client->ps.pm_type != PM_NORMAL ||
+      ent->waterlevel > 1 )
+  {
+    return;
+  }
+
+  memset( &pm, 0, sizeof( pm ) );
+  memcpy( &ps, &ent->client->ps, sizeof( ps ) );
+  //memcpy( &pmext, &ent->client->pmext, sizeof( pmext ) );
+  pm.ps = &ps;
+  //pm.pmext = &pmext;
+  pm.trace = trap_Trace;
+  pm.pointcontents = trap_PointContents;
+  pm.tracemask = MASK_PLAYERSOLID;
+  VectorCopy( ent->r.mins, pm.mins );
+  VectorCopy( ent->r.maxs, pm.maxs );
+
+  PmovePredict( &pm, frametime );
+  SnapVector( ps.origin );
+  SnapVector( ps.velocity );
+
+  // link the entity at this new location so they can be hit there but don't
+  // really move them since it will interfere with movement
+  VectorCopy( ent->r.currentOrigin , currentOrigin );
+  VectorCopy( ps.origin, ent->r.currentOrigin );
+  trap_LinkEntity( ent );
+  VectorCopy( currentOrigin, ent->r.currentOrigin );
+
+  // send this new origin/velocity in the next snapshot
+  VectorCopy( ps.origin, ent->s.pos.trBase );
+  VectorCopy( ps.velocity, ent->s.pos.trDelta );
+}
+
 /*
 ==============
 ClientEndFrame
@@ -1311,6 +1380,7 @@ while a slow client may have multiple ClientEndFrame between ClientThink.
 void ClientEndFrame( gentity_t *ent ) {
 	int			i;
 	clientPersistant_t	*pers;
+	//int frames;
 
 //unlagged - smooth clients #1
 	int frames;
@@ -1390,6 +1460,28 @@ void ClientEndFrame( gentity_t *ent ) {
 		BG_PlayerStateToEntityState( &ent->client->ps, &ent->s, qtrue );
 //	}
 	SendPendingPredictableEvents( &ent->client->ps );
+	
+	// see how many frames the client has missed
+	frames = level.framenum - ent->client->lastUpdateFrame - 1;
+
+	if( g_maxWarp.integer > 0 )
+	{
+	      if( frames > g_maxWarp.integer )
+	      {
+		      ent->client->warping = qtrue;
+		      frames = g_maxWarp.integer;
+	      } 
+	}
+	else if( frames > 3 )
+	      frames = 3;
+
+	if( g_skipCorrection.integer && !ent->client->warped && frames > 0 )
+	{
+	      float pmtime = 0.001f * ( frames * ( level.time - level.previousTime ) );
+
+	      G_PredictPmove( ent, pmtime );
+	}
+	ent->client->warped = qfalse;
 
 //unlagged - smooth clients #1
 	// mark as not missing updates initially

@@ -498,6 +498,9 @@ struct gclient_s {
 	char			*lastDrop;
 	gcapture_t captures[ MAX_CAPTURES ];
 	int captureCount;
+	
+	qboolean            warping;
+	qboolean            warped;
 };
 
 
@@ -1333,6 +1336,9 @@ extern vmCvar_t     g_fadeToBlack;
 extern vmCvar_t     g_spawnProtection;
 
 extern vmCvar_t     g_disableVotingTime;
+
+extern  vmCvar_t  g_maxWarp;
+extern  vmCvar_t  g_skipCorrection;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

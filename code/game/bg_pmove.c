@@ -2175,3 +2175,24 @@ void Pmove (pmove_t *pmove) {
 
 }
 
+/*
+================
+ PmovePredict
+
+ Used by the server to move a client along when they miss a server frame
+================
+*/
+
+void PmovePredict( pmove_t *pmove, float frametime )
+{
+  pm = pmove;
+  memset( &pml, 0, sizeof( pml ) );
+  pml.frametime = frametime;
+  PM_GroundTrace( );
+  if( pml.groundPlane )
+    PM_StepSlideMove( qfalse );
+  else
+    PM_StepSlideMove( qtrue );
+}
+
+
