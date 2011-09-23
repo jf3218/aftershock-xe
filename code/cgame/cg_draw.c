@@ -1892,16 +1892,39 @@ static void CG_DrawTeamInfo ( void ) {
     hudElements_t	hudelement;
     int 		x;
 
-    if ( cgs.teamLastChatPos != cgs.teamChatPos ) {
-        if ( cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer ) {
-            cgs.teamLastChatPos++;
+    hcolor[0] = hcolor[1] = hcolor[2] = 1.0f;
+    hcolor[3] = 1.0f;
+
+    if ( !cg.forceChat ) {
+        if ( cgs.teamLastChatPos != cgs.teamChatPos ) {
+            if ( cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer ) {
+                cgs.teamLastChatPos++;
+            }
+
+            for ( i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i-- ) {
+                hudelement = cgs.hud[HUD_TEAMCHAT1 + i - cgs.teamLastChatPos ];
+
+                if ( !hudelement.inuse )
+                    return;
+
+                w = CG_DrawStrlen ( cgs.teamChatMsgs[i % chatHeight ] ) * hudelement.fontWidth;
+
+                if ( hudelement.textAlign == 0 )
+                    x = hudelement.xpos;
+                else if ( hudelement.textAlign == 2 )
+                    x = hudelement.xpos + hudelement.width - w;
+                else
+                    x = hudelement.xpos + hudelement.width/2 - w/2;
+
+                CG_DrawStringExt ( x,
+                                   hudelement.ypos,
+                                   cgs.teamChatMsgs[i % chatHeight], hcolor, qfalse,
+                                   qfalse, hudelement.fontWidth, hudelement.fontHeight, 0 );
+            }
         }
-
-        hcolor[0] = hcolor[1] = hcolor[2] = 1.0f;
-        hcolor[3] = 1.0f;
-
-        for ( i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i-- ) {
-            hudelement = cgs.hud[HUD_TEAMCHAT1 + i - cgs.teamLastChatPos ];
+    } else {
+        for ( i = cgs.teamChatPos - 1; i >= cgs.teamChatPos - chatHeight; i-- ) {
+            hudelement = cgs.hud[HUD_TEAMCHAT1 + i - cgs.teamChatPos + chatHeight ];
 
             if ( !hudelement.inuse )
                 return;
@@ -1980,15 +2003,15 @@ static void CG_DrawChat ( qboolean endOfGame ) {
     vec4_t hcolor;
     int chatHeight = TEAMCHAT_HEIGHT;
 
+    hcolor[0] = hcolor[1] = hcolor[2] = 1.0f;
+    hcolor[3] = 1.0f;
+
     if ( !cg.forceChat ) {
         if ( cgs.lastChatPos != cgs.chatPos ) {
             if ( cg.time - cgs.chatMsgTimes[cgs.lastChatPos % chatHeight] >
                     cg_chatTime.integer ) {
                 cgs.lastChatPos++;
             }
-
-            hcolor[0] = hcolor[1] = hcolor[2] = 1.0f;
-            hcolor[3] = 1.0f;
 
             for ( i = cgs.lastChatPos; i < cgs.chatPos; i++ ) {
                 if ( !endOfGame ) {
