@@ -169,6 +169,14 @@ static void CG_AccUp_f( void ) {
 	}
 }
 
+static void CG_ChatDown_f( void ) {
+	cg.forceChat = qtrue;
+}
+
+static void CG_ChatUp_f( void ){
+	cg.forceChat = qfalse;
+}
+
 /*
 ==================
 ConcatArgs
@@ -669,7 +677,9 @@ static consoleCommand_t	commands[] = {
 	{ "saveHud", CG_WriteHudFile_f },
 	{ "autorecord", CG_StartOfGame },
 	{ "revision", CG_Revision_f },
-	{ "cvarAdd", CG_CvarAdd_f }
+	{ "cvarAdd", CG_CvarAdd_f },
+	{ "+chat", CG_ChatDown_f },
+	{ "-chat", CG_ChatUp_f }
 	
 };
 

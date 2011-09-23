@@ -867,6 +867,7 @@ typedef struct {
 	
 	vec3_t spawnOrg[MAX_SPAWNPOINTS];
 	int numSpawnpoints;
+	qboolean forceChat;
 
 } cg_t;
 
