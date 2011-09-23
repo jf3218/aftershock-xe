@@ -577,7 +577,7 @@ static void CG_StartOrbit_f( void ) {
 
 	trap_Cvar_VariableStringBuffer( "developer", var, sizeof( var ) );
 	if ( !atoi(var) ) {
-		returrase
+		return;
 	}
 	if (cg_cameraOrbit.value != 0) {
 		trap_Cvar_Set ("cg_cameraOrbit", "0");
@@ -749,4 +749,5 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand ("ref");
 	trap_AddCommand ("listplayers");
 	trap_AddCommand ("mapcycle");
+	trap_AddCommand ("forfeit");
 }

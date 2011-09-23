@@ -3691,6 +3691,39 @@ void Cmd_Unmute_f( gentity_t *ent ) {
         trap_SendServerCommand( ent-g_entities, "print \"Clientnumber out of Range\n\"");
 }
 
+void Cmd_Forfeit_f( gentity_t *ent ) {
+  
+    if( g_gametype.integer != GT_TOURNAMENT ){
+	  trap_SendServerCommand( ent-g_entities, va("screenPrint \"Forfeit is only available in tournament\"") );
+	  trap_SendServerCommand( ent-g_entities, va("print \"Forfeit is only available in tournament\"") );
+	  return;
+    }
+    
+    if ( level.numPlayingClients != 2 )
+	  return;
+	
+    if( ent->client->sess.sessionTeam != TEAM_FREE )
+	  return;
+    
+    if ( level.warmupTime == -1 ){
+	  trap_SendServerCommand( ent-g_entities, va("screenPrint \"Forfeit is not avaible during warmup\"") );
+	  trap_SendServerCommand( ent-g_entities, va("print \"Forfeit is not avaible during warmup\"") );
+	  return;
+    }
+    
+    if( ent->client->ps.clientNum != level.sortedClients[1] ){
+	  trap_SendServerCommand( ent-g_entities, va("screenPrint \"Forfeit is only avaible to the losing player\"") );
+	  trap_SendServerCommand( ent-g_entities, va("print \"Forfeit is only avaible to the losing player\"") );
+	  return;
+    }
+    
+    if( g_entities[ level.sortedClients[0] ].client->ps.persistant[PERS_SCORE] > g_entities[ level.sortedClients[1] ].client->ps.persistant[PERS_SCORE] )
+	  level.intermissionQueued = level.time;
+    trap_SendServerCommand( -1, va("screenPrint \"Match has been forfeited.\"") );
+    trap_SendServerCommand( -1, va("print \"Match has been forfeited.\"") );
+  
+}
+
 
 
 
@@ -3765,6 +3798,7 @@ commands_t cmds[ ] =
     { "mapcycle", 0, Cmd_Listmapcycle_f },
     { "mute", 0, Cmd_Mute_f },
     { "unmute", 0, Cmd_Unmute_f },
+    { "forfeit", 0, Cmd_Forfeit_f },
 
 };
 

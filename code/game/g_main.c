@@ -502,8 +502,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_fadeToBlack, "g_fadeToBlack", "0", CVAR_SERVERINFO, 0, qfalse },
 	{ &g_spawnProtection, "g_spawnProtection", "0", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_disableVotingTime, "g_disableVotingTime", "0", CVAR_ARCHIVE, 0 ,qfalse },
-	{ &g_maxWarp, "g_maxWarp", "3", CVAR_ARCHIVE, 0, qfalse  },
-	{ &g_skipCorrection, "g_skipCorrection", "1", CVAR_ARCHIVE, 0, qfalse  }
+	{ &g_maxWarp, "g_maxWarp", "0", CVAR_CHEAT, 0, qfalse  },
+	{ &g_skipCorrection, "g_skipCorrection", "0", CVAR_CHEAT, 0, qfalse  }
 };
 
 // bk001129 - made static to avoid aliasing
