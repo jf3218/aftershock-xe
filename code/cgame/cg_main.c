@@ -392,6 +392,7 @@ vmCvar_t 	cg_smoothFovChange;
 
 vmCvar_t 	cg_killBeep;
 vmCvar_t 	cg_lowAmmoWarningPercentile;
+vmCvar_t 	cg_lowHealthPercentile;
 
 
 typedef struct {
@@ -645,7 +646,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_smoke_SG, "cg_smoke_SG", "1", CVAR_ARCHIVE },
 	{&cg_smoothFovChange, "cg_smoothFovChange", "0", CVAR_ARCHIVE },
 	{&cg_killBeep, "cg_killBeep", "0", CVAR_ARCHIVE },
-	{&cg_lowAmmoWarningPercentile, "cg_lowAmmoWarningPercentile", "0.4", CVAR_ARCHIVE }
+	{&cg_lowAmmoWarningPercentile, "cg_lowAmmoWarningPercentile", "0.4", CVAR_ARCHIVE },
+	{&cg_lowHealthPercentile, "cg_lowHealthPercentile", "0.25", CVAR_ARCHIVE }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

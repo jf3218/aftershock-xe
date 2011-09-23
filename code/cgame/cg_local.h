@@ -1744,6 +1744,7 @@ extern vmCvar_t 		cg_smoke_SG;
 extern vmCvar_t 		cg_smoothFovChange;
 extern vmCvar_t 		cg_killBeep;
 extern vmCvar_t 		cg_lowAmmoWarningPercentile;
+extern vmCvar_t 		cg_lowHealthPercentile;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

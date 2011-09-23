@@ -756,7 +756,7 @@ static void CG_DrawStatusBar ( void ) {
 
     if ( value > 100 ) {
         VectorCopy ( colors[3], hcolor );
-    } else if ( value > 25 ) {
+    } else if ( value > cg_lowHealthPercentile.value * 100 ) {
         VectorCopy ( colors[0], hcolor );
     } else if ( value > 0 ) {
         color = ( cg.time >> 8 ) & 1;	// flash
