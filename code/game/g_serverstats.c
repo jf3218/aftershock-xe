@@ -119,6 +119,19 @@ static char *boolToChar ( qboolean in ) {
 	return "false";
 }
 
+static char *teamToChar ( int in ) {
+	if ( in == TEAM_BLUE )
+		return "blue";
+	else if ( in == TEAM_RED )
+		return "red";
+	else if ( in == TEAM_FREE )
+		return "free";
+	else if ( in == TEAM_SPECTATOR )
+		return "spectator";
+	else
+		return "none";
+}
+
 static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnected ) {
 	float time;
 	int count;
@@ -126,15 +139,15 @@ static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnec
 	int i;
 
 	if ( !disconnected )
-		time = (level.time - cl->pers.enterTime)/60000;
+		time = (level.time - cl->pers.enterTime)/1000;
 	else
-		time = cl->pers.enterTime/60000;
+		time = cl->pers.enterTime/1000;
 
 	cleanString( cleanName, sizeof(cleanName), cl->pers.netname);
 	cleanString( cleanAftershockName, sizeof(cleanAftershockName), cl->aftershock_name);
 	cleanString( cleanAftershockHash, sizeof(cleanAftershockHash), cl->aftershock_hash);
 	
-	writeToFile ( va ( "\n\t\t<player name=\"%s\" time=\"%i\" aftershock_login=\"%s\" aftershock_hash=\"%s\">\n", cleanName , (int)time, cleanAftershockName , cleanAftershockHash ), f );
+	writeToFile ( va ( "\n\t\t<player name=\"%s\" time=\"%i\" aftershock_login=\"%s\" aftershock_hash=\"%s\" team=\"%s\">\n", cleanName , (int)time, cleanAftershockName , cleanAftershockHash, teamToChar(cl->sess.sessionTeam) ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Score\" value=\"%i\"/>\n", cl->ps.persistant[PERS_SCORE] ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Kills\" value=\"%i\"/>\n", cl->kills ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Death\" value=\"%i\"/>\n", cl->ps.persistant[PERS_KILLED] ), f );
@@ -260,7 +273,7 @@ void G_WriteXMLStats ( void ) {
 	writeToFile ( "<?xml version=\"1.0\"?><?xml-stylesheet type=\"text/xsl\"?>\n", &f );
 	writeToFile ( va ( "<match datetime=\"%i/%02i/%02i %02i:%02i:%02i\" duration=\"%i\" map=\"%s\" type=\"%s\" isTeamGame=\"%s\" instagib=\"%s\" rocketsOnly=\"%s\" reducedLightning=\"%s\" reducedRail=\"%s\" aftershockRevision=\"%s\">\n\n",
 	                   1900 + now.tm_year, 1 + now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec, level.time-level.startTime, mapname, gameShortNames[g_gametype.integer], boolToChar ( isTeamGame ),
-	                   boolToChar ( g_instantgib.integer == 1 ), boolToChar ( g_rockets.integer == 1 ), boolToChar( g_reduceLightningDamage.integer == 1 ), boolToChar( g_reduceRailDamage.integer == 1 ), "205" ), &f );
+	                   boolToChar ( g_instantgib.integer == 1 ), boolToChar ( g_rockets.integer == 1 ), boolToChar( g_reduceLightningDamage.integer == 1 ), boolToChar( g_reduceRailDamage.integer == 1 ), "220" ), &f );
 
 	if ( isTeamGame ) {
 		writeToFile ( va ( "\t<team name=\"Blue\" score=\"%i\">\n", level.teamScores[TEAM_BLUE] ), &f );
