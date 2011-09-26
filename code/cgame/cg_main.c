@@ -578,7 +578,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_teamLegsColor, "cg_teamLegsColor", "white", CVAR_ARCHIVE},	
 	{&cg_deadBodyDarken, "cg_deadBodyDarken", "1", CVAR_ARCHIVE},
 	{&cg_deadBodyColor, "cg_deadBodyColor", "0x323232FF", CVAR_ARCHIVE},
-	{&cg_plasmaBallAlpha, "cg_plasmaBallAlpha", "255", CVAR_ARCHIVE},
+	{&cg_plasmaBallAlpha, "cg_plasmaBallAlpha", "255", CVAR_ARCHIVE| CVAR_CHEAT},
 	{&cg_drawItemPickups, "cg_drawItemPickups", "7", CVAR_ARCHIVE},
 	{&cg_mapConfigs, "cg_mapConfigs", "0", CVAR_ARCHIVE},
 	{&cg_teamWeaponColor, "cg_teamWeaponColor", "0xFFFFFFFF", CVAR_ARCHIVE},

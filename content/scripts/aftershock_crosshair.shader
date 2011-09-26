@@ -107,3 +107,84 @@ aftershock_crosshairk
 		rgbGen identity
 	}
 }
+
+aftershock_crosshairl
+{
+	nopicmip
+	{
+		map gfx/2d/crosshairl.tga       
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+aftershock_crosshairm
+{
+	nopicmip
+	{
+		map gfx/2d/crosshairm.tga       
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+aftershock_crosshairn
+{
+	nopicmip
+	{
+		map gfx/2d/crosshairn.tga       
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+aftershock_crosshairo
+{
+	nopicmip
+	{
+		map gfx/2d/crosshairo.tga       
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+aftershock_crosshairp
+{
+	nopicmip
+	{
+		map gfx/2d/crosshairp.tga       
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+aftershock_crosshairq
+{
+	nopicmip
+	{
+		map gfx/2d/crosshairq.tga       
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+aftershock_crosshairr
+{
+	nopicmip
+	{
+		map gfx/2d/crosshairr.tga       
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+aftershock_crosshairs
+{
+	nopicmip
+	{
+		map gfx/2d/crosshairs.tga       
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
