@@ -258,11 +258,12 @@ static void CG_DrawSpecs( void ){
 				CG_DrawStringExt( SB_SPEC_X, y, string, colorWhite, qfalse, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 0 );
 				if( cgs.gametype == GT_TOURNAMENT ){
 					if( score->specOnly )
-						strcpy( string, va("^7%s^7(^1s^7)", ci->name ) );
+						strcpy( string, va("^7(^2%i^7/^1%i^7)%s^7(^1s^7)", ci->wins, ci->losses, ci->name ) );
 					else{
-						strcpy( string, va("^7%s^7(^2%i^7)", ci->name, queueNumber ) );
+						strcpy( string, va("^7(^2%i^7/^1%i^7)%s^7(^2%i^7)", ci->wins, ci->losses, ci->name, queueNumber ) );
 						queueNumber++;
 					}
+					
 				}
 				else
 					strcpy( string, ci->name );
@@ -279,9 +280,9 @@ static void CG_DrawSpecs( void ){
 				
 				if( cgs.gametype == GT_TOURNAMENT ){
 					if( score->specOnly )
-						strcat( string, va("^7%s^7(^1s^7)", ci->name ) );
+						strcat( string, va("^7(^2%i^7/^1%i^7)%s^7(^1s^7)", ci->wins, ci->losses, ci->name ) );
 					else{
-						strcat( string, va("^7%s^7(^2%i^7)", ci->name, queueNumber ) );
+						strcat( string, va("^7(^2%i^7/^1%i^7)%s^7(^2%i^7)", ci->wins, ci->losses, ci->name, queueNumber ) );
 						queueNumber++;
 					}
 				}
@@ -618,7 +619,7 @@ qboolean CG_DrawOldTourneyScoreboard( void ){
 		
 		if( p == NULL )break;
 	
-		CG_DrawStringExt( x + side*w/2 - SMALLCHAR_WIDTH*CG_DrawStrlen( p->name )/2, y + 15, p->name, colorWhite, qfalse, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + side*w/2 - SMALLCHAR_WIDTH*CG_DrawStrlen( va("^7(^2%i^7/^1%i^7) %s",p->wins, p->losses, p->name ) )/2, y + 15, va("^7(^2%i^7/^1%i^7) %s",p->wins, p->losses, p->name ), colorWhite, qfalse, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0 );
 		CG_DrawPic( x + side*w*0.8 - offset*SB_INFOICON_SIZE, y + 30, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbPing );
 		strcpy( string, va( "%i", score->ping ) );
 		CG_DrawStringExt( x + side*w*0.8 - side*SB_INFOICON_SIZE*2 - offset*SB_MEDCHAR_WIDTH*CG_DrawStrlen( string ), y + 30, string, colorWhite, qfalse, qtrue, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 0 );
