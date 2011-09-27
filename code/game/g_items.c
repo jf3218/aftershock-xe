@@ -59,6 +59,7 @@ int Pickup_Powerup( gentity_t *ent, gentity_t *other ) {
 			
 		if( ent->item->giTag == PW_QUAD ){
 			other->client->quadKills = 0;
+			other->client->stats[STATS_QUAD]++;
 			trap_SendServerCommand( other-g_entities, va( "quadKill %i", other->client->quadKills ) );
 		}
 	

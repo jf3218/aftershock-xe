@@ -295,6 +295,9 @@ typedef enum {
 	STATS_YA,
 	STATS_RA,
 	STATS_MH,
+	STATS_QUAD,
+	STATS_QUADKILLS,
+	STATS_QUADSTREAK,
 	STATS_MAX
 } stats_t;
 

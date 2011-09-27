@@ -121,15 +121,15 @@ static char *boolToChar ( qboolean in ) {
 
 static char *teamToChar ( int in ) {
 	if ( in == TEAM_BLUE )
-		return "blue";
+		return "Blue";
 	else if ( in == TEAM_RED )
-		return "red";
+		return "Red";
 	else if ( in == TEAM_FREE )
-		return "free";
+		return "Free";
 	else if ( in == TEAM_SPECTATOR )
-		return "spectator";
+		return "Spectator";
 	else
-		return "none";
+		return "None";
 }
 
 static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnected ) {
@@ -233,6 +233,16 @@ static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnec
 		writeToFile ( "\t\t\t</rewards>\n", f );
 	}
 	
+	count = cl->stats[STATS_QUAD];
+	
+	if( count ) {
+		writeToFile ( "\t\t\t<powerups>\n", f );
+		if( cl->stats[STATS_QUAD] )
+			writeToFile ( va ( "\t\t\t\t<powerup name=\"QuadDamage\" pickups=\"%i\" kills=\"%i\" streak=\"%i\"/>\n", cl->stats[STATS_QUAD], cl->stats[STATS_QUADKILLS], cl->stats[STATS_QUADSTREAK]  ), f );
+		writeToFile ( "\t\t\t</powerups>\n", f );
+	  
+	}
+	
 	if( g_gametype.integer == GT_CTF && cl->captureCount ){
 		writeToFile( "\t\t\t<captures>\n", f );
 		for( i=0; i<cl->captureCount; i++ ){
@@ -273,7 +283,7 @@ void G_WriteXMLStats ( void ) {
 	writeToFile ( "<?xml version=\"1.0\"?><?xml-stylesheet type=\"text/xsl\"?>\n", &f );
 	writeToFile ( va ( "<match datetime=\"%i/%02i/%02i %02i:%02i:%02i\" duration=\"%i\" map=\"%s\" type=\"%s\" isTeamGame=\"%s\" instagib=\"%s\" rocketsOnly=\"%s\" reducedLightning=\"%s\" reducedRail=\"%s\" aftershockRevision=\"%s\">\n\n",
 	                   1900 + now.tm_year, 1 + now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec, level.time-level.startTime, mapname, gameShortNames[g_gametype.integer], boolToChar ( isTeamGame ),
-	                   boolToChar ( g_instantgib.integer == 1 ), boolToChar ( g_rockets.integer == 1 ), boolToChar( g_reduceLightningDamage.integer == 1 ), boolToChar( g_reduceRailDamage.integer == 1 ), "220" ), &f );
+	                   boolToChar ( g_instantgib.integer == 1 ), boolToChar ( g_rockets.integer == 1 ), boolToChar( g_reduceLightningDamage.integer == 1 ), boolToChar( g_reduceRailDamage.integer == 1 ), "221" ), &f );
 
 	if ( isTeamGame ) {
 		writeToFile ( va ( "\t<team name=\"Blue\" score=\"%i\">\n", level.teamScores[TEAM_BLUE] ), &f );

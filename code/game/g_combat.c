@@ -627,8 +627,14 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 			    
 			    if(attacker->client->ps.powerups[PW_QUAD]) {
                                 attacker->client->quadKills++;
+				attacker->client->stats[STATS_QUADKILLS]++;
+				
+				if( attacker->client->quadKills > attacker->client->stats[STATS_QUADSTREAK] )
+					attacker->client->stats[STATS_QUADSTREAK] = attacker->client->quadKills;
+				
 				trap_SendServerCommand( attacker-g_entities, va( "quadKill %i", attacker->client->quadKills ) );
 				if( attacker->client->quadKills != 0 && attacker->client->quadKills%5 == 0){
+				  
 					trap_SendServerCommand(ent-g_entities,va("screenPrint \"%s is on a quadrun with %i quadkills\"", attacker->client->pers.netname, attacker->client->quadKills ) );
 					trap_SendServerCommand(ent-g_entities,va("print \"%s is on a quadrun with %i quadkills\"", attacker->client->pers.netname, attacker->client->quadKills ) );
 				}
