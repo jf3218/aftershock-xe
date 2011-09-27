@@ -1611,9 +1611,7 @@ extern	vmCvar_t		cg_ch8size;
 extern	vmCvar_t		cg_ch9;
 extern	vmCvar_t		cg_ch9size;*/
 
-extern	vmCvar_t                cg_crosshairColorRed;
-extern	vmCvar_t                cg_crosshairColorGreen;
-extern	vmCvar_t                cg_crosshairColorBlue;
+extern	vmCvar_t                cg_crosshairColor;
 
 extern vmCvar_t 		cg_deathNoticeTime;
 

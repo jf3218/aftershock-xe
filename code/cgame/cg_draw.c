@@ -3383,9 +3383,9 @@ static void CG_GetHitColor( float *color ) {
         hitcolor[2] = 0.0f;
     }
 
-    color[0] = cg_crosshairColorRed.value + factor*(hitcolor[0]-cg_crosshairColorRed.value);
-    color[1] = cg_crosshairColorGreen.value + factor*(hitcolor[1]-cg_crosshairColorGreen.value);
-    color[2] = cg_crosshairColorBlue.value + factor*(hitcolor[2]-cg_crosshairColorBlue.value);
+    color[0] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][0]) + factor*(hitcolor[0]-(g_color_table[ColorIndex(*(cg_crosshairColor.string))][0]));
+    color[1] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][1]) + factor*(hitcolor[1]-(g_color_table[ColorIndex(*(cg_crosshairColor.string))][1]));
+    color[2] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][2]) + factor*(hitcolor[2]-(g_color_table[ColorIndex(*(cg_crosshairColor.string))][2]));
     color[3] = 1.0f;
 }
 
@@ -3428,20 +3428,20 @@ static void CG_DrawCrosshair ( void ) {
             color[2] = 0.0f;
             color[3] = 1.0f;*/
         } else {
-            color[0]=cg_crosshairColorRed.value;
-            color[1]=cg_crosshairColorGreen.value;
-            color[2]=cg_crosshairColorBlue.value;
-            color[3]=1.0f;
+            color[0] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][0]);
+	    color[1] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][1]);
+	    color[2] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][2]);
+	    color[3] = 1.0f;
         }
     }
     // set color based on health
     else if ( cg_crosshairHealth.integer ) {
         CG_ColorForHealth ( color );
     } else {
-        color[0]=cg_crosshairColorRed.value;
-        color[1]=cg_crosshairColorGreen.value;
-        color[2]=cg_crosshairColorBlue.value;
-        color[3]=1.0f;
+        color[0] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][0]);
+	color[1] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][1]);
+	color[2] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][2]);
+	color[3] = 1.0f;
     }
     //TODO: there must be a better solution, maybe only two cvars with 9 numbers? DONE
     /*if ( cg_differentCrosshairs.integer == 1 ) {

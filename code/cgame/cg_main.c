@@ -258,9 +258,7 @@ vmCvar_t	cg_ch8size;
 vmCvar_t	cg_ch9;
 vmCvar_t	cg_ch9size;*/
 
-vmCvar_t	cg_crosshairColorRed;
-vmCvar_t	cg_crosshairColorGreen;
-vmCvar_t	cg_crosshairColorBlue;
+vmCvar_t	cg_crosshairColor;
 
 vmCvar_t 	cg_deathNoticeTime;
 
@@ -551,9 +549,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_ch8size, "cg_ch8size", "24", CVAR_ARCHIVE},
 	{ &cg_ch9, "cg_ch9", "1", CVAR_ARCHIVE},
 	{ &cg_ch9size, "cg_ch9size", "24", CVAR_ARCHIVE},*/
-	{ &cg_crosshairColorRed, "cg_crosshairColorRed", "1.0", CVAR_ARCHIVE},
-        { &cg_crosshairColorGreen, "cg_crosshairColorGreen", "1.0", CVAR_ARCHIVE},
-        { &cg_crosshairColorBlue, "cg_crosshairColorBlue", "1.0", CVAR_ARCHIVE},
+	{ &cg_crosshairColor, "cg_crosshairColor", "7", CVAR_ARCHIVE},
 	{&cg_deathNoticeTime, "cg_deathNoticeTime", "3000", CVAR_ARCHIVE},
 	{&s_ambient, "s_ambient", "1", CVAR_ARCHIVE},
 	{&cg_nokick, "cg_nokick", "0", CVAR_ARCHIVE},
