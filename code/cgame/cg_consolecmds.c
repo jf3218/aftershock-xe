@@ -258,11 +258,11 @@ Prints out the current revision
 ==================
 */
 static void CG_Revision_f( void ) {
-	char* revision = "$Revision$";
+	/*char* revision = "$Revision$";
 	int length = CG_DrawStrlen(revision);
 	revision[length-1] = '\n';
-	revision += 11;
-	CG_Printf("Aftershock revision%s\n", revision);	   
+	revision += 11;*/
+	CG_Printf("Aftershock revision %i\n", REVISION);	   
 }
 
 static void CG_CvarAdd_f( void ){

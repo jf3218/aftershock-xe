@@ -989,6 +989,7 @@ static void CG_LoadClientInfo( int clientNum, clientInfo_t *ci ) {
 		// if the model didn't load use the sounds of the default model
 		if (modelloaded) {
 			ci->sounds[i] = trap_S_RegisterSound( va("sound/player/%s/%s", dir, s + 1), qfalse );
+			//TODO: enemysound teamsound
 		}
 		if ( !ci->sounds[i] ) {
 			ci->sounds[i] = trap_S_RegisterSound( va("sound/player/%s/%s", fallback, s + 1), qfalse );

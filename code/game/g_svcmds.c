@@ -497,6 +497,7 @@ void Matchinfo_f( void ) {
 	G_Printf("\\scores_blue\\%i", level.teamScores[TEAM_BLUE]);
 	
 	G_Printf("\\roundnumber\\%i", level.roundNumberStarted);
+	G_Printf("\\revision\\%i", REVISION);
 	
 	G_Printf("\\");
 	

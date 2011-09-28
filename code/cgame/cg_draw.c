@@ -4322,9 +4322,10 @@ static void CG_Draw2D ( stereoFrame_t stereoFrame ) {
             CG_DrawAccelMeter();
         }
 
-        if ( !CG_DrawFollow() ) {
+        //if ( !CG_DrawFollow() ) {
+	    CG_DrawFollow();
             CG_DrawWarmup();
-        }
+        //}
 
         if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cg_drawTeamOverlay.integer ) {
             CG_DrawTeamOverlay ( qtrue, qfalse );

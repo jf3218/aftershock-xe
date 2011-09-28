@@ -243,7 +243,7 @@ static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnec
 	  
 	}
 	
-	if( g_gametype.integer == GT_CTF && cl->captureCount ){
+	if( ( g_gametype.integer == GT_CTF || g_gametype.integer == GT_CTF_ELIMINATION ) && cl->captureCount ){
 		writeToFile( "\t\t\t<captures>\n", f );
 		for( i=0; i<cl->captureCount; i++ ){
 			writeToFile( va( "\t\t\t\t<capture team=\"%s\" perfect=\"%s\" duration=\"%i\" gametime=\"%i\"/>\n", cl->captures[ i ].team == TEAM_RED? "Red" : "Blue", boolToChar( cl->captures[ i ].perfect ), cl->captures[ i ].duration, cl->captures[ i ].gametime ), f );
@@ -281,9 +281,9 @@ void G_WriteXMLStats ( void ) {
 	trap_FS_FOpenFile ( va ( "%s/%s.xml", g_statsPath.string,gameString ), &f, FS_WRITE );
 
 	writeToFile ( "<?xml version=\"1.0\"?><?xml-stylesheet type=\"text/xsl\"?>\n", &f );
-	writeToFile ( va ( "<match datetime=\"%i/%02i/%02i %02i:%02i:%02i\" duration=\"%i\" map=\"%s\" type=\"%s\" isTeamGame=\"%s\" instagib=\"%s\" rocketsOnly=\"%s\" reducedLightning=\"%s\" reducedRail=\"%s\" aftershockRevision=\"%s\">\n\n",
+	writeToFile ( va ( "<match datetime=\"%i/%02i/%02i %02i:%02i:%02i\" duration=\"%i\" map=\"%s\" type=\"%s\" isTeamGame=\"%s\" instagib=\"%s\" rocketsOnly=\"%s\" reducedLightning=\"%s\" reducedRail=\"%s\" aftershockRevision=\"is\">\n\n",
 	                   1900 + now.tm_year, 1 + now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec, level.time-level.startTime, mapname, gameShortNames[g_gametype.integer], boolToChar ( isTeamGame ),
-	                   boolToChar ( g_instantgib.integer == 1 ), boolToChar ( g_rockets.integer == 1 ), boolToChar( g_reduceLightningDamage.integer == 1 ), boolToChar( g_reduceRailDamage.integer == 1 ), "222" ), &f );
+	                   boolToChar ( g_instantgib.integer == 1 ), boolToChar ( g_rockets.integer == 1 ), boolToChar( g_reduceLightningDamage.integer == 1 ), boolToChar( g_reduceRailDamage.integer == 1 ), REVISION ), &f );
 
 	if ( isTeamGame ) {
 		writeToFile ( va ( "\t<team name=\"Blue\" score=\"%i\">\n", level.teamScores[TEAM_BLUE] ), &f );
