@@ -4295,16 +4295,20 @@ static void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 
     CG_DrawLivingCount();
     CG_DrawTimer();
-
+    
+    if ( cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS ) {
+            CG_DrawEliminationTimer();
+        }
+    CG_DrawWarmup();
+    CG_DrawTimeout();
+    
     // don't draw center string if scoreboard is up
     cg.scoreBoardShowing = CG_DrawScoreboard();
     if ( !cg.scoreBoardShowing ) {
-        if ( cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS ) {
-            CG_DrawEliminationTimer();
-        }
+        
 
         CG_DrawLagometer();
-        CG_DrawTimeout();
+        
         CG_DrawCenterDDString();
         CG_DrawCenter1FctfString();
         CG_DrawCenterString();
@@ -4324,7 +4328,7 @@ static void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 
         //if ( !CG_DrawFollow() ) {
 	    CG_DrawFollow();
-            CG_DrawWarmup();
+            
         //}
 
         if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cg_drawTeamOverlay.integer ) {
