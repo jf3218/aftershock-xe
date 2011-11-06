@@ -1123,7 +1123,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	}
 	
 	if( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ){
-		if( targ->client->respawnTime + g_elimination_activewarmup.integer*1000 > level.time )
+		if( level.time<=level.roundStartTime && level.time>level.roundStartTime-1000*g_elimination_activewarmup.integer )
 			return;
 	}
 
