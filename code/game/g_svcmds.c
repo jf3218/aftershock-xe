@@ -481,6 +481,7 @@ void Matchinfo_f( void ) {
 	G_Printf("\\sv_hostname\\%s", str);
 	trap_Cvar_VariableStringBuffer( "sv_maxclients", str, sizeof(str) );
 	G_Printf("\\sv_maxclients\\%s", str);
+	G_Printf("\\g_maxGameClients\\%i", g_maxGameClients.integer);
 	trap_Cvar_VariableStringBuffer( "sv_fps", str, sizeof(str) );
 	G_Printf("\\sv_fps\\%s", str);
 	G_Printf("\\g_dowarmup\\%i", g_doWarmup.integer);
@@ -507,7 +508,7 @@ void Matchinfo_f( void ) {
 
 		G_Printf(" \"%s\" \"%s\" \"%s\" %i %i %i %i %i", 
 			  cl->pers.netname, cl->aftershock_name, cl->aftershock_hash, cl->sess.sessionTeam, cl->ps.persistant[ PERS_SCORE ], 
-			  cl->kills, cl->ps.persistant[ PERS_KILLED ], (int)((level.time - cl->pers.enterTime)/60000) );
+			  cl->kills, cl->ps.persistant[ PERS_KILLED ], (int)((level.time - cl->pers.enterTime)/1000) );
 	} 
 	G_Printf("\n");
 }
