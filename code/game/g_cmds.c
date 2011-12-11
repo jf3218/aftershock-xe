@@ -2789,6 +2789,13 @@ void Cmd_CallVote_f( gentity_t *ent ) {
         trap_SendServerCommand( ent-g_entities, "print \"Voting not allowed here.\n\"" );
         return;
     }
+    
+    if( g_allowVote.integer == 3 ) {
+	if ( level.warmupTime != -1 ){
+	    trap_SendServerCommand( ent-g_entities, "print \"Voting only allowed during warmup.\n\"" );
+	    return;
+	}
+    }
 
     if ( level.voteTime ) {
         trap_SendServerCommand( ent-g_entities, "print \"A vote is already in progress.\n\"" );
@@ -2811,6 +2818,13 @@ void Cmd_CallVote_f( gentity_t *ent ) {
     trap_Argv( 1, arg1, sizeof( arg1 ) );
     trap_Argv( 2, arg2, sizeof( arg2 ) );
     trap_Argv( 3, arg3, sizeof( arg3 ) );
+    
+    if( g_allowVote.integer == 2 && ( !Q_stricmp( arg1, "map" ) || !Q_stricmp( arg1, "nextmap" ) ) ){
+	if ( level.warmupTime != -1 ){
+	    trap_SendServerCommand( ent-g_entities, "print \"Voting maps only allowed during warmup.\n\"" );
+	    return;
+	}
+    }
 
     // check for command separators in arg2
     for ( c = arg2; *c; ++c) {
