@@ -3011,6 +3011,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
         if ( g_useMapcycle.integer ) {
             trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
             Com_sprintf(level.voteString, sizeof( level.voteString ),"map %s", G_GetNextMap(mapname));
+	    Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s(%s)", "Next map?", mapname );
         }
         else {
             trap_Cvar_VariableStringBuffer( "nextmap", s, sizeof(s) );
@@ -3019,9 +3020,10 @@ void Cmd_CallVote_f( gentity_t *ent ) {
                 return;
             }
             Com_sprintf( level.voteString, sizeof( level.voteString ), "vstr nextmap");
+	    Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", "Next map?" );
         }
         //Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
-        Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", "Next map?" );
+        
     } else if ( !Q_stricmp( arg1, "fraglimit" ) ) {
         i = atoi(arg2);
         if (!allowedFraglimit(i)) {
