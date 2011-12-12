@@ -318,7 +318,7 @@ void G_drawAllowedMaps ( gentity_t *ent ) {
 	int i;
 	char buffer[2048];
 
-	strcat ( buffer,va ( "Allowed maps are: " ) );
+	strcpy ( buffer,va ( "Allowed maps are: " ) );
 
 	for ( i = 0; i < mapcycle.mapcycleCount; i++ ) {
 		strcat ( buffer, va ( "^2%s ", mapcycle.maps[i] ) );
