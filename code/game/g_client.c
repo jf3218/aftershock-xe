@@ -1811,7 +1811,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 		trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_YELLOW "%s" S_COLOR_YELLOW " connected\"", client->pers.netname) );
 	}
 	
-	if( g_gametype.integer == GT_FFA && !( ent->r.svFlags & SVF_BOT) ){
+	if( g_gametype.integer == GT_FFA && !( ent->r.svFlags & SVF_BOT) && firstTime ){
 		client->sess.sessionTeam = TEAM_SPECTATOR;
 	}
 
