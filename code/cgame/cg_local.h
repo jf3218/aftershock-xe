@@ -1783,6 +1783,11 @@ void CG_oaUnofficialCvars( void );
 
 void CG_ForceModelChange( void );
 
+void CG_ParseFov( void );
+void CG_ParseZoomFov( void );
+void CG_ParseCrosshair( void );
+void CG_ParseCrosshairSize( void );
+
 //
 // cg_view.c
 //
@@ -1807,7 +1812,7 @@ void CG_FillRect( float x, float y, float width, float height, const float *colo
 void CG_DrawPic( float x, float y, float width, float height, qhandle_t hShader );
 void CG_DrawString( float x, float y, const char *string, 
 				   float charWidth, float charHeight, const float *modulate );
-//void CG_DrawStringHud( int hudnumber, qboolean colorize, char* text );
+void CG_DrawStringHud( int hudnumber, qboolean colorize, const char* text );
 
 
 void CG_DrawStringExt( int x, int y, const char *string, const float *setColor, 
@@ -1831,7 +1836,7 @@ void CG_DrawSides(float x, float y, float w, float h, float size);
 void CG_DrawTopBottom(float x, float y, float w, float h, float size);
 
 void CG_DrawHudIcon( int hudnumber, qboolean override, qhandle_t hShader );
-
+void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec );
 
 //
 // cg_draw.c, cg_newDraw.c
@@ -1872,6 +1877,9 @@ const char *CG_GameTypeString( void );
 qboolean CG_YourTeamHasFlag( void );
 qboolean CG_OtherTeamHasFlag( void );
 qhandle_t CG_StatusHandle(int task);
+
+void CG_DrawMVDhud ( stereoFrame_t stereoFrame );
+void CG_Draw2D ( stereoFrame_t stereoFrame );
 
 
 
@@ -1983,6 +1991,7 @@ localEntity_t *CG_SmokePuff( const vec3_t p,
 				   int leFlags,
 				   qhandle_t hShader );
 void CG_BubbleTrail( vec3_t start, vec3_t end, float spacing );
+void CG_LaunchParticleTrail( vec3_t origin );
 void CG_SpawnEffect( vec3_t org );
 //#ifdef MISSIONPACK
 void CG_KamikazeEffect( vec3_t org );

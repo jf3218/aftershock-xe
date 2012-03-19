@@ -263,9 +263,9 @@ static void CG_TouchItem( centity_t *cent ) {
 	//For instantgib
 	qboolean	canBePicked;
 	
-	const char* info;
+	//const char* info;
 
-	info = CG_ConfigString( CS_SERVERINFO );
+	//info = CG_ConfigString( CS_SERVERINFO );
 	if(cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_LMS)
 		return; //No weapon pickup in elimination
 

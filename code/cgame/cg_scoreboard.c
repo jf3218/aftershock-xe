@@ -322,7 +322,7 @@ static void CG_DrawPicBar( picBar_t *tab, int count, int x, int y, int w, int h 
 	
 }
 
-static void CG_DrawMapInfo(){
+static void CG_DrawMapInfo( void ){
 	
 	char string[ 128 ];
 	char *buf;

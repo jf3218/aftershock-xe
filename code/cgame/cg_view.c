@@ -975,9 +975,9 @@ Generates and draws a game scene and status information at the given time.
 */
 void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demoPlayback ) {
     int		inwater;
-    int i;
+    //int i;
     vec4_t color;
-    refEntity_t re;
+    //refEntity_t re;
 
     cg.time = serverTime;
 

@@ -210,7 +210,7 @@ TODO: Different Fonts
 ==============
 */
 #ifndef MISSIONPACK
-static void CG_DrawField ( int x, int y, int width, int value, float size ) {
+/*static void CG_DrawField ( int x, int y, int width, int value, float size ) {
     char	num[8], *ptr;
     int		l;
     int		frame;
@@ -261,7 +261,7 @@ static void CG_DrawField ( int x, int y, int width, int value, float size ) {
         ptr++;
         l--;
     }
-}
+}*/
 #endif // MISSIONPACK
 
 static void CG_DrawFieldFontsize ( int x, int y, int width, int value, int fontWidth, int fontHeight ) {
@@ -590,9 +590,9 @@ CG_DrawStatusBarFlag
 ================
 */
 #ifndef MISSIONPACK
-static void CG_DrawStatusBarFlag ( float x, int team ) {
+/*static void CG_DrawStatusBarFlag ( float x, int team ) {
     CG_DrawFlagModel ( x, 480 - ICON_SIZE, ICON_SIZE, ICON_SIZE, team, qfalse );
-}
+}*/
 #endif // MISSIONPACK
 
 /*
@@ -635,7 +635,7 @@ static void CG_DrawStatusBar ( void ) {
     vec4_t		hcolor;
     vec3_t		angles;
     hudElements_t 	hudelement;
-    int ammoPack;
+    int ammoPack=200;
 
     static float colors[4][4] = {
 //		{ 0.2, 1.0, 0.2, 1.0 } , { 1.0, 0.2, 0.2, 1.0 }, {0.5, 0.5, 0.5, 1} };
@@ -705,9 +705,8 @@ static void CG_DrawStatusBar ( void ) {
                 case WP_BFG:
                     ammoPack = 15;
                     break;
-                default:
-                    ammoPack = 200;
-                    break;
+                /*default:
+                    ammoPack = 200;*/
                 }
             hcolor[3] = cgs.hud[HUD_AMMOCOUNT].color[3];
             trap_R_SetColor ( hcolor );
@@ -966,7 +965,7 @@ static void CG_DrawAccelMeter ( void ) {
 CG_DrawSnapshot
 ==================
 */
-static float CG_DrawSnapshot ( float y ) {
+/*static float CG_DrawSnapshot ( float y ) {
     char		*s;
     int			w;
 
@@ -977,7 +976,7 @@ static float CG_DrawSnapshot ( float y ) {
     CG_DrawBigString ( 635 - w, y + 2, s, 1.0F );
 
     return y + BIGCHAR_HEIGHT + 4;
-}
+}*/
 
 /*
 ==================
@@ -1067,7 +1066,7 @@ can we remove the lms gametype?
 =================
 */
 
-static float CG_DrawLMSmode ( float y ) {
+/*static float CG_DrawLMSmode ( float y ) {
     char		*s;
     int		w;
 
@@ -1089,7 +1088,7 @@ static float CG_DrawLMSmode ( float y ) {
     CG_DrawSmallString ( 635 - w, y + 2, s, 1.0F );
 
     return y + SMALLCHAR_HEIGHT+4;
-}
+}*/
 
 /*
 =================
@@ -1098,7 +1097,7 @@ TODO: is it used?
 =================
 */
 
-static float CG_DrawCTFoneway ( float y ) {
+/*static float CG_DrawCTFoneway ( float y ) {
     char		*s;
     int		w;
     vec4_t		color;
@@ -1127,7 +1126,7 @@ static float CG_DrawCTFoneway ( float y ) {
     return y + SMALLCHAR_HEIGHT+4;
 }
 
-
+*/
 
 /*
 =================
@@ -1135,7 +1134,7 @@ CG_DrawDomStatus
 =================
 */
 
-static float CG_DrawDomStatus ( float y ) {
+/*static float CG_DrawDomStatus ( float y ) {
     int 		i,w;
     char		*s;
     vec4_t		color;
@@ -1162,7 +1161,7 @@ static float CG_DrawDomStatus ( float y ) {
 
     return y;
 }
-
+*/
 
 /*
 =================
@@ -1284,8 +1283,8 @@ CG_DrawTeamOverlay
 =================
 */
 
-static float CG_DrawTeamOverlay ( qboolean right, qboolean upper ) {
-    int x, y, w, h, xx;
+static void CG_DrawTeamOverlay ( qboolean right, qboolean upper ) {
+    int x, y;//, w, h, xx;
     int i, j, len;
     const char *p;
     vec4_t		color;
@@ -1576,16 +1575,16 @@ CG_DrawUpperRight
 TODO: This functions are not used anymore, or should be
 =====================
 */
-static void CG_DrawUpperRight() {
+/*static void CG_DrawUpperRight( void ) {
     float	y;
 
     y = 0;
-
+    */
     /*if ( cgs.gametype == GT_DOUBLE_D ) {
     	y = CG_DrawDoubleDominationThings(y);
     }
     else*/
-    if ( cgs.gametype == GT_LMS && cg.showScores ) {
+    /*if ( cgs.gametype == GT_LMS && cg.showScores ) {
         y = CG_DrawLMSmode ( y );
     } else
         if ( cgs.gametype == GT_CTF_ELIMINATION ) {
@@ -1605,7 +1604,7 @@ static void CG_DrawUpperRight() {
 
 
 
-}
+}*/
 
 /*
 ===========================================================================================
@@ -1629,11 +1628,11 @@ static void CG_DrawScores ( void ) {
     int			x, w;
     int			v;
     gitem_t		*item;
-    int statusA,statusB;
-    vec4_t color;
+    //int statusA,statusB;
+    //vec4_t color;
 
-    statusA = cgs.redflag;
-    statusB = cgs.blueflag;
+    //statusA = cgs.redflag;
+    //statusB = cgs.blueflag;
 
     s1 = cgs.scores1;
     s2 = cgs.scores2;
@@ -1841,7 +1840,7 @@ TODO: not used anymore
 =====================
 */
 #ifndef MISSIONPACK
-static void CG_DrawLowerRight ( void ) {
+/*static void CG_DrawLowerRight ( void ) {
     float	y;
 
     y = 480 - ICON_SIZE;
@@ -1852,7 +1851,7 @@ static void CG_DrawLowerRight ( void ) {
 
     CG_DrawScores();
     CG_DrawPowerups();
-}
+}*/
 #endif // MISSIONPACK
 
 /*
@@ -1862,7 +1861,7 @@ TODO: not used anymore
 =====================
 */
 #ifndef MISSIONPACK
-static void CG_DrawLowerLeft ( void ) {
+/*static void CG_DrawLowerLeft ( void ) {
     float	y;
 
     y = 480 - ICON_SIZE;
@@ -1870,7 +1869,7 @@ static void CG_DrawLowerLeft ( void ) {
     if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cg_drawTeamOverlay.integer == 3 ) {
         CG_DrawTeamOverlay ( qfalse, qfalse );
     }
-}
+}*/
 #endif // MISSIONPACK
 
 
@@ -2162,7 +2161,7 @@ CG_DrawReward
 static void CG_DrawReward ( void ) {
     float	*color;
     int		i;
-    float	x, y;
+    //float	x, y;
     //int maxRewards;
     //char	buf[32];  //TODO:aha, 32 digits are useful?
 
@@ -3304,7 +3303,7 @@ CG_DrawCenterDDString
 */
 static void CG_DrawCenterDDString ( void ) {
 #ifndef MISSIONPACK
-    float       *color;
+    //float       *color;
     char        *line;
     int 		statusA, statusB;
     int sec;
@@ -3323,10 +3322,10 @@ static void CG_DrawCenterDDString ( void ) {
 
     if ( statusA == TEAM_BLUE ) {
         line = va ( "Blue scores in %i", ( cgs.timetaken+10*1000-cg.time ) /1000+1 );
-        color = colorBlue;
+        //color = colorBlue;
     } else if ( statusA == TEAM_RED ) {
         line = va ( "Red scores in %i", ( cgs.timetaken+10*1000-cg.time ) /1000+1 );
-        color = colorRed;
+        //color = colorRed;
     } else {
         lastDDSec = -100;
         return;
@@ -4188,7 +4187,7 @@ static void CG_Postdecorate ( void ) {
 CG_Draw2D
 =================
 */
-static void CG_DrawMVDhud ( stereoFrame_t stereoFrame ) {
+void CG_DrawMVDhud ( stereoFrame_t stereoFrame ) {
 
     if ( cg_draw2D.integer == 0 ) {
         return;
@@ -4211,7 +4210,7 @@ static void CG_DrawMVDhud ( stereoFrame_t stereoFrame ) {
 CG_Draw2D
 =================
 */
-static void CG_Draw2D ( stereoFrame_t stereoFrame ) {
+void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 #ifdef MISSIONPACK
     if ( cgs.orderPending && cg.time > cgs.orderTime ) {
         CG_CheckOrderPending();
@@ -4352,7 +4351,7 @@ static void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 }
 
 
-static void CG_DrawTourneyScoreboard ( void ) {
+/*static void CG_DrawTourneyScoreboard ( void ) {
 #ifdef MISSIONPACK
 #else
     if ( cg_oldScoreboard.integer )
@@ -4360,7 +4359,7 @@ static void CG_DrawTourneyScoreboard ( void ) {
     else
         CG_DrawOldTourneyScoreboard();
 #endif
-}
+}*/
 
 /*
 =====================

@@ -431,7 +431,7 @@ static void CG_ParseStatistics ( void ) {
     char		*name, *string;
     char		*team;
     clientInfo_t    *ci;
-    int 		scorenum;
+    //int 		scorenum;
     score_t		*score = &cg.scores[0];
     int		clientnum;
     char		*mapname;
@@ -517,7 +517,7 @@ static void CG_ParseStatistics ( void ) {
 
         for ( j = 0 ; j < cg.numScores ; j++ ) {
             if ( clientnum == cg.scores[j].client ) {
-                scorenum = j;
+                //scorenum = j;
                 score = &cg.scores[j];
                 break;
             }

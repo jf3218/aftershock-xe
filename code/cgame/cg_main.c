@@ -2621,7 +2621,7 @@ void CG_oaUnofficialCvars( void ) {
 
 void CG_ParseFov( void ) {
 	char fov[256];
-	char *buffer;
+	char buffer[16];
 	int counter = WP_GAUNTLET, counter2=0;
 	int i;
 	
@@ -2650,7 +2650,7 @@ void CG_ParseFov( void ) {
 
 void CG_ParseZoomFov( void ) {
 	char fov[256];
-	char *buffer;
+	char buffer[16];
 	int counter = WP_GAUNTLET, counter2=0;
 	int i;
 	
@@ -2679,7 +2679,7 @@ void CG_ParseZoomFov( void ) {
 
 void CG_ParseCrosshair( void ) {
 	char crosshair[256];
-	char *buffer;
+	char buffer[16];
 	int counter = WP_GAUNTLET, counter2=0;
 	int i;
 	
@@ -2708,7 +2708,7 @@ void CG_ParseCrosshair( void ) {
 
 void CG_ParseCrosshairSize( void ) {
 	char crosshair[256];
-	char *buffer;
+	char buffer[16];
 	int counter = WP_GAUNTLET, counter2=0;
 	int i;
 	

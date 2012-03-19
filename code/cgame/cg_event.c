@@ -227,7 +227,7 @@ static void CG_Obituary( entityState_t *ent ) {
 
     //If a suicide happens while disconnecting then we might not have a targetName
     if (message && strlen(targetName)) {
-        CG_AddDeathNotice( "", cgs.clientinfo[attacker].team, va("%s",targetName), cgs.clientinfo[target].team, twoIcons, icon1, icon2 );
+	  CG_AddDeathNotice( "", cgs.clientinfo[attacker].team, va("%s",targetName), cgs.clientinfo[target].team, twoIcons, icon1, icon2 );
         CG_Printf( "%s %s.\n", targetName, message);
         return;
     }
@@ -720,7 +720,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
     case EV_JUMP_PAD:
         DEBUGNAME("EV_JUMP_PAD");
 //		CG_Printf( "EV_JUMP_PAD w/effect #%i\n", es->eventParm );
-        {
+        /*{
             localEntity_t	*smoke;
             vec3_t			up = {0, 0, 1};
 
@@ -732,7 +732,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
                                   cg.time, 0,
                                   LEF_PUFF_DONT_SCALE,
                                   cgs.media.smokePuffShader );
-        }
+        }*/
 
         // boing sound at origin, jump sound on player
         trap_S_StartSound ( cent->lerpOrigin, -1, CHAN_VOICE, cgs.media.jumpPadSound );

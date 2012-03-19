@@ -213,7 +213,7 @@ CG_RailTrail
 ==========================
 */
 void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
-	vec3_t axis[36], move, move2, next_move, vec, temp;
+	vec3_t axis[36], move, move2,/* next_move,*/ vec, temp;
 	float  len;
 	int    i, j, skip;
  
@@ -325,7 +325,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 	}
 
 	VectorMA(move, 20, vec, move);
-	VectorCopy(move, next_move);
+	//VectorCopy(move, next_move);
 	VectorScale (vec, SPACING, vec);
 
 	skip = -1;
@@ -731,7 +731,7 @@ static void CG_PlasmaTrail( centity_t *cent, const weaponInfo_t *wi ) {
 	vec3_t			velocity, xvelocity, origin;
 	vec3_t			offset, xoffset;
 	vec3_t			v[3];
-	int				t, startTime, step;
+	//int				t, startTime, step;
 
 	float	waterScale = 1.0f;
 
@@ -739,11 +739,11 @@ static void CG_PlasmaTrail( centity_t *cent, const weaponInfo_t *wi ) {
 		return;
 	}
 
-	step = 50;
+	//step = 50;
 
 	es = &cent->currentState;
-	startTime = cent->trailTime;
-	t = step * ( (startTime + step) / step );
+	//startTime = cent->trailTime;
+	//t = step * ( (startTime + step) / step );
 
 	BG_EvaluateTrajectory( &es->pos, cg.time, origin );
 
@@ -1507,8 +1507,8 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 
 //unlagged - true lightning
 		// might as well fix up true lightning while we're at it
-		vec3_t viewangles;
-		VectorCopy( cg.predictedPlayerState.viewangles, viewangles );
+		//vec3_t viewangles;
+		//VectorCopy( cg.predictedPlayerState.viewangles, viewangles );
 //unlagged - true lightning
 
 		for (i = 0; i < 3; i++) {
@@ -2061,7 +2061,7 @@ CG_DrawWeaponSelect
 ===================
 */
 void CG_DrawWeaponSelect( void ) {
-	int		i;
+	//int		i;
 	int		bits;
 	float		*color;
 	vec4_t		realColor; 

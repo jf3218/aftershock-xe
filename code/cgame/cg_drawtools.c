@@ -225,7 +225,7 @@ TODO: add function CG_SetTeamColor( vec4_t *color )
 and CG_SetTeamBGColor( vec4_t *color )
 =================
 */
-void CG_DrawScoresHud( int hudnumber, char* text, qboolean spec ){
+void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec ){
 	hudElements_t hudelement = cgs.hud[hudnumber];
 	vec4_t color;
 	int x,y, w;
@@ -431,7 +431,7 @@ and CG_SetTeamBGColor( vec4_t *color )
 maybe add override for some elements
 =================
 */
-void CG_DrawStringHud( int hudnumber, qboolean colorize, char* text ){
+void CG_DrawStringHud( int hudnumber, qboolean colorize, const char* text ){
 	hudElements_t hudelement = cgs.hud[hudnumber];
 	int w, x;
 	vec4_t color;
