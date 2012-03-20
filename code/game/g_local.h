@@ -1342,6 +1342,8 @@ extern vmCvar_t     g_disableVotingTime;
 extern  vmCvar_t  g_maxWarp;
 extern  vmCvar_t  g_skipCorrection;
 
+extern  vmCvar_t  g_selfdamage;
+
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
 int		trap_Milliseconds( void );

@@ -254,6 +254,8 @@ vmCvar_t     g_disableVotingTime;
 vmCvar_t     g_maxWarp;
 vmCvar_t     g_skipCorrection;
 
+vmCvar_t     g_selfdamage;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -503,7 +505,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_spawnProtection, "g_spawnProtection", "0", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_disableVotingTime, "g_disableVotingTime", "0", CVAR_ARCHIVE, 0 ,qfalse },
 	{ &g_maxWarp, "g_maxWarp", "0", CVAR_CHEAT, 0, qfalse  },
-	{ &g_skipCorrection, "g_skipCorrection", "0", CVAR_CHEAT, 0, qfalse  }
+	{ &g_skipCorrection, "g_skipCorrection", "0", CVAR_CHEAT, 0, qfalse  },
+	{ &g_selfdamage, "g_selfdamage", "1", CVAR_ARCHIVE| CVAR_SERVERINFO, 0, qfalse  }
 };
 
 // bk001129 - made static to avoid aliasing
