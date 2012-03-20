@@ -763,6 +763,9 @@ void weapon_railgun_fire (gentity_t *ent) {
 		ent->client->accuracy_hits++;
 		ent->client->accuracy[WP_RAILGUN][1]++;
 	}
+	if( g_instantgib.integer == 3 ) {
+		G_RadiusKnockback(trace.endpos, ent, 100.0f, 120.0f, traceEnt);
+	}
 
 }
 

@@ -1494,6 +1494,86 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	
 }
 
+void G_Knockback( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
+			   vec3_t dir, vec3_t point, int damage ) {
+	gclient_t	*client;
+	int			take;
+	int			save;
+	int			asave;
+	int			knockback;
+	int			max;
+        
+	vec3_t		bouncedir, impactpoint;
+	
+
+	/*if ( targ != attacker) {
+		return;
+	}*/
+	
+        client = targ->client;
+
+	if ( client ) {
+		if ( client->noclip ) {
+			return;
+		}
+	}
+
+
+	VectorNormalize(dir);
+	
+
+	knockback = damage;
+	if ( knockback > 200 ) {
+		knockback = 200;
+	}
+	if ( targ->flags & FL_NO_KNOCKBACK ) {
+		knockback = 0;
+	}
+
+	// figure momentum add, even if the damage won't be taken
+	if ( knockback && targ->client ) {
+		vec3_t	kvel;
+		float	mass;
+
+		mass = 200;
+
+		VectorScale (dir, g_knockback.value * (float)knockback / mass, kvel);
+		VectorAdd (targ->client->ps.velocity, kvel, targ->client->ps.velocity);
+
+		// set the timer so that the other client can't cancel
+		// out the movement immediately
+		if ( !targ->client->ps.pm_time ) {
+			int		t;
+
+			t = knockback * 2;
+			if ( t < 50 ) {
+				t = 50;
+			}
+			if ( t > 200 ) {
+				t = 200;
+			}
+			targ->client->ps.pm_time = t;
+			targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+		}
+                targ->client->lastSentFlying = -1;
+                
+	
+	}
+	// add to the damage inflicted on a player this frame
+	// the total will be turned into screen blends and view angle kicks
+	// at the end of the frame
+	if ( client ) {
+		client->damage_knockback += knockback;
+		if ( dir ) {
+			VectorCopy ( dir, client->damage_from );
+			client->damage_fromWorld = qfalse;
+		} else {
+			VectorCopy ( targ->r.currentOrigin, client->damage_from );
+			client->damage_fromWorld = qtrue;
+		}
+	}
+}
+
 
 /*
 ============
@@ -1620,4 +1700,49 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 	}
 
 	return hitClient;
+}
+
+/*
+============
+G_RadiusKnockback
+============
+*/
+void G_RadiusKnockback ( vec3_t origin, gentity_t *attacker, float damage, float radius,
+					gentity_t *ignore) {
+	float		points, dist;
+	int			entityList[MAX_GENTITIES];
+	vec3_t		mins, maxs;
+	vec3_t		v;
+	vec3_t		dir;
+	int			i, e;
+	
+	if ( radius < 1 ) {
+		radius = 1;
+	}
+		// find the distance from the edge of the bounding box
+		for ( i = 0 ; i < 3 ; i++ ) {
+			if ( origin[i] < attacker->r.absmin[i] ) {
+				v[i] = attacker->r.absmin[i] - origin[i];
+			} else if ( origin[i] > attacker->r.absmax[i] ) {
+				v[i] = origin[i] - attacker->r.absmax[i];
+			} else {
+				v[i] = 0;
+			}
+		}
+
+		dist = VectorLength( v );
+		if ( dist >= radius ) {
+			return;
+		}
+
+		points = damage * ( 1.0 - dist / radius );
+
+		VectorSubtract (attacker->r.currentOrigin, origin, dir);
+		// push the center of mass higher than the origin so players
+		// get knocked into the air more
+		dir[2] += 24;
+		G_Knockback (attacker, NULL, attacker, dir, origin, (int)points);
+		
+
+	return;
 }
