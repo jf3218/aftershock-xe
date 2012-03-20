@@ -2069,6 +2069,7 @@ void ClientSpawn(gentity_t *ent) {
 //	char	*savedAreaBits;
 	int		accuracy_hits, accuracy_shots;
 	int		accuracy[WP_NUM_WEAPONS][5];
+	int 		vote;
 	int		eventSequence;
 	char	userinfo[MAX_INFO_STRING];
 	int		saveddmgdone;
@@ -2291,6 +2292,8 @@ void ClientSpawn(gentity_t *ent) {
 	captureCount = client->captureCount;
 
 	eventSequence = client->ps.eventSequence;
+	
+	vote = client->vote;
 
 	Com_Memset (client, 0, sizeof(*client));
 
@@ -2355,6 +2358,8 @@ void ClientSpawn(gentity_t *ent) {
 		client->captures[ i ] = captures[ i ];
 	}
 	client->captureCount = captureCount;
+	
+	client->vote = vote;
 
 	client->ps.eventSequence = eventSequence;
 	// increment the spawncount so the client will detect the respawn
