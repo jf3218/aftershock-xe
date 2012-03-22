@@ -2,6 +2,57 @@
 // Smarine
 //================================================================
 
+models/players/smarine/pm_u_torsob-detail
+{
+	nopicmip
+	{
+		map models/players/smarine/pm_u_torsob-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc GE128
+		rgbGen entity
+	}
+	{
+		map models/players/smarine/pm_u_torsob-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc LT128
+		rgbGen identity
+	}
+}
+
+models/players/smarine/pm_l_legsb-detail
+{
+	nopicmip
+	{
+		map models/players/smarine/pm_l_legsb-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc GE128
+		rgbGen entity
+	}
+	{
+		map models/players/smarine/pm_l_legsb-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc LT128
+		rgbGen identity
+	}
+}
+
+models/players/smarine/pm_h_headb-detail
+{
+	nopicmip
+	{
+		map models/players/smarine/pm_h_headb-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc GE128
+		rgbGen entity
+	}
+	{
+		map models/players/smarine/pm_h_headb-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc LT128
+		rgbGen identity
+	}
+}
+
 models/players/smarine/pm_u_torsob
 {
 	nopicmip
@@ -10,12 +61,6 @@ models/players/smarine/pm_u_torsob
 		blendFunc GL_ONE GL_ZERO
 		alphaFunc GE128
 		rgbGen entity
-	}
-	{
-		map models/players/smarine/pm_u_torsob.tga
-		blendFunc GL_ONE GL_ZERO
-		alphaFunc LT128
-		rgbGen identity
 	}
 }
 
@@ -28,12 +73,6 @@ models/players/smarine/pm_l_legsb
 		alphaFunc GE128
 		rgbGen entity
 	}
-	{
-		map models/players/smarine/pm_l_legsb.tga
-		blendFunc GL_ONE GL_ZERO
-		alphaFunc LT128
-		rgbGen identity
-	}
 }
 
 models/players/smarine/pm_h_headb
@@ -45,17 +84,62 @@ models/players/smarine/pm_h_headb
 		alphaFunc GE128
 		rgbGen entity
 	}
+}
+
+//================================================================
+// Major
+//================================================================
+
+models/players/major/head_pm-detail
+{
+	nopicmip
 	{
-		map models/players/smarine/pm_h_headb.tga
+		map models/players/major/head_pm-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc GE128
+		rgbGen entity
+	}
+	{	
+		map models/players/major/head_pm-detail.tga
 		blendFunc GL_ONE GL_ZERO
 		alphaFunc LT128
 		rgbGen identity
 	}
 }
 
-//================================================================
-// Major
-//================================================================
+models/players/major/lower_pm-detail
+{
+	nopicmip
+	{
+		map models/players/major/lower_pm-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc GE128
+		rgbGen entity
+	}
+	{
+		map models/players/major/lower_pm-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc LT128
+		rgbGen identity
+	}
+}
+
+models/players/major/torso_pm-detail
+{
+	nopicmip
+	{
+		map models/players/major/torso_pm-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc GE128
+		rgbGen entity
+	}
+	{
+		map models/players/major/torso_pm-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc LT128
+		rgbGen identity
+	}
+}
 
 models/players/major/head_pm
 {
@@ -66,12 +150,12 @@ models/players/major/head_pm
 		alphaFunc GE128
 		rgbGen entity
 	}
-	{	
-		map models/players/major/head_pm.tga
-		blendFunc GL_ONE GL_ZERO
-		alphaFunc LT128
-		rgbGen identity
-	}
+// 	{	
+// 		map models/players/major/head_pm.tga
+// 		blendFunc GL_ONE GL_ZERO
+// 		alphaFunc LT128
+// 		rgbGen identity
+// 	}
 }
 
 models/players/major/lower_pm
@@ -83,12 +167,12 @@ models/players/major/lower_pm
 		alphaFunc GE128
 		rgbGen entity
 	}
-	{
-		map models/players/major/lower_pm.tga
-		blendFunc GL_ONE GL_ZERO
-		alphaFunc LT128
-		rgbGen identity
-	}
+// 	{
+// 		map models/players/major/lower_pm.tga
+// 		blendFunc GL_ONE GL_ZERO
+// 		alphaFunc LT128
+// 		rgbGen identity
+// 	}
 }
 
 models/players/major/torso_pm
@@ -100,12 +184,12 @@ models/players/major/torso_pm
 		alphaFunc GE128
 		rgbGen entity
 	}
-	{
-		map models/players/major/torso_pm.tga
-		blendFunc GL_ONE GL_ZERO
-		alphaFunc LT128
-		rgbGen identity
-	}
+// 	{
+// 		map models/players/major/torso_pm.tga
+// 		blendFunc GL_ONE GL_ZERO
+// 		alphaFunc LT128
+// 		rgbGen identity
+// 	}
 }
 
 //================================================================
@@ -122,8 +206,27 @@ models/players/sarge/skin_pm
 		rgbGen entity
 		alphaGen entity
 	}
+// 	{
+// 		map models/players/sarge/skin_pm.tga
+// 		blendFunc GL_ONE GL_ZERO
+// 		alphaFunc LT128
+// 		rgbGen identity
+// 		alphaGen identity
+// 	}
+}
+
+models/players/sarge/skin_pm-detail
+{
+	nopicmip
 	{
-		map models/players/sarge/skin_pm.tga
+		map models/players/sarge/skin_pm-detail.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc GE128
+		rgbGen entity
+		alphaGen entity
+	}
+	{
+		map models/players/sarge/skin_pm-detail.tga
 		blendFunc GL_ONE GL_ZERO
 		alphaFunc LT128
 		rgbGen identity
@@ -135,7 +238,7 @@ models/players/sarge/skin_pm
 // Skelebot
 //================================================================
 
-models/players/skelebot/skin1_pm
+models/players/skelebot/skin1_pm-detail
 {
 	nopicmip
 	{
@@ -158,7 +261,7 @@ models/players/skelebot/skin1_pm
 	}
 }
 
-models/players/skelebot/skin2_pm
+models/players/skelebot/skin2_pm-detail
 {
 	nopicmip
 	{
@@ -179,5 +282,27 @@ models/players/skelebot/skin2_pm
 		blendfunc add
 		tcGen environment
 		rgbGen lightingDiffuse
+	}
+}
+
+models/players/skelebot/skin1_pm
+{
+	nopicmip
+	{
+		map models/players/skelebot/skin1_pm.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc GE128
+		rgbGen entity
+	}
+}
+
+models/players/skelebot/skin2_pm
+{
+	nopicmip
+	{
+		map models/players/skelebot/skin2_pm.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc GE128
+		rgbGen entity
 	}
 }

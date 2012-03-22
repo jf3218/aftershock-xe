@@ -2610,11 +2610,11 @@ void CG_oaUnofficialCvars( void ) {
 	if(atoi( rendererinfos ) > 1 )
 		trap_Cvar_Set("cg_shadows","1");
 	
-	trap_Cvar_VariableStringBuffer("r_vertexlight",rendererinfos,sizeof(rendererinfos) );
+	/*trap_Cvar_VariableStringBuffer("r_vertexlight",rendererinfos,sizeof(rendererinfos) );
         if(atoi( rendererinfos ) != 0 ) {
             	trap_Cvar_Set("r_vertexlight","0");
 		trap_SendConsoleCommand("vid_restart");
-	}
+	}*/
 
         trap_Cvar_Set("con_notifytime", "-1");
 }
