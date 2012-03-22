@@ -499,6 +499,7 @@ void Matchinfo_f( void ) {
 	
 	G_Printf("\\roundnumber\\%i", level.roundNumberStarted);
 	G_Printf("\\revision\\%i", REVISION);
+	G_Printf("\\g_password\\%s", g_password.string);
 	
 	G_Printf("\\");
 	
