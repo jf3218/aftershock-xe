@@ -2624,8 +2624,8 @@ else
 		G_SendLivingCount();*/
 	
 	client->spawnTime = level.time;
-	if( !ent->sendSpawnpoints ){
-		//G_SendSpawnpoints( ent );
+	if( !ent->sendSpawnpoints && g_gametype.integer < GT_TEAM ){
+		G_SendSpawnpoints( ent );
 		ent->sendSpawnpoints = qtrue;
 	}
 	

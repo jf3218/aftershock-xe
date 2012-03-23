@@ -950,18 +950,50 @@ static void CG_AddMultiviewWindow( stereoFrame_t stereoView ) {
 }
 
 void CG_AddSpawnpoints( void ){
-	refEntity_t re;
+// 	refEntity_t		legs;
+// 	refEntity_t		torso;
+// 	refEntity_t		head;
+	refEntity_t		re;
 	vec3_t angles;
+//	centity_t *cent;
 	int i;
+	
+// 	memset( &legs, 0, sizeof(legs) );
+// 	memset( &torso, 0, sizeof(torso) );
+// 	memset( &head, 0, sizeof(head) );
+// 	
+// 	memset( cent, 0, sizeof(*cent));
+// 	
+// 	legs.hModel = trap_R_RegisterModel("models/players/sarge/lower.md3");
+// 	torso.hModel = trap_R_RegisterModel("models/players/sarge/upper.md3");
+// 	head.hModel = trap_R_RegisterModel("models/players/sarge/head.md3");
+// 	legs.customShader = cgs.media.invisShader;
+// 	torso.customShader = cgs.media.invisShader;
+// 	head.customShader = cgs.media.invisShader;
+	
+	
 	memset( &re, 0, sizeof(re));
-	re.hModel = trap_R_RegisterModel("models/flags/r_flag.md3");
-	angles[PITCH] = 0;
-	angles[YAW] = 180;
+	re.hModel = trap_R_RegisterModel("models/weapons2/shotgun/shotgun_flash_1.md3");
+	angles[PITCH] = 270;
+	angles[YAW] = 0;
 	angles[ROLL] = 0;
+	
+// 	cent->lerpAngles[PITCH] = 0;
+// 	cent->lerpAngles[YAW] = 180;
+// 	cent->lerpAngles[ROLL] = 0;
+	
+	AnglesToAxis(angles, re.axis);
 
-	AnglesToAxis( angles, re.axis );
+//	CG_PlayerAngles( cent, legs.axis, torso.axis, head.axis );
+	
 	for( i=0; i < cg.numSpawnpoints; i++ ){
 	    VectorCopy( cg.spawnOrg[i], re.origin);
+// 	    VectorCopy( cg.spawnOrg[i], legs.origin );
+// 	    CG_PositionRotatedEntityOnTag( &torso, &legs, legs.hModel, "tag_torso");
+// 	    CG_PositionRotatedEntityOnTag( &head, &torso, torso.hModel, "tag_head");
+// 	    trap_R_AddRefEntityToScene(&legs);
+// 	    trap_R_AddRefEntityToScene(&torso);
+// 	    trap_R_AddRefEntityToScene(&head);
 	    trap_R_AddRefEntityToScene(&re);
 	}
 }
@@ -1039,8 +1071,8 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
     }
     CG_AddViewWeapon( &cg.predictedPlayerState );
     
-    /*if ( cg.warmup < 0 )
-	    CG_AddSpawnpoints();*/
+    if ( cg.warmup < 0 && cgs.gametype < GT_TEAM )
+	    CG_AddSpawnpoints();
 
     // add buffered sounds
     CG_PlayBufferedSounds();
