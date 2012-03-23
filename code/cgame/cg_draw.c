@@ -3366,7 +3366,7 @@ CROSSHAIR
 
 static void CG_GetHitColor( float *color ) {
     float hitcolor[3];
-    float factor = ((float)(cg.lastHitDamage)/200.0f)+0.5f;
+    float factor = ((float)(cg.lastHitDamage[0])/200.0f)+0.5f;
 
     if ( factor > 1 )
         factor = 1.0f;
@@ -3418,7 +3418,7 @@ static void CG_DrawCrosshair ( void ) {
     }
 
     if ( cg_crosshairHitColorTime.integer > 0 ) {
-        if ( cg.time - cg.lastHitTime < cg_crosshairHitColorTime.integer ) {
+        if ( cg.time - cg.lastHitTime[0] < cg_crosshairHitColorTime.integer ) {
             CG_GetHitColor(color);
             /*color[0] = 1.0f;
             color[1] = 1.0f-cg.lastHitDamage/100.0f;
@@ -3505,10 +3505,10 @@ static void CG_DrawCrosshair ( void ) {
     }
 
     if ( cg_crosshairPulse.integer == 2 ) {
-        f = cg.time - cg.lastHitTime;
+        f = cg.time - cg.lastHitTime[0];
         if ( f > 0 && f < ITEM_BLOB_TIME ) {
             f = f/ ( ITEM_BLOB_TIME );
-            f = cg.lastHitDamage* ( 1 - f ) /50;
+            f = cg.lastHitDamage[0]* ( 1 - f ) /50;
             w *= ( 1 + f );
             h *= ( 1 + f );
         }

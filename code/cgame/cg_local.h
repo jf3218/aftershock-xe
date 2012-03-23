@@ -844,8 +844,8 @@ typedef struct {
 	char	*gameString;
 	int	demoStarted;
 	
-	int	lastHitTime;
-	int	lastHitDamage;
+	int	lastHitTime[64];
+	int	lastHitDamage[64];
 	
 	vec3_t	accel;
 	vec3_t  lastaccel;
