@@ -306,3 +306,18 @@ models/players/skelebot/skin2_pm
 		rgbGen entity
 	}
 }
+
+//================================================================
+// ALL
+//================================================================
+
+models/players/flat
+{
+	nopicmip
+	{
+		map models/players/flat.tga
+		blendFunc GL_ONE GL_ZERO
+		alphaFunc GE128
+		rgbGen entity
+	}
+}

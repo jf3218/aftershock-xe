@@ -392,6 +392,8 @@ vmCvar_t 	cg_killBeep;
 vmCvar_t 	cg_lowAmmoWarningPercentile;
 vmCvar_t 	cg_lowHealthPercentile;
 
+vmCvar_t 	cg_flatGrenades;
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -643,7 +645,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_smoothFovChange, "cg_smoothFovChange", "0", CVAR_ARCHIVE },
 	{&cg_killBeep, "cg_killBeep", "0", CVAR_ARCHIVE },
 	{&cg_lowAmmoWarningPercentile, "cg_lowAmmoWarningPercentile", "0.4", CVAR_ARCHIVE },
-	{&cg_lowHealthPercentile, "cg_lowHealthPercentile", "0.25", CVAR_ARCHIVE }
+	{&cg_lowHealthPercentile, "cg_lowHealthPercentile", "0.25", CVAR_ARCHIVE },
+	{&cg_flatGrenades, "cg_flatGrenades", "0", CVAR_ARCHIVE }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -1291,8 +1294,11 @@ static void CG_RegisterGraphics( void ) {
 
 	cgs.media.tracerShader = trap_R_RegisterShader( "gfx/misc/tracer" );
 	cgs.media.selectShader = trap_R_RegisterShader( "gfx/2d/select" );
-
-	cgs.media.grenadeSkinColor = trap_R_RegisterShader( "models/ammo/grenadeColor" );
+	
+	if( cg_flatGrenades.integer )
+		cgs.media.grenadeSkinColor = trap_R_RegisterShader( "models/players/flat" );
+	else	
+		cgs.media.grenadeSkinColor = trap_R_RegisterShader( "models/ammo/grenadeColor" );
 
 	for (i = 0; i < NUM_CROSSHAIRS; i++ ) {
 		if (i < 26)

@@ -1744,6 +1744,8 @@ extern vmCvar_t 		cg_killBeep;
 extern vmCvar_t 		cg_lowAmmoWarningPercentile;
 extern vmCvar_t 		cg_lowHealthPercentile;
 
+extern vmCvar_t 		cg_flatGrenades;
+
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
 //void CG_AddBoundingBox( centity_t *cent );
