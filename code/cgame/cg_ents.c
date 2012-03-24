@@ -313,8 +313,15 @@ static void CG_Item( centity_t *cent ) {
 
 	ent.hModel = cg_items[es->modelindex].models[0];
 
-	if( cg_brightItems.integer && cg_items[es->modelindex].brightSkin )
+	if( cg_brightItems.integer == 1 && cg_items[es->modelindex].brightSkin )
 		ent.customShader = cg_items[es->modelindex].brightSkin;
+	else if( cg_brightItems.integer == 2 && ( item->brightColor[0] || item->brightColor[1] || item->brightColor[2] ) ){
+		ent.customShader = trap_R_RegisterShader("models/players/flat");
+		ent.shaderRGBA[0] = item->brightColor[0];
+		ent.shaderRGBA[1] = item->brightColor[1];
+		ent.shaderRGBA[2] = item->brightColor[2];
+		ent.shaderRGBA[3] = 255;
+	}
 
 	VectorCopy( cent->lerpOrigin, ent.origin);
 	VectorCopy( cent->lerpOrigin, ent.oldorigin);

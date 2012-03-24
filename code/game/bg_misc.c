@@ -247,7 +247,8 @@ gitem_t	bg_itemlist[] =
 /* sounds */ "",
 		"",
 	"^5Gaunt",
-		0
+		0,
+		{0, 255, 255}
 	},
 
 /*QUAKED weapon_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -266,7 +267,8 @@ gitem_t	bg_itemlist[] =
 /* sounds */ "",
 		"models/weapons2/shotgun/skin_bright",
 	"^3SG",
-		0
+		0,
+		{255, 128, 0}
 	},
 
 /*QUAKED weapon_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -285,7 +287,8 @@ gitem_t	bg_itemlist[] =
 /* sounds */ "",
 		"models/weapons2/machinegun/skin_bright",
 	"^3MG",
-	0
+	0,
+	{255, 255, 0}
 	},
 
 /*QUAKED weapon_grenadelauncher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -304,7 +307,8 @@ gitem_t	bg_itemlist[] =
 /* sounds */ "sound/weapons/grenade/hgrenb1a.wav sound/weapons/grenade/hgrenb2a.wav",
 		"models/weapons2/grenadel/skin_bright",
 	"^2GL",
-		0
+		0,
+		{0, 128, 0}
 	},
 
 /*QUAKED weapon_rocketlauncher (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -323,7 +327,8 @@ gitem_t	bg_itemlist[] =
 /* sounds */ "",
 		"models/weapons2/rocketl/skin_bright",
 	"^1RL",
-		0
+		0,
+		{ 255, 0, 0 }
 	},
 
 /*QUAKED weapon_lightning (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -342,7 +347,8 @@ gitem_t	bg_itemlist[] =
 /* sounds */ "",
 		"models/weapons2/lightning/skin_bright",
 	"^7LG",
-		0
+		0,
+		{255, 255, 255}
 	},
 
 /*QUAKED weapon_railgun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -361,7 +367,8 @@ gitem_t	bg_itemlist[] =
 /* sounds */ "",
 		"models/weapons2/railgun/skin_bright",
 	"^2RG",
-		0
+		0,
+		{0, 255, 0}
 	},
 
 /*QUAKED weapon_plasmagun (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -380,7 +387,8 @@ gitem_t	bg_itemlist[] =
 /* sounds */ "",
 		"models/weapons2/plasma/skin_bright",
 	"^6PG",
-		0
+		0,
+		{255, 0, 255}
 	},
 
 /*QUAKED weapon_bfg (.3 .3 1) (-16 -16 -16) (16 16 16) suspended
@@ -399,7 +407,8 @@ gitem_t	bg_itemlist[] =
 /* sounds */ "",
 		"models/weapons2/bfg/skin_bright",
 	"^5BFG",
-		0
+		0,
+		{0, 255, 255}
 	},
 
 /*QUAKED weapon_grapplinghook (.3 .3 1) (-16 -16 -16) (16 16 16) suspended

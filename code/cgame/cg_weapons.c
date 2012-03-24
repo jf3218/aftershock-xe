@@ -905,7 +905,13 @@ void CG_RegisterWeapon( int weaponNum ) {
 
 	if( item->brightSkin )
 		weaponInfo->brightSkin = trap_R_RegisterShader( item->brightSkin );
-
+	
+	if( item->brightColor[0] || item->brightColor[1] || item->brightColor[2] ){
+		weaponInfo->brightColor[0] = item->brightColor[0];
+		weaponInfo->brightColor[1] = item->brightColor[1];
+		weaponInfo->brightColor[2] = item->brightColor[2];
+	}
+	  
 	// calc midpoint for rotation
 	trap_R_ModelBounds( weaponInfo->weaponModel, mins, maxs );
 	for ( i = 0 ; i < 3 ; i++ ) {
@@ -1198,6 +1204,13 @@ void CG_RegisterItemVisuals( int itemNum ) {
 	}
 	if ( item->brightSkin )
 		itemInfo->brightSkin = trap_R_RegisterShader( item->brightSkin );
+	
+	if( item->brightColor[0] || item->brightColor[1] || item->brightColor[2] ){
+		itemInfo->brightColor[0] = item->brightColor[0];
+		itemInfo->brightColor[1] = item->brightColor[1];
+		itemInfo->brightColor[2] = item->brightColor[2];
+		
+	}
 }
 
 
@@ -1834,8 +1847,16 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 		return;
 	}
 	
-	if( weapon->brightSkin && cg_brightItems.integer )
+	if( weapon->brightSkin && cg_brightItems.integer == 1 )
 		gun.customShader = weapon->brightSkin;
+	else if( cg_brightItems.integer == 2 && ( weapon->brightColor[0] || weapon->brightColor[1] || weapon->brightColor[2] ) ){
+		gun.customShader = trap_R_RegisterShader("models/players/flat");
+		
+		gun.shaderRGBA[0] = weapon->brightColor[0];
+		gun.shaderRGBA[1] = weapon->brightColor[1];
+		gun.shaderRGBA[2] = weapon->brightColor[2];
+		gun.shaderRGBA[3] = 255;
+	}
 
 	if ( !ps ) {
 		// add weapon ready sound
@@ -1882,6 +1903,16 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 		AnglesToAxis( angles, barrel.axis );
 
 		CG_PositionRotatedEntityOnTag( &barrel, &gun, weapon->weaponModel, "tag_barrel" );
+		
+		if( weapon->brightSkin && cg_brightItems.integer == 1 ) {
+			barrel.customShader = weapon->brightSkin;
+		} else if( cg_brightItems.integer == 2 ){
+			barrel.customShader = trap_R_RegisterShader("models/players/flat");
+			barrel.shaderRGBA[0] = gun.shaderRGBA[0];
+			barrel.shaderRGBA[1] = gun.shaderRGBA[1];
+			barrel.shaderRGBA[2] = gun.shaderRGBA[2];
+			barrel.shaderRGBA[3] = gun.shaderRGBA[3];
+		}
 
 		CG_AddWeaponWithPowerups( &barrel, cent->currentState.powerups );
 	}

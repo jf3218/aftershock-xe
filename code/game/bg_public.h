@@ -723,6 +723,7 @@ typedef struct gitem_s {
 	char		*brightSkin;
 	char		*shortPickup_name;
 	int		lastDrop;
+	vec3_t          brightColor;
 } gitem_t;
 
 // included in both the game dll and the client

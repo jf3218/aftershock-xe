@@ -449,6 +449,7 @@ typedef struct weaponInfo_s {
 	qboolean		loopFireSound;
 	
 	qhandle_t		brightSkin;
+	vec3_t 			brightColor;
 } weaponInfo_t;
 
 
@@ -460,6 +461,7 @@ typedef struct {
 	qhandle_t		models[MAX_ITEM_MODELS];
 	qhandle_t		icon;
 	qhandle_t		brightSkin;
+	vec3_t 			brightColor;
 } itemInfo_t;
 
 
