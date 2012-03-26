@@ -44,6 +44,8 @@ int zoomfovModificationCount = -1;
 int crosshairModificationCount = -1;
 int crosshairsizeModificationCount = -1;
 
+int hitBeepModificationCount = -1;
+
 
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
 void CG_Shutdown( void );
@@ -803,6 +805,10 @@ void CG_UpdateCvars( void ) {
 	if( crosshairsizeModificationCount != cg_crosshairSize.modificationCount ){
 		crosshairsizeModificationCount = cg_crosshairSize.modificationCount;
 		CG_ParseCrosshairSize();
+	}
+	if( hitBeepModificationCount != cg_hitBeep.modificationCount ){
+		hitBeepModificationCount = cg_hitBeep.modificationCount;
+		CG_ParseHitBeep();
 	}
 }
 
@@ -2531,6 +2537,7 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	CG_ParseZoomFov();
 	CG_ParseCrosshair();
 	CG_ParseCrosshairSize();
+	CG_ParseHitBeep();
 	
 	cg.lastFov = 90;
 	cg.currentFov = 90;
@@ -2739,6 +2746,35 @@ void CG_ParseCrosshairSize( void ) {
 		cgs.crosshairSize[i] = cgs.crosshairSize[counter-1];
 	}
 	cgs.crosshairSize[WP_NONE] = cgs.crosshairSize[WP_GAUNTLET];
+}
+
+void CG_ParseHitBeep( void ) {
+	char hitBeep[256];
+	char buffer[16];
+	int counter = WP_GAUNTLET, counter2=0;
+	int i;
+	
+	strcpy(hitBeep, cg_hitBeep.string);
+	for ( i = 0; i <= strlen(hitBeep); i++ ){
+		if( hitBeep[i] != '/' && i != strlen(hitBeep)){
+		  buffer[counter2] = hitBeep[i];
+		  counter2++;
+		}
+		else {
+		  buffer[counter2]='\0';
+		  cgs.hitBeep[counter] = atoi(buffer);
+		  counter2=0;
+		  buffer[counter2] = '\0';
+		  
+		  counter++;
+		  if( counter == WP_NUM_WEAPONS )
+			    return;
+		}
+	}
+	for( i = counter; i < WP_NUM_WEAPONS; i++ ){
+		cgs.hitBeep[i] = cgs.hitBeep[counter-1];
+	}
+	cgs.hitBeep[WP_NONE] = cgs.hitBeep[WP_GAUNTLET];
 }
 
 

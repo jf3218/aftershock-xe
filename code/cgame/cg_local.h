@@ -1453,6 +1453,7 @@ typedef struct {
 	int 		crosshair[ WP_NUM_WEAPONS ];
 	int 		crosshairSize[ WP_NUM_WEAPONS ];
 	int 		csStatus;
+	int 		hitBeep[ WP_NUM_WEAPONS ];
 } cgs_t;
 
 //==============================================================================

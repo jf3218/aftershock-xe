@@ -316,6 +316,7 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 				reward;
 	sfxHandle_t sfx;
 	int i = 0, damage = 0;
+	int hitBeep;
 
 	// don't play the sounds if the player just changed teams
 	if ( ps->persistant[PERS_TEAM] != ops->persistant[PERS_TEAM] ) {
@@ -335,8 +336,9 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 			trap_S_StartLocalSound( cgs.media.hitSound2, CHAN_LOCAL_SOUND );
 		}
 #else
+		hitBeep = cgs.hitBeep[ cg.predictedPlayerState.weapon ];
 		
-		if( cg_hitBeep.integer == 4 ){
+		if( hitBeep == 4 ){
 			for( i = 63; i>0; i-- ){
 				cg.lastHitTime[i] = cg.lastHitTime[i-1];
 				cg.lastHitDamage[i] = cg.lastHitDamage[i-1];
@@ -346,10 +348,9 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 		cg.lastHitTime[0] = cg.time;
 		cg.lastHitDamage[0] = ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] );
 
-		if( cg_hitBeep.integer == 1 )
+		if( hitBeep == 1 )
 			trap_S_StartLocalSound( cgs.media.hitSound2, CHAN_LOCAL_SOUND );
-
-		else if( cg_hitBeep.integer == 2 ){
+		else if( hitBeep == 2 ){
 			if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 80 )
 				trap_S_StartLocalSound( cgs.media.hitSound0, CHAN_LOCAL_SOUND );
 			else if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 60 )
@@ -361,8 +362,7 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 			else
 				trap_S_StartLocalSound( cgs.media.hitSound4, CHAN_LOCAL_SOUND );
 		}
-
-		else if( cg_hitBeep.integer == 3 ){
+		else if( hitBeep == 3 ){
 			if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 80 )
 				trap_S_StartLocalSound( cgs.media.hitSound4, CHAN_LOCAL_SOUND );
 			else if( ( ps->persistant[PERS_DAMAGE_DONE] - ops->persistant[PERS_DAMAGE_DONE] ) > 60 )
@@ -374,8 +374,7 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 			else
 				trap_S_StartLocalSound( cgs.media.hitSound0, CHAN_LOCAL_SOUND );
 		}
-		
-		else if( cg_hitBeep.integer == 4 ){
+		else if( hitBeep == 4 ){
 			for( i = 0; i < 64; i++ ){
 				if( cg.lastHitTime[i] > cg.time - 3000 )
 					damage += cg.lastHitDamage[i];
@@ -393,13 +392,11 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 				trap_S_StartLocalSound( cgs.media.hitSound4, CHAN_LOCAL_SOUND );
 			
 		}
-		
-		else if( cg_hitBeep.integer == 5 ){
+		else if( hitBeep == 5 ){
 			for( i = 0; i < 64; i++ ){
 				if( cg.lastHitTime[i] > cg.time - 3000 )
 					damage += cg.lastHitDamage[i];
 			}
-			
 			if( damage > 200 )
 				trap_S_StartLocalSound( cgs.media.hitSound4, CHAN_LOCAL_SOUND );
 			else if( damage > 140 )
@@ -409,8 +406,7 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 			else if( damage > 40 )
 				trap_S_StartLocalSound( cgs.media.hitSound1, CHAN_LOCAL_SOUND );
 			else
-				trap_S_StartLocalSound( cgs.media.hitSound0, CHAN_LOCAL_SOUND );
-			
+				trap_S_StartLocalSound( cgs.media.hitSound0, CHAN_LOCAL_SOUND );	
 		}
 		
 #endif
