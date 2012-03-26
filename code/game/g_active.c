@@ -1169,6 +1169,9 @@ void ClientThink_real( gentity_t *ent ) {
 
 	// check for respawning
 	if ( client->ps.stats[STAT_HEALTH] <= 0 ) {
+		if( ( ucmd->buttons & ( BUTTON_ATTACK | BUTTON_USE_HOLDABLE ) ) && level.time > client->respawnTime - 1500 )
+			client->respawnCommission = qtrue;
+		
 		// wait for the attack button to be pressed
 		// forcerespawn is to prevent users from waiting out powerups
 		// In Last man standing, we force a quick respawn, since
@@ -1180,8 +1183,8 @@ void ClientThink_real( gentity_t *ent ) {
 			( ( ( g_gametype.integer == GT_LMS ) ||
 			( g_gametype.integer == GT_ELIMINATION ) ||
 			( g_gametype.integer == GT_CTF_ELIMINATION ) ) &&
-			( level.time - client->respawnTime > 0 ) ) ||	
-			( ucmd->buttons & ( BUTTON_ATTACK | BUTTON_USE_HOLDABLE ) ) ) ) {
+			( ( level.time - client->respawnTime > 0 ) ) ) ||	
+			( ( ucmd->buttons & ( BUTTON_ATTACK | BUTTON_USE_HOLDABLE ) ) || client->respawnCommission ) ) ) {
 
 			respawn( ent );
 		}
