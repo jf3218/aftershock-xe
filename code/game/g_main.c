@@ -256,6 +256,9 @@ vmCvar_t     g_skipCorrection;
 
 vmCvar_t     g_selfdamage;
 
+vmCvar_t     g_overtime;
+vmCvar_t     g_overtime_ctf_respawnDelay;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -506,7 +509,9 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_disableVotingTime, "g_disableVotingTime", "0", CVAR_ARCHIVE, 0 ,qfalse },
 	{ &g_maxWarp, "g_maxWarp", "0", CVAR_CHEAT, 0, qfalse  },
 	{ &g_skipCorrection, "g_skipCorrection", "0", CVAR_CHEAT, 0, qfalse  },
-	{ &g_selfdamage, "g_selfdamage", "1", CVAR_ARCHIVE| CVAR_SERVERINFO, 0, qfalse  }
+	{ &g_selfdamage, "g_selfdamage", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse  },
+	{ &g_overtime, "g_overtime", "120", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse  },
+	{ &g_overtime_ctf_respawnDelay, "g_overtime_ctf_respawnDelay", "5", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse  }
 };
 
 // bk001129 - made static to avoid aliasing
@@ -878,6 +883,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	level.timeoutAdd = 0;
 	level.timeoutDelay = 0;
 	level.endgameSend = qfalse;
+	
+	level.overtimeCount = 0;
 	
 	/*trap_Cvar_VariableStringBuffer( "session", buffer, sizeof( buffer ) );
 	sscanf( buffer, "%i %i", &a, &b );
@@ -2103,7 +2110,7 @@ void CheckExitRules( void ) {
 	}
 
 	// check for sudden death
-	if ( ScoreIsTied() ) {
+	if ( ScoreIsTied() && g_overtime.integer <= 0) {
 		// always wait for sudden death
 		return;
 	}
@@ -2119,9 +2126,24 @@ void CheckExitRules( void ) {
 	}
 
 	if ( g_timelimit.integer && !level.warmupTime ) {
-		if ( level.time - level.startTime - level.timeoutDelay >= g_timelimit.integer*60000 ) {
-			trap_SendServerCommand( -1, "print \"Timelimit hit.\n\"");
-			LogExit( "Timelimit hit." );
+		if ( level.time - level.startTime - level.timeoutDelay >= g_timelimit.integer*60000 + g_overtime.integer * level.overtimeCount * 1000 ) {
+			if( ScoreIsTied() && g_overtime.integer > 0 ){
+				level.overtimeCount++;
+				trap_SendServerCommand( -1, va("print \"" S_COLOR_YELLOW "OVERTIME " S_COLOR_WHITE "%i" S_COLOR_YELLOW " seconds added.\n\"", g_overtime.integer));
+				trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_YELLOW "OVERTIME " S_COLOR_WHITE "%i" S_COLOR_YELLOW " seconds added.\"", g_overtime.integer));
+				if( g_gametype.integer == GT_CTF && g_overtime_ctf_respawnDelay.integer > 0 ){
+					trap_SendServerCommand( -1, va("print \"" S_COLOR_WHITE "%i" S_COLOR_YELLOW " seconds respawn delay.\n\"", g_overtime_ctf_respawnDelay.integer));
+					trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_WHITE "%i" S_COLOR_YELLOW " seconds respawn delay.\"", g_overtime_ctf_respawnDelay.integer));
+				}
+			} else {
+				if( g_overtime.integer <= 0 || !level.overtimeCount ) {
+					trap_SendServerCommand( -1, "print \"Timelimit hit.\n\"");
+					LogExit( "Timelimit hit." );  
+				} else {
+					trap_SendServerCommand( -1, "print \"Overtime complete.\n\"");
+					LogExit( "Overtime complete." );
+				}
+			}
 			return;
 		}
 	}

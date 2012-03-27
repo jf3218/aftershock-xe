@@ -655,6 +655,8 @@ typedef struct {
     qboolean captureBlueFlagPerfect;
     qboolean captureRedFlagPerfect;
     
+    int 	overtimeCount;
+    
 } level_locals_t;
 
 //KK-OAX These are some Print Shortcuts for KillingSprees and Admin
@@ -1344,6 +1346,9 @@ extern  vmCvar_t  g_maxWarp;
 extern  vmCvar_t  g_skipCorrection;
 
 extern  vmCvar_t  g_selfdamage;
+
+extern vmCvar_t   g_overtime;
+extern vmCvar_t   g_overtime_ctf_respawnDelay;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

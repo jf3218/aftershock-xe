@@ -885,6 +885,9 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	self->client->respawnTime = level.time + 1700;
 	self->client->respawnCommission = qfalse;
 	//However during warm up, we should respawn quicker!
+	if( g_gametype.integer == GT_CTF && level.overtimeCount > 0 )
+		self->client->respawnTime += g_overtime_ctf_respawnDelay.integer * 1000 * level.overtimeCount;
+	
 	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION || g_gametype.integer == GT_LMS)
 		if(level.time<=level.roundStartTime && level.time>level.roundStartTime-1000*g_elimination_activewarmup.integer)
 			self->client->respawnTime = level.time + rand()%800;

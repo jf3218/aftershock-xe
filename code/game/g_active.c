@@ -1169,7 +1169,8 @@ void ClientThink_real( gentity_t *ent ) {
 
 	// check for respawning
 	if ( client->ps.stats[STAT_HEALTH] <= 0 ) {
-		if( ( ucmd->buttons & ( BUTTON_ATTACK | BUTTON_USE_HOLDABLE ) ) && level.time > client->respawnTime - 1500 )
+		if( ( ucmd->buttons & ( BUTTON_ATTACK | BUTTON_USE_HOLDABLE ) ) && ( ( ( level.time > client->respawnTime - 1500) && ( g_gametype.integer != GT_CTF ) ) || 
+										     ( ( level.time > client->respawnTime - 1500 - g_overtime_ctf_respawnDelay.integer * 1000 * level.overtimeCount ) && ( g_gametype.integer == GT_CTF ) ) ) )
 			client->respawnCommission = qtrue;
 		
 		// wait for the attack button to be pressed

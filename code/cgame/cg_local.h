@@ -1748,6 +1748,7 @@ extern vmCvar_t 		cg_lowAmmoWarningPercentile;
 extern vmCvar_t 		cg_lowHealthPercentile;
 
 extern vmCvar_t 		cg_flatGrenades;
+extern vmCvar_t 		cg_bubbleTrail;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
