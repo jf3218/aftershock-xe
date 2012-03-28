@@ -2131,6 +2131,7 @@ void CheckExitRules( void ) {
 				level.overtimeCount++;
 				trap_SendServerCommand( -1, va("print \"" S_COLOR_YELLOW "OVERTIME " S_COLOR_WHITE "%i" S_COLOR_YELLOW " seconds added.\n\"", g_overtime.integer));
 				trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_YELLOW "OVERTIME " S_COLOR_WHITE "%i" S_COLOR_YELLOW " seconds added.\"", g_overtime.integer));
+				trap_SendServerCommand( -1, "overtime" );
 				if( g_gametype.integer == GT_CTF && g_overtime_ctf_respawnDelay.integer > 0 ){
 					trap_SendServerCommand( -1, va("print \"" S_COLOR_WHITE "%i" S_COLOR_YELLOW " seconds respawn delay.\n\"", g_overtime_ctf_respawnDelay.integer));
 					trap_SendServerCommand( -1, va("screenPrint \"" S_COLOR_WHITE "%i" S_COLOR_YELLOW " seconds respawn delay.\"", g_overtime_ctf_respawnDelay.integer));

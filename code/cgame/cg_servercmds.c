@@ -1033,6 +1033,7 @@ void CG_ParseServerinfo ( void ) {
     cgs.nopickup = atoi ( Info_ValueForKey ( info, "g_rockets" ) ) + atoi ( Info_ValueForKey ( info, "g_instantgib" ) ) + atoi ( Info_ValueForKey ( info, "g_elimination" ) );
     cgs.lms_mode = atoi ( Info_ValueForKey ( info, "g_lms_mode" ) );
     cgs.altExcellent = atoi ( Info_ValueForKey ( info, "g_altExcellent" ) );
+    cgs.overtime = atoi ( Info_ValueForKey( info, "g_overtime" ) );
     mapname = Info_ValueForKey ( info, "mapname" );
     Com_sprintf ( cgs.mapname, sizeof ( cgs.mapname ), "maps/%s.bsp", mapname );
     Q_strncpyz ( cgs.redTeam, Info_ValueForKey ( info, "g_redTeam" ), sizeof ( cgs.redTeam ) );
@@ -1943,6 +1944,16 @@ static void CG_ServerCommand ( void ) {
     
     if ( !strcmp ( cmd, "loadModel" ) ) {
         CG_ForceModelChange();
+        return;
+    }
+    
+    if ( !strcmp ( cmd, "overtime" ) ) {
+        trap_S_StartLocalSound ( cgs.media.protectSound, CHAN_ANNOUNCER );
+        return;
+    }
+    
+    if ( !strcmp ( cmd, "holyshit" ) ) {
+        CG_AddBufferedSound ( cgs.media.airgrenadeSound );
         return;
     }
     

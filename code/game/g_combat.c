@@ -804,6 +804,14 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
                     if(self->client->ps.persistant[PERS_SCORE]>0 || level.numNonSpectatorClients<3) //Cannot get negative scores by suicide
 			AddScore( self, self->r.currentOrigin, -1 );
 	}
+	
+	if( g_gametype.integer == GT_TOURNAMENT ){
+		if( ( ScoreIsTied() || ( level.clients[level.sortedClients[0]].ps.persistant[PERS_SCORE] - level.clients[level.sortedClients[1]].ps.persistant[PERS_SCORE] == 1 ) ) && 
+		  ( level.time - level.startTime - level.timeoutDelay < g_timelimit.integer * 60 * 1000 + g_overtime.integer * level.overtimeCount * 1000 ) &&
+		  ( level.time - level.startTime - level.timeoutDelay >= g_timelimit.integer * 60 * 1000 + g_overtime.integer * level.overtimeCount * 1000 - 5000 ) ) {
+			trap_SendServerCommand( -1, "holyshit");
+		}
+	}
 
 	// Add team bonuses
 	Team_FragBonuses(self, inflictor, attacker);

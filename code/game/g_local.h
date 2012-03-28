@@ -972,6 +972,7 @@ void QDECL G_Error( const char *fmt, ... );
 void LogExit( const char *string ); 
 void CheckTeamVote( int team );
 //void G_DemoCommand( demoCommand_t cmd, const char *string );
+qboolean ScoreIsTied( void );
 
 //
 // g_client.c
