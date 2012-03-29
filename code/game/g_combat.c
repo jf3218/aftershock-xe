@@ -1359,15 +1359,27 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 				if( sqrt((targ->client->ps.origin[0]-attacker->client->ps.origin[0]) * (targ->client->ps.origin[0]-attacker->client->ps.origin[0]) +
 						(targ->client->ps.origin[1]-attacker->client->ps.origin[1]) * (targ->client->ps.origin[1]-attacker->client->ps.origin[1]) + 
 						(targ->client->ps.origin[2]-attacker->client->ps.origin[2]) * (targ->client->ps.origin[2]-attacker->client->ps.origin[2])) > 300 ){
+					if( targ->client->lastAirrocket != attacker->s.number ){
+						attacker->client->rewards[REWARD_AIRROCKET]++;
+						RewardMessage(attacker, REWARD_AIRROCKET, attacker->client->rewards[REWARD_AIRROCKET] );
 
-					attacker->client->rewards[REWARD_AIRROCKET]++;
-					RewardMessage(attacker, REWARD_AIRROCKET, attacker->client->rewards[REWARD_AIRROCKET] );
+						attacker->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP | EF_AWARD_AIRROCKET 
+							| EF_AWARD_AIRGRENADE );
 
-					attacker->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP | EF_AWARD_AIRROCKET 
-						| EF_AWARD_AIRGRENADE );
+						attacker->client->ps.eFlags |= EF_AWARD_AIRROCKET;
+						attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
+					} else {
+						//TODO:Double Airrocket
+						attacker->client->rewards[REWARD_DOUBLE_AIRROCKET]++;
+						RewardMessage(attacker, REWARD_DOUBLE_AIRROCKET, attacker->client->rewards[REWARD_DOUBLE_AIRROCKET] );
 
-					attacker->client->ps.eFlags |= EF_AWARD_AIRROCKET;
-					attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
+						attacker->client->ps.eFlags &= ~(EF_AWARD_IMPRESSIVE | EF_AWARD_EXCELLENT | EF_AWARD_GAUNTLET | EF_AWARD_ASSIST | EF_AWARD_DEFEND | EF_AWARD_CAP | EF_AWARD_AIRROCKET 
+							| EF_AWARD_AIRGRENADE );
+
+						attacker->client->ps.eFlags |= EF_AWARD_AIRROCKET;
+						attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
+					}
+					targ->client->lastAirrocket = attacker->s.number;
 				}
 			}
 			else if( ( targ->client->lastGroundTime != 0 ) && ( level.time - targ->client->lastGroundTime > 750 ) && ( mod == MOD_GRENADE ) ){

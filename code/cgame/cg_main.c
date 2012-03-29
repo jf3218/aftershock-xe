@@ -1480,6 +1480,7 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.medalDefend = trap_R_RegisterShaderNoMip( "medal_defend" );
 	cgs.media.medalAssist = trap_R_RegisterShaderNoMip( "medal_assist" );
 	cgs.media.medalAirrocket = trap_R_RegisterShaderNoMip( "medal_airrocket" );
+	cgs.media.medalDoubleAirrocket = trap_R_RegisterShaderNoMip( "medal_double_airrocket" );
 	cgs.media.medalAirgrenade = trap_R_RegisterShaderNoMip( "medal_airgrenade" );
 	cgs.media.medalFullsg = trap_R_RegisterShaderNoMip( "medal_fullsg" );
 	cgs.media.medalItemdenied = trap_R_RegisterShaderNoMip( "medal_itemdenied" );

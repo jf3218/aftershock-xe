@@ -436,6 +436,8 @@ struct gclient_s {
         int lastSentFlyingSave;
 
 	int lastGroundTime;
+	
+	int lastAirrocket;
         
 
 	//unlagged - backward reconciliation #1

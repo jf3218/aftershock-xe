@@ -218,6 +218,8 @@ static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnec
 			writeToFile ( va ( "\t\t\t\t<reward name=\"Excellent\" value=\"%i\"/>\n", cl->ps.persistant[PERS_EXCELLENT_COUNT] ), f );
 		if ( cl->rewards[REWARD_AIRROCKET] )
 			writeToFile ( va ( "\t\t\t\t<reward name=\"Airrocket\" value=\"%i\"/>\n", cl->rewards[REWARD_AIRROCKET] ), f );
+		if ( cl->rewards[REWARD_DOUBLE_AIRROCKET] )
+			writeToFile ( va ( "\t\t\t\t<reward name=\"DoubleAirrocket\" value=\"%i\"/>\n", cl->rewards[REWARD_DOUBLE_AIRROCKET] ), f );
 		if ( cl->rewards[REWARD_AIRGRENADE] )
 			writeToFile ( va ( "\t\t\t\t<reward name=\"Airgrenade\" value=\"%i\"/>\n", cl->rewards[REWARD_AIRGRENADE] ), f );
 		if ( cl->rewards[REWARD_FULLSG] )

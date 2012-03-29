@@ -933,6 +933,8 @@ static void CG_ParseRewards ( void ) {
         pushReward ( cgs.media.spawnkillSound, cgs.media.medalSpawnkill, rewardCount );
     } else if ( reward == REWARD_LGACCURACY ) {
         pushReward ( cgs.media.lgaccuracySound , cgs.media.medalLgaccuracy, rewardCount );
+    } else if ( reward == REWARD_DOUBLE_AIRROCKET ) {
+        pushReward ( cgs.media.impressiveSound , cgs.media.medalDoubleAirrocket, rewardCount );
     }
 }
 

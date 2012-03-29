@@ -1078,6 +1078,7 @@ typedef struct {
 	qhandle_t	medalDefend;
 	qhandle_t	medalAssist;
 	qhandle_t	medalAirrocket;
+	qhandle_t 	medalDoubleAirrocket;
 	qhandle_t	medalAirgrenade;
 	qhandle_t	medalFullsg;
 	qhandle_t	medalItemdenied;

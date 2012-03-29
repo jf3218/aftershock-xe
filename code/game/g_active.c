@@ -1205,6 +1205,7 @@ void ClientThink_real( gentity_t *ent ) {
 		client->lastGroundTime = 0;
 		client->lastSentFlying = -1;
 		client->lastSentFlyingSave = -1;
+		client->lastAirrocket = -1;
 	}
 	
         

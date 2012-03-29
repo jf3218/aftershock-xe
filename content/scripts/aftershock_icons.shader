@@ -179,6 +179,15 @@ medal_airrocket
 	}
 }
 
+medal_double_airrocket
+{
+	nopicmip
+	{
+		clampmap menu/medals/medal_double_airrocket.tga
+		blendFunc blend
+	}
+}
+
 medal_airgrenade
 {
 	nopicmip
