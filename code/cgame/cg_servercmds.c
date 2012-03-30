@@ -158,6 +158,9 @@ void CG_StartOfGame ( void ) {
 
     if ( cg.demoPlayback )
         return;
+    
+    if ( ( cg_autoaction.integer & 16 ) && cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR )
+	return;
 
     if ( !cg.demoStarted )
         CG_SetGameString();
@@ -181,11 +184,14 @@ static void CG_EndOfGame ( void ) {
     if ( cg.demoPlayback )
         return;
 
-
     if ( cg_autoaction.integer & 1 ) {
         cg.demoStarted = 0;
         trap_SendConsoleCommand ( "stoprecord;" );
     }
+    
+    if ( ( cg_autoaction.integer & 16 ) && cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR )
+	return;
+    
     if ( cg_autoaction.integer & 2 ) {
         cmd = va ( "screenshotJPEG %s;",gameString );
         trap_SendConsoleCommand ( cmd );

@@ -590,7 +590,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_rocketTrailRadius, "cg_rocketTrailRadius", "64", CVAR_ARCHIVE},
 	{&cg_grenadeTrailRadius, "cg_grenadeTrailRadius", "32", CVAR_ARCHIVE},
 	{&cg_brightItems, "cg_brightItems", "0", CVAR_ARCHIVE},
-	{&cg_autoaction, "cg_autoaction", "0", CVAR_ARCHIVE},
+	{&cg_autoaction, "cg_autoaction", "0", CVAR_ARCHIVE| CVAR_USERINFO},
 	{&cg_autosnaps, "cg_autosnaps", "1", CVAR_ARCHIVE},
 	{&cg_particles, "cg_particles", "1", CVAR_ARCHIVE},
 	{&cg_lightningStyle, "cg_lightningStyle", "0", CVAR_ARCHIVE},

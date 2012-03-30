@@ -318,6 +318,7 @@ typedef struct {
     int         nameChanges;
     
     int multiview;
+    int autoaction;
     
     //qboolean    demoClient;
     

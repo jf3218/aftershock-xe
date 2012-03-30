@@ -959,6 +959,18 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 				self->client->preservedScore[i] = self->client->ps.persistant[i];
 		}*/
 	}
+	
+	//TODO: Follow attacker - cg_autoaction & 64
+	for ( i = 0 ; i < level.maxclients ; i++ ) {
+		if ( 	attacker && attacker->client
+			&& (level.clients[i].sess.sessionTeam == TEAM_SPECTATOR || level.clients[i].ps.pm_type == PM_SPECTATOR )
+			&& level.clients[i].pers.autoaction & 64 
+			&& level.clients[i].sess.spectatorState == SPECTATOR_FOLLOW
+			&& level.clients[i].sess.spectatorClient == self->s.clientNum) {
+		  
+			level.clients[i].sess.spectatorClient = attacker->s.clientNum;
+		}
+	}
 
 }
 

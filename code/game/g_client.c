@@ -1435,6 +1435,9 @@ void ClientUserinfoChanged( int clientNum ) {
 	
 	s = Info_ValueForKey( userinfo, "cg_multiview" );
 	client->pers.multiview = atoi( s );
+	
+	s = Info_ValueForKey( userinfo, "cg_autoaction" );
+	client->pers.autoaction = atoi( s );
 	 
 	// see if the player wants to debug the backward reconciliation
 	/*s = Info_ValueForKey( userinfo, "cg_debugDelag" );

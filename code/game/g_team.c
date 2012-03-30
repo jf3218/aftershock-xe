@@ -1488,6 +1488,7 @@ int Team_TouchEnemyFlag( gentity_t *ent, gentity_t *other, int team ) {
 int Pickup_Team( gentity_t *ent, gentity_t *other ) {
     int team;
     gclient_t *cl = other->client;
+    int i;
 
     if ( g_gametype.integer == GT_OBELISK ) {
         // there are no team items that can be picked up in obelisk
@@ -1507,6 +1508,17 @@ int Pickup_Team( gentity_t *ent, gentity_t *other ) {
         Team_Dom_TakePoint(ent, cl->sess.sessionTeam);
         return 0;
     }
+    
+    //TODO: Follow powerup - autoaction & 32
+	for ( i = 0 ; i < level.maxclients ; i++ ) {
+		if ( (level.clients[i].sess.sessionTeam == TEAM_SPECTATOR || level.clients[i].ps.pm_type == PM_SPECTATOR )
+			&& level.clients[i].pers.autoaction & 32 ) {
+		  
+			level.clients[i].sess.spectatorClient = other->s.clientNum;
+			level.clients[i].sess.spectatorState = SPECTATOR_FOLLOW;
+		}
+	}
+    
     // figure out what team this flag is
     if ( strcmp(ent->classname, "team_CTF_redflag") == 0 ) {
         team = TEAM_RED;

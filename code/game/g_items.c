@@ -119,6 +119,17 @@ int Pickup_Powerup( gentity_t *ent, gentity_t *other ) {
 		// anti-reward
 		client->ps.persistant[PERS_PLAYEREVENTS] ^= PLAYEREVENT_DENIEDREWARD;
 	}
+	
+	//TODO: Follow powerup - autoaction & 32
+	for ( i = 0 ; i < level.maxclients ; i++ ) {
+		if ( (level.clients[i].sess.sessionTeam == TEAM_SPECTATOR || level.clients[i].ps.pm_type == PM_SPECTATOR )
+			&& level.clients[i].pers.autoaction & 32 ) {
+		  
+			level.clients[i].sess.spectatorClient = other->s.clientNum;
+			level.clients[i].sess.spectatorState = SPECTATOR_FOLLOW;
+		}
+	}
+	
 	return RESPAWN_POWERUP;
 }
 
