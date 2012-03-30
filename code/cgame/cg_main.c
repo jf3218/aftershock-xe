@@ -397,6 +397,8 @@ vmCvar_t 	cg_lowHealthPercentile;
 vmCvar_t 	cg_flatGrenades;
 vmCvar_t 	cg_bubbleTrail;
 
+vmCvar_t 	cg_muzzleFlash;
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -650,7 +652,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_lowAmmoWarningPercentile, "cg_lowAmmoWarningPercentile", "0.4", CVAR_ARCHIVE },
 	{&cg_lowHealthPercentile, "cg_lowHealthPercentile", "0.25", CVAR_ARCHIVE },
 	{&cg_flatGrenades, "cg_flatGrenades", "0", CVAR_ARCHIVE },
-	{&cg_bubbleTrail, "cg_bubbleTrail", "1", CVAR_ARCHIVE }
+	{&cg_bubbleTrail, "cg_bubbleTrail", "1", CVAR_ARCHIVE },
+	{&cg_muzzleFlash, "cg_muzzleFlash", "1", CVAR_ARCHIVE }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

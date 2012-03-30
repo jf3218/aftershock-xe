@@ -1942,33 +1942,36 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 			return;
 		}
 	}
+	
+	if( cg_muzzleFlash.integer ) {
+		memset( &flash, 0, sizeof( flash ) );
+		VectorCopy( parent->lightingOrigin, flash.lightingOrigin );
+		flash.shadowPlane = parent->shadowPlane;
+		flash.renderfx = parent->renderfx;
 
-	memset( &flash, 0, sizeof( flash ) );
-	VectorCopy( parent->lightingOrigin, flash.lightingOrigin );
-	flash.shadowPlane = parent->shadowPlane;
-	flash.renderfx = parent->renderfx;
+		flash.hModel = weapon->flashModel;
+		if (!flash.hModel) {
+			return;
+		}
+		angles[YAW] = 0;
+		angles[PITCH] = 0;
+		angles[ROLL] = crandom() * 10;
+		AnglesToAxis( angles, flash.axis );
 
-	flash.hModel = weapon->flashModel;
-	if (!flash.hModel) {
-		return;
+		// colorize the railgun blast
+		if ( weaponNum == WP_RAILGUN ) {
+			clientInfo_t	*ci;
+
+			ci = &cgs.clientinfo[ cent->currentState.clientNum ];
+			flash.shaderRGBA[0] = 255 * ci->color1[0];
+			flash.shaderRGBA[1] = 255 * ci->color1[1];
+			flash.shaderRGBA[2] = 255 * ci->color1[2];
+		}
+
+		CG_PositionRotatedEntityOnTag( &flash, &gun, weapon->weaponModel, "tag_flash");
+		trap_R_AddRefEntityToScene( &flash );
+	
 	}
-	angles[YAW] = 0;
-	angles[PITCH] = 0;
-	angles[ROLL] = crandom() * 10;
-	AnglesToAxis( angles, flash.axis );
-
-	// colorize the railgun blast
-	if ( weaponNum == WP_RAILGUN ) {
-		clientInfo_t	*ci;
-
-		ci = &cgs.clientinfo[ cent->currentState.clientNum ];
-		flash.shaderRGBA[0] = 255 * ci->color1[0];
-		flash.shaderRGBA[1] = 255 * ci->color1[1];
-		flash.shaderRGBA[2] = 255 * ci->color1[2];
-	}
-
-	CG_PositionRotatedEntityOnTag( &flash, &gun, weapon->weaponModel, "tag_flash");
-	trap_R_AddRefEntityToScene( &flash );
 
 	if ( ps || cg.renderingThirdPerson ||
 		cent->currentState.number != cg.predictedPlayerState.clientNum ) {
