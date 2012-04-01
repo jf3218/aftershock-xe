@@ -1923,10 +1923,12 @@ static void CG_PlayerAngles( centity_t *cent, vec3_t legs[3], vec3_t torso[3], v
 	// lean towards the direction of travel
 	VectorCopy( cent->currentState.pos.trDelta, velocity );
 	speed = VectorNormalize( velocity );
-	if ( speed ) {
+	speed *= cg_playerLean.value;
+	
+	if ( speed > 0.0f ) {
 		vec3_t	axis[3];
 		float	side;
-
+		
 		speed *= 0.05f;
 
 		AnglesToAxis( legsAngles, axis );

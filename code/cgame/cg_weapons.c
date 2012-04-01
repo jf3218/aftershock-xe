@@ -1054,10 +1054,14 @@ void CG_RegisterWeapon( int weaponNum ) {
 		MAKERGB( weaponInfo->flashDlightColor, 1, 0.75f, 0 );
 
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/rocket/rocklf1a.wav", qfalse );
-		if( cg_nomip.integer & 4 )
+		if( cg_nomip.integer & 4 ) {
 			cgs.media.rocketExplosionShader = trap_R_RegisterShader( "aftershock_rocketExplosion_nomip" );
-		else
+			cgs.media.railCoreShader = trap_R_RegisterShader( "railCore_nomip" );
+		}
+		else {
 			cgs.media.rocketExplosionShader = trap_R_RegisterShader( "aftershock_rocketExplosion" );
+			cgs.media.railCoreShader = trap_R_RegisterShader( "railCore" );
+		}
 		break;
 
 #ifdef MISSIONPACK
@@ -1079,10 +1083,14 @@ void CG_RegisterWeapon( int weaponNum ) {
 		weaponInfo->trailRadius = 32;
 		MAKERGB( weaponInfo->flashDlightColor, 1, 0.70f, 0 );
 		weaponInfo->flashSound[0] = trap_S_RegisterSound( "sound/weapons/grenade/grenlf1a.wav", qfalse );
-		if( cg_nomip.integer & 8 )
+		if( cg_nomip.integer & 8 ){
 			cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "aftershock_grenadeExplosion2_nomip" );
-		else
+			cgs.media.railCoreShader = trap_R_RegisterShader( "railCore_nomip" );
+		}
+		else {
 			cgs.media.grenadeExplosionShader = trap_R_RegisterShader( "aftershock_grenadeExplosion2" );
+			cgs.media.railCoreShader = trap_R_RegisterShader( "railCore" );
+		}
 		break;
 
 #ifdef MISSIONPACK
@@ -1971,6 +1979,8 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 		CG_PositionRotatedEntityOnTag( &flash, &gun, weapon->weaponModel, "tag_flash");
 		trap_R_AddRefEntityToScene( &flash );
 	
+	} else {
+		CG_PositionRotatedEntityOnTag( &flash, &gun, weapon->weaponModel, "tag_flash");
 	}
 
 	if ( ps || cg.renderingThirdPerson ||

@@ -398,6 +398,7 @@ vmCvar_t 	cg_flatGrenades;
 vmCvar_t 	cg_bubbleTrail;
 
 vmCvar_t 	cg_muzzleFlash;
+vmCvar_t 	cg_playerLean;
 
 
 typedef struct {
@@ -653,7 +654,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_lowHealthPercentile, "cg_lowHealthPercentile", "0.25", CVAR_ARCHIVE },
 	{&cg_flatGrenades, "cg_flatGrenades", "0", CVAR_ARCHIVE },
 	{&cg_bubbleTrail, "cg_bubbleTrail", "1", CVAR_ARCHIVE },
-	{&cg_muzzleFlash, "cg_muzzleFlash", "1", CVAR_ARCHIVE }
+	{&cg_muzzleFlash, "cg_muzzleFlash", "1", CVAR_ARCHIVE },
+	{&cg_playerLean, "cg_playerLean", "1.0", CVAR_ARCHIVE }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -750,6 +752,9 @@ void CG_UpdateCvars( void ) {
 			CG_Cvar_ClampInt( cv->cvarName, cv->vmCvar, 0, 250 );
 		}
 		else if ( cv->vmCvar == &cg_lowAmmoWarningPercentile ) {
+			CG_Cvar_ClampFloat( cv->cvarName, cv->vmCvar, 0.0, 1.0 );
+		}
+		else if ( cv->vmCvar == &cg_playerLean ) {
 			CG_Cvar_ClampFloat( cv->cvarName, cv->vmCvar, 0.0, 1.0 );
 		}
 		trap_Cvar_Update( cv->vmCvar );
