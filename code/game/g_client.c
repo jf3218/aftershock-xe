@@ -2046,6 +2046,9 @@ void ClientBegin( int clientNum ) {
 	
 	//G_SendAllItems();
 	
+	if( client->sess.sessionTeam == TEAM_SPECTATOR )
+		G_ReadSessionDataRestart( client );
+	
 }
 
 /*

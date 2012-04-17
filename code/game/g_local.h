@@ -1027,6 +1027,7 @@ void G_WriteXMLStats( void );
 // g_session.c
 //
 void G_ReadSessionData( gclient_t *client );
+void G_ReadSessionDataRestart( gclient_t *client );
 void G_InitSessionData( gclient_t *client, char *userinfo );
 
 void G_InitWorldSession( void );
