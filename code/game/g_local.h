@@ -1355,6 +1355,8 @@ extern  vmCvar_t  g_selfdamage;
 extern vmCvar_t   g_overtime;
 extern vmCvar_t   g_overtime_ctf_respawnDelay;
 
+extern vmCvar_t   g_thrufloors;
+
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );
 int		trap_Milliseconds( void );

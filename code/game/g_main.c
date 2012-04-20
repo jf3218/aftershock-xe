@@ -258,6 +258,7 @@ vmCvar_t     g_selfdamage;
 
 vmCvar_t     g_overtime;
 vmCvar_t     g_overtime_ctf_respawnDelay;
+vmCvar_t     g_thrufloors;
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -511,7 +512,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_skipCorrection, "g_skipCorrection", "0", CVAR_CHEAT, 0, qfalse  },
 	{ &g_selfdamage, "g_selfdamage", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse  },
 	{ &g_overtime, "g_overtime", "120", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse  },
-	{ &g_overtime_ctf_respawnDelay, "g_overtime_ctf_respawnDelay", "5", CVAR_ARCHIVE, 0, qfalse  }
+	{ &g_overtime_ctf_respawnDelay, "g_overtime_ctf_respawnDelay", "5", CVAR_ARCHIVE, 0, qfalse  },
+	{ &g_thrufloors, "g_thrufloors", "0", CVAR_ARCHIVE, 0, qfalse  }
 };
 
 // bk001129 - made static to avoid aliasing
