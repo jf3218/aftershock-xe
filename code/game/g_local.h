@@ -505,6 +505,11 @@ struct gclient_s {
 	
 	qboolean            warping;
 	qboolean            warped;
+	
+	int 		    elimRoundDamage;
+	int 		    elimRoundDamageTaken;
+	int 		    elimRoundKills;
+	
 };
 
 

@@ -2226,6 +2226,7 @@ void StartLMSRound(void) {
 void StartEliminationRound(void) {
 
 	int		countsLiving[TEAM_NUM_TEAMS];
+	int i;
 	countsLiving[TEAM_BLUE] = TeamLivingCount( -1, TEAM_BLUE );
 	countsLiving[TEAM_RED] = TeamLivingCount( -1, TEAM_RED );
 	if((countsLiving[TEAM_BLUE]==0) || (countsLiving[TEAM_RED]==0))
@@ -2258,13 +2259,54 @@ void StartEliminationRound(void) {
 		SendAttackingTeamMessageToAllClients(); //Ensure that evaryone know who should attack.
 	EnableWeapons();
 	G_SendLivingCount();
+	
+	for( i = 0; i < level.numConnectedClients ;i++ ) {
+		 g_clients[i].elimRoundDamage = 0;
+		 g_clients[i].elimRoundDamageTaken = 0;
+		 g_clients[i].elimRoundKills = 0;
+	}
+	
+}
+
+void G_SendEliminationStats( void ) {
+	int i;
+	int maxdmgdone = 0, maxdmgdoneClientnum = -1, mindmgtaken = 1000, mindmgtakenClientnum = -1, maxkills = -1, maxkillsClientnum = -1;
+	
+	for( i = 0; i < level.numConnectedClients ;i++ ) {
+	  
+		if( g_clients[i].sess.sessionTeam == TEAM_SPECTATOR )
+			continue;
+		
+		if( g_clients[i].elimRoundDamage > maxdmgdone ){
+			maxdmgdone = g_clients[i].elimRoundDamage;
+			maxdmgdoneClientnum = i;
+		}
+		
+		if( g_clients[i].elimRoundDamageTaken < mindmgtaken ){
+			mindmgtaken = g_clients[i].elimRoundDamageTaken;
+			mindmgtakenClientnum = i;
+		}
+		
+		if( g_clients[i].elimRoundKills > maxkills || ( g_clients[i].elimRoundKills == maxkills && g_clients[i].elimRoundDamage > g_clients[maxkillsClientnum].elimRoundDamage ) ){
+			maxkills = g_clients[i].elimRoundKills;
+			maxkillsClientnum = i;
+		}
+	}
+	
+	trap_SendServerCommand( -1, va( "print \"Max damage done: %s ^2%i\n\"", g_clients[maxdmgdoneClientnum].pers.netname, g_clients[maxdmgdoneClientnum].elimRoundDamage ) );
+	trap_SendServerCommand( -1, va( "print \"Min damage taken: %s ^1%i\n\"", g_clients[mindmgtakenClientnum].pers.netname, g_clients[mindmgtakenClientnum].elimRoundDamageTaken ) );
+	trap_SendServerCommand( -1, va( "print \"Max kills: %s ^3%i\n\"", g_clients[maxkillsClientnum].pers.netname, g_clients[maxkillsClientnum].elimRoundKills ) );
+	
+	trap_SendServerCommand( -1, va( "screenPrint \"Max damage done: %s ^2%i\"", g_clients[maxdmgdoneClientnum].pers.netname, g_clients[maxdmgdoneClientnum].elimRoundDamage ) );
+	trap_SendServerCommand( -1, va( "screenPrint \"Min damage taken: %s ^1%i\"", g_clients[mindmgtakenClientnum].pers.netname, g_clients[mindmgtakenClientnum].elimRoundDamageTaken ) );
+	trap_SendServerCommand( -1, va( "screenPrint \"Max kills: %s ^3%i\"", g_clients[maxkillsClientnum].pers.netname, g_clients[maxkillsClientnum].elimRoundKills ) );
 }
 
 //things to do at end of round:
 void EndEliminationRound(void)
 {
 	//int i,j;
-	
+	G_SendEliminationStats();
 	DisableWeapons();
 	level.roundNumber++;
 	level.roundStartTime = level.time+1000*g_elimination_warmup.integer;

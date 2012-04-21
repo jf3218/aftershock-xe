@@ -624,6 +624,8 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
                                     break;
                             };
 			    attacker->client->kills++;
+			    if( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION )
+				attacker->client->elimRoundKills++;
 			    
 			    if(attacker->client->ps.powerups[PW_QUAD]) {
                                 attacker->client->quadKills++;
@@ -1365,6 +1367,10 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			if( !( mod==MOD_FALLING || mod==MOD_LAVA || mod==MOD_SLIME || mod==MOD_TRIGGER_HURT || mod==MOD_SUICIDE || mod==MOD_TELEFRAG )) {
 					attacker->client->dmgdone += damage;
 					targ->client->dmgtaken += damage;
+					if( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ) {
+						attacker->client->elimRoundDamage += damage;
+						targ->client->elimRoundDamageTaken += damage;
+					}
 			}
 
 			if( ( targ->client->lastGroundTime != 0 ) && ( level.time - targ->client->lastGroundTime > 750 ) && ( mod == MOD_ROCKET ) ){
@@ -1726,7 +1732,7 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 
 		points = damage * ( 1.0 - dist / radius );
 
-		if( CanDamage (ent, origin) || g_thrufloors.integer ) {
+		if( CanDamage (ent, origin) || g_thrufloors.integer & 1 ) {
 			if( LogAccuracyHit( ent, attacker ) ) {
 				hitClient = qtrue;
 			}

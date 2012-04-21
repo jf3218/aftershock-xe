@@ -169,9 +169,26 @@ static void CG_AccUp_f( void ) {
 	}
 }
 
+/*
+=============
+CG_ChatDown_f
+
+Function is called when the 
+chat button is released
+=============
+*/
 static void CG_ChatDown_f( void ) {
 	cg.forceChat = qtrue;
 }
+
+/*
+=============
+CG_ChatUp_f
+
+Function is called when the 
+chat button is released
+=============
+*/
 
 static void CG_ChatUp_f( void ){
 	cg.forceChat = qfalse;
@@ -245,11 +262,6 @@ static void CG_Currenttime_f( void ) {
 			now.tm_sec);
 }
 
-#ifndef AFTERSHOCK_REVISION
-#define AFTERSHOCK_REVISION 220
-#endif
-
-
 /*
 ==================
 CG_Revision_f
@@ -258,13 +270,16 @@ Prints out the current revision
 ==================
 */
 static void CG_Revision_f( void ) {
-	/*char* revision = "$Revision$";
-	int length = CG_DrawStrlen(revision);
-	revision[length-1] = '\n';
-	revision += 11;*/
 	CG_Printf("Aftershock revision %i\n", REVISION);	   
 }
 
+/*
+==================
+CG_CvarAdd_f
+
+Adds a value to a cvar (float)
+==================
+*/
 static void CG_CvarAdd_f( void ){
 	char cvarName[MAX_STRING_CHARS];
 	char add[MAX_STRING_CHARS];
@@ -283,7 +298,7 @@ static void CG_CvarAdd_f( void ){
 }
 
 //TODO: remove all the MISSIONPACK things, AfterShock will never have a missionpack
-#ifdef MISSIONPACK
+/*#ifdef MISSIONPACK
 extern menuDef_t *menuScoreboard;
 void Menu_Reset( void );			// FIXME: add to right include file
 
@@ -345,7 +360,7 @@ static void CG_spLose_f( void) {
 	CG_CenterPrint("YOU LOSE...", SCREEN_HEIGHT * .30, 0);
 }
 
-#endif
+#endif*/
 
 static void CG_TellTarget_f( void ) {
 	int		clientNum;
