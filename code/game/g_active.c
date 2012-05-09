@@ -69,7 +69,7 @@ void P_DamageFeedback( gentity_t *player ) {
 		client->ps.damageYaw = angles[YAW]/360.0 * 256;
 	}
 
-	// play an apropriate pain sound
+	// play an apropriate pain sound ( debounce_time -> min 700 msec no new painsound )
 	if ( (level.time > player->pain_debounce_time) && !(player->flags & FL_GODMODE) ) {
 		player->pain_debounce_time = level.time + 700;
 		G_AddEvent( player, EV_PAIN, player->health );
@@ -86,8 +86,6 @@ void P_DamageFeedback( gentity_t *player ) {
 	client->damage_armor = 0;
 	client->damage_knockback = 0;
 }
-
-
 
 /*
 =============
@@ -156,7 +154,8 @@ void P_WorldEffects( gentity_t *ent ) {
 		(ent->watertype&(CONTENTS_LAVA|CONTENTS_SLIME)) ) {
 		if (ent->health > 0
 			&& ent->pain_debounce_time <= level.time	) {
-
+			//damage every 500msec, this removes the old buggy lava
+			ent->pain_debounce_time = level.time + 500;
 			if ( envirosuit ) {
 				G_AddEvent( ent, EV_POWERUP_BATTLESUIT, 0 );
 			} else {
@@ -186,9 +185,7 @@ G_SetClientSound
 void G_SetClientSound( gentity_t *ent ) {
 	if( ent->s.eFlags & EF_TICKING ) {
 		ent->client->ps.loopSound = G_SoundIndex( "sound/weapons/proxmine/wstbtick.wav");
-	}
-	else
-	if (ent->waterlevel && (ent->watertype&(CONTENTS_LAVA|CONTENTS_SLIME)) ) {
+	} else if (ent->waterlevel && (ent->watertype&(CONTENTS_LAVA|CONTENTS_SLIME)) ) {
 		ent->client->ps.loopSound = level.snd_fry;
 	} else {
 		ent->client->ps.loopSound = 0;
