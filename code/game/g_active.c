@@ -199,6 +199,7 @@ void G_SetClientSound( gentity_t *ent ) {
 /*
 ==============
 ClientImpacts
+Calls the touch-function if an entity touches another
 ==============
 */
 void ClientImpacts( gentity_t *ent, pmove_t *pm ) {
@@ -259,7 +260,7 @@ void	G_TouchTriggers( gentity_t *ent ) {
 
 	VectorSubtract( ent->client->ps.origin, range, mins );
 	VectorAdd( ent->client->ps.origin, range, maxs );
-
+	//How many entities touch the entity? Save in touch
 	num = trap_EntitiesInBox( mins, maxs, touch, MAX_GENTITIES );
 
 	// can't use ent->absmin, because that has a one unit pad
@@ -327,7 +328,8 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 	gclient_t	*client;
 
 	client = ent->client;
-
+	
+	//If playing and in freespec, follow the next player(if lockspectator is enabled)
         if ( ( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION) &&
                 client->sess.spectatorState != SPECTATOR_FOLLOW &&
                 g_elimination_lockspectator.integer>1 &&
@@ -337,7 +339,8 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 
 	if ( client->sess.spectatorState != SPECTATOR_FOLLOW ) {
 		client->ps.pm_type = PM_SPECTATOR;
-		client->ps.speed = 2*g_speed.integer;	// faster than normal
+		//TODO: client cvar to change specspeed
+		client->ps.speed = 2.5*g_speed.integer;	// faster than normal
 
 		// set up for pmove
 		memset (&pm, 0, sizeof(pm));
@@ -369,6 +372,8 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 	if ( ( client->buttons & BUTTON_ATTACK ) && ! ( client->oldbuttons & BUTTON_ATTACK ) ) {
 		Cmd_FollowCycle_f( ent );
 	}
+	
+	//TODO: Add button to reverse cycle through spectators
 
 	if ( ( client->buttons & BUTTON_USE_HOLDABLE ) && ! ( client->oldbuttons & BUTTON_USE_HOLDABLE ) ) {
 		if ( ( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION) &&
@@ -386,13 +391,17 @@ void SpectatorThink( gentity_t *ent, usercmd_t *ucmd ) {
 =================
 ClientInactivityTimer
 
-Returns qfalse if the client is dropped
+Returns qfalse if the client is moved to spec
 =================
 */
 qboolean ClientInactivityTimer( gentity_t *ent ) {
-  
 	gclient_t *client = ent->client;
-  
+	
+	//dont drop specs to speconly anymore
+	if( client->sess.sessionTeam == TEAM_SPECTATOR )
+		return qtrue;
+	
+	//Last movement for lightning accuracy reward
 	if ( client->pers.cmd.forwardmove || 
 		client->pers.cmd.rightmove || 
 		client->pers.cmd.upmove ||
@@ -416,7 +425,7 @@ qboolean ClientInactivityTimer( gentity_t *ent ) {
 		if ( level.time > client->inactivityTime ) {
 			//trap_DropClient( client - level.clients, "Dropped due to inactivity" );
 			SetTeam( ent, "speconly" );
-			
+			//TODO: msg to clients why they are moved
 			return qfalse;
 		}
 		if ( level.time > client->inactivityTime - 10000 && !client->inactivityWarning ) {
