@@ -398,7 +398,7 @@ qboolean ClientInactivityTimer( gentity_t *ent ) {
 	gclient_t *client = ent->client;
 	
 	//dont drop specs to speconly anymore
-	if( client->sess.sessionTeam == TEAM_SPECTATOR )
+	if( client->sess.sessionTeam == TEAM_SPECTATOR || client->isEliminated )
 		return qtrue;
 	
 	//Last movement for lightning accuracy reward
@@ -451,7 +451,7 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 	client->timeResidual += msec;
 
 	while ( client->timeResidual >= 1000 ) {
-		client->timeResidual -= 1000;
+		client->timeResidual -= 1000;		//So this works once a second
 
 		//Stop in elimination!!!
 		if (client->ps.pm_flags & PMF_ELIMWARMUP)
@@ -467,6 +467,7 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 		else {
 			maxHealth = 0;
 		}
+		//Only called if client has regen or guard
 		if( maxHealth ) {
 			if ( ent->health < maxHealth ) {
 				ent->health += 15;
@@ -482,7 +483,7 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 				G_AddEvent( ent, EV_POWERUP_REGEN, 0 );
 			}
 		} else {
-			// count down health when over max
+			// count down health when over max, dont count down if gametype is CA or CS
 			if ( ent->health > client->ps.stats[STAT_MAX_HEALTH] && !( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ) ) {
 				ent->health--;
 			}
@@ -493,6 +494,7 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 					ent->damage, DAMAGE_NO_ARMOR, MOD_UNKNOWN);
 			}
 			else
+			//if lower as MAX_HEALTH regen by g_regen.integer every second
 			if ( ent->health < client->ps.stats[STAT_MAX_HEALTH] ) {
 				ent->health+=g_regen.integer;
 				if(ent->health>client->ps.stats[STAT_MAX_HEALTH])
@@ -507,46 +509,46 @@ void ClientTimerActions( gentity_t *ent, int msec ) {
 	}
 	if( bg_itemlist[client->ps.stats[STAT_PERSISTANT_POWERUP]].giTag == PW_AMMOREGEN ) {
 		int w, max, inc, t, i;
-    int weapList[]={WP_MACHINEGUN,WP_SHOTGUN,WP_GRENADE_LAUNCHER,WP_ROCKET_LAUNCHER,WP_LIGHTNING,WP_RAILGUN,WP_PLASMAGUN,WP_BFG
+		int weapList[]={WP_MACHINEGUN,WP_SHOTGUN,WP_GRENADE_LAUNCHER,WP_ROCKET_LAUNCHER,WP_LIGHTNING,WP_RAILGUN,WP_PLASMAGUN,WP_BFG
 #ifdef MISSIONPACK
-	,WP_NAILGUN,WP_PROX_LAUNCHER,WP_CHAINGUN};
+			,WP_NAILGUN,WP_PROX_LAUNCHER,WP_CHAINGUN};
 #else
-	};
+			};
 #endif
-    int weapCount = sizeof(weapList) / sizeof(int);
+		int weapCount = sizeof(weapList) / sizeof(int);
 		//
-    for (i = 0; i < weapCount; i++) {
-		  w = weapList[i];
+		for (i = 0; i < weapCount; i++) {
+			w = weapList[i];
 
-		  switch(w) {
-			  case WP_MACHINEGUN: max = 50; inc = 4; t = 1000; break;
-			  case WP_SHOTGUN: max = 10; inc = 1; t = 1500; break;
-			  case WP_GRENADE_LAUNCHER: max = 10; inc = 1; t = 2000; break;
-			  case WP_ROCKET_LAUNCHER: max = 10; inc = 1; t = 1750; break;
-			  case WP_LIGHTNING: max = 50; inc = 5; t = 1500; break;
-			  case WP_RAILGUN: max = 10; inc = 1; t = 1750; break;
-			  case WP_PLASMAGUN: max = 50; inc = 5; t = 1500; break;
-			  case WP_BFG: max = 10; inc = 1; t = 4000; break;
+			switch(w) {
+				case WP_MACHINEGUN: max = 50; inc = 4; t = 1000; break;
+				case WP_SHOTGUN: max = 10; inc = 1; t = 1500; break;
+				case WP_GRENADE_LAUNCHER: max = 10; inc = 1; t = 2000; break;
+				case WP_ROCKET_LAUNCHER: max = 10; inc = 1; t = 1750; break;
+				case WP_LIGHTNING: max = 50; inc = 5; t = 1500; break;
+				case WP_RAILGUN: max = 10; inc = 1; t = 1750; break;
+				case WP_PLASMAGUN: max = 50; inc = 5; t = 1500; break;
+				case WP_BFG: max = 10; inc = 1; t = 4000; break;
 #ifdef MISSIONPACK
-			  case WP_NAILGUN: max = 10; inc = 1; t = 1250; break;
-			  case WP_PROX_LAUNCHER: max = 5; inc = 1; t = 2000; break;
-			  case WP_CHAINGUN: max = 100; inc = 5; t = 1000; break;
+				case WP_NAILGUN: max = 10; inc = 1; t = 1250; break;
+				case WP_PROX_LAUNCHER: max = 5; inc = 1; t = 2000; break;
+				case WP_CHAINGUN: max = 100; inc = 5; t = 1000; break;
 #endif
-			  default: max = 0; inc = 0; t = 1000; break;
-		  }
-		  client->ammoTimes[w] += msec;
-		  if ( client->ps.ammo[w] >= max ) {
-			  client->ammoTimes[w] = 0;
-		  }
-		  if ( client->ammoTimes[w] >= t ) {
-			  while ( client->ammoTimes[w] >= t )
-				  client->ammoTimes[w] -= t;
-			  client->ps.ammo[w] += inc;
-			  if ( client->ps.ammo[w] > max ) {
+				default: max = 0; inc = 0; t = 1000; break;
+			}
+			client->ammoTimes[w] += msec;
+			if ( client->ps.ammo[w] >= max ) {
+				client->ammoTimes[w] = 0;
+			}
+			if ( client->ammoTimes[w] >= t ) {
+				while ( client->ammoTimes[w] >= t )
+					client->ammoTimes[w] -= t;
+				client->ps.ammo[w] += inc;
+				if ( client->ps.ammo[w] > max ) {
 				  client->ps.ammo[w] = max;
-			  }
-		  }
-    }
+				}
+			}
+		}
 	}
 }
 
@@ -562,12 +564,12 @@ void ClientIntermissionThink( gclient_t *client ) {
 	// the level will exit when everyone wants to or after timeouts
 
         if( g_entities[client->ps.clientNum].r.svFlags & SVF_BOT )
-            return; //Bots cannot mark themself as ready
+		return; //Bots cannot mark themself as ready
 
 	// swap and latch button actions
 	client->oldbuttons = client->buttons;
 	client->buttons = client->pers.cmd.buttons;
-	if ( client->buttons & ( BUTTON_ATTACK | BUTTON_USE_HOLDABLE ) & ( client->oldbuttons ^ client->buttons ) ) {
+	if ( ( client->buttons & ( BUTTON_ATTACK | BUTTON_USE_HOLDABLE ) & ( client->oldbuttons ^ client->buttons ) ) || g_forceIntermissionExit.integer ) {
 		// this used to be an ^1 but once a player says ready, it should stick
 		client->readyToExit = 1;
 	}
