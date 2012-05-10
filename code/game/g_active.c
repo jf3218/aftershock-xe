@@ -589,7 +589,7 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 	int		event;
 	gclient_t *client;
 	int		damage;
-	vec3_t	dir;
+	//vec3_t	dir;
 	vec3_t	origin, angles;
 //	qboolean	fired;
 	gitem_t *item;
@@ -617,7 +617,7 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 			} else {
 				damage = 5;
 			}
-			VectorSet (dir, 0, 0, 1);
+			//VectorSet (dir, 0, 0, 1);
 			ent->pain_debounce_time = level.time + 200;	// no normal pain sound
 			G_Damage (ent, NULL, NULL, NULL, NULL, damage, 0, MOD_FALLING);
 			break;
@@ -804,7 +804,7 @@ void ClientThink_real( gentity_t *ent ) {
 	int			oldEventSequence;
 	int			msec;
 	usercmd_t	*ucmd;
-	int i;
+	//int i;
 	
 	//TODO:Understand if this works well, what to do with projectiles?
 	if( level.timeout )
@@ -1293,6 +1293,7 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 		} else if ( clientNum == -2 ) {
 			clientNum = level.follow2;
 		}
+		//TODO: dont follow eliminated players
 		if ( clientNum >= 0 ) {
 			cl = &level.clients[ clientNum ];
 			if ( ( cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR ) /*|| cl->pers.demoClient*/ ) {
@@ -1322,10 +1323,7 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 					ClientBegin( ent->client - level.clients );
 				}
 			}
-		}
-	
-		
-			
+		}	
 	}
 }
 
@@ -1386,13 +1384,13 @@ static void G_PredictPmove( gentity_t *ent, float frametime )
 ClientEndFrame
 
 Called at the end of each server frame for each connected client
-A fast client will have multiple ClientThink for each ClientEdFrame,
+A fast client will have multiple ClientThink for each ClientEndFrame,
 while a slow client may have multiple ClientEndFrame between ClientThink.
 ==============
 */
 void ClientEndFrame( gentity_t *ent ) {
 	int			i;
-	clientPersistant_t	*pers;
+//	clientPersistant_t	*pers; //not used
 	//int frames;
 
 //unlagged - smooth clients #1
@@ -1404,7 +1402,7 @@ void ClientEndFrame( gentity_t *ent ) {
 		return;
 	}
 
-	pers = &ent->client->pers;
+//	pers = &ent->client->pers;
 
 	// turn off any expired powerups
 	for ( i = 0 ; i < MAX_POWERUPS ; i++ ) {

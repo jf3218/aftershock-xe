@@ -88,6 +88,7 @@ void SP_info_player_intermission( gentity_t *ent ) {
 ================
 SpotWouldTelefrag
 
+Returns qtrue if a client touches the spot
 ================
 */
 qboolean SpotWouldTelefrag( gentity_t *spot ) {
@@ -116,7 +117,7 @@ qboolean SpotWouldTelefrag( gentity_t *spot ) {
 ================
 SelectNearestDeathmatchSpawnPoint
 
-Find the spot that we DON'T want to use
+Find the spot that is closest to the point from
 ================
 */
 #define	MAX_SPAWN_POINTS	128
@@ -162,6 +163,7 @@ gentity_t *SelectRandomDeathmatchSpawnPoint( void ) {
 	spot = NULL;
 
 	while ((spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != NULL) {
+		//Dont use spots that would telefrag
 		if ( SpotWouldTelefrag( spot ) ) {
 			continue;
 		}
@@ -169,7 +171,7 @@ gentity_t *SelectRandomDeathmatchSpawnPoint( void ) {
 		count++;
 	}
 
-	if ( !count ) {	// no spots that won't telefrag
+	if ( !count ) {	// no spots that won't telefrag, take the next spot TODO: fix that for CA start, maybe add delay?
 		return G_Find( NULL, FOFS(classname), "info_player_deathmatch");
 	}
 
@@ -196,11 +198,14 @@ gentity_t *SelectRandomFurthestSpawnPoint ( vec3_t avoidPoint, vec3_t origin, ve
 	spot = NULL;
 
 	while ((spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != NULL) {
+		//dont take spots that would telefrag
 		if ( SpotWouldTelefrag( spot ) ) {
 			continue;
 		}
+		//get distance from avoid point
 		VectorSubtract( spot->s.origin, avoidPoint, delta );
 		dist = VectorLength( delta );
+		//sort spots by distance
 		for (i = 0; i < numSpots; i++) {
 			if ( dist > list_dist[i] ) {
 				if ( numSpots >= 64 )
@@ -223,6 +228,7 @@ gentity_t *SelectRandomFurthestSpawnPoint ( vec3_t avoidPoint, vec3_t origin, ve
 			numSpots++;
 		}
 	}
+	//no spot found? check if there is a spot or only all would telefrag
 	if (!numSpots) {
 		spot = G_Find( NULL, FOFS(classname), "info_player_deathmatch");
 		if (!spot)
@@ -234,8 +240,18 @@ gentity_t *SelectRandomFurthestSpawnPoint ( vec3_t avoidPoint, vec3_t origin, ve
 	}
 
 	// select a random spot from the spawn points furthest away
-	rnd = random() * (numSpots / 2);
-
+	if( g_aftershockRespawn.integer ){
+		
+		if( numSpots >= 3 )
+			rnd = random() * 3;
+		else	
+			rnd = random() * numSpots;
+		
+		//G_Printf("numspots %i, random %i\n", numSpots, rnd );
+	} else {
+		rnd = random() * (numSpots / 2);
+	}
+	//set respawn vectors
 	VectorCopy (list_spot[rnd]->s.origin, origin);
 	origin[2] += 9;
 	VectorCopy (list_spot[rnd]->s.angles, angles);
@@ -2188,12 +2204,18 @@ void ClientSpawn(gentity_t *ent) {
 			if ( !client->pers.initialSpawn && client->pers.localClient ) {
 				client->pers.initialSpawn = qtrue;
 				spawnPoint = SelectInitialSpawnPoint( spawn_origin, spawn_angles,
-								      !!(ent->r.svFlags & SVF_BOT));
+								      !!(ent->r.svFlags & SVF_BOT)); // !! ??
 			} else {
 				// don't spawn near existing origin if possible
-				spawnPoint = SelectSpawnPoint ( 
-					client->ps.origin, 
-					spawn_origin, spawn_angles);
+				if( g_aftershockRespawn.integer && client->lastKiller >= 0){
+					spawnPoint = SelectSpawnPoint ( 
+						g_entities[client->lastKiller].client->ps.origin, 
+						spawn_origin, spawn_angles);
+				} else {
+					spawnPoint = SelectSpawnPoint ( 
+						client->ps.origin, 
+						spawn_origin, spawn_angles);
+				}
 			}
 
 			// Tim needs to prevent bots from spawning at the initial point
