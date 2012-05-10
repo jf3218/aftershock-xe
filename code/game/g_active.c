@@ -711,6 +711,7 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 /*
 ==============
 StuckInOtherClient
+returns qtrue if the client is in the same place as another client
 ==============
 */
 static int StuckInOtherClient(gentity_t *ent) {
@@ -805,6 +806,7 @@ void ClientThink_real( gentity_t *ent ) {
 	usercmd_t	*ucmd;
 	int i;
 	
+	//TODO:Understand if this works well, what to do with projectiles?
 	if( level.timeout )
 		return;
 
@@ -974,7 +976,7 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 
 	if ( pmove_fixed.integer || client->pers.pmoveFixed ) {
-		ucmd->serverTime = ((ucmd->serverTime + pmove_msec.integer-1) / pmove_msec.integer) * pmove_msec.integer;
+		ucmd->serverTime = ((ucmd->serverTime + pmove_msec.integer-1) / pmove_msec.integer) * pmove_msec.integer; //FIXME:redundant? (x/b)*b?
 		//if (ucmd->serverTime - client->ps.commandTime <= 0)
 		//	return;
 	}
@@ -1123,7 +1125,7 @@ void ClientThink_real( gentity_t *ent ) {
 	// since that's the case, it makes no sense to store the extra info
 	// in the client's snapshot entity, so let's save a little bandwidth
 
-
+//TODO: Why no extrapolation at all anymore?
 /*	if (g_smoothClients.integer) {
 		BG_PlayerStateToEntityStateExtraPolate( &ent->client->ps, &ent->s, ent->client->ps.commandTime, qtrue );
 	}
@@ -1177,6 +1179,7 @@ void ClientThink_real( gentity_t *ent ) {
 
 	// check for respawning
 	if ( client->ps.stats[STAT_HEALTH] <= 0 ) {
+		//Dead clients can issue the respawncomand even before they can respawn
 		if( ( ucmd->buttons & ( BUTTON_ATTACK | BUTTON_USE_HOLDABLE ) ) && ( ( ( level.time > client->respawnTime - 1500) && ( g_gametype.integer != GT_CTF ) ) || 
 										     ( ( level.time > client->respawnTime - 1500 - g_overtime_ctf_respawnDelay.integer * 1000 * level.overtimeCount ) && ( g_gametype.integer == GT_CTF ) ) ) )
 			client->respawnCommission = qtrue;
@@ -1186,15 +1189,11 @@ void ClientThink_real( gentity_t *ent ) {
 		// In Last man standing, we force a quick respawn, since
 		// the player must be able to loose health
 		// pressing attack or use is the normal respawn method
-		if ( ( level.time > client->respawnTime ) &&
-			( ( ( g_forcerespawn.integer > 0 ) && 
-			( level.time - client->respawnTime  > g_forcerespawn.integer * 1000 ) ) ||
-			( ( ( g_gametype.integer == GT_LMS ) ||
-			( g_gametype.integer == GT_ELIMINATION ) ||
-			( g_gametype.integer == GT_CTF_ELIMINATION ) ) &&
-			( ( level.time - client->respawnTime > 0 ) ) ) ||	
-			( ( ucmd->buttons & ( BUTTON_ATTACK | BUTTON_USE_HOLDABLE ) ) || client->respawnCommission ) ) ) {
-
+			
+		//TODO: this is a mess! Redo this section
+		if ( ( level.time > client->respawnTime ) && ( ( ( g_forcerespawn.integer > 0 ) && ( level.time - client->respawnTime  > g_forcerespawn.integer * 1000 ) ) ||
+			( ( ( g_gametype.integer == GT_LMS ) || ( g_gametype.integer == GT_ELIMINATION ) || ( g_gametype.integer == GT_CTF_ELIMINATION ) ) &&
+			( ( level.time - client->respawnTime > 0 ) ) ) || ( ( ucmd->buttons & ( BUTTON_ATTACK | BUTTON_USE_HOLDABLE ) ) || client->respawnCommission ) ) ) {
 			respawn( ent );
 		}
 		return;
@@ -1216,7 +1215,6 @@ void ClientThink_real( gentity_t *ent ) {
 		client->lastAirrocket = -1;
 	}
 	
-        
 	// perform once-a-second actions
 	ClientTimerActions( ent, msec );
 }
@@ -1263,7 +1261,8 @@ SpectatorClientEndFrame
 void SpectatorClientEndFrame( gentity_t *ent ) {
 	gclient_t	*cl;
 	int i, preservedScore[MAX_PERSISTANT]; //for keeping in elimination
-
+	
+	//TODO: check here why playing clients get all entityinfo during multiview if someone specs them
 	if( ent->client->pers.multiview >= 2 && g_allowMultiview.integer && ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) ){
 		for( i = 0 ; i < MAX_GENTITIES; i++ ){
 			if( g_entities[i].inuse ){
@@ -1273,8 +1272,9 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 			}
 		}
 	}
-	
-	if ( ent->client->sess.spectatorState == SPECTATOR_SCOREBOARD || ( ( ent->client->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR ) && g_disableSpecs.integer && !level.warmupTime )) {
+	//Referees can always spec a match 
+	if ( ent->client->sess.spectatorState == SPECTATOR_SCOREBOARD || 
+	   ( ( ent->client->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR ) && g_disableSpecs.integer && !level.warmupTime && !ent->client->referee )) {
 		ent->client->ps.pm_flags |= PMF_SCOREBOARD;
 		return;
 	} else {
