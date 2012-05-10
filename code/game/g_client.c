@@ -576,18 +576,19 @@ void respawn( gentity_t *ent ) {
 			return;
 		}
 	}
-
+	
+	//Do not respawn when eliminated in CA and CS gametype
 	if((g_gametype.integer==GT_ELIMINATION || g_gametype.integer==GT_CTF_ELIMINATION || g_gametype.integer==GT_LMS) 
 			&& ent->client->ps.pm_type == PM_SPECTATOR && ent->client->ps.stats[STAT_HEALTH] > 0)
 		return;
-		ClientSpawn(ent);
+	
+	ClientSpawn(ent);
 
-		// add a teleportation effect
-		if(g_gametype.integer!=GT_ELIMINATION && g_gametype.integer!=GT_CTF_ELIMINATION && g_gametype.integer!=GT_LMS)
-		{	
-			tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
-			tent->s.clientNum = ent->s.clientNum;
-		}
+	// add a teleportation effect at spawn
+	if(g_gametype.integer!=GT_ELIMINATION && g_gametype.integer!=GT_CTF_ELIMINATION && g_gametype.integer!=GT_LMS) {	
+		tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
+		tent->s.clientNum = ent->s.clientNum;
+	}
 }
 
 /*
@@ -608,14 +609,14 @@ void respawnRound( gentity_t *ent ) {
 	//	return;
         if(ent->client->hook)
                 Weapon_HookFree(ent->client->hook);
-		ClientSpawn(ent);
+		
+	ClientSpawn(ent);
 
-		// add a teleportation effect
-		if(g_gametype.integer!=GT_ELIMINATION && g_gametype.integer!=GT_CTF_ELIMINATION && g_gametype.integer!=GT_LMS)
-		{	
-			tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
-			tent->s.clientNum = ent->s.clientNum;
-		}
+	// add a teleportation effect
+	if(g_gametype.integer!=GT_ELIMINATION && g_gametype.integer!=GT_CTF_ELIMINATION && g_gametype.integer!=GT_LMS) {	
+		tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
+		tent->s.clientNum = ent->s.clientNum;
+	}
 }
 
 /*
@@ -747,7 +748,7 @@ team_t TeamLivingCount( int ignoreClientNum, int team ) {
 ================
 TeamHealthCount
 
-Count total number of healthpoints on teh teams used for draws in Elimination
+Count total number of healthpoints on the teams used for draws in Elimination
 ================
 */
 
@@ -988,12 +989,12 @@ team_t PickTeam( int ignoreClientNum ) {
 	counts[TEAM_BLUE] = TeamCount( ignoreClientNum, TEAM_BLUE );
 	counts[TEAM_RED] = TeamCount( ignoreClientNum, TEAM_RED );
     
-    //KK-OAX Both Teams locked...forget about it, print an error message, keep as spec
-    if ( g_redLocked.integer && g_blueLocked.integer ) {
-        G_Printf( "Both teams have been locked by the Admin! \n" );
-        return TEAM_NONE;
-    }	
-	if ( ( counts[TEAM_BLUE] > counts[TEAM_RED] ) && ( !g_redLocked.integer ) ) {
+	//KK-OAX Both Teams locked...forget about it, print an error message, keep as spec
+	if ( g_redLocked.integer && g_blueLocked.integer ) {
+		G_Printf( "Both teams have been locked by the Admin! \n" );
+		return TEAM_NONE;
+	}	
+	 if ( ( counts[TEAM_BLUE] > counts[TEAM_RED] ) && ( !g_redLocked.integer ) ) {
 		return TEAM_RED;
 	}
 	if ( ( counts[TEAM_RED] > counts[TEAM_BLUE] ) && ( !g_blueLocked.integer ) ) {
@@ -1004,10 +1005,10 @@ team_t PickTeam( int ignoreClientNum ) {
 		return TEAM_RED;
 	}
 	if ( ( level.teamScores[TEAM_RED] > level.teamScores[TEAM_BLUE] ) && ( !g_blueLocked.integer ) ) {  
-	    return TEAM_BLUE;
-    }
-    //KK-OAX Force Team Blue?
-    return TEAM_BLUE;
+		return TEAM_BLUE;
+	}
+	//KK-OAX Force Team Blue?
+	return TEAM_BLUE;
 }
 
 /*
@@ -1032,7 +1033,7 @@ static void ForceClientSkin( gclient_t *client, char *model, const char *skin ) 
 
 /*
 ===========
-ClientCheckName
+ClientCleanName
 ============
 */
 static void ClientCleanName(const char *in, char *out, int outSize)
@@ -1086,10 +1087,19 @@ static void ClientCleanName(const char *in, char *out, int outSize)
     out[outpos] = '\0';
 
     // don't allow empty names
-    if( *out == '\0' || colorlessLen == 0)
+    if( *out == '\0' || colorlessLen == 0){
         Q_strncpyz(out, "UnnamedPlayer", outSize );
+    }
 }
 
+/*
+===========
+ClientNameAllowed
+returns qtrue if a name is allowed, otherwise qfalse
+An allowed name contains min 3 valid chars
+"UnnamedPlayer" is not allowed
+============
+*/
 qboolean ClientNameAllowed( const char *in , int size){
 	int count = 0;
 	
@@ -1109,6 +1119,7 @@ qboolean ClientNameAllowed( const char *in , int size){
 	return qtrue;
 }
 
+//TODO: add a new sourcefile for md5
 typedef struct MD5Context {
 	unsigned int  buf[4];
 	unsigned int  bits[2];
@@ -1376,6 +1387,12 @@ char *G_MD5String( const char *in )
 	return final;
 }
 
+/*
+===========
+G_toSmallCaps
+Changes capital letters to non capital letters
+============
+*/
 void G_toSmallCaps( char* in ){
 	for( ; *in; in++ ){
 		if( *in >= 'A' && *in <= 'Z' ){
@@ -1529,6 +1546,11 @@ void ClientUserinfoChanged( int clientNum ) {
             trap_SendServerCommand( ent - g_entities, va( "print \"%s\n\"", err ) );
             revertName = qtrue;
         }
+        else if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) ) {
+		trap_SendServerCommand( ent - g_entities,
+			"print \"Name not allowed, a valid name contains at least 3 chars (a-z,A-Z,*)\n\"" );
+            revertName = qtrue;
+	}
 
         //Never revert a bots name... just to bad if it hapens... but the bot will always be expendeble :-)
         if (ent->r.svFlags & SVF_BOT)
