@@ -372,6 +372,8 @@ BODYQUE
 /*
 ===============
 InitBodyQue
+
+Save some(8) entities for dead bodies
 ===============
 */
 void InitBodyQue (void) {
@@ -457,6 +459,7 @@ void CopyToBodyQue( gentity_t *ent ) {
 	body->timestamp = level.time;
 	body->physicsObject = qtrue;
 	body->physicsBounce = 0;		// don't bounce
+	//if in air, fall down
 	if ( body->s.groundEntityNum == ENTITYNUM_NONE ) {
 		body->s.pos.trType = TR_GRAVITY;
 		body->s.pos.trTime = level.time;
@@ -2062,8 +2065,9 @@ void ClientBegin( int clientNum ) {
 	
 	//G_SendAllItems();
 	
-	if( client->sess.sessionTeam == TEAM_SPECTATOR )
-		G_ReadSessionDataRestart( client );
+	
+	/*if( client->sess.sessionTeam == TEAM_SPECTATOR )
+		G_ReadSessionDataRestart( client );*/
 	
 }
 
