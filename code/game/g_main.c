@@ -261,6 +261,7 @@ vmCvar_t     g_overtime_ctf_respawnDelay;
 vmCvar_t     g_thrufloors;
 vmCvar_t     g_forceIntermissionExit;
 vmCvar_t     g_aftershockRespawn;
+vmCvar_t     g_nameCheck;
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -517,7 +518,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_overtime_ctf_respawnDelay, "g_overtime_ctf_respawnDelay", "5", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_thrufloors, "g_thrufloors", "0", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_forceIntermissionExit, "g_forceIntermissionExit", "0", CVAR_ARCHIVE, 0, qfalse  },
-	{ &g_aftershockRespawn, "g_aftershockRespawn", "1", CVAR_ARCHIVE, 0, qfalse  }
+	{ &g_aftershockRespawn, "g_aftershockRespawn", "1", CVAR_ARCHIVE, 0, qfalse  },
+	{ &g_nameCheck, "g_nameCheck", "1", CVAR_ARCHIVE, 0, qfalse }
 };
 
 // bk001129 - made static to avoid aliasing

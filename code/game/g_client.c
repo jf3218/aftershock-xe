@@ -1103,8 +1103,8 @@ An allowed name contains min 3 valid chars
 qboolean ClientNameAllowed( const char *in , int size){
 	int count = 0;
 	
-	if( !strcmp( in, "UnnamedPlayer" ) )
-		return qfalse;
+	/*if( !strcmp( in, "UnnamedPlayer" ) )
+		return qfalse;*/
 	
 	for(; *in; in++)
 	{
@@ -1546,7 +1546,7 @@ void ClientUserinfoChanged( int clientNum ) {
             trap_SendServerCommand( ent - g_entities, va( "print \"%s\n\"", err ) );
             revertName = qtrue;
         }
-        else if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) ) {
+        else if( !ClientNameAllowed(client->pers.netname, sizeof(client->pers.netname) ) && g_nameCheck.integer ) {
 		trap_SendServerCommand( ent - g_entities,
 			"print \"Name not allowed, a valid name contains at least 3 chars (a-z,A-Z,*)\n\"" );
             revertName = qtrue;
@@ -1677,11 +1677,12 @@ Sago: I am not happy with this exception
 	*/
 
 	// team task (0 = none, 1 = offence, 2 = defence)
+	//TODO: show teamtask in CTF gametype
 	teamTask = atoi(Info_ValueForKey(userinfo, "teamtask"));
 	// team Leader (1 = leader, 0 is normal player)
 	teamLeader = client->sess.teamLeader;
 
-	// colors
+	// force railcolors for instantgib gametype
         if( g_gametype.integer >= GT_TEAM && g_ffa_gt==0 && g_instantgib.integer) {
             switch(team) {
                 case TEAM_RED:
@@ -1790,10 +1791,10 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
  	    return va( "%s", reason );
  	}
  	 
-  //KK-OAX
-  // we don't check GUID or password for bots and local client
-  // NOTE: local client <-> "ip" "localhost"
-  //   this means this client is not running in our current process
+	//KK-OAX
+	// we don't check GUID or password for bots and local client
+	// NOTE: local client <-> "ip" "localhost"
+	//   this means this client is not running in our current process
 	if ( !isBot && (strcmp(value, "localhost") != 0)) {
 		// check for a password
 		value = Info_ValueForKey (userinfo, "password");
@@ -1801,32 +1802,41 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 			strcmp( g_password.string, value) != 0) {
 			return "Invalid password";
 		}
+		if( g_nameCheck.integer ) {
+			value = Info_ValueForKey (userinfo, "name");
+			if( !ClientNameAllowed(value, sizeof(value)) ){
+				return "Name not allowed, a valid name contains at least 3 chars (a-z,A-Z,*)";
+			}
+		}
+		
+		// check for valid guid
 		for( i = 0; i < sizeof( client->pers.guid ) - 1 &&
-		    isxdigit( client->pers.guid[ i ] ); i++ );
+			isxdigit( client->pers.guid[ i ] ); i++ );
+		
 		if( i < sizeof( client->pers.guid ) - 1 )
-		    return "Invalid GUID";
+			return "Invalid GUID";
 		    
+		// check for duplicate guid
 		for( i = 0; i < level.maxclients; i++ ) {
 		
-		    if( level.clients[ i ].pers.connected == CON_DISCONNECTED )
-		        continue;
+			if( level.clients[ i ].pers.connected == CON_DISCONNECTED )
+				continue;
 		        
-		    if( !Q_stricmp( client->pers.guid, level.clients[ i ].pers.guid ) ) {
-		        if( !G_ClientIsLagging( level.clients + i ) ) {
-		            trap_SendServerCommand( i, "cp \"Your GUID is not secure\"" );
-		                return "Duplicate GUID";
-		        }
-		        trap_DropClient( i, "Ghost" );
-		    }
-		}
-		    
+			if( !Q_stricmp( client->pers.guid, level.clients[ i ].pers.guid ) ) {
+				if( !G_ClientIsLagging( level.clients + i ) ) {
+					trap_SendServerCommand( i, "cp \"Your GUID is not secure\"" );
+					return "Duplicate GUID";
+				}
+				trap_DropClient( i, "Ghost" );
+			}
+		}   
 	}
 	
-    //Check for local client
-    if( !strcmp( client->pers.ip, "localhost" ) )
-        client->pers.localClient = qtrue;
+	//Check for local client
+	if( !strcmp( client->pers.ip, "localhost" ) )
+		client->pers.localClient = qtrue;
+	
         client->pers.adminLevel = G_admin_level( ent );
-
 	client->pers.connected = CON_CONNECTING;
 
 	// read or initialize the session data
