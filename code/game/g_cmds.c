@@ -27,222 +27,164 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*
 ==================
 DeathmatchScoreboardMessage
-
+TODO: add teamtask in teamgames/ctf
 ==================
 */
 void DeathmatchScoreboardMessage( gentity_t *ent ) {
-    char		entry[2048];
-    char		string[4096];
-    int			stringlength;
-    int			i, j;
-    gclient_t	*cl;
-    int			numSorted, scoreFlags, accuracy, perfect;
+	char		entry[2048];
+	char		string[4096];
+	int			stringlength;
+	int			i, j;
+	gclient_t	*cl;
+	int			numSorted, scoreFlags, accuracy, perfect;
 
-    // send the latest information on all clients
-    string[0] = 0;
-    stringlength = 0;
-    scoreFlags = 0;
+	// send the latest information on all clients
+	string[0] = 0;
+	stringlength = 0;
+	scoreFlags = 0;
 
-    numSorted = level.numConnectedClients;
+	numSorted = level.numConnectedClients;
 
-    for (i=0 ; i < numSorted ; i++) {
-        int		ping;
+	for (i=0 ; i < numSorted ; i++) {
+		int		ping;
 
-        cl = &level.clients[level.sortedClients[i]];
+		cl = &level.clients[level.sortedClients[i]];
 
-        if ( cl->pers.connected == CON_CONNECTING ) {
-            ping = -1;
-        } else {
+		if ( cl->pers.connected == CON_CONNECTING ) {
+			ping = -1;
+		} else {
 //unlagged - true ping
-            //ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
-            ping = cl->pers.realPing < 999 ? cl->pers.realPing : 999;
+			//ping = cl->ps.ping < 999 ? cl->ps.ping : 999;
+			ping = cl->pers.realPing < 999 ? cl->pers.realPing : 999;
 //unlagged - true ping
-        }
+		}
 
-        if ( cl->accuracy_shots ) {
-            accuracy = cl->accuracy_hits * 100 / cl->accuracy_shots;
-        }
-        else {
-            accuracy = 0;
-        }
-        perfect = ( cl->ps.persistant[PERS_RANK] == 0 && cl->ps.persistant[PERS_KILLED] == 0 ) ? 1 : 0;
+		if ( cl->accuracy_shots ) {
+			accuracy = cl->accuracy_hits * 100 / cl->accuracy_shots;
+		}
+		else {
+			accuracy = 0;
+		}
+		perfect = ( cl->ps.persistant[PERS_RANK] == 0 && cl->ps.persistant[PERS_KILLED] == 0 ) ? 1 : 0;
 
-        /*if (g_gametype.integer == GT_LMS) {
-        if( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime ){
-            Com_sprintf (entry, sizeof(entry),
-                         " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
-                         cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
-                         scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
-                         cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
-                         cl->ps.persistant[PERS_EXCELLENT_COUNT],
-                         cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT],
-                         cl->ps.persistant[PERS_DEFEND_COUNT],
-                         cl->ps.persistant[PERS_ASSIST_COUNT],
-                         perfect,
-                         cl->ps.persistant[PERS_CAPTURES],
-                         cl->pers.livesLeft + (cl->isEliminated?0:1),
-                         cl->dmgdone,
-                         cl->dmgtaken,
-                         cl->sess.specOnly,
-                         cl->ps.persistant[PERS_KILLED],
-                         cl->kills,
-        	 cl->rewards[REWARD_AIRROCKET],
-        	 cl->rewards[REWARD_AIRGRENADE],
-        	 cl->rewards[REWARD_FULLSG],
-        	 cl->rewards[REWARD_RLRG],
-        	 cl->rewards[REWARD_ITEMDENIED],
-        	 cl->stats[STATS_HEALTH],
-        	 cl->stats[STATS_ARMOR],
-        	 cl->stats[STATS_YA],
-                         cl->stats[STATS_RA],
-                         cl->stats[STATS_MH]);
-        }
-        else{
-        Com_sprintf (entry, sizeof(entry),
-                         " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 ", level.sortedClients[i],
-                         cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
-                         scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
-                         cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
-                         cl->ps.persistant[PERS_EXCELLENT_COUNT],
-                         cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT],
-                         cl->ps.persistant[PERS_DEFEND_COUNT],
-                         cl->ps.persistant[PERS_ASSIST_COUNT],
-                         perfect,
-                         cl->ps.persistant[PERS_CAPTURES],
-                         cl->pers.livesLeft + (cl->isEliminated?0:1),
-                         cl->dmgdone,
-                         cl->dmgtaken,
-                         cl->sess.specOnly,
-                         cl->ps.persistant[PERS_KILLED],
-                         cl->kills,
-        	 cl->rewards[REWARD_AIRROCKET],
-        	 cl->rewards[REWARD_AIRGRENADE],
-        	 cl->rewards[REWARD_FULLSG],
-        	 cl->rewards[REWARD_RLRG],
-        	 cl->rewards[REWARD_ITEMDENIED]
-        	);
-        }
-        }
-        else {*/
-        if ( g_gametype.integer == GT_TOURNAMENT ) {
-            if ( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
-                Com_sprintf (entry, sizeof(entry),
-                             " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
-                             cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
-                             scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
-                             cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
-                             cl->ps.persistant[PERS_EXCELLENT_COUNT],
-                             cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT],
-                             cl->ps.persistant[PERS_DEFEND_COUNT],
-                             cl->ps.persistant[PERS_ASSIST_COUNT],
-                             perfect,
-                             cl->ps.persistant[PERS_CAPTURES],
-                             cl->isEliminated,
-                             cl->dmgdone,
-                             cl->dmgtaken,
-                             cl->sess.specOnly,
-                             cl->ps.persistant[PERS_KILLED],
-                             cl->kills,
-                             cl->rewards[REWARD_AIRROCKET],
-                             cl->rewards[REWARD_AIRGRENADE],
-                             cl->rewards[REWARD_FULLSG],
-                             cl->rewards[REWARD_RLRG],
-                             cl->rewards[REWARD_ITEMDENIED],
-                             cl->stats[STATS_HEALTH],
-                             cl->stats[STATS_ARMOR],
-                             cl->stats[STATS_YA],
-                             cl->stats[STATS_RA],
-                             cl->stats[STATS_MH],
-                             cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1],
-                             cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1],
-                             cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1],
-                             cl->accuracy[WP_ROCKET_LAUNCHER][0], cl->accuracy[WP_ROCKET_LAUNCHER][1],
-                             cl->accuracy[WP_LIGHTNING][0], cl->accuracy[WP_LIGHTNING][1],
-                             cl->accuracy[WP_RAILGUN][0], cl->accuracy[WP_RAILGUN][1],
-                             cl->accuracy[WP_PLASMAGUN][0], cl->accuracy[WP_PLASMAGUN][1],
-                             cl->accuracy[WP_BFG][0], cl->accuracy[WP_BFG][1],
-                             cl->rewards[REWARD_SPAWNKILL]
-                            );
-            }
-            else {
-                Com_sprintf (entry, sizeof(entry),
-                             " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 %i ", level.sortedClients[i],
-                             cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
-                             scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
-                             cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
-                             cl->ps.persistant[PERS_EXCELLENT_COUNT],
-                             cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT],
-                             cl->ps.persistant[PERS_DEFEND_COUNT],
-                             cl->ps.persistant[PERS_ASSIST_COUNT],
-                             perfect,
-                             cl->ps.persistant[PERS_CAPTURES],
-                             cl->isEliminated,
-                             cl->dmgdone,
-                             cl->dmgtaken,
-                             cl->sess.specOnly,
-                             cl->ps.persistant[PERS_KILLED],
-                             cl->kills,
-                             cl->rewards[REWARD_AIRROCKET],
-                             cl->rewards[REWARD_AIRGRENADE],
-                             cl->rewards[REWARD_FULLSG],
-                             cl->rewards[REWARD_RLRG],
-                             cl->rewards[REWARD_ITEMDENIED],
-                             cl->rewards[REWARD_SPAWNKILL]
-                            );
-            }
-        } else {
-	    if ( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
-                Com_sprintf (entry, sizeof(entry),
-                             " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
-                             cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
-                             scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
-                             cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
-                             cl->ps.persistant[PERS_EXCELLENT_COUNT],
-                             cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT],
-                             cl->ps.persistant[PERS_DEFEND_COUNT],
-                             cl->ps.persistant[PERS_ASSIST_COUNT],
-                             perfect,
-                             cl->ps.persistant[PERS_CAPTURES],
-                             cl->isEliminated,
-                             cl->dmgdone,
-                             cl->dmgtaken,
-                             cl->sess.specOnly,
-                             cl->ps.persistant[PERS_KILLED],
-                             cl->kills,
-                             cl->rewards[REWARD_AIRROCKET],
-                             cl->rewards[REWARD_AIRGRENADE],
-                             cl->rewards[REWARD_FULLSG],
-                             cl->rewards[REWARD_RLRG],
-                             cl->rewards[REWARD_ITEMDENIED],
-                             cl->rewards[REWARD_SPAWNKILL]
-                            );
-            }
-            else {
-                Com_sprintf (entry, sizeof(entry),
-                             " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 -1 ", level.sortedClients[i],
-                             cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
-                             scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
-                             cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
-                             cl->ps.persistant[PERS_EXCELLENT_COUNT],
-                             cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT],
-                             cl->ps.persistant[PERS_DEFEND_COUNT],
-                             cl->ps.persistant[PERS_ASSIST_COUNT],
-                             perfect,
-                             cl->ps.persistant[PERS_CAPTURES],
-                             cl->isEliminated,
-                             cl->dmgdone,
-                             cl->dmgtaken,
-                             cl->sess.specOnly,
-                             cl->ps.persistant[PERS_KILLED],
-                             cl->kills
-                            );
-            }
+		if ( g_gametype.integer == GT_TOURNAMENT ) {
+			if ( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
+				Com_sprintf (entry, sizeof(entry),
+					" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
+					cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
+					scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
+					cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
+					cl->ps.persistant[PERS_EXCELLENT_COUNT],
+					cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT],
+					cl->ps.persistant[PERS_DEFEND_COUNT],
+					cl->ps.persistant[PERS_ASSIST_COUNT],
+					perfect,
+					cl->ps.persistant[PERS_CAPTURES],
+					cl->isEliminated,
+					cl->dmgdone,
+					cl->dmgtaken,
+					cl->sess.specOnly,
+					cl->ps.persistant[PERS_KILLED],
+					cl->kills,
+					cl->rewards[REWARD_AIRROCKET],
+					cl->rewards[REWARD_AIRGRENADE],
+					cl->rewards[REWARD_FULLSG],
+					cl->rewards[REWARD_RLRG],
+					cl->rewards[REWARD_ITEMDENIED],
+					cl->stats[STATS_HEALTH],
+					cl->stats[STATS_ARMOR],
+					cl->stats[STATS_YA],
+					cl->stats[STATS_RA],
+					cl->stats[STATS_MH],
+					cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1],
+					cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1],
+					cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1],
+					cl->accuracy[WP_ROCKET_LAUNCHER][0], cl->accuracy[WP_ROCKET_LAUNCHER][1],
+					cl->accuracy[WP_LIGHTNING][0], cl->accuracy[WP_LIGHTNING][1],
+					cl->accuracy[WP_RAILGUN][0], cl->accuracy[WP_RAILGUN][1],
+					cl->accuracy[WP_PLASMAGUN][0], cl->accuracy[WP_PLASMAGUN][1],
+					cl->accuracy[WP_BFG][0], cl->accuracy[WP_BFG][1],
+					cl->rewards[REWARD_SPAWNKILL]
+					);
+			} else {
+				Com_sprintf (entry, sizeof(entry),
+					" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 %i ", level.sortedClients[i],
+					cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
+					scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
+					cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
+					cl->ps.persistant[PERS_EXCELLENT_COUNT],
+					cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT],
+					cl->ps.persistant[PERS_DEFEND_COUNT],
+					cl->ps.persistant[PERS_ASSIST_COUNT],
+					perfect,
+					cl->ps.persistant[PERS_CAPTURES],
+					cl->isEliminated,
+					cl->dmgdone,
+					cl->dmgtaken,
+					cl->sess.specOnly,
+					cl->ps.persistant[PERS_KILLED],
+					cl->kills,
+					cl->rewards[REWARD_AIRROCKET],
+					cl->rewards[REWARD_AIRGRENADE],
+					cl->rewards[REWARD_FULLSG],
+					cl->rewards[REWARD_RLRG],
+					cl->rewards[REWARD_ITEMDENIED],
+					cl->rewards[REWARD_SPAWNKILL]
+					);
+			}
+		} else {
+			if ( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
+				Com_sprintf (entry, sizeof(entry),
+					" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
+					cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
+					scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
+					cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
+					cl->ps.persistant[PERS_EXCELLENT_COUNT],
+					cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT],
+					cl->ps.persistant[PERS_DEFEND_COUNT],
+					cl->ps.persistant[PERS_ASSIST_COUNT],
+					perfect,
+					cl->ps.persistant[PERS_CAPTURES],
+					cl->isEliminated,
+					cl->dmgdone,
+					cl->dmgtaken,
+					cl->sess.specOnly,
+					cl->ps.persistant[PERS_KILLED],
+					cl->kills,
+					cl->rewards[REWARD_AIRROCKET],
+					cl->rewards[REWARD_AIRGRENADE],
+					cl->rewards[REWARD_FULLSG],
+					cl->rewards[REWARD_RLRG],
+					cl->rewards[REWARD_ITEMDENIED],
+					cl->rewards[REWARD_SPAWNKILL]
+					);
+			}
+		else {
+			Com_sprintf (entry, sizeof(entry),
+				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 -1 ", level.sortedClients[i],
+				cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/60000,
+				scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
+				cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
+				cl->ps.persistant[PERS_EXCELLENT_COUNT],
+				cl->ps.persistant[PERS_GAUNTLET_FRAG_COUNT],
+				cl->ps.persistant[PERS_DEFEND_COUNT],
+				cl->ps.persistant[PERS_ASSIST_COUNT],
+				perfect,
+				cl->ps.persistant[PERS_CAPTURES],
+				cl->isEliminated,
+				cl->dmgdone,
+				cl->dmgtaken,
+				cl->sess.specOnly,
+				cl->ps.persistant[PERS_KILLED],
+				cl->kills
+				);
+		}
 	}
 	
         j = strlen(entry);
         if (stringlength + j > 1024 ) {
-            G_Printf("Too many clients connected for scoreboard info!\n");
-            break;
+		G_Printf("Too many clients connected for scoreboard info!\n");
+		break;
         }
         strcpy (string + stringlength, entry);
         stringlength += j;
@@ -260,20 +202,20 @@ G_SendAccMessage
 ==================
 */
 void G_SendAccMessage( gentity_t *ent ) {
-    char		entry[128];
+	char		entry[128];
 
-    Com_sprintf (entry, sizeof(entry),
-                 " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", ent->client->accuracy[WP_MACHINEGUN][0], ent->client->accuracy[WP_MACHINEGUN][1],
-                 ent->client->accuracy[WP_SHOTGUN][0], ent->client->accuracy[WP_SHOTGUN][1],
-                 ent->client->accuracy[WP_GRENADE_LAUNCHER][0], ent->client->accuracy[WP_GRENADE_LAUNCHER][1],
-                 ent->client->accuracy[WP_ROCKET_LAUNCHER][0], ent->client->accuracy[WP_ROCKET_LAUNCHER][1],
-                 ent->client->accuracy[WP_LIGHTNING][0], ent->client->accuracy[WP_LIGHTNING][1],
-                 ent->client->accuracy[WP_RAILGUN][0], ent->client->accuracy[WP_RAILGUN][1],
-                 ent->client->accuracy[WP_PLASMAGUN][0], ent->client->accuracy[WP_PLASMAGUN][1],
-                 ent->client->accuracy[WP_BFG][0], ent->client->accuracy[WP_BFG][1]
-                );
+	Com_sprintf (entry, sizeof(entry),
+		" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", ent->client->accuracy[WP_MACHINEGUN][0], ent->client->accuracy[WP_MACHINEGUN][1],
+		ent->client->accuracy[WP_SHOTGUN][0], ent->client->accuracy[WP_SHOTGUN][1],
+		ent->client->accuracy[WP_GRENADE_LAUNCHER][0], ent->client->accuracy[WP_GRENADE_LAUNCHER][1],
+		ent->client->accuracy[WP_ROCKET_LAUNCHER][0], ent->client->accuracy[WP_ROCKET_LAUNCHER][1],
+		ent->client->accuracy[WP_LIGHTNING][0], ent->client->accuracy[WP_LIGHTNING][1],
+		ent->client->accuracy[WP_RAILGUN][0], ent->client->accuracy[WP_RAILGUN][1],
+		ent->client->accuracy[WP_PLASMAGUN][0], ent->client->accuracy[WP_PLASMAGUN][1],
+		ent->client->accuracy[WP_BFG][0], ent->client->accuracy[WP_BFG][1]
+	      );
 
-    trap_SendServerCommand( ent-g_entities, va("accs%s", entry ));
+	trap_SendServerCommand( ent-g_entities, va("accs%s", entry ));
 }
 
 /*
@@ -283,34 +225,39 @@ G_SendLivingCount
 ==================
 */
 void G_SendLivingCount( void ) {
-    char		entry[128];
+	char		entry[128];
 
-
-    if ( level.roundRespawned )
-        Com_sprintf (entry, sizeof(entry),
+	if ( level.roundRespawned )
+		Com_sprintf (entry, sizeof(entry),
                      " %i %i %i %i ", TeamLivingCount( -1, TEAM_RED ), TeamLivingCount( -1, TEAM_BLUE ), TeamCount( -1, TEAM_RED ), TeamCount( -1, TEAM_BLUE ) );
-    else
-        Com_sprintf (entry, sizeof(entry),
+	else
+		Com_sprintf (entry, sizeof(entry),
                      " %i %i %i %i ", TeamCount( -1, TEAM_RED ), TeamCount( -1, TEAM_BLUE ), TeamCount( -1, TEAM_RED ), TeamCount( -1, TEAM_BLUE ) );
 
-    trap_SendServerCommand( -1, va("livingCount%s", entry ));
+	trap_SendServerCommand( -1, va("livingCount%s", entry ));
 }
 
-qboolean G_ItemCount( int type, int quantity, int tag ) {
-    gentity_t *ent;
-    int i;
-    int count = 0;
+/*
+==================
+G_ItemCount
 
-    for ( i = 0; i < MAX_GENTITIES; i++ ) {
-        ent = &g_entities[i];
-        if ( !ent->inuse )
-            continue;
-        if ( ent->s.eType != ET_ITEM )
-            continue;
-        if ( ( ent->item->giType == type ) && ( ent->item->quantity == quantity ) && ( ent->item->giTag == tag ) )
-            count++;
-    }
-    return( count == 1 );
+returns qtrue if an item is only once on the map
+==================
+*/
+qboolean G_ItemCount( int type, int quantity, int tag ) {
+	gentity_t *ent;
+	int i, count = 0;
+
+	for ( i = 0; i < MAX_GENTITIES; i++ ) {
+		ent = &g_entities[i];
+		if ( !ent->inuse )
+			continue;
+		if ( ent->s.eType != ET_ITEM )
+			continue;
+		if ( ( ent->item->giType == type ) && ( ent->item->quantity == quantity ) && ( ent->item->giTag == tag ) )
+			count++;
+	}
+	return( count == 1 );
 }
 
 /*
@@ -320,45 +267,53 @@ G_SendRespawnTimer
 ==================
 */
 void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum ) {
-    char		entry[32];
-    gentity_t	*ent;
-    int		i;
-    int team;
+	char		entry[32];
+	gentity_t	*ent;
+	int		i;
+	int team;
 
-    //G_Printf("entityNum %i, type %i, quantity %i, respawnTime %i, nextItemEntityNum %i\n", entityNum, type, quantity, respawnTime, nextItemEntityNum);
+	//G_Printf("entityNum %i, type %i, quantity %i, respawnTime %i, nextItemEntityNum %i\n", entityNum, type, quantity, respawnTime, nextItemEntityNum);
 
-    if ( level.warmupTime ) {
-        return;
-    }
+	if ( level.warmupTime ) {
+		return;
+	}
 
-    if ( ( type != IT_ARMOR ) && ( type != IT_HEALTH ) && ( type != IT_POWERUP ) )
-        return;
+	if ( ( type != IT_ARMOR ) && ( type != IT_HEALTH ) && ( type != IT_POWERUP ) )
+		return;
 
-    if ( type == IT_ARMOR && quantity < 50 )
-        return;
+	if ( type == IT_ARMOR && quantity < 50 )
+		return;
 
-    if ( type == IT_HEALTH && quantity != 100 )
-        return;
+	if ( type == IT_HEALTH && quantity != 100 )
+		return;
 
-    //G_Printf("type %i, quantity %i\n", type, quantity );
+	//G_Printf("type %i, quantity %i\n", type, quantity );
 
-    if ( G_ItemCount(type, quantity, g_entities[entityNum].item->giTag) )
-        nextItemEntityNum = -1;
+	if ( G_ItemCount(type, quantity, g_entities[entityNum].item->giTag) )
+		nextItemEntityNum = -1;
 
-    team = G_ItemTeam( entityNum );
+	team = G_ItemTeam( entityNum );
 
 
-    Com_sprintf (entry, sizeof(entry),
+	Com_sprintf (entry, sizeof(entry),
                  " %i %i %i %i %i %i ", entityNum, type, quantity, respawnTime, nextItemEntityNum , team);
 
-    for (i = 0; i < MAX_CLIENTS; i++) {
-        ent = &g_entities[i];
-        if ( ( ent->inuse ) && ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) ) {
-            trap_SendServerCommand( ent-g_entities, va("respawnTime%s", entry ));
-        }
-    }
+	for (i = 0; i < MAX_CLIENTS; i++) {
+		ent = &g_entities[i];
+		if ( ( ent->inuse ) && ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) ) {
+			trap_SendServerCommand( ent-g_entities, va("respawnTime%s", entry ));
+		}
+	}	
 }
 
+/*
+==================
+G_SendSpawnpoints
+
+sends spawnpoints to the given entity
+TODO: add teamspawnpoint color for teambased gametypes
+==================
+*/
 void G_SendSpawnpoints( gentity_t *ent ){
 	gentity_t *spot;
 	int spotnumber = 0;

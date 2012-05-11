@@ -1086,7 +1086,7 @@ static void ClientCleanName(const char *in, char *out, int outSize)
 
     out[outpos] = '\0';
 
-    // don't allow empty names
+    // don't allow empty names TODO: add number at the end of UnnamedPlayer
     if( *out == '\0' || colorlessLen == 0){
         Q_strncpyz(out, "UnnamedPlayer", outSize );
     }
@@ -1108,7 +1108,7 @@ qboolean ClientNameAllowed( const char *in , int size){
 	
 	for(; *in; in++)
 	{
-		if( ( *in >= 'a' && *in <= 'z' ) || ( *in >= 'A' && *in <= 'Z' ) || *in == '*' ){
+		if( ( *in >= 'a' && *in <= 'z' ) || ( *in >= 'A' && *in <= 'Z' ) || *in == '*' || *in == '_' ){
 			if( !(Q_IsColorString(in - 1)) )
 				count++;
 		}
@@ -1896,14 +1896,24 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	else {
 		trap_SendServerCommand( clientNum, "print \"Full lag compensation is OFF!\n\"" );
 	}
-	
-	client->lastKilledTime = -5000;
 
 //unlagged - backward reconciliation #5
-    G_admin_namelog_update( client, qfalse );
+	G_admin_namelog_update( client, qfalse );
+	
+	//No Ragequit at first connect(mapdownload etc)
+	client->lastKilledTime = -5000;
+	
+	//client ready to play
 	return NULL;
 }
 
+/*
+===========
+motd
+
+Centerprints message of the day
+============
+*/
 void motd (gentity_t *ent)
 {
 	char motd[1024];
@@ -1989,19 +1999,14 @@ void ClientBegin( int clientNum ) {
 	countFree = TeamCount(-1,TEAM_FREE);
 	countRed = TeamCount(-1,TEAM_RED);
 	countBlue = TeamCount(-1,TEAM_BLUE);
-	if(g_gametype.integer < GT_TEAM || g_ffa_gt)
-	{
+	
+	if(g_gametype.integer < GT_TEAM || g_ffa_gt) {
 		if(countFree>level.teamSize)
 			level.teamSize=countFree;
-	}
-	else
-	if(countRed>countBlue)
-	{
+	} else if(countRed>countBlue) {
 		if(countBlue>level.teamSize)
 			level.teamSize=countBlue;
-	}
-	else
-	{
+	} else {
 		if(countRed>level.teamSize)
 			level.teamSize=countRed;
 	}
@@ -2028,11 +2033,11 @@ void ClientBegin( int clientNum ) {
 	ClientSpawn( ent );
 		
 	if( ( client->sess.sessionTeam != TEAM_SPECTATOR ) &&
-		( ( !( client->isEliminated ) /*&&
-		( ( !client->ps.pm_type ) == PM_SPECTATOR ) */ ) || //Sago: Yes, it made no sense 
-		( ( g_gametype.integer != GT_ELIMINATION || level.intermissiontime) &&
+		( !( client->isEliminated ) ||
+		( ( g_gametype.integer != GT_ELIMINATION || level.intermissiontime) &&		//TODO: you dont need all the level.intermissiontime, just once
 		( g_gametype.integer != GT_CTF_ELIMINATION || level.intermissiontime) &&
 		( g_gametype.integer != GT_LMS || level.intermissiontime ) ) ) ) {
+	  
 		// send event
 		tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_IN );
 		tent->s.clientNum = ent->s.clientNum;
@@ -2041,7 +2046,7 @@ void ClientBegin( int clientNum ) {
 			trap_SendServerCommand( -1, va("print \"%s" S_COLOR_WHITE " entered the game\n\"", client->pers.netname) );
 		}
 	}
-        
+        // TODO: clientvar to toggle motd at gamestart
         motd ( ent );
         
 	G_LogPrintf( "ClientBegin: %i\n", clientNum );
@@ -2158,44 +2163,36 @@ void ClientSpawn(gentity_t *ent) {
 	//In Elimination the player should not spawn if he have already spawned in the round (but not for spectators)
 	// N_G: You've obviously wanted something ELSE
 	//Sago: Yes, the !level.intermissiontime is currently redundant but it might still be the bast place to make the test, CheckElimination in g_main makes sure the next if will fail and the rest of the things this block does might not affect if in Intermission (I'll just test that)
-	if( 
-	( 
-		( 
-			g_gametype.integer == GT_ELIMINATION ||
-			g_gametype.integer == GT_CTF_ELIMINATION || (g_gametype.integer == GT_LMS && client->isEliminated)) &&
-			(!level.intermissiontime || level.warmupTime != 0)
-		) &&
-		( client->sess.sessionTeam != TEAM_SPECTATOR ) 
-	)
-	{
+	if( ( ( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION || (g_gametype.integer == GT_LMS && client->isEliminated) ) &&
+			(!level.intermissiontime || level.warmupTime != 0) ) && 
+			( client->sess.sessionTeam != TEAM_SPECTATOR ) ) {
+	  
 		// N_G: Another condition that makes no sense to me, see for
 		// yourself if you really meant this
 		// Sago: I beleive the TeamCount is to make sure people can join even if the game can't start
 		if( ( ( level.roundNumber == level.roundNumberStarted ) ||
 			( (level.time < level.roundStartTime - g_elimination_activewarmup.integer*1000 ) &&
 			TeamCount( -1, TEAM_BLUE ) &&
-			TeamCount( -1, TEAM_RED )  ) ) && level.roundNumberStarted > 0 )
+			TeamCount( -1, TEAM_RED )  ) ) && level.roundNumberStarted > 0 ) 
 		{	
 			client->sess.spectatorState = SPECTATOR_FREE;
 			client->isEliminated = qtrue;
 			client->ps.pm_type = PM_SPECTATOR;
-                        CalculateRanks();
+			CalculateRanks();
 			return;
-		}
-		else
-		{
+		} else {
 			client->pers.roundReached = level.roundNumber+1;
 			client->sess.spectatorState = SPECTATOR_NOT;
 			client->ps.pm_type = PM_NORMAL;
 			client->isEliminated = qfalse;
-                        CalculateRanks();
+			CalculateRanks();
 		}
 	} else {
-            //Force false.
-            if(client->isEliminated) {
-                client->isEliminated = qfalse;
-                CalculateRanks();
-            }
+		//Force false.
+		if(client->isEliminated) {
+			client->isEliminated = qfalse;
+			CalculateRanks();
+		}
         }
 
 	if(g_gametype.integer == GT_LMS && client->sess.sessionTeam != TEAM_SPECTATOR && (!level.intermissiontime || level.warmupTime != 0))
@@ -2238,11 +2235,12 @@ void ClientSpawn(gentity_t *ent) {
 		do {
 			// the first spawn should be at a good looking spot
 			if ( !client->pers.initialSpawn && client->pers.localClient ) {
-				client->pers.initialSpawn = qtrue;
+				client->pers.initialSpawn = qtrue; 					//The client had an initial spawn
 				spawnPoint = SelectInitialSpawnPoint( spawn_origin, spawn_angles,
-								      !!(ent->r.svFlags & SVF_BOT)); // !! ??
+								      (ent->r.svFlags & SVF_BOT)); 
 			} else {
-				// don't spawn near existing origin if possible
+				// if aftershock spawnsystem is used, dont spawn near the killer( 3 furthest spawnpoints )
+				// if aftershock spawnsystem is not used, spawn on the other side of the map 
 				if( g_aftershockRespawn.integer && client->lastKiller >= 0){
 					spawnPoint = SelectSpawnPoint ( 
 						g_entities[client->lastKiller].client->ps.origin, 
@@ -2306,6 +2304,7 @@ void ClientSpawn(gentity_t *ent) {
 	accuracy_hits = client->accuracy_hits;
 	accuracy_shots = client->accuracy_shots;
 
+	// TODO: memcpy, does it work?
 	for( i = 0 ; i < WP_NUM_WEAPONS ; i++ ){
 		accuracy[i][0] = client->accuracy[i][0];
 		accuracy[i][1] = client->accuracy[i][1];
@@ -2350,7 +2349,7 @@ void ClientSpawn(gentity_t *ent) {
 		rewards[i] = client->rewards[i];
 	}
 	
-	for( i=0; i<MAX_CAPTURES; i++ ){
+	for( i = 0 ; i < MAX_CAPTURES ; i++ ){
 		captures[ i ] = client->captures[ i ];
 	}
 	captureCount = client->captureCount;
@@ -2359,6 +2358,7 @@ void ClientSpawn(gentity_t *ent) {
 	
 	vote = client->vote;
 
+	//clear all the clientdata
 	Com_Memset (client, 0, sizeof(*client));
 
 	client->pers = saved;
@@ -2462,94 +2462,94 @@ void ClientSpawn(gentity_t *ent) {
 
 	client->ps.clientNum = index;
 
-if(g_gametype.integer != GT_ELIMINATION && g_gametype.integer != GT_CTF_ELIMINATION && g_gametype.integer != GT_LMS && !g_elimination_allgametypes.integer)
-{
-	client->ps.stats[STAT_WEAPONS] = ( 1 << WP_MACHINEGUN );
-	if ( g_gametype.integer == GT_TEAM ) {
-		client->ps.ammo[WP_MACHINEGUN] = 50;
-	} else {
-		client->ps.ammo[WP_MACHINEGUN] = 100;
-	}
-
-	client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
-	client->ps.ammo[WP_GAUNTLET] = -1;
-	client->ps.ammo[WP_GRAPPLING_HOOK] = -1;
-
-	// health will count down towards max_health
-	ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH] + 25;
-	
-	if( level.warmupTime == -1 ){
-		for ( i = WP_SHOTGUN; i <= WP_BFG; i++ ){
-			if( G_WeaponRegistered( i ) ){
-				client->ps.stats[STAT_WEAPONS] |= ( 1 << i );
-				client->ps.ammo[i] = BG_FindItemForWeapon(i)->quantity/*BG_FindAmmoForWeapon(i)->quantity*/;
-			}
+	if(g_gametype.integer != GT_ELIMINATION && g_gametype.integer != GT_CTF_ELIMINATION && g_gametype.integer != GT_LMS && 
+	    !g_elimination_allgametypes.integer) {
+		//Give mg at gamestart
+		client->ps.stats[STAT_WEAPONS] = ( 1 << WP_MACHINEGUN );
+		if ( g_gametype.integer == GT_TEAM ) {
+			client->ps.ammo[WP_MACHINEGUN] = 50;	//less ammo in tdm
+		} else {
+			client->ps.ammo[WP_MACHINEGUN] = 100;
 		}
-		client->ps.stats[STAT_ARMOR] = client->ps.stats[STAT_MAX_HEALTH];
-	}
-}
-else if (g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_LMS || g_elimination_allgametypes.integer )
-{
-	client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
-	client->ps.ammo[WP_GAUNTLET] = -1;
-	client->ps.ammo[WP_GRAPPLING_HOOK] = -1;
-	if (g_elimination_machinegun.integer > 0) {
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MACHINEGUN );
-		client->ps.ammo[WP_MACHINEGUN] = g_elimination_machinegun.integer;
-	}
-	if (g_elimination_shotgun.integer > 0) {
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SHOTGUN );
-		client->ps.ammo[WP_SHOTGUN] = g_elimination_shotgun.integer;
-	}
-	if (g_elimination_grenade.integer > 0) {	
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GRENADE_LAUNCHER );
-		client->ps.ammo[WP_GRENADE_LAUNCHER] = g_elimination_grenade.integer;
-	}
-	if (g_elimination_rocket.integer > 0) {
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_ROCKET_LAUNCHER );
-		client->ps.ammo[WP_ROCKET_LAUNCHER] = g_elimination_rocket.integer;
-	}
-	if (g_elimination_lightning.integer > 0) {
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_LIGHTNING );
-		client->ps.ammo[WP_LIGHTNING] = g_elimination_lightning.integer;
-	}
-	if (g_elimination_railgun.integer > 0) {
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_RAILGUN );
-		client->ps.ammo[WP_RAILGUN] = g_elimination_railgun.integer;
-	}
-	if (g_elimination_plasmagun.integer > 0) {
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_PLASMAGUN );
-		client->ps.ammo[WP_PLASMAGUN] = g_elimination_plasmagun.integer;
-	}
-	if (g_elimination_bfg.integer > 0) {
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_BFG );
-		client->ps.ammo[WP_BFG] = g_elimination_bfg.integer;
-	}
-        if (g_elimination_grapple.integer) {
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GRAPPLING_HOOK );
-	}
+		
+		//Give Gauntlet + unlimited ammo
+		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
+		client->ps.ammo[WP_GAUNTLET] = -1;
+		client->ps.ammo[WP_GRAPPLING_HOOK] = -1;
+
+		// health will count down towards max_health
+		ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH] + 25;
+	
+		//Give all Weapons on the map + armor during warmup
+		if( level.warmupTime == -1 ){
+			for ( i = WP_SHOTGUN; i <= WP_BFG; i++ ){
+				if( G_WeaponRegistered( i ) ){
+					client->ps.stats[STAT_WEAPONS] |= ( 1 << i );
+					client->ps.ammo[i] = BG_FindItemForWeapon(i)->quantity/*BG_FindAmmoForWeapon(i)->quantity*/;
+				}
+			}
+			client->ps.stats[STAT_ARMOR] = client->ps.stats[STAT_MAX_HEALTH];
+		}
+	} else if (g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_LMS || g_elimination_allgametypes.integer ) {
+		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
+		client->ps.ammo[WP_GAUNTLET] = -1;
+		client->ps.ammo[WP_GRAPPLING_HOOK] = -1;
+		if (g_elimination_machinegun.integer > 0) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MACHINEGUN );
+			client->ps.ammo[WP_MACHINEGUN] = g_elimination_machinegun.integer;
+		}
+		if (g_elimination_shotgun.integer > 0) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_SHOTGUN );
+			client->ps.ammo[WP_SHOTGUN] = g_elimination_shotgun.integer;
+		}
+		if (g_elimination_grenade.integer > 0) {	
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GRENADE_LAUNCHER );
+			client->ps.ammo[WP_GRENADE_LAUNCHER] = g_elimination_grenade.integer;
+		}
+		if (g_elimination_rocket.integer > 0) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_ROCKET_LAUNCHER );
+			client->ps.ammo[WP_ROCKET_LAUNCHER] = g_elimination_rocket.integer;
+		}
+		if (g_elimination_lightning.integer > 0) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_LIGHTNING );
+			client->ps.ammo[WP_LIGHTNING] = g_elimination_lightning.integer;
+		}
+		if (g_elimination_railgun.integer > 0) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_RAILGUN );
+			client->ps.ammo[WP_RAILGUN] = g_elimination_railgun.integer;
+		}
+		if (g_elimination_plasmagun.integer > 0) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_PLASMAGUN );
+			client->ps.ammo[WP_PLASMAGUN] = g_elimination_plasmagun.integer;
+		}
+		if (g_elimination_bfg.integer > 0) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_BFG );
+			client->ps.ammo[WP_BFG] = g_elimination_bfg.integer;
+		}
+		if (g_elimination_grapple.integer) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GRAPPLING_HOOK );
+		}
 #ifdef MISSIONPACK
-	if (g_elimination_nail.integer > 0) {
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_NAILGUN );
-		client->ps.ammo[WP_NAILGUN] = g_elimination_nail.integer;
-	}
-	if (g_elimination_mine.integer > 0) {
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_PROX_LAUNCHER );
-		client->ps.ammo[WP_PROX_LAUNCHER] = g_elimination_mine.integer;
-	}
-	if (g_elimination_chain.integer > 0) {
-		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_CHAINGUN );
-		client->ps.ammo[WP_CHAINGUN] = g_elimination_chain.integer;
-	}
+		if (g_elimination_nail.integer > 0) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_NAILGUN );
+			client->ps.ammo[WP_NAILGUN] = g_elimination_nail.integer;
+		}
+		if (g_elimination_mine.integer > 0) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_PROX_LAUNCHER );
+			client->ps.ammo[WP_PROX_LAUNCHER] = g_elimination_mine.integer;
+		}
+		if (g_elimination_chain.integer > 0) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_CHAINGUN );
+			client->ps.ammo[WP_CHAINGUN] = g_elimination_chain.integer;
+		}
 #endif
-	ent->health = client->ps.stats[STAT_ARMOR] = client->ps.stats[STAT_MAX_HEALTH]*1.5;
-	ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH]*2;
-}
-else
-{
-	client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
-	client->ps.ammo[WP_GAUNTLET] = -1;
-	client->ps.ammo[WP_GRAPPLING_HOOK] = -1;
+		ent->health = client->ps.stats[STAT_ARMOR] = client->ps.stats[STAT_MAX_HEALTH]*1.5;
+		ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH]*2;
+	} else {	//Capture Strike
+
+		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
+		client->ps.ammo[WP_GAUNTLET] = -1;
+		client->ps.ammo[WP_GRAPPLING_HOOK] = -1;
 	
 		client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MACHINEGUN );
 		client->ps.ammo[WP_MACHINEGUN] = 200;
@@ -2576,27 +2576,24 @@ else
 		client->ps.ammo[WP_PLASMAGUN] = 125;
 	
 	
-	ent->health = client->ps.stats[STAT_ARMOR] = 100; //client->ps.stats[STAT_MAX_HEALTH]*2;
-	ent->health = client->ps.stats[STAT_HEALTH] = 100; //client->ps.stats[STAT_MAX_HEALTH]*2;	
+		ent->health = client->ps.stats[STAT_ARMOR] = 100; //client->ps.stats[STAT_MAX_HEALTH]*2;
+		ent->health = client->ps.stats[STAT_HEALTH] = 100; //client->ps.stats[STAT_MAX_HEALTH]*2;	
 	
 	
-	//	ent->health = client->ps.stats[STAT_HEALTH] = 0;
-}
-	//Instantgib mode, replace weapons with rail (and maybe gauntlet)
-	if(g_instantgib.integer)
-	{
+
+	}
+	//Instantgib mode, replace weapons with rail (and maybe gauntlet), TODO, we should do that before all the other gametypes
+	if(g_instantgib.integer) {
 		client->ps.stats[STAT_WEAPONS] = ( 1 << WP_RAILGUN );
 		client->ps.ammo[WP_RAILGUN] = 999; //Don't display any ammo
-		if(g_instantgib.integer>1)
-		{
-			 client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
-	              	client->ps.ammo[WP_GAUNTLET] = -1;
+		if(g_instantgib.integer>1) {
+			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
+			client->ps.ammo[WP_GAUNTLET] = -1;
 		}
 	}
 
-	//nexuiz style rocket arena (rocket launcher only)
-	if(g_rockets.integer) 
-	{
+	//nexuiz style rocket arena (rocket launcher only) TODO: what if instantgib and rockets are enabled? Lets try a mixed gametype someday
+	if(g_rockets.integer) {
 		client->ps.stats[STAT_WEAPONS] = ( 1 << WP_ROCKET_LAUNCHER );
 		client->ps.ammo[WP_ROCKET_LAUNCHER] = 999;
 	}
@@ -2651,6 +2648,7 @@ else
 
 		// select the highest weapon number available, after any
 		// spawn given items have fired
+		//TODO: need to think about that, on some large open maps it sucks to spawn with sg out when you could use mg, maybe add client var
 		if(g_gametype.integer != GT_ELIMINATION && g_gametype.integer != GT_CTF_ELIMINATION && g_gametype.integer != GT_LMS && !g_elimination_allgametypes.integer){
 			client->ps.weapon = 1;
 			for ( i = WP_NUM_WEAPONS - 1 ; i > 0 ; i-- ) {
@@ -2706,8 +2704,6 @@ Will not be called between levels.
 This should NOT be called directly by any game logic,
 call trap_DropClient(), which will call this and do
 server system housekeeping.
-TODO: Add flagdrop(done)
-TODO: Add disconnected Players to statsfile(done)
 ============
 */
 void ClientDisconnect( int clientNum ) {
@@ -2728,12 +2724,12 @@ void ClientDisconnect( int clientNum ) {
 	for( i = 0; i < MAX_CLIENTS ; i++ )
 		level.clients[i].mute[clientNum] = qfalse;
 	
-    //KK-OAX Admin
-    G_admin_namelog_update( ent->client, qtrue );
+	//KK-OAX Admin
+	G_admin_namelog_update( ent->client, qtrue );
     
         trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 	
-	
+	//Log the disconnected clients data
 	if( ( level.disconnectedClientsNumber < MAX_DISCONNECTEDCLIENTS ) && ( ent->client->pers.connected == CON_CONNECTED ) && ( level.warmupTime == 0 ) && ( ( ent->client->dmgdone + ent->client->dmgtaken ) > 300 )){
 		level.disconnectedClients[level.disconnectedClientsNumber] = *ent->client;
 		level.disconnectedClients[level.disconnectedClientsNumber].pers.enterTime = (level.time - level.disconnectedClients[level.disconnectedClientsNumber].pers.enterTime);
@@ -2748,9 +2744,9 @@ void ClientDisconnect( int clientNum ) {
 			StopFollowing( &g_entities[i] );
 		}
 	}
-	
+	// update living count, if player was playing
 	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ){
-		if( ent->client->sess.sessionTeam != TEAM_SPECTATOR ){
+		if( ent->client->sess.sessionTeam != TEAM_SPECTATOR && !ent->client->isEliminated){
 			G_SendLivingCount();
 		}
 	}
@@ -2759,8 +2755,7 @@ void ClientDisconnect( int clientNum ) {
         /*
          *Sago: I have removed this. A little dangerous but I make him suicide in a moment.
          */
-	if ( ent->client->pers.connected == CON_CONNECTED
-		&& ent->client->sess.sessionTeam != TEAM_SPECTATOR ) {
+	if ( ent->client->pers.connected == CON_CONNECTED && ent->client->sess.sessionTeam != TEAM_SPECTATOR ) {
 		tent = G_TempEntity( ent->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
 		tent->s.clientNum = ent->s.clientNum;
 
@@ -2771,8 +2766,6 @@ void ClientDisconnect( int clientNum ) {
                 if( g_gametype.integer == GT_HARVESTER ) {
 			TossClientCubes( ent );
 		}
-//#endif
-
 	}
 
         //Is the player alive?
