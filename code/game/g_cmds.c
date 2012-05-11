@@ -347,59 +347,15 @@ void G_SendSpawnpoints( gentity_t *ent ){
 
 /*
 ==================
-G_StartServerDemo
-
-==================
-*/
-/*void G_StartServerDemo( void ) {
-    int i;
-    char buffer[ MAX_INFO_STRING ] = "";
-    if( qfalse ){
-	    trap_SendConsoleCommand( EXEC_APPEND, "demo_record\n" );
-	    level.demoStarted = level.time;
-	    for ( i = 0; i < level.maxclients; i++ ) {
-		    if ( level.clients[ i ].pers.connected == CON_CONNECTED ){
-			    Info_SetValueForKey( buffer, "name", level.clients[ i ].pers.netname );
-			    Info_SetValueForKey( buffer, "ip", level.clients[ i ].pers.ip );
-			    Info_SetValueForKey( buffer, "team", va( "%d", level.clients[ i ].sess.sessionTeam ) );
-			    G_DemoCommand( DC_CLIENT_SET, va( "%d %s", i, buffer ) );
-			    ClientUserinfoChanged(i);
-		    }
-	    }
-    }
-}*/
-
-/*
-==================
-G_StartServerDemo
-
-==================
-*/
-/*void G_StopServerDemo( void ) {
-    if( qfalse ){
-	    trap_SendConsoleCommand( EXEC_APPEND, "demo_stoprecord\n" );
-    }
-}*/
-
-/*
-==================
 G_SendStartGame
 
 ==================
 */
 void G_SendStartGame( void ) {
-    gentity_t	*ent;
-    int	i;
-
-    if ( level.intermissiontime )
-        return;
-
-    for (i = 0; i < MAX_CLIENTS; i++) {
-        ent = &g_entities[i];
-        if ( ( ent->inuse ) ) {
-            trap_SendServerCommand( ent-g_entities, va("startOfGame"));
-        }
-    }
+	if ( level.intermissiontime )
+		return;
+    
+	trap_SendServerCommand( -1, va("startOfGame"));
 }
 
 /*
@@ -408,18 +364,8 @@ G_SendEndGame
 ==================
 */
 void G_SendEndGame( void ) {
-    gentity_t	*ent;
-    int	i;
-
-    level.endgameSend = qtrue;
-
-    for (i = 0; i < MAX_CLIENTS; i++) {
-        ent = &g_entities[i];
-        if ( ( ent->inuse ) ) {
-            trap_SendServerCommand( ent-g_entities, va("endOfGame"));
-        }
-    }
-
+	level.endgameSend = qtrue;
+        trap_SendServerCommand( -1, va("endOfGame"));
 }
 
 /*
