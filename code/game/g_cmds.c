@@ -375,67 +375,62 @@ G_SendStats
 ==================
 */
 void G_SendStats( gentity_t *ent ) {
-    char		entry[2048];
-    char		string[2800];
-    int			stringlength;
-    int			i, j;
-    gclient_t	*cl;
-    int			numSorted;
+	char		entry[2048];
+	char		string[2800];
+	int			stringlength;
+	int			i, j;
+	gclient_t	*cl;
+	int			numSorted;
 
-    if ( !level.intermissiontime )
-        return;
+	//Stats only possible during intermission
+	if ( !level.intermissiontime )
+		return;
 
-    // send the latest information on all clients
-    string[0] = 0;
-    stringlength = 0;
+	// send the latest information on all clients
+	string[0] = 0;
+	stringlength = 0;
 
-    numSorted = level.numConnectedClients;
+	numSorted = level.numConnectedClients;
 
-    for (i=0 ; i < numSorted ; i++) {
+	for (i=0 ; i < numSorted ; i++) {
 
-        cl = &level.clients[level.sortedClients[i]];
+		cl = &level.clients[level.sortedClients[i]];
 
-        Com_sprintf (entry, sizeof(entry),
-                     " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i", level.sortedClients[i], cl->accuracy[WP_GAUNTLET][2], cl->accuracy[WP_GAUNTLET][3], cl->accuracy[WP_GAUNTLET][4],
-                     cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1], cl->accuracy[WP_MACHINEGUN][2], cl->accuracy[WP_MACHINEGUN][3], cl->accuracy[WP_MACHINEGUN][4],
-                     cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1], cl->accuracy[WP_SHOTGUN][2], cl->accuracy[WP_SHOTGUN][3], cl->accuracy[WP_SHOTGUN][4],
-                     cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1], cl->accuracy[WP_GRENADE_LAUNCHER][2], cl->accuracy[WP_GRENADE_LAUNCHER][3], cl->accuracy[WP_GRENADE_LAUNCHER][4],
-                     cl->accuracy[WP_ROCKET_LAUNCHER][0], cl->accuracy[WP_ROCKET_LAUNCHER][1], cl->accuracy[WP_ROCKET_LAUNCHER][2], cl->accuracy[WP_ROCKET_LAUNCHER][3], cl->accuracy[WP_ROCKET_LAUNCHER][4],
-                     cl->accuracy[WP_LIGHTNING][0], cl->accuracy[WP_LIGHTNING][1], cl->accuracy[WP_LIGHTNING][2], cl->accuracy[WP_LIGHTNING][3], cl->accuracy[WP_LIGHTNING][4],
-                     cl->accuracy[WP_RAILGUN][0], cl->accuracy[WP_RAILGUN][1], cl->accuracy[WP_RAILGUN][2], cl->accuracy[WP_RAILGUN][3], cl->accuracy[WP_RAILGUN][4],
-                     cl->accuracy[WP_PLASMAGUN][0], cl->accuracy[WP_PLASMAGUN][1], cl->accuracy[WP_PLASMAGUN][2], cl->accuracy[WP_PLASMAGUN][3], cl->accuracy[WP_PLASMAGUN][4],
-                     cl->accuracy[WP_BFG][0], cl->accuracy[WP_BFG][1], cl->accuracy[WP_BFG][2], cl->accuracy[WP_BFG][3], cl->accuracy[WP_BFG][4],
-                     cl->stats[STATS_HEALTH],
-                     cl->stats[STATS_ARMOR],
-                     cl->stats[STATS_YA],
-                     cl->stats[STATS_RA],
-                     cl->stats[STATS_MH],
-                     cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
-                     cl->ps.persistant[PERS_EXCELLENT_COUNT],
-                     cl->ps.persistant[PERS_ASSIST_COUNT],
-                     cl->ps.persistant[PERS_DEFEND_COUNT],
-                     cl->ps.persistant[PERS_CAPTURES],
-                     cl->rewards[REWARD_AIRGRENADE],
-                     cl->rewards[REWARD_AIRROCKET],
-                     cl->rewards[REWARD_FULLSG],
-                     cl->rewards[REWARD_RLRG],
-                     cl->rewards[REWARD_ITEMDENIED]/*,
-		     cl->rewards[REWARD_SPAWNKILL]*/); //TOO much for the engine
+		Com_sprintf (entry, sizeof(entry),
+			" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i", level.sortedClients[i], cl->accuracy[WP_GAUNTLET][2], cl->accuracy[WP_GAUNTLET][3], cl->accuracy[WP_GAUNTLET][4],
+			cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1], cl->accuracy[WP_MACHINEGUN][2], cl->accuracy[WP_MACHINEGUN][3], cl->accuracy[WP_MACHINEGUN][4],
+			cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1], cl->accuracy[WP_SHOTGUN][2], cl->accuracy[WP_SHOTGUN][3], cl->accuracy[WP_SHOTGUN][4],
+			cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1], cl->accuracy[WP_GRENADE_LAUNCHER][2], cl->accuracy[WP_GRENADE_LAUNCHER][3], cl->accuracy[WP_GRENADE_LAUNCHER][4],
+			cl->accuracy[WP_ROCKET_LAUNCHER][0], cl->accuracy[WP_ROCKET_LAUNCHER][1], cl->accuracy[WP_ROCKET_LAUNCHER][2], cl->accuracy[WP_ROCKET_LAUNCHER][3], cl->accuracy[WP_ROCKET_LAUNCHER][4],
+			cl->accuracy[WP_LIGHTNING][0], cl->accuracy[WP_LIGHTNING][1], cl->accuracy[WP_LIGHTNING][2], cl->accuracy[WP_LIGHTNING][3], cl->accuracy[WP_LIGHTNING][4],
+			cl->accuracy[WP_RAILGUN][0], cl->accuracy[WP_RAILGUN][1], cl->accuracy[WP_RAILGUN][2], cl->accuracy[WP_RAILGUN][3], cl->accuracy[WP_RAILGUN][4],
+			cl->accuracy[WP_PLASMAGUN][0], cl->accuracy[WP_PLASMAGUN][1], cl->accuracy[WP_PLASMAGUN][2], cl->accuracy[WP_PLASMAGUN][3], cl->accuracy[WP_PLASMAGUN][4],
+			cl->accuracy[WP_BFG][0], cl->accuracy[WP_BFG][1], cl->accuracy[WP_BFG][2], cl->accuracy[WP_BFG][3], cl->accuracy[WP_BFG][4],
+			cl->stats[STATS_HEALTH],
+			cl->stats[STATS_ARMOR],
+			cl->stats[STATS_YA],
+			cl->stats[STATS_RA],
+			cl->stats[STATS_MH],
+			cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
+			cl->ps.persistant[PERS_EXCELLENT_COUNT],
+			cl->ps.persistant[PERS_ASSIST_COUNT],
+			cl->ps.persistant[PERS_DEFEND_COUNT],
+			cl->ps.persistant[PERS_CAPTURES],
+			cl->rewards[REWARD_AIRGRENADE],
+			cl->rewards[REWARD_AIRROCKET],
+			cl->rewards[REWARD_FULLSG],
+			cl->rewards[REWARD_RLRG],
+			cl->rewards[REWARD_ITEMDENIED]/*,
+			cl->rewards[REWARD_SPAWNKILL]*/); //TOO much for the engine
 
-        j = strlen(entry);
-        if (stringlength + j > 2048)
-            break;
-        strcpy (string + stringlength, entry);
-        stringlength += j;
-    }
+		j = strlen(entry);
+		if (stringlength + j > 2048)
+			break;
+		strcpy (string + stringlength, entry);
+		stringlength += j;
+	}
 
-
-
-
-
-    trap_SendServerCommand( ent-g_entities, va("statistics %i %s", i,
-                            string ) );
-
+	trap_SendServerCommand( ent-g_entities, va("statistics %i %s", i, string ) );
 }
 
 /*
@@ -572,70 +567,65 @@ RewardMessage
 */
 
 void RewardMessage(gentity_t *ent, int reward, int rewardCount) {
-    gentity_t *other;
-    int i;
+	gentity_t *other;
+	int i;
 
-    for (i = 0; i < MAX_CLIENTS; i++) {
-        other = &g_entities[i];
-        if (  other->client->ps.clientNum == ent->client->ps.clientNum ) {
-
-            trap_SendServerCommand( other-g_entities, va("reward %i %i", reward, rewardCount) );
-        }
-    }
+	for (i = 0; i < MAX_CLIENTS; i++) {
+	  
+		other = &g_entities[i];
+		if (  other->client->ps.clientNum == ent->client->ps.clientNum ) {
+		  
+			trap_SendServerCommand( other-g_entities, va("reward %i %i", reward, rewardCount) );
+		}
+	}
 }
 
 /*
 ==================
 SendReadymask
 
+sends the readymask to the player with clientnum, if clientnum = -1 its send to every player
 ==================
 */
 
 void SendReadymask( int clientnum ) {
-    int			ready, notReady, playerCount;
-    int			i;
-    gclient_t	*cl;
-    gentity_t 	*ent;
-    int			readyMask;
-    char		entry[16];
+	int			ready, notReady, playerCount;
+	int			i;
+	gclient_t	*cl;
+	int			readyMask;
+	char		entry[16];
 
-    if ( !level.warmupTime ) {
-        return;
-    }
+	if ( !level.warmupTime ) {
+		return;
+	}
 
-    // see which players are ready
-    ready = 0;
-    notReady = 0;
-    readyMask = 0;
-    playerCount = 0;
-    for ( i = 0; i < g_maxclients.integer; i++ ) {
-        cl = level.clients + i;
-        if ( cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam == TEAM_SPECTATOR ) {
-            continue;
-        }
+	// see which players are ready
+	ready = 0;
+	notReady = 0;
+	readyMask = 0;
+	playerCount = 0;
+	
+	for ( i = 0; i < g_maxclients.integer; i++ ) {
+		cl = level.clients + i;
+		if ( cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam == TEAM_SPECTATOR ) {
+			continue;
+		}
 
-        playerCount++;
-        if ( cl->ready || ( g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT ) ) {
-            ready++;
-            if ( i < 16 ) {
-                readyMask |= 1 << i;
-            }
-        } else {
-            notReady++;
-        }
-    }
+		playerCount++;
+		if ( cl->ready || ( g_entities[cl->ps.clientNum].r.svFlags & SVF_BOT ) ) {
+			ready++;
+			if ( i < 16 ) {
+			    readyMask |= 1 << i;
+			}
+		} else {
+			notReady++;
+		}
+	}
 
-    level.readyMask = readyMask;
-    Com_sprintf (entry, sizeof(entry), " %i ", readyMask);
+	level.readyMask = readyMask;
+	Com_sprintf (entry, sizeof(entry), " %i ", readyMask);
 
-    /*for (i = 0; i < MAX_CLIENTS; i++) {
-    	ent = &g_entities[i];
-    	if ( ( ent->inuse ) ) {
-
-    	      trap_SendServerCommand( ent-g_entities, va("readyMask%s", entry ));
-    	}
-    }*/
-    trap_SendServerCommand( clientnum, va("readyMask%s", entry ));
+	trap_SendServerCommand( clientnum, va("readyMask%s", entry ));
 }
 
 /*
@@ -646,7 +636,7 @@ SendCustomVoteCommands
 */
 
 void SendCustomVoteCommands(int clientNum) {
-    trap_SendServerCommand( clientNum, va("customvotes %s", custom_vote_info) );
+	trap_SendServerCommand( clientNum, va("customvotes %s", custom_vote_info) );
 }
 
 /*
@@ -657,7 +647,7 @@ Request current scoreboard information
 ==================
 */
 void Cmd_Score_f( gentity_t *ent ) {
-    DeathmatchScoreboardMessage( ent );
+	DeathmatchScoreboardMessage( ent );
 }
 
 /*
@@ -668,24 +658,27 @@ Request current scoreboard information
 ==================
 */
 void Cmd_Acc_f( gentity_t *ent ) {
-    G_SendAccMessage( ent );
+	G_SendAccMessage( ent );
 }
 
 /*
 ==================
 CheatsOk
+
+checks if cheats are enabled and if the player is alive
+used by the give command
 ==================
 */
-qboolean	CheatsOk( gentity_t *ent ) {
-    if ( !g_cheats.integer ) {
-        trap_SendServerCommand( ent-g_entities, va("print \"Cheats are not enabled on this server.\n\""));
-        return qfalse;
-    }
-    if ( ent->health <= 0 ) {
-        trap_SendServerCommand( ent-g_entities, va("print \"You must be alive to use this command.\n\""));
-        return qfalse;
-    }
-    return qtrue;
+qboolean CheatsOk( gentity_t *ent ) {
+	if ( !g_cheats.integer ) {
+		trap_SendServerCommand( ent-g_entities, va("print \"Cheats are not enabled on this server.\n\""));
+		return qfalse;
+	}
+	if ( ent->health <= 0 ) {
+		trap_SendServerCommand( ent-g_entities, va("print \"You must be alive to use this command.\n\""));
+		return qfalse;
+	}
+	return qtrue;
 }
 
 
@@ -694,31 +687,31 @@ qboolean	CheatsOk( gentity_t *ent ) {
 ConcatArgs
 ==================
 */
-char	*ConcatArgs( int start ) {
-    int		i, c, tlen;
-    static char	line[MAX_STRING_CHARS];
-    int		len;
-    char	arg[MAX_STRING_CHARS];
+char *ConcatArgs( int start ) {
+	int		i, c, tlen;
+	static char	line[MAX_STRING_CHARS];
+	int		len;
+	char	arg[MAX_STRING_CHARS];
 
-    len = 0;
-    c = trap_Argc();
-    for ( i = start ; i < c ; i++ ) {
-        trap_Argv( i, arg, sizeof( arg ) );
-        tlen = strlen( arg );
-        if ( len + tlen >= MAX_STRING_CHARS - 1 ) {
-            break;
-        }
-        memcpy( line + len, arg, tlen );
-        len += tlen;
-        if ( i != c - 1 ) {
-            line[len] = ' ';
-            len++;
-        }
-    }
+	len = 0;
+	c = trap_Argc();
+	for ( i = start ; i < c ; i++ ) {
+		trap_Argv( i, arg, sizeof( arg ) );
+		tlen = strlen( arg );
+		if ( len + tlen >= MAX_STRING_CHARS - 1 ) {
+			break;
+		}
+		memcpy( line + len, arg, tlen );
+		len += tlen;
+		if ( i != c - 1 ) {
+			line[len] = ' ';
+			len++;
+		}
+	}
 
-    line[len] = 0;
+	line[len] = 0;
 
-    return line;
+	return line;
 }
 
 /*
@@ -730,40 +723,40 @@ Returns -1 if invalid
 ==================
 */
 int ClientNumberFromString( gentity_t *to, char *s ) {
-    gclient_t	*cl;
-    int			idnum;
-    char        cleanName[MAX_STRING_CHARS];
+	gclient_t	*cl;
+	int			idnum;
+	char        cleanName[MAX_STRING_CHARS];
 
-    // numeric values are just slot numbers
-    if (s[0] >= '0' && s[0] <= '9') {
-        idnum = atoi( s );
-        if ( idnum < 0 || idnum >= level.maxclients ) {
-            trap_SendServerCommand( to-g_entities, va("print \"Bad client slot: %i\n\"", idnum));
-            return -1;
-        }
+	// numeric values are just slot numbers
+	if (s[0] >= '0' && s[0] <= '9') {
+		idnum = atoi( s );
+		if ( idnum < 0 || idnum >= level.maxclients ) {
+			trap_SendServerCommand( to-g_entities, va("print \"Bad client slot: %i\n\"", idnum));
+			return -1;
+		}
 
-        cl = &level.clients[idnum];
-        if ( cl->pers.connected != CON_CONNECTED ) {
-            trap_SendServerCommand( to-g_entities, va("print \"Client %i is not active\n\"", idnum));
-            return -1;
-        }
-        return idnum;
-    }
+		cl = &level.clients[idnum];
+		if ( cl->pers.connected != CON_CONNECTED ) {
+			trap_SendServerCommand( to-g_entities, va("print \"Client %i is not active\n\"", idnum));
+			return -1;
+		}
+		return idnum;
+	}
 
-    // check for a name match
-    for ( idnum=0,cl=level.clients ; idnum < level.maxclients ; idnum++,cl++ ) {
-        if ( cl->pers.connected != CON_CONNECTED ) {
-            continue;
-        }
-        Q_strncpyz(cleanName, cl->pers.netname, sizeof(cleanName));
-        Q_CleanStr(cleanName);
-        if ( !Q_stricmp( cleanName, s ) ) {
-            return idnum;
-        }
-    }
+	// check for a name match
+	for ( idnum=0,cl=level.clients ; idnum < level.maxclients ; idnum++,cl++ ) {
+		if ( cl->pers.connected != CON_CONNECTED ) {
+			continue;
+		}
+		Q_strncpyz(cleanName, cl->pers.netname, sizeof(cleanName));
+		Q_CleanStr(cleanName);
+		if ( !Q_stricmp( cleanName, s ) ) {
+			return idnum;
+		}
+	}
 
-    trap_SendServerCommand( to-g_entities, va("print \"User %s is not on the server\n\"", s));
-    return -1;
+	trap_SendServerCommand( to-g_entities, va("print \"User %s is not on the server\n\"", s));
+	return -1;
 }
 
 /*
@@ -775,95 +768,91 @@ Give items to a client
 */
 void Cmd_Give_f (gentity_t *ent)
 {
-    char		*name;
-    gitem_t		*it;
-    int			i;
-    qboolean	give_all;
-    gentity_t		*it_ent;
-    trace_t		trace;
+	char		*name;
+	gitem_t		*it;
+	int			i;
+	qboolean	give_all;
+	gentity_t		*it_ent;
+	trace_t		trace;
 
-    if ( !CheatsOk( ent ) ) {
-        return;
-    }
+	if ( !CheatsOk( ent ) ) {
+		return;
+	}
 
-    name = ConcatArgs( 1 );
+	name = ConcatArgs( 1 );
 
-    if (Q_stricmp(name, "all") == 0)
-        give_all = qtrue;
-    else
-        give_all = qfalse;
+	if (Q_stricmp(name, "all") == 0)
+		give_all = qtrue;
+	else
+		give_all = qfalse;
 
-    if (give_all || Q_stricmp( name, "health") == 0)
-    {
-        ent->health = ent->client->ps.stats[STAT_MAX_HEALTH];
-        if (!give_all)
-            return;
-    }
+	if (give_all || Q_stricmp( name, "health") == 0) {
+		ent->health = ent->client->ps.stats[STAT_MAX_HEALTH];
+		if (!give_all)
+			return;
+	}
 
-    if (give_all || Q_stricmp(name, "weapons") == 0)
-    {
-        ent->client->ps.stats[STAT_WEAPONS] = (1 << WP_NUM_WEAPONS) - 1 -
-                                              ( 1 << WP_GRAPPLING_HOOK ) - ( 1 << WP_NONE );
-        if (!give_all)
-            return;
-    }
+	if (give_all || Q_stricmp(name, "weapons") == 0) {
+		ent->client->ps.stats[STAT_WEAPONS] = (1 << WP_NUM_WEAPONS) - 1 -
+						      ( 1 << WP_GRAPPLING_HOOK ) - ( 1 << WP_NONE );
+		if (!give_all)
+			return;
+	}
 
-    if (give_all || Q_stricmp(name, "ammo") == 0)
-    {
-        for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
-            ent->client->ps.ammo[i] = 999;
-        }
-        if (!give_all)
-            return;
-    }
+	if (give_all || Q_stricmp(name, "ammo") == 0) {
+		for ( i = 0 ; i < MAX_WEAPONS ; i++ ) {
+			ent->client->ps.ammo[i] = 999;
+		}
+		if (!give_all)
+			return;
+	}
 
-    if (give_all || Q_stricmp(name, "armor") == 0)
-    {
-        ent->client->ps.stats[STAT_ARMOR] = 200;
+	if (give_all || Q_stricmp(name, "armor") == 0) {
+		ent->client->ps.stats[STAT_ARMOR] = 200;
 
-        if (!give_all)
-            return;
-    }
+		if (!give_all)
+			return;
+	}
 
-    if (Q_stricmp(name, "excellent") == 0) {
-        ent->client->ps.persistant[PERS_EXCELLENT_COUNT]++;
-        return;
-    }
-    if (Q_stricmp(name, "impressive") == 0) {
-        ent->client->ps.persistant[PERS_IMPRESSIVE_COUNT]++;
-        return;
-    }
-    if (Q_stricmp(name, "gauntletaward") == 0) {
-        ent->client->ps.persistant[PERS_GAUNTLET_FRAG_COUNT]++;
-        return;
-    }
-    if (Q_stricmp(name, "defend") == 0) {
-        ent->client->ps.persistant[PERS_DEFEND_COUNT]++;
-        return;
-    }
-    if (Q_stricmp(name, "assist") == 0) {
-        ent->client->ps.persistant[PERS_ASSIST_COUNT]++;
-        return;
-    }
+	if (Q_stricmp(name, "excellent") == 0) {
+		ent->client->ps.persistant[PERS_EXCELLENT_COUNT]++;
+		return;
+	}
+	if (Q_stricmp(name, "impressive") == 0) {
+		ent->client->ps.persistant[PERS_IMPRESSIVE_COUNT]++;
+		return;
+	}
+	if (Q_stricmp(name, "gauntletaward") == 0) {
+		ent->client->ps.persistant[PERS_GAUNTLET_FRAG_COUNT]++;
+		return;
+	}
+	if (Q_stricmp(name, "defend") == 0) {
+		ent->client->ps.persistant[PERS_DEFEND_COUNT]++;
+		return;
+	}
+	if (Q_stricmp(name, "assist") == 0) {
+		ent->client->ps.persistant[PERS_ASSIST_COUNT]++;
+		return;
+	}
 
-    // spawn a specific item right on the player
-    if ( !give_all ) {
-        it = BG_FindItem (name);
-        if (!it) {
-            return;
-        }
+	// spawn a specific item right on the player
+	if ( !give_all ) {
+		it = BG_FindItem (name);
+		if (!it) {
+			return;
+		}
 
-        it_ent = G_Spawn();
-        VectorCopy( ent->r.currentOrigin, it_ent->s.origin );
-        it_ent->classname = it->classname;
-        G_SpawnItem (it_ent, it);
-        FinishSpawningItem(it_ent );
-        memset( &trace, 0, sizeof( trace ) );
-        Touch_Item (it_ent, ent, &trace);
-        if (it_ent->inuse) {
-            G_FreeEntity( it_ent );
-        }
-    }
+		it_ent = G_Spawn();
+		VectorCopy( ent->r.currentOrigin, it_ent->s.origin );
+		it_ent->classname = it->classname;
+		G_SpawnItem (it_ent, it);
+		FinishSpawningItem(it_ent );
+		memset( &trace, 0, sizeof( trace ) );
+		Touch_Item (it_ent, ent, &trace);
+		if (it_ent->inuse) {
+			G_FreeEntity( it_ent );
+		}
+	}
 }
 
 
@@ -878,19 +867,19 @@ argv(0) god
 */
 void Cmd_God_f (gentity_t *ent)
 {
-    char	*msg;
+	char	*msg;
 
-    if ( !CheatsOk( ent ) ) {
-        return;
-    }
+	if ( !CheatsOk( ent ) ) {
+		return;
+	}
 
-    ent->flags ^= FL_GODMODE;
-    if (!(ent->flags & FL_GODMODE) )
-        msg = "godmode OFF\n";
-    else
-        msg = "godmode ON\n";
+	ent->flags ^= FL_GODMODE;
+	if (!(ent->flags & FL_GODMODE) )
+		msg = "godmode OFF\n";
+	else
+		msg = "godmode ON\n";
 
-    trap_SendServerCommand( ent-g_entities, va("print \"%s\"", msg));
+	trap_SendServerCommand( ent-g_entities, va("print \"%s\"", msg));
 }
 
 
@@ -1008,25 +997,28 @@ Cmd_Kill_f
 =================
 */
 void Cmd_Kill_f( gentity_t *ent ) {
-    if ( !g_allowKill.integer ) {
-        trap_SendServerCommand( ent-g_entities,
+  
+	if ( (ent->client->sess.sessionTeam == TEAM_SPECTATOR) || ent->client->isEliminated ) {
+		return;
+	}
+	
+	if (ent->health <= 0) {
+		return;
+	}
+  
+	if ( !g_allowKill.integer ) {
+		trap_SendServerCommand( ent-g_entities,
                                 "print \"Selfkill not allowed on this server\n\"" );
-        return;
-    }
+		return;
+	}
 
-    if ( (ent->client->sess.sessionTeam == TEAM_SPECTATOR) || ent->client->isEliminated ) {
-        return;
-    }
-    if (ent->health <= 0) {
-        return;
-    }
-    ent->flags &= ~FL_GODMODE;
-    ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
-    if (ent->client->lastSentFlying>-1 && g_awardpushing.integer )
-        //If player is in the air because of knockback we give credit to the person who sent it flying
-        player_die (ent, ent, &g_entities[ent->client->lastSentFlying], 100000, MOD_FALLING);
-    else
-        player_die (ent, ent, ent, 100000, MOD_SUICIDE);
+	ent->flags &= ~FL_GODMODE;
+	ent->client->ps.stats[STAT_HEALTH] = ent->health = -999;
+	if (ent->client->lastSentFlying>-1 && g_awardpushing.integer )
+		//If player is in the air because of knockback we give credit to the person who sent it flying
+		player_die (ent, ent, &g_entities[ent->client->lastSentFlying], 100000, MOD_FALLING);
+	else
+		player_die (ent, ent, ent, 100000, MOD_SUICIDE);
 }
 
 /*

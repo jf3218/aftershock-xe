@@ -1753,6 +1753,7 @@ extern vmCvar_t 		cg_flatGrenades;
 extern vmCvar_t 		cg_bubbleTrail;
 extern vmCvar_t 		cg_muzzleFlash;
 extern vmCvar_t 		cg_playerLean;
+extern vmCvar_t 		cg_explosion;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

@@ -399,6 +399,7 @@ vmCvar_t 	cg_bubbleTrail;
 
 vmCvar_t 	cg_muzzleFlash;
 vmCvar_t 	cg_playerLean;
+vmCvar_t 	cg_explosion;
 
 
 typedef struct {
@@ -655,7 +656,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_flatGrenades, "cg_flatGrenades", "0", CVAR_ARCHIVE },
 	{&cg_bubbleTrail, "cg_bubbleTrail", "1", CVAR_ARCHIVE },
 	{&cg_muzzleFlash, "cg_muzzleFlash", "1", CVAR_ARCHIVE },
-	{&cg_playerLean, "cg_playerLean", "1.0", CVAR_ARCHIVE }
+	{&cg_playerLean, "cg_playerLean", "1.0", CVAR_ARCHIVE },
+	{&cg_explosion, "cg_explosion", "255", CVAR_ARCHIVE }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

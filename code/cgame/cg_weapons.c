@@ -2764,8 +2764,10 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		break;
 #endif
 	case WP_GRENADE_LAUNCHER:
-		mod = cgs.media.dishFlashModel;
-		shader = cgs.media.grenadeExplosionShader;
+		if( cg_explosion.integer & 1 << ( WP_GRENADE_LAUNCHER - 2 ) ){
+			mod = cgs.media.dishFlashModel;
+			shader = cgs.media.grenadeExplosionShader;
+		}
 		sfx = cgs.media.sfx_rockexp;
 		mark = cgs.media.burnMarkShader;
 		radius = 64;
@@ -2773,8 +2775,10 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		isSprite = qtrue;
 		break;
 	case WP_ROCKET_LAUNCHER:
-		mod = cgs.media.dishFlashModel;
-		shader = cgs.media.rocketExplosionShader;
+		if( cg_explosion.integer & 1 << ( WP_ROCKET_LAUNCHER - 2 ) ){
+			mod = cgs.media.dishFlashModel;
+			shader = cgs.media.rocketExplosionShader;
+		}
 		sfx = cgs.media.sfx_rockexp;
 		mark = cgs.media.burnMarkShader;
 		radius = 64;
@@ -2793,15 +2797,19 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		}*/
 		break;
 	case WP_RAILGUN:
-		mod = cgs.media.ringFlashModel;
-		shader = cgs.media.railExplosionShader;
+		if( cg_explosion.integer & 1 << ( WP_RAILGUN - 2 ) ){
+			mod = cgs.media.ringFlashModel;
+			shader = cgs.media.railExplosionShader;
+		}
 		sfx = cgs.media.sfx_plasmaexp;
 		mark = cgs.media.energyMarkShader;
 		radius = 24;
 		break;
 	case WP_PLASMAGUN:
-		mod = cgs.media.plasmaExplosionModel;
-		shader = cgs.media.plasmaExplosionShader;
+		if( cg_explosion.integer & 1 << ( WP_PLASMAGUN - 2 ) ){
+			mod = cgs.media.plasmaExplosionModel;
+			shader = cgs.media.plasmaExplosionShader;
+		}
 		sfx = cgs.media.sfx_plasmaexp;
 		mark = cgs.media.energyMarkShader;
 		radius = 16;
@@ -2811,16 +2819,20 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		lightColor[2] = 1.0f;
 		break;
 	case WP_BFG:
-		mod = cgs.media.dishFlashModel;
-		shader = cgs.media.bfgExplosionShader;
+		if( cg_explosion.integer & 1 << ( WP_BFG - 2 ) ){
+			mod = cgs.media.dishFlashModel;
+			shader = cgs.media.bfgExplosionShader;
+		}
 		sfx = cgs.media.sfx_rockexp;
 		mark = cgs.media.burnMarkShader;
 		radius = 32;
 		isSprite = qtrue;
 		break;
 	case WP_SHOTGUN:
-		mod = cgs.media.bulletFlashModel;
-		shader = cgs.media.bulletExplosionShader;
+		if( cg_explosion.integer & 1 << ( WP_SHOTGUN - 2 ) ){
+			mod = cgs.media.bulletFlashModel;
+			shader = cgs.media.bulletExplosionShader;
+		}
 		mark = cgs.media.bulletMarkShader;
 		sfx = 0;
 		radius = 4;
@@ -2862,8 +2874,10 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 #endif
 
 	case WP_MACHINEGUN:
-		mod = cgs.media.bulletFlashModel;
-		shader = cgs.media.bulletExplosionShader;
+		if( cg_explosion.integer & 1 << ( WP_MACHINEGUN - 2 ) ){
+			mod = cgs.media.bulletFlashModel;
+			shader = cgs.media.bulletExplosionShader;
+		}
 		mark = cgs.media.bulletMarkShader;
 
 		r = rand() & 3;
