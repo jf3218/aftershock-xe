@@ -1645,7 +1645,7 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 		angles[1] = rand() % 360;
 		angles[2] = rand() % 360;
 		AnglesToAxis( angles, beam.axis );
-		if( cg_lightningExplosion.integer )
+		if( cg_explosion.integer & ( 1 << ( WP_LIGHTNING - 2 )) )
 			trap_R_AddRefEntityToScene( &beam );
 		CG_ExplosionParticles(WP_LIGHTNING, beam.origin, NULL, NULL);
 	}

@@ -1682,7 +1682,7 @@ extern vmCvar_t			cg_newRewards;
 extern vmCvar_t			cg_drawCenterprint;
 
 extern vmCvar_t			cg_nomip;
-extern vmCvar_t			cg_lightningExplosion;
+//extern vmCvar_t			cg_lightningExplosion;
 
 extern vmCvar_t			cg_noAmmoChange;
 extern vmCvar_t			cg_lgHitSfx;

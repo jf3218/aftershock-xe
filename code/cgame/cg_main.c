@@ -327,7 +327,7 @@ vmCvar_t	cg_drawCenterprint;
 
 vmCvar_t	cg_nomip;
 
-vmCvar_t	cg_lightningExplosion;
+//vmCvar_t	cg_lightningExplosion;
 vmCvar_t	cg_noAmmoChange;
 vmCvar_t	cg_lgHitSfx;
 vmCvar_t	cg_crosshairHitColor;
@@ -600,7 +600,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_newRewards, "cg_newRewards", "1", CVAR_ARCHIVE},
 	{&cg_drawCenterprint, "cg_drawCenterprint", "1", CVAR_ARCHIVE},
 	{&cg_nomip, "cg_nomip", "0", CVAR_ARCHIVE},
-	{&cg_lightningExplosion, "cg_lightningImpact", "0", CVAR_ARCHIVE},
+//	{&cg_lightningExplosion, "cg_lightningImpact", "0", CVAR_ARCHIVE},
 	{&cg_noAmmoChange, "cg_noAmmoChange", "1", CVAR_ARCHIVE},
 	{&cg_lgHitSfx, "cg_lgHitSfx", "1", CVAR_ARCHIVE},
 	{&cg_crosshairHitColor, "cg_crosshairHitColor", "1", CVAR_ARCHIVE},
