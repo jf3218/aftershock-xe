@@ -433,6 +433,28 @@ void G_SendStats( gentity_t *ent ) {
 	trap_SendServerCommand( ent-g_entities, va("statistics %i %s", i, string ) );
 }
 
+void G_StartServerDemos( void ) {
+	int i;
+	char gamestring[128];
+	
+	//TODO: Add other gametypes
+	if( ( g_gametype.integer != GT_TOURNAMENT ) || !g_autoServerDemos.integer )
+		return;
+	
+	trap_Cvar_VariableStringBuffer("gamestring", gamestring, sizeof(gamestring));
+	
+	for( i = 0; i < level.numConnectedClients; i++ ){
+		if( level.clients[i].sess.sessionTeam == TEAM_SPECTATOR )
+			continue;
+		if ( g_entities[ &level.clients[i] - level.clients].r.svFlags & SVF_BOT)
+			continue;
+		
+		/*G_Printf("%s \n", g_entities[i].client->pers.netname );
+		G_Printf("svrecord %i %s/%s \n", &level.clients[i] - level.clients, gamestring, level.clients[i].pers.netname );*/
+		trap_SendConsoleCommand(EXEC_APPEND, va("svrecord %i %s/%s \n", &level.clients[i] - level.clients, gamestring, level.clients[i].pers.netname ) );
+	}
+}
+
 /*
 ==================
 DominationPointStatusMessage

@@ -1366,6 +1366,7 @@ extern vmCvar_t   g_thrufloors;
 extern vmCvar_t   g_forceIntermissionExit;
 extern vmCvar_t   g_aftershockRespawn;
 extern vmCvar_t   g_nameCheck;
+extern vmCvar_t   g_autoServerDemos;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

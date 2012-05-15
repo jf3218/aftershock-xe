@@ -263,6 +263,8 @@ vmCvar_t     g_forceIntermissionExit;
 vmCvar_t     g_aftershockRespawn;
 vmCvar_t     g_nameCheck;
 
+vmCvar_t     g_autoServerDemos;
+
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
 	// don't override the cheat state set by the system
@@ -519,7 +521,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_thrufloors, "g_thrufloors", "0", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_forceIntermissionExit, "g_forceIntermissionExit", "0", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_aftershockRespawn, "g_aftershockRespawn", "1", CVAR_ARCHIVE, 0, qfalse  },
-	{ &g_nameCheck, "g_nameCheck", "1", CVAR_ARCHIVE, 0, qfalse }
+	{ &g_nameCheck, "g_nameCheck", "1", CVAR_ARCHIVE, 0, qfalse },
+	{ &g_autoServerDemos, "g_autoServerDemos", "0", CVAR_ARCHIVE, 0, qfalse }
 };
 
 // bk001129 - made static to avoid aliasing
@@ -2830,6 +2833,7 @@ void CheckTournament( void ) {
 					trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
 					G_SendStartGame();
 					G_SetGameString();
+					G_StartServerDemos();
 				}
 			}
 			return;
@@ -2901,6 +2905,7 @@ void CheckTournament( void ) {
 			trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
 			G_SendStartGame();
 			G_SetGameString();
+			G_StartServerDemos();
 			return;
 		}
 
