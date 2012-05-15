@@ -2090,6 +2090,7 @@ void CheckExitRules( void ) {
 			G_SendEndGame();
 			if( g_writeStats.integer )
 				G_WriteXMLStats();
+			G_StopServerDemos();
 		}
 		CheckIntermissionExit ();
 		return;
