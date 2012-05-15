@@ -46,6 +46,8 @@ int crosshairsizeModificationCount = -1;
 
 int hitBeepModificationCount = -1;
 
+int nomipModificationCount = 1;
+
 
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
 void CG_Shutdown( void );
@@ -821,6 +823,10 @@ void CG_UpdateCvars( void ) {
 	if( hitBeepModificationCount != cg_hitBeep.modificationCount ){
 		hitBeepModificationCount = cg_hitBeep.modificationCount;
 		CG_ParseHitBeep();
+	}
+	if( nomipModificationCount != cg_nomip.modificationCount ){
+		nomipModificationCount = cg_nomip.modificationCount;
+		CG_Printf("cg_picmip will be changed upon restarting\n" );
 	}
 }
 
