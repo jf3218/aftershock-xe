@@ -305,22 +305,22 @@ static graphicsoptions_t		s_graphicsoptions;
 static InitialVideoOptions_s s_ivo_templates[] =
 {
 	{
-		6, qtrue, 3, 0, qfalse,qfalse, 2, 2, 2, 1, 0, 0, qtrue
+		6, qtrue, 16, 0, qfalse,qfalse, 2, 2, 2, 1, 0, 0, qtrue
 	},
 	{
-		4, qtrue, 2, 0, qfalse,qfalse, 2, 2, 1, 1, 0, 0, qtrue	// JDC: this was tq 3
+		4, qtrue, 15, 0, qfalse,qfalse, 2, 2, 1, 1, 0, 0, qtrue	// JDC: this was tq 3
 	},
 	{
-		3, qtrue, 2, 0, qfalse,qfalse, 0, 0, 1, 0, 0, 0, qtrue
+		3, qtrue, 15, 0, qfalse,qfalse, 0, 0, 1, 0, 0, 0, qtrue
 	},
 	{
-		2, qtrue, 1, 0, qfalse,qfalse, 1, 0, 0, 0, 0, 0, qtrue
+		2, qtrue, 14, 0, qfalse,qfalse, 1, 0, 0, 0, 0, 0, qtrue
 	},
 	{
-		2, qtrue, 1, 1, qfalse,qfalse, 1, 0, 0, 0, 0, 0, qtrue
+		2, qtrue, 14, 1, qfalse,qfalse, 1, 0, 0, 0, 0, 0, qtrue
 	},
 	{
-		3, qtrue, 1, 0, qfalse,qfalse, 0, 0, 1, 0, 0, 0, qtrue
+		3, qtrue, 14, 0, qfalse,qfalse, 0, 0, 1, 0, 0, 0, qtrue
 	}
 };
 
@@ -681,7 +681,7 @@ static void GraphicsOptions_ApplyChanges( void *unused, int notification )
 		trap_Cvar_SetValue( "r_texturebits", 32 );
 		break;
 	}
-	trap_Cvar_SetValue( "r_picmip", 3 - s_graphicsoptions.tq.curvalue );
+	trap_Cvar_SetValue( "r_picmip", 16 - s_graphicsoptions.tq.curvalue );
 	trap_Cvar_SetValue( "r_allowExtensions", s_graphicsoptions.allow_extensions.curvalue );
 
 	if( resolutionsDetected )
@@ -901,14 +901,14 @@ static void GraphicsOptions_SetMenuItems( void )
         if(trap_Cvar_VariableValue("r_ext_texture_filter_anisotropic")) {
             s_graphicsoptions.aniso.curvalue = trap_Cvar_VariableValue("r_ext_max_anisotropy")/2;
         }
-	s_graphicsoptions.tq.curvalue = 3-trap_Cvar_VariableValue( "r_picmip");
+	s_graphicsoptions.tq.curvalue = 16-trap_Cvar_VariableValue( "r_picmip");
 	if ( s_graphicsoptions.tq.curvalue < 0 )
 	{
 		s_graphicsoptions.tq.curvalue = 0;
 	}
-	else if ( s_graphicsoptions.tq.curvalue > 3 )
+	else if ( s_graphicsoptions.tq.curvalue > 16 )
 	{
-		s_graphicsoptions.tq.curvalue = 3;
+		s_graphicsoptions.tq.curvalue = 16;
 	}
 
 	s_graphicsoptions.lighting.curvalue = trap_Cvar_VariableValue( "r_vertexLight" ) != 0;
@@ -1244,7 +1244,7 @@ void GraphicsOptions_MenuInit( void )
 	s_graphicsoptions.tq.generic.x		= 400;
 	s_graphicsoptions.tq.generic.y		= y;
 	s_graphicsoptions.tq.minvalue       = 0;
-	s_graphicsoptions.tq.maxvalue       = 3;
+	s_graphicsoptions.tq.maxvalue       = 16;
 	s_graphicsoptions.tq.generic.callback = GraphicsOptions_TQEvent;
 	y += BIGCHAR_HEIGHT+2;
 
