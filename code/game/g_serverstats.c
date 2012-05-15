@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "g_local.h"
 
-static char gameString[128];
 static const char *gameShortNames[] = {
 	"FFA",
 	"1v1",
@@ -55,13 +54,14 @@ void cleanString( char *dest, size_t max, const char *instring ){
 	dest[count] = '\0';
 }
 
-static void G_SetGameString ( void ) {
+void G_SetGameString ( void ) {
 	qtime_t	now;
 	//char		*p;
 	char		mapname[MAX_MAPNAME];
 	//char		*buf;
 	char		playerName[128];
 	int 		i, count;
+	char gameString[128];
 
 	trap_RealTime ( &now );
 
@@ -106,6 +106,7 @@ static void G_SetGameString ( void ) {
 	              mapname );
 
 	//G_Printf("gamestring: %s\n",gameString );
+	trap_Cvar_Set( "gamestring", gameString );
 }
 
 static void writeToFile ( char *string, fileHandle_t *f ) {
@@ -264,10 +265,13 @@ void G_WriteXMLStats ( void ) {
 	qboolean isTeamGame = g_gametype.integer >= GT_TEAM;
 	qboolean spectatorInGame = qfalse;
 	qtime_t	now;
+	static char gameString[128];
 
 	trap_RealTime ( &now );
 
-	G_SetGameString();
+	//G_SetGameString();
+	
+	trap_Cvar_VariableStringBuffer("gamestring", gameString, sizeof(gameString));
 
 	numStats = level.numConnectedClients;
 

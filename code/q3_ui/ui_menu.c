@@ -237,7 +237,8 @@ static void Main_MenuDraw( void ) {
 		for( i = 0; i < 6; i++ ){
 			UI_DrawNamedPic( 60, 155 + i*25, 10, 15, "white_arrow_small_aftershock");
 		}
-		UI_DrawString( 320, 444, "afterShock(c) 2010 afterShock Team", UI_CENTER|UI_SMALLFONT, color_white );
+		UI_DrawString( 320, 464, va("AfterShock(c) 2012 afterShock Team, AfterShock revision %i", REVISION ), UI_CENTER|UI_SMALLFONT, color_white );
+		
 		
 }
 

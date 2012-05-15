@@ -2829,6 +2829,7 @@ void CheckTournament( void ) {
 					
 					trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
 					G_SendStartGame();
+					G_SetGameString();
 				}
 			}
 			return;
@@ -2899,6 +2900,7 @@ void CheckTournament( void ) {
 			level.warmupTime = level.time + ( g_warmup.integer - 1 ) * 1000;
 			trap_SetConfigstring( CS_WARMUP, va("%i", level.warmupTime) );
 			G_SendStartGame();
+			G_SetGameString();
 			return;
 		}
 

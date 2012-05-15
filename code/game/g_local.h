@@ -1027,6 +1027,7 @@ void Svcmd_GameMem_f( void );
 // g_serverstats.c
 //
 void G_WriteXMLStats( void );
+void G_SetGameString( void );
 
 
 //
