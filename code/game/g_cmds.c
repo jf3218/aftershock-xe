@@ -434,15 +434,18 @@ void G_SendStats( gentity_t *ent ) {
 }
 
 void G_StartServerDemos( void ) {
-	int i;
+	int i,j;
 	char gamestring[128];
-	char *s;
+	char matchstring[128];
+	char playerName[128];
+	int count;
 	
 	//TODO: Add other gametypes
 	if( ( g_gametype.integer != GT_TOURNAMENT ) || !g_autoServerDemos.integer )
 		return;
 	
 	trap_Cvar_VariableStringBuffer("gamestring", gamestring, sizeof(gamestring));
+	trap_Cvar_VariableStringBuffer("matchstring", matchstring, sizeof(matchstring));
 	
 	for( i = 0; i < level.numConnectedClients; i++ ){
 		if( level.clients[i].sess.sessionTeam == TEAM_SPECTATOR )
@@ -450,10 +453,28 @@ void G_StartServerDemos( void ) {
 		if ( g_entities[ &level.clients[i] - level.clients].r.svFlags & SVF_BOT)
 			continue;
 		
+		Com_sprintf ( playerName, sizeof ( playerName ),"%s", level.clients[i].pers.netname );
+		count = 0;
+		
+		for ( j = 0; j < 128 ; j++ ) {
+			if ( playerName[j] == '^' && ( ( playerName[j+1] >= '0' && playerName[i+1] <= '9' ) || ( playerName[j+1] >= 'a' && playerName[j+1] <= 'z' ) || ( playerName[j+1] >= 'A' && playerName[j+1] <= 'Z' ) ) ) {
+				j++;
+				continue;
+			} else if ( ( ! ( playerName[j] >= '0' && playerName[j] <= '9' ) && ! ( playerName[j] >= 'a' && playerName[j] <= 'z' ) && ! ( playerName[j] >= 'A' && playerName[j] <= 'Z' ) ) ) {
+				continue;
+			}
+
+			else {
+				playerName[count] = playerName[j];
+				count++;
+			}
+		}
+		playerName[count] = '\0';
+		
 		/*G_Printf("%s \n", g_entities[i].client->pers.netname );
 		G_Printf("svrecord %i %s/%s \n", &level.clients[i] - level.clients, gamestring, level.clients[i].pers.netname );*/
-		ClientCleanName( s, level.clients[i].pers.netname, sizeof(level.clients[i].pers.netname) );
-		trap_SendConsoleCommand(EXEC_APPEND, va("svrecord %i %s/%s \n", &level.clients[i] - level.clients, gamestring, s ) );
+		//ClientCleanName( s, level.clients[i].pers.netname, sizeof(level.clients[i].pers.netname) );
+		trap_SendConsoleCommand(EXEC_APPEND, va("svrecord %i %s/%s-POV(%s) \n", &level.clients[i] - level.clients, gamestring, matchstring, playerName ) );
 	}
 }
 

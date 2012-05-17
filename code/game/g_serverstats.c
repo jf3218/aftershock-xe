@@ -107,6 +107,19 @@ void G_SetGameString ( void ) {
 
 	//G_Printf("gamestring: %s\n",gameString );
 	trap_Cvar_Set( "gamestring", gameString );
+	
+	Com_sprintf ( gameString, sizeof ( gameString ), "%04d%02d%02d%02d%02d%02d-%s%s-%s",
+	              1900 + now.tm_year,
+	              1 + now.tm_mon,
+	              now.tm_mday,
+	              now.tm_hour,
+	              now.tm_min,
+	              now.tm_sec,
+	              gameShortNames[g_gametype.integer],
+	              playerName,
+	              mapname );
+	
+	trap_Cvar_Set( "matchstring", gameString );
 }
 
 static void writeToFile ( char *string, fileHandle_t *f ) {
