@@ -90,7 +90,7 @@ Demos_MenuEvent
 static void Demos_MenuEvent( void *ptr, int event ) {
 	char *buffer;
 	int len;
-	char	path[128];
+	char	path[512];
 	if( event != QM_ACTIVATED ) {
 		return;
 	}
@@ -125,10 +125,11 @@ static void Demos_MenuEvent( void *ptr, int event ) {
 				trap_Cmd_ExecuteText( EXEC_APPEND, path );
 			}				
 		}
+		//Com_Printf("%s - %s\n", currentFolder, path);
 		break;
 	case ID_BACK:
 		for(; *currentFolder; currentFolder++)
-			*currentFolder = ' ';
+			*currentFolder = '\0';
 		UI_PopMenu();
 		break;
 
@@ -308,6 +309,7 @@ static void Demos_MenuInit( qboolean firstStart ) {
 	
 	s_demos.list.numitems = trap_FS_GetFileList( folder, extension, s_demos.names, sizeof(s_demos.names) );
 	
+	Com_Printf("%s\n", folder);
 	
 	s_demos.list.numitems			+= s_demos.numFolders;
 	s_demos.list.itemnames			= (const char **)s_demos.demolist;

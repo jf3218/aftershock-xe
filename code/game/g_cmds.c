@@ -457,7 +457,7 @@ void G_StartServerDemos( void ) {
 		count = 0;
 		
 		for ( j = 0; j < 128 ; j++ ) {
-			if ( playerName[j] == '^' && ( ( playerName[j+1] >= '0' && playerName[i+1] <= '9' ) || ( playerName[j+1] >= 'a' && playerName[j+1] <= 'z' ) || ( playerName[j+1] >= 'A' && playerName[j+1] <= 'Z' ) ) ) {
+			if ( playerName[j] == '^' && ( ( playerName[j+1] >= '0' && playerName[j+1] <= '9' ) || ( playerName[j+1] >= 'a' && playerName[j+1] <= 'z' ) || ( playerName[j+1] >= 'A' && playerName[j+1] <= 'Z' ) ) ) {
 				j++;
 				continue;
 			} else if ( ( ! ( playerName[j] >= '0' && playerName[j] <= '9' ) && ! ( playerName[j] >= 'a' && playerName[j] <= 'z' ) && ! ( playerName[j] >= 'A' && playerName[j] <= 'Z' ) ) ) {
@@ -471,9 +471,6 @@ void G_StartServerDemos( void ) {
 		}
 		playerName[count] = '\0';
 		
-		/*G_Printf("%s \n", g_entities[i].client->pers.netname );
-		G_Printf("svrecord %i %s/%s \n", &level.clients[i] - level.clients, gamestring, level.clients[i].pers.netname );*/
-		//ClientCleanName( s, level.clients[i].pers.netname, sizeof(level.clients[i].pers.netname) );
 		trap_SendConsoleCommand(EXEC_APPEND, va("svrecord %i %s/%s-POV(%s) \n", &level.clients[i] - level.clients, gamestring, matchstring, playerName ) );
 	}
 }
@@ -493,8 +490,6 @@ void G_StopServerDemos( void ) {
 		if ( g_entities[ &level.clients[i] - level.clients].r.svFlags & SVF_BOT)
 			continue;
 		
-		/*G_Printf("%s \n", g_entities[i].client->pers.netname );
-		G_Printf("svrecord %i %s/%s \n", &level.clients[i] - level.clients, gamestring, level.clients[i].pers.netname );*/
 		trap_SendConsoleCommand(EXEC_APPEND, va("stopsvrecord %i \n", &level.clients[i] - level.clients ) );
 	}
 }
