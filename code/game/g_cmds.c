@@ -294,7 +294,7 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
 
 	team = G_ItemTeam( entityNum );
 	
-	//trap_FS_FOpenFile( g_logfile.string, &level.logFile, FS_APPEND );
+	Com_sprintf (entry, sizeof(entry), " %i %i %i %i %i %i ", entityNum, type, quantity, respawnTime, nextItemEntityNum , team);
 
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		ent = &g_entities[i];
