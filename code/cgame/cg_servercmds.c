@@ -1925,9 +1925,13 @@ static void CG_ParseSpawnpoints( void ){
     int i;
     cg.numSpawnpoints = atoi( CG_Argv(1) );
     for( i = 0; i < cg.numSpawnpoints ; i++ ){
-	cg.spawnOrg[i][0] = atof(CG_Argv( 2 + i*3 ));
-	cg.spawnOrg[i][1] = atof(CG_Argv( 3 + i*3 ));
-	cg.spawnOrg[i][2] = atof(CG_Argv( 4 + i*3 ));
+	cg.spawnOrg[i][0] = atof(CG_Argv( 2 + i*7 ));
+	cg.spawnOrg[i][1] = atof(CG_Argv( 3 + i*7 ));
+	cg.spawnOrg[i][2] = atof(CG_Argv( 4 + i*7 ));
+	cg.spawnAngle[i][0] = atof(CG_Argv( 5 + i*7 ));
+	cg.spawnAngle[i][1] = atof(CG_Argv( 6 + i*7 ));
+	cg.spawnAngle[i][2] = atof(CG_Argv( 7 + i*7 ));
+	cg.spawnTeam[i] = atoi(CG_Argv( 8 + i*7 ));
     }
 }
 

@@ -951,50 +951,80 @@ static void CG_AddMultiviewWindow( stereoFrame_t stereoView ) {
 }
 
 void CG_AddSpawnpoints( void ){
-// 	refEntity_t		legs;
-// 	refEntity_t		torso;
-// 	refEntity_t		head;
 	refEntity_t		re;
-	vec3_t angles;
-//	centity_t *cent;
 	int i;
+	int 			dist[3] = {0,0,0};
+	int 			distnum[3] = {-1,-1,-1};
+	int 			distbuf;
+	vec3_t 			delta;
 	
-// 	memset( &legs, 0, sizeof(legs) );
-// 	memset( &torso, 0, sizeof(torso) );
-// 	memset( &head, 0, sizeof(head) );
-// 	
-// 	memset( cent, 0, sizeof(*cent));
-// 	
-// 	legs.hModel = trap_R_RegisterModel("models/players/sarge/lower.md3");
-// 	torso.hModel = trap_R_RegisterModel("models/players/sarge/upper.md3");
-// 	head.hModel = trap_R_RegisterModel("models/players/sarge/head.md3");
-// 	legs.customShader = cgs.media.invisShader;
-// 	torso.customShader = cgs.media.invisShader;
-// 	head.customShader = cgs.media.invisShader;
+	if( !cg_drawSpawnpoints.integer )
+		return;
 	
-	
+	//CG_Printf("AddSpawnpoints();\n");
 	memset( &re, 0, sizeof(re));
-	re.hModel = trap_R_RegisterModel("models/weapons2/shotgun/shotgun_flash_1.md3");
-	angles[PITCH] = 270;
-	angles[YAW] = 0;
-	angles[ROLL] = 0;
+	re.hModel = cgs.media.spawnPoint;
+	re.customShader = cgs.media.spawnPointShader;
 	
-// 	cent->lerpAngles[PITCH] = 0;
-// 	cent->lerpAngles[YAW] = 180;
-// 	cent->lerpAngles[ROLL] = 0;
-	
-	AnglesToAxis(angles, re.axis);
-
-//	CG_PlayerAngles( cent, legs.axis, torso.axis, head.axis );
+	if( cgs.gametype == GT_TOURNAMENT ){
+		for( i=0; i < cg.numSpawnpoints; i++ ){
+			VectorSubtract( cg.spawnOrg[i], cg.snap->ps.origin, delta );
+			distbuf = VectorLength( delta );
+			if( distbuf > dist[0] || distnum[0] == -1 ){
+				dist[2] = dist[1];
+				distnum[2] = distnum[1];
+				dist[1]= dist[0];
+				distnum[1] = distnum[0];
+				
+				dist[0] = distbuf;
+				distnum[0] = i;
+			} else if( distbuf > dist[1] || distnum[1] == -1 ){
+				dist[2] = dist[1];
+				distnum[2] = distnum[1];
+				
+				dist[1] = distbuf;
+				distnum[1] = i;
+			} else if( distbuf > dist[2] || distnum[2] == -1 ){
+				dist[2] = distbuf;
+				distnum[2] = i;
+			}
+		}
+	}
 	
 	for( i=0; i < cg.numSpawnpoints; i++ ){
 	    VectorCopy( cg.spawnOrg[i], re.origin);
-// 	    VectorCopy( cg.spawnOrg[i], legs.origin );
-// 	    CG_PositionRotatedEntityOnTag( &torso, &legs, legs.hModel, "tag_torso");
-// 	    CG_PositionRotatedEntityOnTag( &head, &torso, torso.hModel, "tag_head");
-// 	    trap_R_AddRefEntityToScene(&legs);
-// 	    trap_R_AddRefEntityToScene(&torso);
-// 	    trap_R_AddRefEntityToScene(&head);
+	    AnglesToAxis(cg.spawnAngle[i], re.axis);
+	    
+	    if( cg.spawnTeam[i] == TEAM_FREE ){
+		    if( cgs.gametype == GT_TOURNAMENT ) {
+			    if( i == distnum[0] || i == distnum[1] || i == distnum[2] ) {
+				    re.shaderRGBA[0] = 255;
+				    re.shaderRGBA[1] = 0;
+				    re.shaderRGBA[2] = 0;
+				    re.shaderRGBA[3] = 255;
+			    } else {
+				    re.shaderRGBA[0] = 0;
+				    re.shaderRGBA[1] = 255;
+				    re.shaderRGBA[2] = 0;
+				    re.shaderRGBA[3] = 255;
+			    }
+		    } else {
+			    re.shaderRGBA[0] = 0;
+			    re.shaderRGBA[1] = 255;
+			    re.shaderRGBA[2] = 0;
+			    re.shaderRGBA[3] = 255;
+		    }
+	    } else if( cg.spawnTeam[i] == TEAM_BLUE ){
+		    re.shaderRGBA[0] = 0;
+		    re.shaderRGBA[1] = 0;
+		    re.shaderRGBA[2] = 255;
+		    re.shaderRGBA[3] = 255;
+	    } else if( cg.spawnTeam[i] == TEAM_RED ){
+		    re.shaderRGBA[0] = 255;
+		    re.shaderRGBA[1] = 0;
+		    re.shaderRGBA[2] = 0;
+		    re.shaderRGBA[3] = 255;
+	    }
 	    trap_R_AddRefEntityToScene(&re);
 	}
 }
@@ -1069,11 +1099,10 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
         CG_AddMarks();
         CG_AddParticles ();
         CG_AddLocalEntities();
+	if ( cg.warmup != 0 /*&& cgs.gametype < GT_TEAM*/ )
+		CG_AddSpawnpoints();
     }
     CG_AddViewWeapon( &cg.predictedPlayerState );
-    
-    if ( cg.warmup < 0 && cgs.gametype < GT_TEAM )
-	    CG_AddSpawnpoints();
 
     // add buffered sounds
     CG_PlayBufferedSounds();

@@ -802,9 +802,9 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
                 trap_S_StartSound (NULL, es->number, CHAN_AUTO,	trap_S_RegisterSound( item->pickup_sound, qfalse ) );
             }
             
-            /*if( cg.demoPlayback ) {
+            if( cg.demoPlayback ) {
 		    if( item->giType == IT_ARMOR && item->quantity == 50 ){
-			    CG_AddToChat(va("YA at %i:%i next spawn at %i:%i", );
+			    CG_Printf("Yellow\n");
 		    }
 		    else if( item->giType == IT_ARMOR && item->quantity == 100 ){
 			    CG_Printf("Red\n");
@@ -812,7 +812,7 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 		    else if( item->giType == IT_HEALTH && item->quantity == 100 ){
 			    CG_Printf("Mega\n");
 		    }
-	    }*/
+	    }
             // show icon and name on status bar
             if ( es->number == cg.snap->ps.clientNum ) {
                 CG_ItemPickup( index );

@@ -2105,7 +2105,7 @@ void ClientBegin( int clientNum ) {
 	
 	/*if( client->sess.sessionTeam == TEAM_SPECTATOR )
 		G_ReadSessionDataRestart( client );*/
-	
+	G_SendSpawnpoints( ent );
 }
 
 /*
@@ -2151,6 +2151,7 @@ void ClientSpawn(gentity_t *ent) {
 	char		aftershock_hash[33];
 	qboolean	referee;
 	qboolean 	mute[MAX_CLIENTS];
+	//qboolean 	sendSpawnpoints;
 	
 	gcapture_t captures[ MAX_CAPTURES ];
 	int captureCount;
@@ -2357,6 +2358,8 @@ void ClientSpawn(gentity_t *ent) {
 	eventSequence = client->ps.eventSequence;
 	
 	vote = client->vote;
+	
+	//sendSpawnpoints = client->sendSpawnpoints;
 
 	//clear all the clientdata
 	Com_Memset (client, 0, sizeof(*client));
@@ -2686,10 +2689,11 @@ void ClientSpawn(gentity_t *ent) {
 		G_SendLivingCount();*/
 	
 	client->spawnTime = level.time;
-	if( !ent->sendSpawnpoints && g_gametype.integer < GT_TEAM ){
+	//client->sendSpawnpoints = sendSpawnpoints;
+	/*if( !client->sendSpawnpoints /*&& g_gametype.integer < GT_TEAM*//* ){
 		G_SendSpawnpoints( ent );
-		ent->sendSpawnpoints = qtrue;
-	}
+		client->sendSpawnpoints = qtrue;
+	}*/
 	
 }
 

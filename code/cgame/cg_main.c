@@ -402,6 +402,7 @@ vmCvar_t 	cg_bubbleTrail;
 vmCvar_t 	cg_muzzleFlash;
 vmCvar_t 	cg_playerLean;
 vmCvar_t 	cg_explosion;
+vmCvar_t 	cg_drawSpawnpoints;
 
 
 typedef struct {
@@ -659,7 +660,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_bubbleTrail, "cg_bubbleTrail", "1", CVAR_ARCHIVE },
 	{&cg_muzzleFlash, "cg_muzzleFlash", "1", CVAR_ARCHIVE },
 	{&cg_playerLean, "cg_playerLean", "1.0", CVAR_ARCHIVE },
-	{&cg_explosion, "cg_explosion", "255", CVAR_ARCHIVE }
+	{&cg_explosion, "cg_explosion", "255", CVAR_ARCHIVE },
+	{&cg_drawSpawnpoints, "cg_drawSpawnpoints", "1", CVAR_ARCHIVE }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -1622,6 +1624,8 @@ static void CG_RegisterGraphics( void ) {
 	
 	cgs.media.blueMarker = trap_R_RegisterShader("icons/blue.tga");
 	cgs.media.redMarker = trap_R_RegisterShader("icons/red.tga");
+	cgs.media.spawnPoint = trap_R_RegisterModel("models/mapobjects/spawnpoint.md3");
+	cgs.media.spawnPointShader = trap_R_RegisterShader("spawnpoint");
 /*
 	for (i=1; i<MAX_PARTICLES_AREAS; i++)
 	{
@@ -2561,6 +2565,7 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 	cg.lastFov = 90;
 	cg.currentFov = 90;
 	cg.fovTime = -1000;
+	cg.numSpawnpoints = 0;
 }
 
 /*

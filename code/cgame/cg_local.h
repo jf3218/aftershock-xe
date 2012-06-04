@@ -868,6 +868,8 @@ typedef struct {
 	int fovTime;
 	
 	vec3_t spawnOrg[MAX_SPAWNPOINTS];
+	vec3_t spawnAngle[MAX_SPAWNPOINTS];
+	int spawnTeam[MAX_SPAWNPOINTS];
 	int numSpawnpoints;
 	qboolean forceChat;
 
@@ -1272,6 +1274,9 @@ typedef struct {
 	qhandle_t	sbNotReady;
 	qhandle_t	sbSkull;
 	qhandle_t       sbLocked;
+	
+	qhandle_t 	spawnPoint;
+	qhandle_t 	spawnPointShader;
 
 } cgMedia_t;
 
@@ -1754,6 +1759,7 @@ extern vmCvar_t 		cg_bubbleTrail;
 extern vmCvar_t 		cg_muzzleFlash;
 extern vmCvar_t 		cg_playerLean;
 extern vmCvar_t 		cg_explosion;
+extern vmCvar_t 		cg_drawSpawnpoints;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );

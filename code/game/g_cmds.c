@@ -293,10 +293,8 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
 		nextItemEntityNum = -1;
 
 	team = G_ItemTeam( entityNum );
-
-
-	Com_sprintf (entry, sizeof(entry),
-                 " %i %i %i %i %i %i ", entityNum, type, quantity, respawnTime, nextItemEntityNum , team);
+	
+	//trap_FS_FOpenFile( g_logfile.string, &level.logFile, FS_APPEND );
 
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		ent = &g_entities[i];
@@ -317,27 +315,30 @@ TODO: add teamspawnpoint color for teambased gametypes
 void G_SendSpawnpoints( gentity_t *ent ){
 	gentity_t *spot;
 	int spotnumber = 0;
-	char entry[16];
-	char string[1024];
+	char entry[64];
+	char string[2048];
 	
 	if( level.warmupTime != -1 )
 		return;
 	
 	if( g_gametype.integer < GT_CTF || g_gametype.integer == GT_ELIMINATION ){
 		while(( spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != NULL ) {
-			Com_sprintf( entry, sizeof(entry), "%i %i %i ", (int)spot->s.origin[0], (int)spot->s.origin[1], (int)spot->s.origin[2] );
+			Com_sprintf( entry, sizeof(entry), "%i %i %i %i %i %i %i ", (int)spot->s.origin[0], (int)spot->s.origin[1], (int)spot->s.origin[2], 
+										   (int)spot->s.angles[0], (int)spot->s.angles[1], (int)spot->s.angles[2], TEAM_FREE );
 			spotnumber++;
 			strcat( string, entry );
 		}
 	}
 	else{
 		while(( spot = G_Find (spot, FOFS(classname), "team_CTF_redspawn")) != NULL ) {
-			Com_sprintf( entry, sizeof(entry), "%i %i %i ", (int)spot->s.origin[0], (int)spot->s.origin[1], (int)spot->s.origin[2] );
+			Com_sprintf( entry, sizeof(entry), "%i %i %i %i %i %i %i ", (int)spot->s.origin[0], (int)spot->s.origin[1], (int)spot->s.origin[2], 
+										   (int)spot->s.angles[0], (int)spot->s.angles[1], (int)spot->s.angles[2], TEAM_RED );
 			spotnumber++;
 			strcat( string, entry );
 		}
 		while(( spot = G_Find (spot, FOFS(classname), "team_CTF_bluespawn")) != NULL ) {
-			Com_sprintf( entry, sizeof(entry), "%i %i %i ", (int)spot->s.origin[0], (int)spot->s.origin[1], (int)spot->s.origin[2] );
+			Com_sprintf( entry, sizeof(entry), "%i %i %i %i %i %i %i ", (int)spot->s.origin[0], (int)spot->s.origin[1], (int)spot->s.origin[2], 
+										   (int)spot->s.angles[0], (int)spot->s.angles[1], (int)spot->s.angles[2], TEAM_BLUE );
 			spotnumber++;
 			strcat( string, entry );
 		}

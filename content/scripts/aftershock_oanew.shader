@@ -980,3 +980,14 @@ lightningBoltNew
 	}
 }
 
+spawnpoint
+{
+	cull disable
+	{
+		map models/mapobjects/spawnpoint.tga
+		blendfunc add
+		alphaGen entity
+		rgbGen entity
+	}
+}
+
