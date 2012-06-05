@@ -1401,6 +1401,7 @@ typedef struct {
 	int respawnTimerNumber;
 	int respawnTimerNextItem[ MAX_RESPAWN_TIMERS ];
 	int respawnTimerTeam[ MAX_RESPAWN_TIMERS ];
+	int respawnTimerClientNum[MAX_RESPAWN_TIMERS];
 
 	
 	int cursorX;

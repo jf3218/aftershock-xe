@@ -825,7 +825,7 @@ void G_SendAllItems( void ){
 					continue;
 				//G_Printf("%s\n", ent->item->shortPickup_name);
 				if( ( G_ItemTeam( ent->s.number ) == TEAM_RED && j == 0 ) || ( G_ItemTeam( ent->s.number ) == TEAM_BLUE && j == 1 ) || ( G_ItemTeam( ent->s.number ) == -1 && j == 2 ) )
-					G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink, G_FindNearestItemSpawn( ent ) );
+					G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink, G_FindNearestItemSpawn( ent ), -1 );
 			}
 		}
 	}
@@ -840,7 +840,7 @@ void G_SendAllItems( void ){
 				continue;
 			//G_Printf("%s\n", ent->item->shortPickup_name);
 			
-			G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink, G_FindNearestItemSpawn( ent ) );
+			G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink, G_FindNearestItemSpawn( ent ), -1 );
 		}
 	}
 			

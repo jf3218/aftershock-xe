@@ -698,7 +698,7 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText );
 void RewardMessage(gentity_t *ent, int reward, int rewardCount);
 
 void G_SendAllItems( void );
-void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum );
+void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum, int clientNum );
 
 void G_SendEndGame( void );
 void G_SendStartGame( void );

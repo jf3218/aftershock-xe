@@ -2219,6 +2219,7 @@ void CG_DrawRespawnTimers ( void ) {
     int iconsize, icon_xrel, icon_yrel, text_xrel, text_yrel, text_step;
     char *s;
     int w;
+    vec4_t color;
     hudElements_t hudelement = cgs.hud[HUD_RESPAWNTIMER];
 
     if ( !hudelement.inuse )
@@ -2295,10 +2296,35 @@ void CG_DrawRespawnTimers ( void ) {
             if ( cgs.respawnTimerNextItem[i] != -1 &&  cg_items[cg_entities[cgs.respawnTimerNextItem[i]].currentState.modelindex].icon ) {
                 CG_DrawPic ( x + icon_xrel + iconsize - iconsize/4, y + icon_yrel + iconsize - iconsize/4, iconsize/4, iconsize/4, cg_items[cg_entities[cgs.respawnTimerNextItem[i]].currentState.modelindex].icon );
             }
+            
+            color[3] = 1.0f;
+            if( cgs.gametype >= GT_TEAM ){
+		    if( cgs.respawnTimerClientNum[i] == TEAM_RED ){
+			    color[0] = 1.0f;
+			    color[1] = 0.2f;;
+			    color[2] = 0.2f;
+		    } else {
+			    color[0] = 0.2f;
+			    color[1] = 0.2f;
+			    color[2] = 1.0f;
+		    }
+	    } else {
+		    if( cgs.respawnTimerClientNum[i] == cg.snap->ps.clientNum ){
+			    VectorCopy(colorWhite,color);
+		    } else {
+			    VectorCopy(colorGreen,color);
+		    }
+	      
+	    }
+            
             if ( time > 0 ) {
                 s = va ( "%i", time/1000+1 );
                 w = CG_DrawStrlen ( s );
-                CG_DrawStringExt ( x + text_xrel + ( 2 - w ) *text_step, y + text_yrel, s, colorWhite, qfalse, hudelement.textstyle & 1, hudelement.fontWidth, hudelement.fontHeight, 0 );
+                CG_DrawStringExt ( x + text_xrel + ( 2 - w ) *text_step, y + text_yrel, s, color, qtrue, hudelement.textstyle & 1, hudelement.fontWidth, hudelement.fontHeight, 0 );
+            } else {
+		s = va ( "*" );
+                w = CG_DrawStrlen ( s );
+                CG_DrawStringExt ( x + text_xrel + ( 2 - w ) *text_step, y + text_yrel, s, color, qtrue, hudelement.textstyle & 1, hudelement.fontWidth, hudelement.fontHeight, 0 );
             }
 
             if ( cgs.gametype == GT_CTF ) {

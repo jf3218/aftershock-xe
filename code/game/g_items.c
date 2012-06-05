@@ -616,7 +616,7 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace) {
 	trap_LinkEntity( ent );
 	
 	if( g_allowRespawnTimer.integer && !(ent->flags & FL_DROPPED_ITEM) )
-		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, level.time + respawn * 1000, G_FindNearestItemSpawn( ent ) );
+		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, level.time + respawn * 1000, G_FindNearestItemSpawn( ent ), other->s.clientNum);
 }
 
 
@@ -1011,7 +1011,7 @@ void FinishSpawningItem( gentity_t *ent ) {
 	trap_LinkEntity (ent);
 	
 	if( g_allowRespawnTimer.integer && !(ent->flags & FL_DROPPED_ITEM) )
-		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink , G_FindNearestItemSpawn( ent ) );
+		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, ent->nextthink , G_FindNearestItemSpawn( ent ), -1 );
 }
 
 

@@ -266,7 +266,7 @@ G_SendRespawnTimer
 
 ==================
 */
-void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum ) {
+void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum, int clientNum ) {
 	char		entry[32];
 	gentity_t	*ent;
 	int		i;
@@ -294,7 +294,10 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
 
 	team = G_ItemTeam( entityNum );
 	
-	Com_sprintf (entry, sizeof(entry), " %i %i %i %i %i %i ", entityNum, type, quantity, respawnTime, nextItemEntityNum , team);
+	if( g_gametype.integer >= GT_TEAM )
+		clientNum = level.clients[clientNum].sess.sessionTeam;
+	
+	Com_sprintf (entry, sizeof(entry), " %i %i %i %i %i %i %i ", entityNum, type, quantity, respawnTime, nextItemEntityNum , team, clientNum );
 
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		ent = &g_entities[i];
