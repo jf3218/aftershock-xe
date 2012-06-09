@@ -34,6 +34,8 @@ typedef struct mapcycle_s {
 	char *allowedMaps[MAX_MAPCYCLECOUNT];
 	int  allowedMapsCount;
 	qboolean allAllowed;
+	char mapfiles[MAX_MAPCYCLECOUNT][MAX_QPATH];
+	char allowedmapfiles[MAX_MAPCYCLECOUNT][MAX_QPATH];
 } mapcycle_t;
 
 mapcycle_t mapcycle;
@@ -171,6 +173,15 @@ static qboolean G_MapAvailable ( char* map ) {
 	return qtrue;
 }
 
+static int G_findCharInString( char charin, char* string, int size ){
+	int i;
+	for( i = 0; i < size; i++ ){
+		if( charin == string[i] )
+			return i;
+	}
+	return -1;
+}
+
 /*
 =================
 G_setMapcycle
@@ -181,11 +192,25 @@ mapcycle
 static void G_setMapcycle ( token_t *in, int min, int max ) {
 	int lastmappos;
 	qboolean lastMapAvailable = qfalse;
-	int i;
+	int i,j;
+	int lpar,rpar;
 
 	for ( i = min; i <= max; i++ ) {
 		if ( in[i].type == TOT_WORD ) {
 			lastmappos = i;
+			//find '(' ')' for mapfiles
+			lpar = G_findCharInString('(',in[i].value,sizeof(in[i].value) );
+			rpar = G_findCharInString(')',in[i].value,sizeof(in[i].value) );
+			if ( lpar != -1 && rpar != -1 ){
+				for( j= lpar+1; j < rpar; j++ ){
+					mapcycle.mapfiles[mapcycle.mapcycleCount][j-lpar-1] = in[i].value[j]; 
+				}
+				mapcycle.mapfiles[mapcycle.mapcycleCount][j-lpar-1] = '\0';
+				in[i].value[lpar] = '\0';
+			} else {
+				mapcycle.mapfiles[mapcycle.mapcycleCount][0] = '\0';
+			}
+			
 			if ( G_MapAvailable ( in[i].value ) ) {
 				mapcycle.maps[mapcycle.mapcycleCount] = in[i].value;
 				mapcycle.mapcycleCount++;
@@ -215,9 +240,23 @@ maps
 */
 static void G_setAllowedMaps ( token_t *in, int min, int max ) {
 	int i;
-
+	int lpar,rpar,j;
+	
 	for ( i = min; i <= max; i++ ) {
 		if ( in[i].type == TOT_WORD ) {
+			//find '(' ')' for mapfiles
+			lpar = G_findCharInString('(',in[i].value,sizeof(in[i].value) );
+			rpar = G_findCharInString(')',in[i].value,sizeof(in[i].value) );
+			if ( lpar != -1 && rpar != -1 ){
+				for( j= lpar+1; j < rpar; j++ ){
+					mapcycle.allowedmapfiles[mapcycle.allowedMapsCount][j-lpar-1] = in[i].value[j]; 
+				}
+				mapcycle.allowedmapfiles[mapcycle.allowedMapsCount][j-lpar-1] = '\0';
+				in[i].value[lpar] = '\0';
+			} else {
+				mapcycle.allowedmapfiles[mapcycle.allowedMapsCount][0] = '\0';
+			}
+			
 			if ( G_MapAvailable ( in[i].value ) ) {
 				mapcycle.allowedMaps[mapcycle.allowedMapsCount] = in[i].value;
 				mapcycle.allowedMapsCount++;
@@ -283,6 +322,41 @@ char *G_GetNextMap ( char *map ) {
 
 /*
 =================
+G_GetMapfile
+finds the current mapnumber and
+returns the next possible
+map in the cycle
+=================
+*/
+void G_GetMapfile ( char *map ) {
+	int i;
+	char	command[1024];
+
+	if ( mapcycle.mapcycleCount == 0 )
+		return;
+
+	for ( i = 0; i < mapcycle.mapcycleCount; i++ ) {
+		if ( strcmp ( map, mapcycle.maps[i] ) == 0 )
+			break;
+	}
+
+	if ( i == mapcycle.mapcycleCount ) {
+		for ( i = 0; i < mapcycle.allowedMapsCount; i++ ) {
+			if ( strcmp ( map, mapcycle.allowedMaps[i] ) == 0 ){
+				if( strcmp(mapcycle.allowedmapfiles[i],"") )
+					G_LoadMapfile(mapcycle.allowedmapfiles[i]);
+				return;
+			}
+		}
+	} else {
+		if( strcmp(mapcycle.mapfiles[i],"") )
+			G_LoadMapfile(mapcycle.mapfiles[i]);
+	}
+	return;
+}
+
+/*
+=================
 G_mapIsVoteable
 looks up in the mapcycle and
 the allowed mapcycle
@@ -343,11 +417,11 @@ void G_drawMapcycle ( gentity_t *ent ) {
 	char buffer[2048];
 
 	for ( i = 0; i < mapcycle.mapcycleCount; i++ ) {
-		strcat ( buffer, va ( "^3%i ^2%s ^3%i %i\n", i, mapcycle.maps[i], mapcycle.minplayers[i], mapcycle.maxplayers[i] ) );
+		strcat ( buffer, va ( "^3%i ^2%s(%s) ^3%i %i\n", i, mapcycle.maps[i], mapcycle.mapfiles[i], mapcycle.minplayers[i], mapcycle.maxplayers[i] ) );
 	}
 	strcat ( buffer, va ( "\n" ) );
 	for ( i = 0; i < mapcycle.allowedMapsCount; i++ ) {
-		strcat ( buffer, va ( "^1%s ", mapcycle.allowedMaps[i] ) );
+		strcat ( buffer, va ( "^1%s(%s) ", mapcycle.allowedMaps[i], mapcycle.allowedmapfiles[i] ) );
 	}
 
 	strcat ( buffer, va ( "\n" ) );
@@ -373,7 +447,10 @@ void G_sendMapcycle( void ){
 	}
 
 	for ( i = 0; i < mapcycle.mapcycleCount; i++ ) {
-		strcat ( buffer, va ( "    %s\n", mapcycle.maps[i] ) );
+		if( !strcmp("", mapcycle.mapfiles[i]) )
+			strcat ( buffer, va ( "    %s\n", mapcycle.maps[i] ) );
+		else
+			strcat ( buffer, va ( "    %s(%s)\n", mapcycle.maps[i], mapcycle.mapfiles[i] ) );
 	}
 	
 	strcat( buffer, "}\n" );
@@ -383,7 +460,10 @@ void G_sendMapcycle( void ){
 		strcat ( buffer, "\nallowed {\n");
 	
 		for ( i = 0; i < mapcycle.allowedMapsCount; i++ ) {
-			strcat ( buffer, va ( "    %s\n", mapcycle.allowedMaps[i] ) );
+			if( !strcmp("", mapcycle.allowedmapfiles[i]) )
+				strcat ( buffer, va ( "    %s\n", mapcycle.allowedMaps[i] ) );
+			else
+				strcat ( buffer, va ( "    %s(%s)\n", mapcycle.allowedMaps[i], mapcycle.allowedmapfiles[i] ) );
 		}
 
 		strcat ( buffer, va ( "}\n" ) );

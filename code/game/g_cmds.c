@@ -271,6 +271,7 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
 	gentity_t	*ent;
 	int		i;
 	int team;
+	fileHandle_t f;
 
 	//G_Printf("entityNum %i, type %i, quantity %i, respawnTime %i, nextItemEntityNum %i\n", entityNum, type, quantity, respawnTime, nextItemEntityNum);
 
@@ -298,6 +299,16 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
 		clientNum = level.clients[clientNum].sess.sessionTeam;
 	
 	Com_sprintf (entry, sizeof(entry), " %i %i %i %i %i %i %i ", entityNum, type, quantity, respawnTime, nextItemEntityNum , team, clientNum );
+	/*if( g_autoServerDemos.integer ) {
+		char gamestring[128];
+		char matchstring[128];
+	
+		trap_Cvar_VariableStringBuffer("gamestring", gamestring, sizeof(gamestring));
+		trap_Cvar_VariableStringBuffer("matchstring", matchstring, sizeof(matchstring));
+		trap_FS_FOpenFile( va("%s/%s",gamestring,matchstring), &f, FS_APPEND );
+		trap_FS_Write( va("%i %s\n", level.time, entry), strlen(va("%i %s\n", level.time, entry)), f );
+		trap_FS_FCloseFile( f );
+	}*/
 
 	for (i = 0; i < MAX_CLIENTS; i++) {
 		ent = &g_entities[i];
@@ -3698,9 +3709,6 @@ void Cmd_Forfeit_f( gentity_t *ent ) {
   
 }
 
-
-
-
 //KK-OAX This is the table that ClientCommands runs the console entry against.
 commands_t cmds[ ] =
 {
@@ -3772,8 +3780,7 @@ commands_t cmds[ ] =
     { "mapcycle", 0, Cmd_Listmapcycle_f },
     { "mute", 0, Cmd_Mute_f },
     { "unmute", 0, Cmd_Unmute_f },
-    { "forfeit", 0, Cmd_Forfeit_f },
-
+    { "forfeit", 0, Cmd_Forfeit_f }
 };
 
 static int numCmds = sizeof( cmds ) / sizeof( cmds[ 0 ] );

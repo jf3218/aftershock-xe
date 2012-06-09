@@ -855,6 +855,11 @@ G_InitGame
 void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	int					i;
 	qboolean 			blueLocked, redLocked;
+	char 		mapname[64];
+	char 		mapfile[MAX_QPATH];
+	char 		lastmap[64];
+	/*char* 		mapfile;
+	char 		command[64];*/
 	/*char buffer[ MAX_CVAR_VALUE_STRING ];
 	int a, b;*/
 	
@@ -979,6 +984,23 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	}
 
 	SaveRegisteredItems();
+	
+	trap_Cvar_VariableStringBuffer("lastmap", lastmap, sizeof(lastmap));
+	trap_Cvar_VariableStringBuffer("mapfile", mapfile, sizeof(mapfile));
+	trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
+	
+	if( !strcmp(mapname,lastmap) && strcmp("",mapfile) && strcmp(mapname,"") ) {
+		G_LoadMapfile(mapfile);
+	} else {
+		trap_Cvar_Set("mapfile","");
+		trap_Cvar_Set("lastmap","");
+	}
+	if( g_useMapcycle.integer ){
+		G_LoadMapcycle();
+		if( strcmp(mapname,lastmap) || !strcmp("",mapfile))
+			G_GetMapfile(mapname);
+		
+	}
         
         G_Printf ("-----------------------------------\n");
 
@@ -1060,9 +1082,6 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	
 	memset(level.disconnectedClients, 0, MAX_DISCONNECTEDCLIENTS * sizeof(level.disconnectedClients[0]));
 	level.disconnectedClientsNumber = 0;
-	
-	if( g_useMapcycle.integer )
-		G_LoadMapcycle();
 }
 
 

@@ -1747,6 +1747,7 @@ Q3GOBJ_ = \
   $(B)/baseq3/game/g_fileops.o \
   $(B)/baseq3/game/g_killspree.o \
   $(B)/baseq3/game/g_mapcycle.o \
+  $(B)/baseq3/game/g_mapfiles.o \
   $(B)/baseq3/game/g_misc.o \
   $(B)/baseq3/game/g_missile.o \
   $(B)/baseq3/game/g_mover.o \
@@ -1808,6 +1809,7 @@ MPGOBJ_ = \
   $(B)/missionpack/game/g_fileops.o \
   $(B)/missionpack/game/g_killspree.o \
   $(B)/missionpack/game/g_mapcycle.o \
+  $(B)/missionpack/game/g_mapfiles.o \
   $(B)/missionpack/game/g_misc.o \
   $(B)/missionpack/game/g_missile.o \
   $(B)/missionpack/game/g_mover.o \

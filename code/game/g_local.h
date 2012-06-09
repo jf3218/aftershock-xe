@@ -684,6 +684,7 @@ qboolean	G_SpawnVector( const char *key, const char *defaultString, float *out )
 void		G_SpawnEntitiesFromString( void );
 char *G_NewString( const char *string );
 
+
 //
 // g_cmds.c
 //
@@ -1081,11 +1082,20 @@ void CountVotes( void );
 // g_mapcycle.c
 //
 char *G_GetNextMap ( char *map );
+void G_GetMapfile ( char *map );
 qboolean G_mapIsVoteable ( char* map );
 void G_drawAllowedMaps ( gentity_t *ent );
 void G_drawMapcycle ( gentity_t *ent );
 void G_sendMapcycle( void );
 void G_LoadMapcycle ( void );
+
+//
+// g_mapfiles.c
+//
+qboolean G_ClassnameAllowed( char *input );
+void G_WriteMapfile_f( void );
+void G_LoadMapfile( char *filename );
+void G_LoadMapfile_f( void );
 
 #define MAX_MAPNAME 32
 #define MAPS_PER_PAGE 10
