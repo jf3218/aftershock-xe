@@ -204,82 +204,76 @@ fieldCopy_t fieldsCopy[] = {
 	{NULL}
 };
 
+char *G_ClearString( char *input ){
+	if( input[0] == '"' ){
+		input[0] = '\0';
+		input++;
+	}
+	if( input[strlen(input)-1] == '"' ){
+		input[strlen(input)-1] = '\0';
+	}
+	return input;
+}
+
 static void G_LoadMapfileEntity( token_t *in, int min, int max ){
-	int i = min;
+	int i;
 	int j;
-	char buf[64];
-	char *classname;
-	vec3_t origin;
-	int spawnflags;
-	float random;
-	float wait;
-	qboolean foundClass=qfalse, foundOrigin=qfalse;
-	for( i = min; i <= max; i++ ){
-		//G_Printf("%s\n", in[i].value );
-		if( !strcmp(in[i].value, "\"classname\"" ) ) {
-			classname = va("%s", in[i+1].value );
-			for( j = 0; j < strlen(classname) - 2; j++ ){
-				classname[j] = classname[j+1];
+	char *buf;
+	float	v;
+	vec3_t	vec;
+	
+	fieldCopy_t *field;
+	byte	*b;
+	
+	gentity_t *ent;
+	ent = G_Spawn();
+	
+	b = (byte *)ent;
+	
+	for( i = min; i <= max ; i++ ) {
+		for( field = fieldsCopy; field->name; field++ ){
+			if( !strcmp(va("\"%s\"",field->name), in[i].value ) ) {
+				switch( field->type ) {
+				  case F_LSTRING:
+					*(char **)(b+field->ofs) = G_NewString(G_ClearString(in[i+1].value));
+					break;
+				  case F_VECTOR:
+					buf = in[i+1].value;
+					strcat(buf, " ");
+					strcat(buf, in[i+2].value);
+					strcat(buf, " ");
+					strcat(buf, in[i+3].value);
+					sscanf (G_ClearString(buf), "%f %f %f", &vec[0], &vec[1], &vec[2]);
+					((float *)(b+field->ofs))[0] = vec[0];
+					((float *)(b+field->ofs))[1] = vec[1];
+					((float *)(b+field->ofs))[2] = vec[2];
+					break;
+				  case F_INT:
+					*(int *)(b+field->ofs) = atoi(G_ClearString(in[i+1].value));
+					break;
+				  case F_FLOAT:
+					*(float *)(b+field->ofs) = atof(G_ClearString(in[i+1].value));
+					break;
+				  case F_ANGLEHACK:
+					buf = in[i+1].value;
+					strcat(buf, in[i+2].value);
+					strcat(buf, in[i+3].value);
+					sscanf (G_ClearString(buf), "%f %f %f", &vec[0], &vec[1], &vec[2]);
+					((float *)(b+field->ofs))[0] = vec[0];
+					((float *)(b+field->ofs))[1] = vec[1];
+					((float *)(b+field->ofs))[2] = vec[2];
+					break;
+				  default:
+				  case F_IGNORE:
+					break;
+				}
+				break;
 			}
-			classname[j] = '\0';
-			//G_Printf("%s %s\n", in[i].value, in[i+1].value );
-			foundClass = qtrue;
-			
-		} else if( !strcmp(in[i].value, "\"origin\"" ) ) {
-		  
-		//	buf = va("%s", in[i+1].value);
-			Com_sprintf(buf, sizeof(buf), "%s", in[i+1].value);
-			for( j = 0; j < strlen(buf) - 2; j++ ){
-				buf[j] = buf[j+1];
-			}
-			buf[j+1] = '\0';
-			
-			origin[0] = atof(buf);
-			origin[1] = atof(in[i+2].value);
-			
-			//buf = va("%s", in[i+3].value);
-			Com_sprintf(buf, sizeof(buf), "%s", in[i+3].value);
-			buf[strlen(buf)-1] = '\0';
-			
-			origin[2] = atof(buf);
-			
-			//G_Printf("%f %f %f\n", origin[0], origin[1], origin[2] );
-			foundOrigin = qtrue;
-		} else if( !strcmp(in[i].value, "\"spawnflags\"" ) ) {
-		  
-			//buf = va("%s", in[i+1].value);
-			Com_sprintf(buf, sizeof(buf), "%s", in[i+1].value);
-			for( j = 0; j < strlen(buf) - 2; j++ ){
-				buf[j] = buf[j+1];
-			}
-			buf[j] = '\0';
-			
-			spawnflags = atoi(buf);
-		} else if( !strcmp(in[i].value, "\"random\"" ) ) {
-		  
-			//buf = va("%s", in[i+1].value);
-			Com_sprintf(buf, sizeof(buf), "%s", in[i+1].value);
-			for( j = 0; j < strlen(buf) - 2; j++ ){
-				buf[j] = buf[j+1];
-			}
-			buf[j] = '\0';
-			
-			random = atof(buf);
-		} else if( !strcmp(in[i].value, "\"wait\"" ) ) {
-		  
-			//buf = va("%s", in[i+1].value);
-			Com_sprintf(buf, sizeof(buf), "%s", in[i+1].value);
-			for( j = 0; j < strlen(buf) - 2; j++ ){
-				buf[j] = buf[j+1];
-			}
-			buf[j] = '\0';
-			
-			wait = atof(buf);
 		}
 	}
-	if( foundClass && foundOrigin ){
-		//G_Printf("%s\n", classname );
-		G_AddEntity(classname, origin, spawnflags, wait, random);
+	
+	if ( !G_CallSpawn( ent ) ) {
+		G_FreeEntity( ent );
 	}
 }
 
