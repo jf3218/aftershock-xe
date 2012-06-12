@@ -318,12 +318,12 @@ gentity_t *SelectInitialSpawnPoint( vec3_t origin, vec3_t angles, qboolean isbot
 			continue;
 		}
 		
-		if ( spot->spawnflags & 0x01 ) {
+		if ( spot->spawnflags & 1 && !SpotWouldTelefrag( spot ) ) {
 			break;
 		}
 	}
 
-	if ( !spot || SpotWouldTelefrag( spot ) ) {
+	if ( !spot /*|| SpotWouldTelefrag( spot )*/ ) {
 		return SelectSpawnPoint( vec3_origin, origin, angles );
 	}
 

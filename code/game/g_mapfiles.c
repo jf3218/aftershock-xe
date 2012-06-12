@@ -46,13 +46,99 @@ token_t tokens2[MAX_TOKENNUM];
 
 //TODO: items at first, later more stuff
 
+char*	allowed[] = {
+	// info entities don't do anything at all, but provide positional
+	// information for things controlled by other processes
+	"info_player_start",
+	"info_player_deathmatch",
+	"info_player_intermission",
+//Double Domination player spawn:
+	"info_player_dd",
+        "info_player_dd_red",
+        "info_player_dd_blue",
+//Standard Domination point spawn:
+	"domination_point",
+
+
+	"info_null",
+	"info_notnull",		// use target_position instead
+	"info_camp",
+	"func_plat",
+	"func_button",
+	"func_door",
+	"func_static",
+	"func_rotating",
+	"func_bobbing",
+	"func_pendulum",
+	"func_train",
+	"func_group",
+	"func_timer",		// rename trigger_timer?
+
+	// Triggers are brush objects that cause an effect when contacted
+	// by a living player, usually involving firing targets.
+	// While almost everything could be done with
+	// a single trigger class and different targets, triggered effects
+	// could not be client side predicted (push and teleport).
+	"trigger_always",
+	"trigger_multiple",
+	"trigger_push",
+	"trigger_teleport",
+	"trigger_hurt",
+
+	// targets perform no action by themselves, but must be triggered
+	// by another entity
+	"target_give",
+	"target_remove_powerups",
+	"target_delay",
+	"target_speaker",
+	"target_print",
+	"target_laser",
+	"target_score",
+	"target_teleporter",
+	"target_relay",
+	"target_kill",
+	"target_position",
+	"target_location",
+	"target_push",
+
+	"light",
+	"path_corner",
+	"misc_teleporter_dest",
+	"misc_model",
+	"misc_portal_surface",
+	"misc_portal_camera",
+
+	"shooter_rocket",
+	"shooter_grenade",
+	"shooter_plasma",
+	"team_CTF_redplayer",
+	"team_CTF_blueplayer",
+
+	"team_CTF_redspawn",
+	"team_CTF_bluespawn",
+
+	"team_redobelisk",
+	"team_blueobelisk",
+	"team_neutralobelisk",
+	"item_botroam",
+
+	NULL
+};
+
 qboolean G_ClassnameAllowed( char *input ){
 	gitem_t	*it;
+	int i;
 	for ( it = bg_itemlist + 1 ; it->classname ; it++) {
 		if ( !strcmp(input, it->classname ) ) {
 			return qtrue;
 		}
 	}
+	
+	/*for( i = 0; allowed[i]; i++ ){
+		if ( !strcmp(input, allowed[i] ) ) {
+			return qtrue;
+		} 
+	}*/
 	return qfalse;
 }
 
