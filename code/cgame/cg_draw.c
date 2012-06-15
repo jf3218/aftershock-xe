@@ -4387,6 +4387,88 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 #endif
 }*/
 
+float CG_OriginToScreenpos0( vec3_t origin ) {
+	float X1org=-160.0f, Y1org=16.0f, X2org=672.0f, Y2org=-1368.0f, X3org=-96.0f, Y3org=192.0f, X1=396.0f, X2=228.0f, X3=383.0f;
+	float b;
+	float a;
+	float c;
+	
+	b = ( (X1-X3)/(X1org-X3org)-(X2-X3)/(X2org-X3org) )/( (Y1org-Y3org)/(X1org-X3org)-(Y2org-Y3org)/(X2org-X3org));
+	a = ((X1-X3)/(X1org-X3org))-b*((Y1org-Y3org)/(X1org-X3org));
+	c = X3 - b*Y3org - a*X3org;
+ 	
+	return a*origin[0]+b*origin[1]+c;
+}
+
+float CG_OriginToScreenpos1( vec3_t origin ) {
+	float X1org=-160.0f, Y1org=16.0f, X2org=672.0f, Y2org=-1368.0f, X3org=-96.0f, Y3org=192.0f, X1=292.0f, X2=16.0f, X3=328.0f;
+	float b;
+	float a;
+	float c;
+	
+	b = ( (X1-X3)/(X1org-X3org)-(X2-X3)/(X2org-X3org) )/( (Y1org-Y3org)/(X1org-X3org)-(Y2org-Y3org)/(X2org-X3org));
+	a = ((X1-X3)/(X1org-X3org))-b*((Y1org-Y3org)/(X1org-X3org));
+	c = X3 - b*Y3org - a*X3org;
+ 	
+	return a*origin[0]+b*origin[1]+c;
+}
+
+/*
+=====================
+CG_DrawOverviewEntities
+
+Perform all drawing needed to completely fill the screen
+=====================
+*/
+static void CG_DrawOverviewEntities ( void ) {
+	int num,clientnum;
+	centity_t *cent;
+	for ( num = 0 ; num < cg.nextSnap->numEntities ; num++ ) {
+		cent = &cg_entities[ cg.nextSnap->entities[ num ].number ];
+		if( cent->currentState.eType == ET_ITEM ){
+			if ( cent->currentState.modelindex >= bg_numItems ) {
+				continue;
+			}
+			// if set to invisible, skip
+			if ( !cent->currentState.modelindex ||   cent->currentState.eFlags & EF_NODRAW  ) {
+				continue;
+			}
+			CG_DrawPic(CG_OriginToScreenpos0(cent->lerpOrigin)-5, CG_OriginToScreenpos1(cent->lerpOrigin)-5, 10, 10, cg_items[cent->currentState.modelindex].icon);
+		} else if( cent->currentState.eType == ET_PLAYER ) {
+			trap_R_SetColor(colorGreen);
+			CG_DrawPic(CG_OriginToScreenpos0(cent->lerpOrigin)-5, CG_OriginToScreenpos1(cent->lerpOrigin)-5, 10, 10, cgs.media.playericon);
+			trap_R_SetColor(NULL);
+		} else if( cent->currentState.eType == ET_MISSILE ) {
+			if( cent->currentState.weapon == WP_GRENADE_LAUNCHER ) {
+				CG_DrawPic(CG_OriginToScreenpos0(cent->lerpOrigin)-2.5f, CG_OriginToScreenpos1(cent->lerpOrigin)-2.5f, 5, 5, cgs.media.grenadeMapoverview);
+			} else if( cent->currentState.weapon == WP_ROCKET_LAUNCHER ) {
+				CG_DrawPic(CG_OriginToScreenpos0(cent->lerpOrigin)-2.5f, CG_OriginToScreenpos1(cent->lerpOrigin)-2.5f, 5, 5, cgs.media.rocketMapoverview);
+			} else if( cent->currentState.weapon == WP_PLASMAGUN ) {
+				CG_DrawPic(CG_OriginToScreenpos0(cent->lerpOrigin)-2.5f, CG_OriginToScreenpos1(cent->lerpOrigin)-2.5f, 5, 5, cgs.media.plasmaMapoverview);
+			} else if( cent->currentState.weapon == WP_BFG ) {
+				CG_DrawPic(CG_OriginToScreenpos0(cent->lerpOrigin)-2.5f, CG_OriginToScreenpos1(cent->lerpOrigin)-2.5f, 5, 5, cgs.media.bfgMapoverview);
+			}
+		} else if( cent->currentState.eType > ET_EVENTS ) {
+			switch( cent->currentState.event & ~EV_EVENT_BITS ){
+				case EV_RAILTRAIL:
+					CG_DrawLine( CG_OriginToScreenpos0(cent->currentState.origin2), CG_OriginToScreenpos1(cent->currentState.origin2), 
+						     CG_OriginToScreenpos0(cent->currentState.pos.trBase), CG_OriginToScreenpos1(cent->currentState.pos.trBase), colorGreen );
+					break;
+				case EV_BULLET_HIT_FLESH:
+				case EV_BULLET_HIT_WALL:
+					clientnum = cent->currentState.clientNum;
+					CG_DrawLine( CG_OriginToScreenpos0(cg_entities[clientnum].lerpOrigin), CG_OriginToScreenpos1(cg_entities[clientnum].lerpOrigin), 
+						     CG_OriginToScreenpos0(cent->currentState.pos.trBase), CG_OriginToScreenpos1(cent->currentState.pos.trBase), colorYellow );
+					break;
+					
+			}
+		}
+		
+	}
+	if( cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR ){
+		CG_DrawPic(CG_OriginToScreenpos0(cg.snap->ps.origin)-5, CG_OriginToScreenpos1(cg.snap->ps.origin)-5, 10, 10, cgs.media.playericon);
+	}
+}
 /*
 =====================
 CG_DrawActive
@@ -4396,6 +4478,7 @@ Perform all drawing needed to completely fill the screen
 */
 void CG_DrawActive ( stereoFrame_t stereoView, qboolean draw2d ) {
     //int i;
+    qhandle_t picture;
     if ( !cg.snap ) {
         CG_DrawInformation();
         return;
@@ -4415,6 +4498,14 @@ void CG_DrawActive ( stereoFrame_t stereoView, qboolean draw2d ) {
         CG_DrawChat ( qtrue );
         CG_DrawTeamInfo();
         return;
+    }
+    
+    if( cg_mapoverview.integer /*&& cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR*/ ){
+	    picture = trap_R_RegisterShader("mapoverview/ztn3tourney1.tga");
+	    CG_DrawPic(0,0,640,480,picture);
+	    //CG_FillRect(0, 0, 640, 480, colorBlack);
+	    CG_DrawOverviewEntities();
+	    return;
     }
 
     if ( stereoView != STEREO_CENTER )

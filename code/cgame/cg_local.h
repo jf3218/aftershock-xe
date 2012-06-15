@@ -1277,6 +1277,13 @@ typedef struct {
 	
 	qhandle_t 	spawnPoint;
 	qhandle_t 	spawnPointShader;
+	
+	qhandle_t 	playericon;
+	qhandle_t 	mapoverview;
+	qhandle_t	grenadeMapoverview;
+	qhandle_t	rocketMapoverview;
+	qhandle_t	plasmaMapoverview;
+	qhandle_t	bfgMapoverview;
 
 } cgMedia_t;
 
@@ -1761,6 +1768,7 @@ extern vmCvar_t 		cg_muzzleFlash;
 extern vmCvar_t 		cg_playerLean;
 extern vmCvar_t 		cg_explosion;
 extern vmCvar_t 		cg_drawSpawnpoints;
+extern vmCvar_t 		cg_mapoverview;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
@@ -1828,6 +1836,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 void CG_AdjustFrom640( float *x, float *y, float *w, float *h );
 void CG_FillRect( float x, float y, float width, float height, const float *color );
 void CG_DrawPic( float x, float y, float width, float height, qhandle_t hShader );
+void CG_DrawLine( float x1, float y1, float x2, float y2, float* color );
 void CG_DrawString( float x, float y, const char *string, 
 				   float charWidth, float charHeight, const float *modulate );
 void CG_DrawStringHud( int hudnumber, qboolean colorize, const char* text );

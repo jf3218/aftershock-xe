@@ -404,6 +404,8 @@ vmCvar_t 	cg_playerLean;
 vmCvar_t 	cg_explosion;
 vmCvar_t 	cg_drawSpawnpoints;
 
+vmCvar_t 	cg_mapoverview;
+
 
 typedef struct {
 	vmCvar_t	*vmCvar;
@@ -661,7 +663,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_muzzleFlash, "cg_muzzleFlash", "1", CVAR_ARCHIVE },
 	{&cg_playerLean, "cg_playerLean", "1.0", CVAR_ARCHIVE },
 	{&cg_explosion, "cg_explosion", "255", CVAR_ARCHIVE },
-	{&cg_drawSpawnpoints, "cg_drawSpawnpoints", "1", CVAR_ARCHIVE }
+	{&cg_drawSpawnpoints, "cg_drawSpawnpoints", "1", CVAR_ARCHIVE },
+	{&cg_mapoverview, "cg_mapoverview", "0", CVAR_ARCHIVE }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -1626,6 +1629,12 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.redMarker = trap_R_RegisterShader("icons/red.tga");
 	cgs.media.spawnPoint = trap_R_RegisterModel("models/mapobjects/spawnpoint.md3");
 	cgs.media.spawnPointShader = trap_R_RegisterShader("spawnpoint");
+	
+	cgs.media.playericon = trap_R_RegisterShader("playericon");
+	cgs.media.grenadeMapoverview = trap_R_RegisterShader("grenadeMapoverview");
+	cgs.media.rocketMapoverview = trap_R_RegisterShader("rocketMapoverview");
+	cgs.media.plasmaMapoverview = trap_R_RegisterShader("plasmaMapoverview");
+	cgs.media.bfgMapoverview = trap_R_RegisterShader("bfgMapoverview");
 /*
 	for (i=1; i<MAX_PARTICLES_AREAS; i++)
 	{

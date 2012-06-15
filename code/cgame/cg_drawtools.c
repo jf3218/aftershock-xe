@@ -120,6 +120,23 @@ void CG_DrawPic( float x, float y, float width, float height, qhandle_t hShader 
 
 /*
 ================
+CG_DrawLine
+
+Coordinates are 640*480 virtual values
+=================
+*/
+void CG_DrawLine( float x1, float y1, float x2, float y2, float* color ) {
+	int i;
+	int diffx = (int)x2-(int)x1;
+	int diffy = (int)y2-(int)y1;
+	int length = (int)sqrt(diffx*diffx+diffy*diffy);
+	for( i = 0; i < length; i++ ){
+		CG_FillRect(x1+diffx*i/length, y1+diffy*i/length, 1, 1, color);
+	}
+}
+
+/*
+================
 CG_DrawHudIcon
 
 Draws an icon defined 

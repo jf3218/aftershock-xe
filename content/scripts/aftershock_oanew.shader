@@ -991,3 +991,44 @@ spawnpoint
 	}
 }
 
+playericon
+{
+	nopicmip
+	{
+		map gfx/playericon.tga          
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA     
+        	rgbGen vertex
+	}
+}
+
+grenadeMapoverview
+{
+	{
+		map gfx/grenadeMapoverview.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA 
+	}
+}
+
+rocketMapoverview
+{
+	{
+		map gfx/rocketMapoverview.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA 
+	}
+}
+
+plasmaMapoverview
+{
+	{
+		map gfx/plasmaMapoverview.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA 
+	}
+}
+
+bfgMapoverview
+{
+	{
+		map gfx/bfgMapoverview.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA 
+	}
+}
