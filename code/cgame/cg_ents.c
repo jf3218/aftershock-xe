@@ -493,25 +493,30 @@ static void CG_Missile( centity_t *cent ) {
 			ent.customShader = cgs.media.plasmaBallShaderColor;
 			if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
 				if( local->team != other->team ){
-					ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+					CG_setRGBA( &ent, cg_enemyWeaponColor.string );
+					/*ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 					ent.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
-					ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+					ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );*/
 				}
 				else{
+					CG_setRGBA( &ent, cg_teamWeaponColor.string );
+					/*
 					ent.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
 					ent.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
-					ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+					ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );*/
 				}
 			}
 			else if( cg.clientNum != cg_entities[cent->currentState.otherEntityNum].currentState.number ){
-				ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+				CG_setRGBA( &ent, cg_enemyWeaponColor.string );
+				/*ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 				ent.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
-				ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+				ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );*/
 			}
 			else{
-				ent.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+				CG_setRGBA( &ent, cg_teamWeaponColor.string );
+				/*ent.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
 				ent.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
-				ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+				ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );*/
 			}
 		}
 		else
@@ -531,25 +536,30 @@ static void CG_Missile( centity_t *cent ) {
 		ent.customShader = cgs.media.grenadeSkinColor;
 		if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
 			if( local->team != other->team ){
-				ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+				CG_setRGBA( &ent, cg_enemyWeaponColor.string );
+				/*ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 				ent.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
-				ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+				ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );*/
 			}
 			else{
+				CG_setRGBA( &ent, cg_teamWeaponColor.string );
+				/*
 				ent.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
 				ent.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
-				ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+				ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );*/
 			}
 		}
 		else if( cg.clientNum != cg_entities[cent->currentState.otherEntityNum].currentState.number ){
-			ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
+			CG_setRGBA( &ent, cg_enemyWeaponColor.string );
+			/*ent.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 			ent.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
-			ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
+			ent.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );*/
 		}
 		else{
-			ent.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
+			CG_setRGBA( &ent, cg_teamWeaponColor.string );
+			/*ent.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
 			ent.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
-			ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
+			ent.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );*/
 		}	
 	}	
 	
