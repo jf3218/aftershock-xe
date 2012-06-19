@@ -2798,35 +2798,35 @@ int hexToAlpha( char* hexin ){
 	return( out );
 }
 
-void CG_setRGBA( refEntity_t *inRef, char *instring ){
+void CG_setRGBA( byte *incolor, char *instring ){
 	
 	if( strlen(instring) == 1 && ColorIndex(*(instring)) >= 0 && ColorIndex(*(instring)) < MAX_CCODES ){
-		inRef->shaderRGBA[0] = (int)(g_color_table[ColorIndex(*(instring))][0]*255);
-		inRef->shaderRGBA[1] = (int)(g_color_table[ColorIndex(*(instring))][1]*255);
-		inRef->shaderRGBA[2] = (int)(g_color_table[ColorIndex(*(instring))][2]*255);
-		inRef->shaderRGBA[3] = 255;
+		incolor[0] = (int)(g_color_table[ColorIndex(*(instring))][0]*255);
+		incolor[1] = (int)(g_color_table[ColorIndex(*(instring))][1]*255);
+		incolor[2] = (int)(g_color_table[ColorIndex(*(instring))][2]*255);
+		incolor[3] = 255;
 	}
 	else if( !strcmp( instring, "red" ) )
-		CG_setRGBA(inRef, "1");
+		CG_setRGBA(incolor, "1");
 	else if( !strcmp( instring, "green" ) )
-		CG_setRGBA(inRef, "2");
+		CG_setRGBA(incolor, "2");
 	else if( !strcmp( instring, "yellow" ) )
-		CG_setRGBA(inRef, "3");
+		CG_setRGBA(incolor, "3");
 	else if( !strcmp( instring, "blue" ) )
-		CG_setRGBA(inRef, "4");
+		CG_setRGBA(incolor, "4");
 	else if( !strcmp( instring, "cyan" ) )
-		CG_setRGBA(inRef, "5");
+		CG_setRGBA(incolor, "5");
 	else if( !strcmp( instring, "purple" ) )
-		CG_setRGBA(inRef, "6");
+		CG_setRGBA(incolor, "6");
 	else if( !strcmp( instring, "white" ) )
-		CG_setRGBA(inRef, "7");
+		CG_setRGBA(incolor, "7");
 	else if( !strcmp( instring, "orange" ) )
-		CG_setRGBA(inRef, "8");
+		CG_setRGBA(incolor, "8");
 	else{
-		inRef->shaderRGBA[0] = hexToRed(instring);
-		inRef->shaderRGBA[1] = hexToGreen(instring);
-		inRef->shaderRGBA[2] = hexToBlue(instring);
-		inRef->shaderRGBA[3] = hexToAlpha(instring);
+		incolor[0] = hexToRed(instring);
+		incolor[1] = hexToGreen(instring);
+		incolor[2] = hexToBlue(instring);
+		incolor[3] = hexToAlpha(instring);
 	}
 }
 
@@ -2842,39 +2842,39 @@ void CG_setColor(clientInfo_t * ci, refEntity_t * head, refEntity_t * torso,
   	localPlayer = &cgs.clientinfo[cg.clientNum];
 
 	if( ( state & EF_DEAD )  && cg_deadBodyDarken.integer ){
-		CG_setRGBA(legs, cg_deadBodyColor.string);
-		CG_setRGBA(torso, cg_deadBodyColor.string);
-		CG_setRGBA(head, cg_deadBodyColor.string);
+		CG_setRGBA(legs->shaderRGBA, cg_deadBodyColor.string);
+		CG_setRGBA(torso->shaderRGBA, cg_deadBodyColor.string);
+		CG_setRGBA(head->shaderRGBA, cg_deadBodyColor.string);
 		return;
 	}
 	else if( localPlayer->team == TEAM_FREE || ( localPlayer->team != ci->team && !cg_forceteammodels.integer && localPlayer->team != TEAM_SPECTATOR ) ){
-		CG_setRGBA(legs, cg_enemyLegsColor.string);
-		CG_setRGBA(torso, cg_enemyTorsoColor.string);
-		CG_setRGBA(head, cg_enemyHeadColor.string);
+		CG_setRGBA(legs->shaderRGBA, cg_enemyLegsColor.string);
+		CG_setRGBA(torso->shaderRGBA, cg_enemyTorsoColor.string);
+		CG_setRGBA(head->shaderRGBA, cg_enemyHeadColor.string);
 		return;
 	}
 	else if( ( ci->team == TEAM_BLUE && cg_forceteammodels.integer ) || ( ci->team == TEAM_BLUE && localPlayer->team == TEAM_SPECTATOR ) ){
-		CG_setRGBA(legs, cg_blueLegsColor.string);
-		CG_setRGBA(torso, cg_blueTorsoColor.string);
-		CG_setRGBA(head, cg_blueHeadColor.string);
+		CG_setRGBA(legs->shaderRGBA, cg_blueLegsColor.string);
+		CG_setRGBA(torso->shaderRGBA, cg_blueTorsoColor.string);
+		CG_setRGBA(head->shaderRGBA, cg_blueHeadColor.string);
 		return;
 	}
 	else if( ( ci->team == TEAM_RED &&  cg_forceteammodels.integer ) || ( ci->team == TEAM_RED && localPlayer->team == TEAM_SPECTATOR ) ){
-		CG_setRGBA(legs, cg_redLegsColor.string);
-		CG_setRGBA(torso, cg_redTorsoColor.string);
-		CG_setRGBA(head, cg_redHeadColor.string);
+		CG_setRGBA(legs->shaderRGBA, cg_redLegsColor.string);
+		CG_setRGBA(torso->shaderRGBA, cg_redTorsoColor.string);
+		CG_setRGBA(head->shaderRGBA, cg_redHeadColor.string);
 		return;
 	}
 	else if( localPlayer->team != TEAM_FREE && ( localPlayer->team == ci->team && !cg_forceteammodels.integer ) ){
-		CG_setRGBA(legs, cg_teamLegsColor.string);
-		CG_setRGBA(torso, cg_teamTorsoColor.string);
-		CG_setRGBA(head, cg_teamHeadColor.string);
+		CG_setRGBA(legs->shaderRGBA, cg_teamLegsColor.string);
+		CG_setRGBA(torso->shaderRGBA, cg_teamTorsoColor.string);
+		CG_setRGBA(head->shaderRGBA, cg_teamHeadColor.string);
 		return;
 	}
 	else{
-		CG_setRGBA(legs, cg_enemyLegsColor.string);
-		CG_setRGBA(torso, cg_enemyTorsoColor.string);
-		CG_setRGBA(head, cg_enemyHeadColor.string);
+		CG_setRGBA(legs->shaderRGBA, cg_enemyLegsColor.string);
+		CG_setRGBA(torso->shaderRGBA, cg_enemyTorsoColor.string);
+		CG_setRGBA(head->shaderRGBA, cg_enemyHeadColor.string);
 		return;
 	}
 }

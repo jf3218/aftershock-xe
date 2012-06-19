@@ -1922,7 +1922,7 @@ int  hexToRed( char* hexin );
 int  hexToGreen( char* hexin );
 int  hexToBlue( char* hexin );
 int  hexToAlpha( char* hexin );
-void CG_setRGBA( refEntity_t *inRef, char *instring );
+void CG_setRGBA( byte *incolor, char *instring );
 //
 // cg_predict.c
 //

@@ -249,7 +249,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 		
 		if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
 			if( localPlayer->team != ci->team ){
-				CG_setRGBA(re, cg_enemyWeaponColor.string);
+				CG_setRGBA(re->shaderRGBA, cg_enemyWeaponColor.string);
 				/*re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 				re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 				re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
@@ -261,7 +261,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 				le->color[3] = ((float)re->shaderRGBA[3])/255.0;
 			}
 			else{
-				CG_setRGBA(re, cg_teamWeaponColor.string);
+				CG_setRGBA(re->shaderRGBA, cg_teamWeaponColor.string);
 				/*re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 				re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 				re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
@@ -274,7 +274,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 			}
 		}
 		else if( localPlayer != ci ){
-			CG_setRGBA(re, cg_enemyWeaponColor.string);
+			CG_setRGBA(re->shaderRGBA, cg_enemyWeaponColor.string);
 			/*re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 			re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 			re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
@@ -286,7 +286,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 			le->color[3] = ((float)re->shaderRGBA[3])/255.0;
 		}
 		else{
-			CG_setRGBA(re, cg_teamWeaponColor.string);
+			CG_setRGBA(re->shaderRGBA, cg_teamWeaponColor.string);
 			/*re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 			re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 			re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
@@ -357,7 +357,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 		
 				if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
 					if( localPlayer->team != ci->team ){
-						CG_setRGBA(re, cg_enemyWeaponColor.string);
+						CG_setRGBA(re->shaderRGBA, cg_enemyWeaponColor.string);
 						/*re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 						re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 						re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
@@ -369,7 +369,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 						le->color[3] = ((float)re->shaderRGBA[3])/255.0;
 					}
 					else{
-						CG_setRGBA(re, cg_teamWeaponColor.string);
+						CG_setRGBA(re->shaderRGBA, cg_teamWeaponColor.string);
 						/*re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 						re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 						re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
@@ -382,7 +382,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 					}
 				}
 				else if( localPlayer != ci ){
-					CG_setRGBA(re, cg_enemyWeaponColor.string);
+					CG_setRGBA(re->shaderRGBA, cg_enemyWeaponColor.string);
 					/*re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 					re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 					re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
@@ -394,7 +394,7 @@ void CG_RailTrail (clientInfo_t *ci, vec3_t start, vec3_t end) {
 					le->color[3] = ((float)re->shaderRGBA[3])/255.0;
 				}
 				else{
-					CG_setRGBA(re, cg_teamWeaponColor.string);
+					CG_setRGBA(re->shaderRGBA, cg_teamWeaponColor.string);
 					/*re->shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 					re->shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 					re->shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
@@ -454,13 +454,14 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 	localEntity_t *le;
 	refEntity_t   *re;
 	clientInfo_t *local, *other;
+	byte color[4];
 	
-	if( ( ( wi->item->giTag == WP_GRENADE_LAUNCHER ) && ( cg_forceWeaponColor.integer & 2 ) && ( cg_grenadeTrail.integer == TRAIL_TRACER ) ) || 
-	    ( ( wi->item->giTag == WP_ROCKET_LAUNCHER ) && ( cg_forceWeaponColor.integer & 4 ) && ( cg_rocketTrail.integer == TRAIL_TRACER ) ) ){
+	//if( ( ( wi->item->giTag == WP_GRENADE_LAUNCHER ) && ( cg_forceWeaponColor.integer & 2 ) && ( cg_grenadeTrail.integer == TRAIL_TRACER ) ) || 
+	//    ( ( wi->item->giTag == WP_ROCKET_LAUNCHER ) && ( cg_forceWeaponColor.integer & 4 ) && ( cg_rocketTrail.integer == TRAIL_TRACER ) ) ){
 	  
-		le = CG_AllocLocalEntity();
-		re = &le->refEntity;
-	}
+	//	le = CG_AllocLocalEntity();
+	//	re = &le->refEntity;
+	//}
 	
 	if ( cg_noProjectileTrail.integer ) {
 		return;
@@ -472,40 +473,40 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 	if( ( ( wi->item->giTag == WP_GRENADE_LAUNCHER ) && ( cg_forceWeaponColor.integer & 2 ) ) || ( ( wi->item->giTag == WP_ROCKET_LAUNCHER ) && ( cg_forceWeaponColor.integer & 4 ) ) ){
 		if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
 			if( local->team != other->team ){
-				CG_setRGBA(re,cg_enemyWeaponColor.string);
+				CG_setRGBA(color,cg_enemyWeaponColor.string);
 				/*red = ((float)hexToRed( cg_enemyWeaponColor.string ))/255.0f;
 				green = ((float)hexToGreen( cg_enemyWeaponColor.string ))/255.0f;
 				blue = ((float)hexToBlue( cg_enemyWeaponColor.string ))/255.0f;*/
 			}
 			else{
-				CG_setRGBA(re,cg_teamWeaponColor.string);
+				CG_setRGBA(color,cg_teamWeaponColor.string);
 				/*red = ((float)hexToRed( cg_teamWeaponColor.string ))/255.0f;
 				green = ((float)hexToGreen( cg_teamWeaponColor.string ))/255.0f;
 				blue = ((float)hexToBlue( cg_teamWeaponColor.string ))/255.0f;*/
 			}
 		}
 		else if( cg.clientNum != cg_entities[ent->currentState.otherEntityNum].currentState.number ){
-			CG_setRGBA(re,cg_enemyWeaponColor.string);
+			CG_setRGBA(color,cg_enemyWeaponColor.string);
 			/*red = ((float)hexToRed( cg_enemyWeaponColor.string ))/255.0f;
 			green = ((float)hexToGreen( cg_enemyWeaponColor.string ))/255.0f;
 			blue = ((float)hexToBlue( cg_enemyWeaponColor.string ))/255.0f;*/
 		}
 		else{
-			CG_setRGBA(re,cg_teamWeaponColor.string);
+			CG_setRGBA(color,cg_teamWeaponColor.string);
 			/*red = ((float)hexToRed( cg_teamWeaponColor.string ))/255.0f;
 			green = ((float)hexToGreen( cg_teamWeaponColor.string ))/255.0f;
 			blue = ((float)hexToBlue( cg_teamWeaponColor.string ))/255.0f;*/
 		}
 	}
 	else{
-		re->shaderRGBA[0] = 1;
-		re->shaderRGBA[1] = 1;
-		re->shaderRGBA[2] = 1;
+		color[0] = 1;
+		color[1] = 1;
+		color[2] = 1;
 	}
 	
-	red = ((float)re->shaderRGBA[0])/255.0f;
-	green = ((float)re->shaderRGBA[1])/255.0f;
-	blue = ((float)re->shaderRGBA[2])/255.0f;
+	red = ((float)color[0])/255.0f;
+	green = ((float)color[1])/255.0f;
+	blue = ((float)color[2])/255.0f;
 	alpha = 0.33f;
 
 	up[0] = 0;
@@ -569,8 +570,8 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 			} else if( cg_grenadeTrail.integer == TRAIL_PARTICLE ) {
 				CG_LaunchParticleTrail(lastPos );
 			} else if( cg_grenadeTrail.integer == TRAIL_TRACER ){
-				/*le = CG_AllocLocalEntity();
-				re = &le->refEntity;*/
+				le = CG_AllocLocalEntity();
+				re = &le->refEntity;
  
 				le->leType = LE_FADE_RGB;
 				le->startTime = cg.time;
@@ -588,6 +589,11 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 					re->shaderRGBA[2] = 0.0 * 255;
 					re->shaderRGBA[3] = 255;
 
+				} else {
+					re->shaderRGBA[0] = color[0];
+					re->shaderRGBA[1] = color[1];
+					re->shaderRGBA[2] = color[2];
+					re->shaderRGBA[3] = 255;
 				}
 				
 				le->color[0] = ((float)re->shaderRGBA[0])/255.0f;
@@ -627,8 +633,8 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 			} else if( cg_rocketTrail.integer == TRAIL_PARTICLE ) {
 				CG_LaunchParticleTrail(lastPos );
 			} else if( cg_rocketTrail.integer == TRAIL_TRACER ){
-				/*le = CG_AllocLocalEntity();
-				re = &le->refEntity;*/
+				le = CG_AllocLocalEntity();
+				re = &le->refEntity;
  
 				le->leType = LE_FADE_RGB;
 				le->startTime = cg.time;
@@ -640,12 +646,16 @@ static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi ) {
 				re->customShader = cgs.media.railCoreShader;
 				
 				if( !( ( wi->item->giTag == WP_ROCKET_LAUNCHER ) && ( cg_forceWeaponColor.integer & 4 ) ) ){
-				
 					re->shaderRGBA[0] = 1.0 * 255;
 					re->shaderRGBA[1] = 1.0 * 255;
 					re->shaderRGBA[2] = 0.0 * 255;
 					re->shaderRGBA[3] = 255;
 
+				} else {
+					re->shaderRGBA[0] = color[0];
+					re->shaderRGBA[1] = color[1];
+					re->shaderRGBA[2] = color[2];
+					re->shaderRGBA[3] = 255;
 				}
 				
 				le->color[0] = ((float)re->shaderRGBA[0])/255.0f;
@@ -1620,14 +1630,14 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 		beam.customShader = cgs.media.lightningShaderColor[style];
 		if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
 			if( local->team != other->team ){
-				CG_setRGBA(&beam, cg_enemyWeaponColor.string);
+				CG_setRGBA(beam.shaderRGBA, cg_enemyWeaponColor.string);
 				/*beam.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 				beam.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 				beam.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
 				beam.shaderRGBA[3] = hexToAlpha( cg_enemyWeaponColor.string );*/
 			}
 			else{
-				CG_setRGBA(&beam, cg_teamWeaponColor.string);
+				CG_setRGBA(beam.shaderRGBA, cg_teamWeaponColor.string);
 				/*beam.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
 				beam.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
 				beam.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );
@@ -1635,14 +1645,14 @@ static void CG_LightningBolt( centity_t *cent, vec3_t origin ) {
 			}
 		}
 		else if( cg.clientNum != cent->currentState.number ){
-			CG_setRGBA(&beam, cg_enemyWeaponColor.string);
+			CG_setRGBA(beam.shaderRGBA, cg_enemyWeaponColor.string);
 			/*beam.shaderRGBA[0] = hexToRed( cg_enemyWeaponColor.string );
 			beam.shaderRGBA[1] = hexToGreen( cg_enemyWeaponColor.string );
 			beam.shaderRGBA[2] = hexToBlue( cg_enemyWeaponColor.string );
 			beam.shaderRGBA[3] = hexToAlpha( cg_enemyWeaponColor.string );*/
 		}
 		else{
-			CG_setRGBA(&beam, cg_teamWeaponColor.string);
+			CG_setRGBA(beam.shaderRGBA, cg_teamWeaponColor.string);
 			/*beam.shaderRGBA[0] = hexToRed( cg_teamWeaponColor.string );
 			beam.shaderRGBA[1] = hexToGreen( cg_teamWeaponColor.string );
 			beam.shaderRGBA[2] = hexToBlue( cg_teamWeaponColor.string );

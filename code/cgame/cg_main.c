@@ -664,7 +664,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_playerLean, "cg_playerLean", "1.0", CVAR_ARCHIVE },
 	{&cg_explosion, "cg_explosion", "255", CVAR_ARCHIVE },
 	{&cg_drawSpawnpoints, "cg_drawSpawnpoints", "1", CVAR_ARCHIVE },
-	{&cg_mapoverview, "cg_mapoverview", "0", CVAR_ARCHIVE }
+	{&cg_mapoverview, "cg_mapoverview", "0", CVAR_ARCHIVE | CVAR_CHEAT }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
