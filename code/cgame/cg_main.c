@@ -609,7 +609,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_noAmmoChange, "cg_noAmmoChange", "1", CVAR_ARCHIVE},
 	{&cg_lgHitSfx, "cg_lgHitSfx", "1", CVAR_ARCHIVE},
 	{&cg_crosshairHitColor, "cg_crosshairHitColor", "1", CVAR_ARCHIVE},
-	{&cg_crosshairHitColorTime, "cg_crosshairHitColorTime", "0", CVAR_ARCHIVE},
+	{&cg_crosshairHitColorTime, "cg_crosshairHitColorTime", "500", CVAR_ARCHIVE},
 	{&cg_itemFX, "cg_itemFX", "7", CVAR_ARCHIVE},
 	{&aftershock_login, "aftershock_login", "", CVAR_USERINFO },
 	{&aftershock_password, "aftershock_password", "", CVAR_USERINFO },
