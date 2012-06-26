@@ -467,7 +467,7 @@ gitem_t	bg_itemlist[] =
 		WP_MACHINEGUN,
 /* precache */ "",
 /* sounds */ "",
-		"",
+		"models/powerups/ammo/machammo_bright",
 	"^2MG ammo",
 		0
 	},

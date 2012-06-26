@@ -1701,6 +1701,7 @@ extern vmCvar_t			cg_noAmmoChange;
 extern vmCvar_t			cg_lgHitSfx;
 extern vmCvar_t			cg_crosshairHitColor;
 extern vmCvar_t			cg_crosshairHitColorTime;
+extern vmCvar_t 		cg_crosshairHitColorStyle;
 
 extern vmCvar_t			cg_itemFX;
 

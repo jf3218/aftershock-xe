@@ -3394,6 +3394,10 @@ static void CG_GetHitColor( float *color ) {
     float hitcolor[3];
     float factor = ((float)(cg.lastHitDamage[0])/200.0f)+0.5f;
 
+    if( cg_crosshairHitColorStyle.integer == 1 || cg_crosshairHitColorStyle.integer == 3 ) {
+	    factor = 1.0f;
+    }
+    
     if ( factor > 1 )
         factor = 1.0f;
 
@@ -3443,21 +3447,27 @@ static void CG_DrawCrosshair ( void ) {
         return;
     }
 
-    if ( cg_crosshairHitColorTime.integer > 0 ) {
-        if ( cg.time - cg.lastHitTime[0] < cg_crosshairHitColorTime.integer ) {
-            CG_GetHitColor(color);
-            /*color[0] = 1.0f;
-            color[1] = 1.0f-cg.lastHitDamage/100.0f;
-            if ( color[1] < 0.0f )
-            	color[1] = 0.0f;
-            color[2] = 0.0f;
-            color[3] = 1.0f;*/
-        } else {
-            color[0] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][0]);
-	    color[1] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][1]);
-	    color[2] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][2]);
-	    color[3] = 1.0f;
-        }
+    if ( cg_crosshairHitColorTime.integer > 0 && cg_crosshairHitColorStyle.integer ) {
+	if ( cg_crosshairHitColorStyle.integer == 3 || cg_crosshairHitColorStyle.integer == 4 ) {
+		if ( cg.time - cg.lastHitTime[0] < (int)( cg_crosshairHitColorTime.integer * ( cg.lastHitDamage[0]/100.0f ) ) ) {
+		    CG_GetHitColor(color);
+		} else {
+		    color[0] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][0]);
+		    color[1] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][1]);
+		    color[2] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][2]);
+		    color[3] = 1.0f;
+		}
+	  
+	} else {
+		if ( cg.time - cg.lastHitTime[0] < cg_crosshairHitColorTime.integer ) {
+		    CG_GetHitColor(color);
+		} else {
+		    color[0] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][0]);
+		    color[1] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][1]);
+		    color[2] = (g_color_table[ColorIndex(*(cg_crosshairColor.string))][2]);
+		    color[3] = 1.0f;
+		}
+	}
     }
     // set color based on health
     else if ( cg_crosshairHealth.integer ) {

@@ -334,6 +334,7 @@ vmCvar_t	cg_noAmmoChange;
 vmCvar_t	cg_lgHitSfx;
 vmCvar_t	cg_crosshairHitColor;
 vmCvar_t 	cg_crosshairHitColorTime;
+vmCvar_t 	cg_crosshairHitColorStyle;
 
 vmCvar_t	cg_itemFX;
 
@@ -610,6 +611,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_lgHitSfx, "cg_lgHitSfx", "1", CVAR_ARCHIVE},
 	{&cg_crosshairHitColor, "cg_crosshairHitColor", "1", CVAR_ARCHIVE},
 	{&cg_crosshairHitColorTime, "cg_crosshairHitColorTime", "500", CVAR_ARCHIVE},
+	{&cg_crosshairHitColorStyle, "cg_crosshairHitColorStyle", "1", CVAR_ARCHIVE},
 	{&cg_itemFX, "cg_itemFX", "7", CVAR_ARCHIVE},
 	{&aftershock_login, "aftershock_login", "", CVAR_USERINFO },
 	{&aftershock_password, "aftershock_password", "", CVAR_USERINFO },
@@ -765,6 +767,9 @@ void CG_UpdateCvars( void ) {
 		}
 		else if ( cv->vmCvar == &cg_playerLean ) {
 			CG_Cvar_ClampFloat( cv->cvarName, cv->vmCvar, 0.0, 1.0 );
+		}
+		else if ( cv->vmCvar == &cg_crosshairHitColorStyle ) {
+			CG_Cvar_ClampInt( cv->cvarName, cv->vmCvar, 0, 4 );
 		}
 		trap_Cvar_Update( cv->vmCvar );
 	}
