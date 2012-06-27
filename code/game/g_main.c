@@ -264,6 +264,7 @@ vmCvar_t     g_aftershockRespawn;
 vmCvar_t     g_nameCheck;
 
 vmCvar_t     g_autoServerDemos;
+vmCvar_t     g_autoRestart;
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -522,7 +523,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_forceIntermissionExit, "g_forceIntermissionExit", "0", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_aftershockRespawn, "g_aftershockRespawn", "1", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_nameCheck, "g_nameCheck", "1", CVAR_ARCHIVE, 0, qfalse },
-	{ &g_autoServerDemos, "g_autoServerDemos", "0", CVAR_ARCHIVE, 0, qfalse }
+	{ &g_autoServerDemos, "g_autoServerDemos", "0", CVAR_ARCHIVE, 0, qfalse },
+	{ &g_autoRestart, "g_autoRestart", "1", CVAR_ARCHIVE, 0, qfalse }
 };
 
 // bk001129 - made static to avoid aliasing
@@ -3176,6 +3178,11 @@ void G_RunFrame( int levelTime ) {
 	if ( level.restarted ) {
 		return;
 	} 
+	
+	if( g_autoRestart.integer && level.numConnectedClients == 0 && g_timelimit.integer && ( ( level.time - level.startTime ) > g_timelimit.integer*60000 ) ){
+		G_Printf("AUTORESTART:timelimit hit, restarting map\n");
+		trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
+	}
 	
 	/*if( level.timeout && ( ( levelTime- level.timeoutAdd ) < level.timeoutTime ) )
 		return;*/
