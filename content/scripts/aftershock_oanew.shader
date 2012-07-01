@@ -243,18 +243,18 @@ redArmor
 	}
 }
 
-yellowArmor
+models/powerups/armor/yellowArmor
 {
 	{
 		map models/powerups/armor/yellowarmor.tga
 		rgbGen lightingDiffuse
 	}
-	{
-		map textures/sfx/specular.tga
-		blendfunc add
-		rgbGen lightingDiffuse
-		tcGen environment 
-	}
+//	{
+//		map textures/sfx/specular.tga
+//		blendfunc add
+//		rgbGen lightingDiffuse
+//		tcGen environment 
+//	}
 	{
 		map models/powerups/armor/yellowarmor.tga
 		blendfunc blend

@@ -1024,6 +1024,7 @@ and whenever the server updates any serverinfo flagged cvars
 void CG_ParseServerinfo ( void ) {
     const char	*info;
     char	*mapname;
+    char 	buf[128];
 
     info = CG_ConfigString ( CS_SERVERINFO );
     cgs.gametype = atoi ( Info_ValueForKey ( info, "g_gametype" ) );
@@ -1074,7 +1075,13 @@ void CG_ParseServerinfo ( void ) {
     if ( cg_autosnaps.integer )
         trap_Cvar_Set ( "snaps", va ( "%i", atoi ( Info_ValueForKey ( info, "sv_fps" ) ) ) );
 
-
+    memset(buf, 0, sizeof(buf));
+    trap_Cvar_VariableStringBuffer("cl_maxpackets", buf, sizeof(buf));
+    
+    if( atoi(buf) < atoi ( Info_ValueForKey ( info, "sv_fps" ) )*1.5f ){
+	    CG_Printf("cl_maxpackets low, setting cl_maxpackets to %i (1.5*sv_fps)\n", (int)( atoi ( Info_ValueForKey ( info, "sv_fps" ) ) * 1.5f ) );
+	    trap_Cvar_Set ( "cl_maxpackets", va ( "%i", (int)( atoi ( Info_ValueForKey ( info, "sv_fps" ) ) * 1.5f ) ) );
+    }
 
     trap_Cvar_Set ( "g_aftershockPhysic",va("%i",atoi (Info_ValueForKey ( info, "g_aftershockPhysic" ))) );
 
