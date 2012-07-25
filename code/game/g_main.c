@@ -876,6 +876,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	if( restart == 0 ){
 		trap_Cvar_Set("g_redLocked","0");
 		trap_Cvar_Set("g_blueLocked","0");
+		for( i = 0; i < MAX_CLIENTS; i++ ){
+			trap_Cvar_Set(va( "demopath%i", i ), "");
+		}
 	}
         
         //disable unwanted cvars

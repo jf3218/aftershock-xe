@@ -485,7 +485,8 @@ void G_StartServerDemos( void ) {
 			}
 		}
 		playerName[count] = '\0';
-		
+		trap_Cvar_Set(va( "demopath%i", i ), va("%s/%s-POV(%s)", gamestring, matchstring, playerName));
+		//Com_sprintf(level.clients[i].demopath, MAX_QPATH, "%s/%s-POV(%s)", gamestring, matchstring, playerName );
 		trap_SendConsoleCommand(EXEC_APPEND, va("svrecord %i %s/%s-POV(%s) \n", &level.clients[i] - level.clients, gamestring, matchstring, playerName ) );
 	}
 }
