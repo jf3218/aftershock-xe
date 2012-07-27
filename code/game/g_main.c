@@ -2308,22 +2308,22 @@ void G_SendEliminationStats( void ) {
 	
 	for( i = 0; i < level.numConnectedClients ;i++ ) {
 	  
-		if( g_clients[i].sess.sessionTeam == TEAM_SPECTATOR )
+		if( g_clients[level.sortedClients[i]].sess.sessionTeam == TEAM_SPECTATOR )
 			continue;
 		
-		if( g_clients[i].elimRoundDamage > maxdmgdone ){
-			maxdmgdone = g_clients[i].elimRoundDamage;
-			maxdmgdoneClientnum = i;
+		if( g_clients[level.sortedClients[i]].elimRoundDamage > maxdmgdone ){
+			maxdmgdone = g_clients[level.sortedClients[i]].elimRoundDamage;
+			maxdmgdoneClientnum = level.sortedClients[i];
 		}
 		
-		if( g_clients[i].elimRoundDamageTaken < mindmgtaken ){
-			mindmgtaken = g_clients[i].elimRoundDamageTaken;
-			mindmgtakenClientnum = i;
+		if( g_clients[level.sortedClients[i]].elimRoundDamageTaken < mindmgtaken ){
+			mindmgtaken = g_clients[level.sortedClients[i]].elimRoundDamageTaken;
+			mindmgtakenClientnum = level.sortedClients[i];
 		}
 		
-		if( g_clients[i].elimRoundKills > maxkills || ( g_clients[i].elimRoundKills == maxkills && g_clients[i].elimRoundDamage > g_clients[maxkillsClientnum].elimRoundDamage ) ){
-			maxkills = g_clients[i].elimRoundKills;
-			maxkillsClientnum = i;
+		if( g_clients[level.sortedClients[i]].elimRoundKills > maxkills || ( g_clients[level.sortedClients[i]].elimRoundKills == maxkills && g_clients[level.sortedClients[i]].elimRoundDamage > g_clients[maxkillsClientnum].elimRoundDamage ) ){
+			maxkills = g_clients[level.sortedClients[i]].elimRoundKills;
+			maxkillsClientnum = level.sortedClients[i];
 		}
 	}
 	
