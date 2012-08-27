@@ -1139,6 +1139,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	int			max;
         
 	vec3_t		bouncedir, impactpoint;
+	qboolean 	damageValid = qfalse;
 
 	if (!targ->takedamage) {
 		return;
@@ -1227,6 +1228,11 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	if ( knockback > 200 ) {
 		knockback = 200;
 	}
+	
+	if ( g_rockets.integer == 2 && targ != attacker ) {
+		knockback *= 1.5;
+	}
+	
 	if ( targ->flags & FL_NO_KNOCKBACK ) {
 		knockback = 0;
 	}
@@ -1398,6 +1404,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 						attacker->client->rewardTime = level.time + REWARD_SPRITE_TIME;
 					}
 					targ->client->lastAirrocket = attacker->s.number;
+					damageValid = qtrue;
 				}
 			}
 			else if( ( targ->client->lastGroundTime != 0 ) && ( level.time - targ->client->lastGroundTime > 750 ) && ( mod == MOD_GRENADE ) ){
@@ -1453,7 +1460,6 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		damage = 0;
 	}
 
-
 	take = damage;
 	save = 0;
 
@@ -1464,6 +1470,13 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	if ( g_debugDamage.integer ) {
 		G_Printf( "%i: client:%i health:%i damage:%i armor:%i\n", level.time, targ->s.number,
 			targ->health, take, asave );
+	}
+	
+	if( g_rockets.integer == 2 && !damageValid ) {
+		if( !( mod==MOD_FALLING || mod==MOD_TRIGGER_HURT || mod==MOD_SUICIDE || mod==MOD_TELEFRAG )){
+			take = 0;
+			asave = 0;
+		}
 	}
 
 	// add to the damage inflicted on a player this frame
