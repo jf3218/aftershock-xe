@@ -1140,6 +1140,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
         
 	vec3_t		bouncedir, impactpoint;
 	qboolean 	damageValid = qfalse;
+	int 		damageSaved = attacker->client->ps.persistant[PERS_DAMAGE_DONE];
 
 	if (!targ->takedamage) {
 		return;
@@ -1229,9 +1230,9 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		knockback = 200;
 	}
 	
-	if ( g_rockets.integer == 2 && targ != attacker ) {
+	/*if ( g_rockets.integer == 2 && targ != attacker ) {
 		knockback *= 1.5;
-	}
+	}*/
 	
 	if ( targ->flags & FL_NO_KNOCKBACK ) {
 		knockback = 0;
@@ -1248,7 +1249,14 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		mass = 200;
 
 		VectorScale (dir, g_knockback.value * (float)knockback / mass, kvel);
+		
+		if( g_rockets.integer == 2 ) {
+			kvel[2] *= 2;
+		}
+		
 		VectorAdd (targ->client->ps.velocity, kvel, targ->client->ps.velocity);
+		
+		
 
 		// set the timer so that the other client can't cancel
 		// out the movement immediately
@@ -1476,6 +1484,9 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		if( !( mod==MOD_FALLING || mod==MOD_TRIGGER_HURT || mod==MOD_SUICIDE || mod==MOD_TELEFRAG )){
 			take = 0;
 			asave = 0;
+			
+			attacker->client->ps.persistant[PERS_HITS]--;
+			attacker->client->ps.persistant[PERS_DAMAGE_DONE] = damageSaved;
 		}
 	}
 
