@@ -1481,7 +1481,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	}
 	
 	if( g_rockets.integer == 2 && !damageValid ) {
-		if( !( mod==MOD_FALLING || mod==MOD_TRIGGER_HURT || mod==MOD_SUICIDE || mod==MOD_TELEFRAG )){
+		if( !( mod==MOD_TRIGGER_HURT || mod==MOD_SUICIDE || mod==MOD_TELEFRAG )){
 			take = 0;
 			asave = 0;
 			
