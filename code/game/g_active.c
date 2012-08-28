@@ -786,6 +786,53 @@ void SendPendingPredictableEvents( playerState_t *ps ) {
 		ps->externalEvent = extEvent;
 	}
 }
+//Only for development use!
+void WriteCoordinates( gentity_t *ent ) {
+	char buffer[64];
+	int lastFrame;
+	fileHandle_t file;
+	char gameString[128];
+	char playerName[128];
+	int count,j;
+	char *string;
+	
+	if( !g_writePlayerCoords.integer )
+		return;
+	
+	if( level.warmupTime != 0 )
+		return;
+	
+	trap_Cvar_VariableStringBuffer(va("lastCoordFrame%i", ent->client->ps.clientNum), buffer, sizeof(buffer));
+	lastFrame = atoi(buffer);
+	
+	if( level.framenum < lastFrame + sv_fps.integer )
+		return;
+	trap_Cvar_VariableStringBuffer("gamestring", gameString, sizeof(gameString));
+	Com_sprintf ( playerName, sizeof ( playerName ),"%s", ent->client->pers.netname );
+		count = 0;
+		
+		for ( j = 0; j < 128 ; j++ ) {
+			if ( playerName[j] == '^' && ( ( playerName[j+1] >= '0' && playerName[j+1] <= '9' ) || ( playerName[j+1] >= 'a' && playerName[j+1] <= 'z' ) || ( playerName[j+1] >= 'A' && playerName[j+1] <= 'Z' ) ) ) {
+				j++;
+				continue;
+			} else if ( ( ! ( playerName[j] >= '0' && playerName[j] <= '9' ) && ! ( playerName[j] >= 'a' && playerName[j] <= 'z' ) && ! ( playerName[j] >= 'A' && playerName[j] <= 'Z' ) ) ) {
+				continue;
+			}
+
+			else {
+				playerName[count] = playerName[j];
+				count++;
+			}
+		}
+		playerName[count] = '\0';
+	
+	trap_FS_FOpenFile ( va ( "%s/%s/%s.dat", "playerCoords",gameString, playerName ), &file, FS_APPEND );
+	
+	string = va("%i %i %i %i\n", level.time, (int) ent->client->ps.origin[0], (int) ent->client->ps.origin[1], (int) ent->client->ps.origin[2] );
+	trap_FS_Write ( string, strlen ( string ), file );
+	trap_FS_FCloseFile( file );
+	trap_Cvar_Set(va("lastCoordFrame%i", ent->client->ps.clientNum), va("%i",level.framenum ) );
+}
 
 /*
 ==============
@@ -811,6 +858,8 @@ void ClientThink_real( gentity_t *ent ) {
 		return;
 
 	client = ent->client;
+	
+	WriteCoordinates(ent);
 
 	// don't think if the client is not yet connected (and thus not yet spawned in)
 	if (client->pers.connected != CON_CONNECTED) {

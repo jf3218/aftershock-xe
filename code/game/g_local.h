@@ -1379,6 +1379,7 @@ extern vmCvar_t   g_aftershockRespawn;
 extern vmCvar_t   g_nameCheck;
 extern vmCvar_t   g_autoServerDemos;
 extern vmCvar_t   g_autoRestart;
+extern vmCvar_t   g_writePlayerCoords;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

@@ -265,6 +265,7 @@ vmCvar_t     g_nameCheck;
 
 vmCvar_t     g_autoServerDemos;
 vmCvar_t     g_autoRestart;
+vmCvar_t     g_writePlayerCoords;
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -524,7 +525,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_aftershockRespawn, "g_aftershockRespawn", "1", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_nameCheck, "g_nameCheck", "1", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_autoServerDemos, "g_autoServerDemos", "0", CVAR_ARCHIVE, 0, qfalse },
-	{ &g_autoRestart, "g_autoRestart", "1", CVAR_ARCHIVE, 0, qfalse }
+	{ &g_autoRestart, "g_autoRestart", "1", CVAR_ARCHIVE, 0, qfalse },
+	{ &g_writePlayerCoords, "g_writePlayerCoords", "0", CVAR_CHEAT, 0, qfalse }
 };
 
 // bk001129 - made static to avoid aliasing
