@@ -2092,12 +2092,6 @@ void ClientBegin( int clientNum ) {
 		Q_strncpyz ( ent->client->aftershock_hash, G_MD5String(Info_ValueForKey( userinfo, "aftershock_password" )), sizeof( ent->client->aftershock_hash ) );
 	else
 		Q_strncpyz ( ent->client->aftershock_hash, "", sizeof( ent->client->aftershock_hash ) );
-	
-	if( !( *Info_ValueForKey( userinfo, "aftershock_login" ) && *Info_ValueForKey( userinfo, "aftershock_password" ) ) ){
-		trap_SendServerCommand( ent-g_entities, va("print \"" S_COLOR_YELLOW "not logged in, register on http://www.aftershock-fps.com for login\n\"") );
-		trap_SendServerCommand( ent-g_entities, va("screenPrint \"" S_COLOR_YELLOW "not logged in, register on ^2http://www.aftershock-fps.com ^3for login\"") );
-	}
-	
 	G_toSmallCaps(ent->client->aftershock_hash);
 	
 	//G_SendAllItems();
