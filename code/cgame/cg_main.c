@@ -2653,11 +2653,6 @@ void SnapVectorTowards( vec3_t v, vec3_t to ) {
 
 void CG_oaUnofficialCvars( void ) {
 	char rendererinfos[128];
-
-	trap_Cvar_VariableStringBuffer("com_maxfps",rendererinfos,sizeof(rendererinfos) );
-	if(atoi( rendererinfos ) > 125 )
-            	trap_Cvar_Set("com_maxfps","125");
-
 	trap_Cvar_VariableStringBuffer("cg_shadows",rendererinfos,sizeof(rendererinfos) );
 	if(atoi( rendererinfos ) > 1 )
 		trap_Cvar_Set("cg_shadows","1");
