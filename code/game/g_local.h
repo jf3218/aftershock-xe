@@ -1341,6 +1341,7 @@ extern vmCvar_t	    g_blueLocked;
 
 extern vmCvar_t	    g_reduceRailDamage;
 extern vmCvar_t	    g_reduceLightningDamage;
+extern vmCvar_t     g_reduceMachinegunDamage;
 
 extern vmCvar_t	    g_extrapolateFrames;
 

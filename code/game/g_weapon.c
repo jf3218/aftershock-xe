@@ -222,6 +222,7 @@ void SnapVectorTowards( vec3_t v, vec3_t to ) {
 #define CHAINGUN_SPREAD		600.0
 #define MACHINEGUN_SPREAD	200
 #define	MACHINEGUN_DAMAGE	7
+#define MACHINEGUN_DAMAGE_REDUCED 6
 #define	MACHINEGUN_TEAM_DAMAGE	5		// wimpier MG in teamplay
 
 void Bullet_Fire (gentity_t *ent, float spread, int damage ) {
@@ -337,6 +338,23 @@ void Bullet_Fire (gentity_t *ent, float spread, int damage ) {
 	}
 }
 
+void Weapon_MachinegunFire( gentity_t *ent ) {
+    int damage;
+
+    if (g_reduceMachinegunDamage.integer) {
+        damage = MACHINEGUN_DAMAGE_REDUCED * s_quadFactor;
+    }
+    else {
+        damage = MACHINEGUN_DAMAGE * s_quadFactor;
+    }
+
+    if ( g_gametype.integer != GT_TEAM ) {
+        Bullet_Fire( ent, MACHINEGUN_SPREAD, damage );
+    }
+    else {
+         Bullet_Fire( ent, MACHINEGUN_SPREAD, MACHINEGUN_TEAM_DAMAGE );
+    }
+}
 
 /*
 ======================================================================
@@ -1081,13 +1099,9 @@ void FireWeapon( gentity_t *ent ) {
 	case WP_SHOTGUN:
 		weapon_supershotgun_fire( ent );
 		break;
-	case WP_MACHINEGUN:
-		if ( g_gametype.integer != GT_TEAM ) {
-			Bullet_Fire( ent, MACHINEGUN_SPREAD, MACHINEGUN_DAMAGE );
-		} else {
-			Bullet_Fire( ent, MACHINEGUN_SPREAD, MACHINEGUN_TEAM_DAMAGE );
-		}
-		break;
+    case WP_MACHINEGUN:
+         Weapon_MachinegunFire( ent );
+         break;
 	case WP_GRENADE_LAUNCHER:
 		weapon_grenadelauncher_fire( ent );
 		break;

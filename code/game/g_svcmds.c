@@ -492,7 +492,7 @@ void Matchinfo_f( void ) {
 	G_Printf("\\g_aftershockPhysic\\%i", g_aftershockPhysic.integer);
 	G_Printf("\\g_reduceLightningDamage\\%i", g_reduceLightningDamage.integer);
 	G_Printf("\\g_reduceRailDamage\\%i", g_reduceRailDamage.integer);
-	
+	G_Printf("\\g_reduceMachinegunDamage\\%i", g_reduceMachinegunDamage.integer);	
 	
 	G_Printf("\\scores_red\\%i", level.teamScores[TEAM_RED]);
 	G_Printf("\\scores_blue\\%i", level.teamScores[TEAM_BLUE]);
