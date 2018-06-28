@@ -228,6 +228,8 @@ vmCvar_t     g_reduceRailDamage;
 vmCvar_t     g_reduceLightningDamage;
 vmCvar_t     g_reduceMachinegunDamage;
 
+vmCvar_t     g_rocketVelocity;
+
 vmCvar_t     g_extrapolateFrames;
 
 vmCvar_t     g_refPassword;
@@ -501,6 +503,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_reduceRailDamage, "g_reduceRailDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_reduceLightningDamage, "g_reduceLightningDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_reduceMachinegunDamage, "g_reduceMachinegunDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
+	{ &g_rocketVelocity, "g_rocketVelocity", "1000", 0, 0, qtrue  },
 	{ &g_extrapolateFrames, "g_extrapolateFrames", "2", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_refPassword, "g_refPassword", "", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_refNames, "g_refNames", "/map_restart/nextmap/map/g_gametype/kick/clientkick/timelimit/fraglimit/remove/clientremove/lock/unlock/startgame/", CVAR_ARCHIVE, 0, qfalse },
