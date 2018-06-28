@@ -270,7 +270,7 @@ Prints out the current revision
 ==================
 */
 static void CG_Revision_f( void ) {
-	CG_Printf("Aftershock revision %i\n", REVISION);	   
+	CG_Printf("AfterShock XE revision %i\n based on AfterShock revision 299", REVISION);
 }
 
 /*
