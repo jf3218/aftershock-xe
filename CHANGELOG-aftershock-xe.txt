@@ -1,0 +1,18 @@
+2018-06-28 AfterShock XE Revision 307
+
+		- added g_reduceMachinegunDamage <0|1>
+	(vanilla) 0 - Machinegun does 7 damage for all modes except Team Deathmatch where it's 5
+	(default) 1 - Machinegun does 6 damage for all modes except Team Deathmatch where it's 5		      
+	Thanks to f:x3r for the implementation!
+	
+		- added g_rocketVelocity <integer>
+	Specifies rocket speed in UPS, default value is 1000, vanilla used to be 900
+	Taken from the OATMEAL OpenArena mod by Dan Hetrick (dhetrick@gmail.com) https://github.com/lrq3000/oatmeal
+	
+	    - backported g_gravityModifier (by sago007) from OAX https://github.com/OpenArena/gamecode/
+	    
+	    - removed 125FPS lock
+	    
+	    - removed "not logged in" message since the AfterShock site is long gone
+	    
+	    - now compiles on GCC-4.8+ (sago007) http://openarena.ws/board/index.php?topic=5093.msg52133#msg52133
