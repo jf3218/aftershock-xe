@@ -9,7 +9,8 @@
 	Specifies rocket speed in UPS, default value is 1000, vanilla used to be 900
 	Taken from the OATMEAL OpenArena mod by Dan Hetrick (dhetrick@gmail.com) https://github.com/lrq3000/oatmeal
 	
-	    - backported g_gravityModifier (by sago007) from OAX https://github.com/OpenArena/gamecode/
+	    - backported g_gravityModifier <float> (by sago007) from OAX https://github.com/OpenArena/gamecode/
+	Sets a multiplier for g_gravity, default value is 1    
 	    
 	    - removed 125FPS lock
 	    
