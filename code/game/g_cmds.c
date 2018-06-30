@@ -3509,7 +3509,7 @@ void Cmd_DropWeapon_f( gentity_t *ent ) {
     } else
 	weapon = ent->s.weapon;
   
-    if ( weapon <= WP_GAUNTLET || weapon >= WP_NUM_WEAPONS )
+    if ( weapon <= WP_MACHINEGUN || weapon >= WP_NUM_WEAPONS )
         return;
 
     item = BG_FindItemForWeapon( weapon );
