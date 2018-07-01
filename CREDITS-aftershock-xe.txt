@@ -1,5 +1,5 @@
+borg - numerous new features, improvements and bug fixes
 f:x3r - g_reduceMachinegunDamage implementation
-borg - code cleanup, GitHub commits systematization, technical help
 miOw - mostly copy/paste and removal of other people's stuff
 
 Also the code was taken from the following projects:
