@@ -865,7 +865,6 @@ G_InitGame
 */
 void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	int					i;
-	qboolean 			blueLocked, redLocked;
 	char 		mapname[64];
 	char 		mapfile[MAX_QPATH];
 	char 		lastmap[64];
