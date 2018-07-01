@@ -1,6 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 2004-2006 Tony J. White
+Copyright (C) 2018 borg
 
 This file is part of the Open Arena source code.
 
@@ -1032,7 +1033,7 @@ void G_admin_namelog_update( gclient_t *client, qboolean disconnect )
     return;
   }
   namelog = BG_Alloc( sizeof( g_admin_namelog_t ) );
-  memset( namelog, 0, sizeof( namelog ) );
+  memset( namelog, 0, sizeof( g_admin_namelog_t ) );
   for( j = 0; j < MAX_ADMIN_NAMELOG_NAMES; j++ )
     namelog->name[ j ][ 0 ] = '\0';
   Q_strncpyz( namelog->ip, client->pers.ip, sizeof( namelog->ip ) );

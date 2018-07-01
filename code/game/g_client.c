@@ -1,6 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 2018 borg
 
 This file is part of Quake III Arena source code.
 
@@ -1356,7 +1357,7 @@ static void MD5Final(struct MD5Context *ctx, unsigned char *digest)
     
     if (digest!=NULL)
 	    memcpy(digest, ctx->buf, 16);
-    memset(ctx, 0, sizeof(ctx));	/* In case it's sensitive */
+    memset(ctx, 0, sizeof(struct MD5Context));	/* In case it's sensitive */
 }
 
 char *G_MD5String( const char *in )
