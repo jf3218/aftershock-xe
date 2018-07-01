@@ -2011,15 +2011,17 @@ static void CG_ServerCommand ( void ) {
 
     if ( !strcmp ( cmd, "print" ) ) {
         CG_Printf ( "%s", CG_Argv ( 1 ) );
-//#ifdef MISSIONPACK
         cmd = CG_Argv ( 1 );			// yes, this is obviously a hack, but so is the way we hear about
-        // votes passing or failing
-        if ( !Q_stricmpn ( cmd, "vote failed", 11 ) || !Q_stricmpn ( cmd, "team vote failed", 16 ) ) {
-            trap_S_StartLocalSound ( cgs.media.voteFailed, CHAN_ANNOUNCER );
-        } else if ( !Q_stricmpn ( cmd, "vote passed", 11 ) || !Q_stricmpn ( cmd, "team vote passed", 16 ) ) {
-            trap_S_StartLocalSound ( cgs.media.votePassed, CHAN_ANNOUNCER );
-        }
-//#endif
+
+		// First check if someone renamed himself to "vote passed" or "vote failed".
+		// In this case wie obviously don't want this to make any sound...
+		if( !Q_stristr ( cmd, "renamed" ) ) {
+			if ( !Q_stricmpn ( cmd, "vote failed", 11 ) || !Q_stricmpn ( cmd, "team vote failed", 16 ) ) {
+				trap_S_StartLocalSound ( cgs.media.voteFailed, CHAN_ANNOUNCER );
+			} else if ( !Q_stricmpn ( cmd, "vote passed", 11 ) || !Q_stricmpn ( cmd, "team vote passed", 16 ) ) {
+				trap_S_StartLocalSound ( cgs.media.votePassed, CHAN_ANNOUNCER );
+			}
+		}
         return;
     }
     if ( !strcmp ( cmd, "screenPrint" ) ) {
