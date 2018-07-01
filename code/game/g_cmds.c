@@ -2940,7 +2940,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
             }
         } else {
             if ( trap_Argc() >= 3  && mapAllowed) {
-                Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %d; map", arg1, i, arg3);
+                Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %d; map", arg1, i);
                 Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change gametype to: %s   Map: %s?", gameNames[i], arg3 );
             }
             else {
