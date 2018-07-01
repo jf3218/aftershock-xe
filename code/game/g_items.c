@@ -1,6 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 2018 borg
 
 This file is part of Quake III Arena source code.
 
@@ -865,7 +866,7 @@ gentity_t *Drop_Item_Armor( gentity_t *ent, gitem_t *item, float angle ) {
 	velocity[2] += 200 + crandom() * 50;
 	
 	if( ent->client->ps.stats[STAT_ARMOR] < item->quantity )
-	    return;
+	    return NULL;
 	
 	ent->client->ps.stats[STAT_ARMOR] -= item->quantity;
 	
@@ -896,7 +897,7 @@ gentity_t *Drop_Item_Health( gentity_t *ent, gitem_t *item, float angle ) {
 	velocity[2] += 200 + crandom() * 50;
 	
 	if( ent->client->ps.stats[STAT_HEALTH] <= item->quantity || ent->health <= item->quantity)
-	    return;
+	    return NULL;
 	
 	ent->client->ps.stats[STAT_HEALTH] -= item->quantity;
 	ent->health -= item->quantity;
@@ -928,7 +929,7 @@ gentity_t *Drop_Item_Ammo( gentity_t *ent, gitem_t *item, float angle ) {
 	velocity[2] += 200 + crandom() * 50;
 	
 	if( ent->client->ps.ammo[item->giTag] < item->quantity )
-	    return;
+	    return NULL;
 	
 	ent->client->ps.ammo[item->giTag/*ent->s.weapon*/] -= item->quantity;
 	
