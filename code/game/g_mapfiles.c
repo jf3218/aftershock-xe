@@ -511,7 +511,7 @@ void G_WriteMapfile_f( void ) {
 				}
 				break;
 			case F_VECTOR:
-				if( ((float *)(b+field->ofs))[0] && ((float *)(b+field->ofs))[1] && ((float *)(b+field->ofs))[2] || !strcmp(field->name,"origin") ){
+				if( (((float *)(b+field->ofs))[0] && ((float *)(b+field->ofs))[1] && ((float *)(b+field->ofs))[2]) || !strcmp(field->name,"origin") ){
 					string = va("   \"%s\"   \"%f %f %f\"\n", field->name, ((float *)(b+field->ofs))[0], ((float *)(b+field->ofs))[1], ((float *)(b+field->ofs))[2] );
 					trap_FS_Write(string, strlen(string), f);
 				}
