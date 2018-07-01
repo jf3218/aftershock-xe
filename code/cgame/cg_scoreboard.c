@@ -306,8 +306,10 @@ static void CG_DrawSpecs( void ){
 					}
 					
 				}
-				else
+				else {
+					strcat( string, "^7");
 					strcpy( string, ci->name );
+				}
 				
 				y += SB_MEDCHAR_HEIGHT;
 				numLine++;
@@ -327,8 +329,10 @@ static void CG_DrawSpecs( void ){
 						queueNumber++;
 					}
 				}
-				else
+				else {
+					strcat( string, "^7");
 					strcat( string, ci->name );
+				}
 			}
 			
 		}
