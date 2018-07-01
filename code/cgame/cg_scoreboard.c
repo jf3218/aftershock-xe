@@ -118,15 +118,15 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 	}*/
 	
 	picSize = h*0.8;
-	
+
 	if( cg.snap->ps.stats[ STAT_CLIENTS_READY ] & ( 1 << score->client ) ){
 		// ready during intermission
 		CG_DrawPic( x - picSize, y - picSize/2, picSize, picSize, cgs.media.sbReady );
 	}else if( ci->isDead ){
 		CG_DrawPic( x - picSize, y - picSize/2, picSize, picSize, cgs.media.sbSkull );
-	}else if( ci->powerups & ( 1 << PW_REDFLAG ) ){
+	} else 	if( (ci->team != TEAM_SPECTATOR) && (cg.warmup == 0) && (score->powerUps & (1 << PW_REDFLAG)) ) {
 		CG_DrawFlagModel( x - picSize, y - picSize/2, picSize, picSize, TEAM_RED, qfalse );
-	}else if( ci->powerups & ( 1 << PW_BLUEFLAG ) ){
+	} else 	if( (ci->team != TEAM_SPECTATOR) && (cg.warmup == 0) && (score->powerUps & (1 << PW_BLUEFLAG)) ) {
 		CG_DrawFlagModel( x - picSize, y - picSize/2, picSize, picSize, TEAM_BLUE, qfalse );
 	}
 	

@@ -208,7 +208,7 @@ CG_ParseScores
 =================
 */
 static void CG_ParseScores ( void ) {
-    int		i, powerups;
+    int		i;
 
     cg.numScores = atoi ( CG_Argv ( 1 ) );
     if ( cg.numScores > MAX_CLIENTS ) {
@@ -240,7 +240,7 @@ static void CG_ParseScores ( void ) {
             cg.scores[i].ping = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 3 ) );
             cg.scores[i].time = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 4 ) );
             cg.scores[i].scoreFlags = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 5 ) );
-            powerups = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 6 ) );
+            cg.scores[i].powerUps = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 6 ) );
             cg.scores[i].accuracy = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 7 ) );
             cg.scores[i].impressiveCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 8 ) );
             cg.scores[i].excellentCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 9 ) );
@@ -289,7 +289,7 @@ static void CG_ParseScores ( void ) {
                 cg.scores[i].client = 0;
             }
             cgs.clientinfo[ cg.scores[i].client ].score = cg.scores[i].score;
-            cgs.clientinfo[ cg.scores[i].client ].powerups = powerups;
+            cgs.clientinfo[ cg.scores[i].client ].powerups = cg.scores[i].powerUps;
             cgs.clientinfo[ cg.scores[i].client ].isDead = cg.scores[i].isDead;
 
             cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
@@ -300,7 +300,7 @@ static void CG_ParseScores ( void ) {
             cg.scores[i].ping = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 3 ) );
             cg.scores[i].time = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 4 ) );
             cg.scores[i].scoreFlags = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 5 ) );
-            powerups = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 6 ) );
+            cg.scores[i].powerUps = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 6 ) );
             cg.scores[i].accuracy = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 7 ) );
             cg.scores[i].impressiveCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 8 ) );
             cg.scores[i].excellentCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 9 ) );
@@ -328,7 +328,7 @@ static void CG_ParseScores ( void ) {
                 cg.scores[i].client = 0;
             }
             cgs.clientinfo[ cg.scores[i].client ].score = cg.scores[i].score;
-            cgs.clientinfo[ cg.scores[i].client ].powerups = powerups;
+            cgs.clientinfo[ cg.scores[i].client ].powerups = cg.scores[i].powerUps;
             cgs.clientinfo[ cg.scores[i].client ].isDead = cg.scores[i].isDead;
 
             cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
