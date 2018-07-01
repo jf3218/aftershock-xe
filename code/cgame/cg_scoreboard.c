@@ -308,7 +308,7 @@ static void CG_DrawSpecs( void ){
 				}
 				else {
 					strcat( string, "^7");
-					strcpy( string, ci->name );
+					strcat( string, ci->name );
 				}
 				
 				y += SB_MEDCHAR_HEIGHT;
