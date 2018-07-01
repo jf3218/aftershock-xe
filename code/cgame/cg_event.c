@@ -1,6 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 2018 borg
 
 This file is part of Quake III Arena source code.
 
@@ -91,7 +92,7 @@ static void CG_Obituary( entityState_t *ent ) {
     gender_t	gender;
     clientInfo_t	*ci;
     qhandle_t icon1;
-    qhandle_t icon2;
+    qhandle_t icon2 = 0;
     qboolean twoIcons;
 
     twoIcons = qfalse;
