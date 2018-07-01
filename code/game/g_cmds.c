@@ -3866,10 +3866,15 @@ void ClientCommand( int clientNum )
                                 "print \"Cheats are not enabled on this server\n\"" );
         return;
     }
-    //KK-OAX When the corresponding code is integrated, I will activate these.
-    //if( cmds[ i ].cmdFlags & CMD_MESSAGE &&
-    //    ( ent->client->pers.muted || G_FloodLimited( ent ) ) )
-    //    return;
+
+	if(G_FloodLimited( ent )) {
+		return;
+	}
+
+	if( (ent->client->pers.muted && (cmds[i].cmdFlags & CMD_MESSAGE)) ) {
+		trap_SendServerCommand( clientNum, "print \"You have been ^3MUTED ^7\n\"" );
+		return;
+	}
 
     //KK-OAX Do I need to change this for FFA gametype?
     if ( cmds[ i ].cmdFlags & CMD_TEAM &&
