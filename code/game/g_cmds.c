@@ -1221,9 +1221,10 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 =================
 SetTeam
 KK-OAX Modded this to accept a forced admin change.
+Returns team that was used, -1 if nothing was changed
 =================
 */
-void SetTeam( gentity_t *ent, char *s ) {
+int SetTeam( gentity_t *ent, char *s ) {
     int					team, oldTeam;
     gclient_t			*client;
     int					clientNum;
@@ -1233,7 +1234,7 @@ void SetTeam( gentity_t *ent, char *s ) {
     int				specOnly;
     char	            userinfo[MAX_INFO_STRING];
     qboolean            force;
-    //char    buf[ MAX_INFO_STRING ];
+	int ret = 0;
 
     force = G_admin_permission(ent, ADMF_FORCETEAMCHANGE);
 
@@ -1302,12 +1303,12 @@ void SetTeam( gentity_t *ent, char *s ) {
                 if ( team == TEAM_RED && counts[TEAM_RED] - counts[TEAM_BLUE] > 1 ) {
                     trap_SendServerCommand( ent->client->ps.clientNum,
                                             "cp \"Red team has too many players.\n\"" );
-                    return; // ignore the request
+                    return -1; // ignore the request
                 }
                 if ( team == TEAM_BLUE && counts[TEAM_BLUE] - counts[TEAM_RED] > 1 ) {
                     trap_SendServerCommand( ent->client->ps.clientNum,
                                             "cp \"Blue team has too many players.\n\"" );
-                    return; // ignore the request
+                    return -1; // ignore the request
                 }
 
                 // It's ok, the team we are switching to has less or same number of players
@@ -1334,24 +1335,32 @@ void SetTeam( gentity_t *ent, char *s ) {
     // decide if we will allow the change
     //
     oldTeam = client->sess.sessionTeam;
-    if ( team == oldTeam && team != TEAM_SPECTATOR ) {
-        return;
+    if ( team == oldTeam ) {
+		if( team == TEAM_SPECTATOR ) {
+			// If a player is spec and rejoins as spec he gets
+			// send back to the end of the queue, but there is no 5sec delay
+			// for the next team change added.
+			ret = -1;
+		} else {
+        	return -1;
+		}
     }
     //KK-OAX Check to make sure the team is not locked from Admin
     if ( !force ) {
         if ( team == TEAM_RED && g_redLocked.integer ) {
             trap_SendServerCommand( ent->client->ps.clientNum,
                                     "cp \"The Red Team has been locked! \n\"" );
-            return;
+            return -1;
         }
         if ( team == TEAM_BLUE && g_blueLocked.integer ) {
             trap_SendServerCommand( ent->client->ps.clientNum,
                                     "cp \"The Blue Team has been locked! \n\"" );
-            return;
+            return -1;
         }
         if ( team == TEAM_FREE && level.FFALocked ) {
             trap_SendServerCommand( ent->client->ps.clientNum,
                                     "cp \"This Deathmatch has been locked! \n\"" );
+			return -1;
         }
     }
     //
@@ -1415,6 +1424,8 @@ void SetTeam( gentity_t *ent, char *s ) {
     
     trap_SendServerCommand( ent->client->ps.clientNum,
                                     "loadModel" );
+
+	return ret < 0 ? ret : team;
 }
 
 /*
@@ -1497,9 +1508,9 @@ void Cmd_Team_f( gentity_t *ent ) {
 
     trap_Argv( 1, s, sizeof( s ) );
 
-    SetTeam( ent, s );
-
-    ent->client->switchTeamTime = level.time + 5000;
+    if( SetTeam( ent, s ) >= 0 ) {
+    	ent->client->switchTeamTime = level.time + 5000;
+	}
 }
 
 
