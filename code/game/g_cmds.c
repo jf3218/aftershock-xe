@@ -3400,6 +3400,42 @@ void Cmd_GetMappage_f( gentity_t *ent ) {
     trap_SendServerCommand( ent-g_entities, string );
 }
 
+void Cmd_DropPowerup_f( gentity_t *ent ) {
+	gitem_t	*item;
+	gentity_t *out;
+	int now;
+	int timeLeft;
+	int pw;
+
+	if ( !( g_itemDrop.integer & 32 ) ) {
+		return;
+	}
+
+	if ( ent->client->ps.pm_type == PM_DEAD ) {
+		return;
+	}
+
+	now = (level.time - ( level.time % 1000 )); // Current time rounded to the second
+
+	// We go through the powerups in the sequence:
+	// quad -> battlesuit -> haste -> invis -> regen -> flight
+	// Only one powerup is dropped at a time.
+	for (pw = PW_QUAD; pw <= PW_FLIGHT; pw++) {
+		if ( ent->client->ps.powerups[pw] ) {
+			gitem_t *item = BG_FindItemForPowerup( pw );
+			timeLeft = (ent->client->ps.powerups[pw] - now)/1000; // Time left for powerup
+			if (timeLeft < 0) {
+				timeLeft = 0;
+			}
+
+			Drop_Item_Powerup( ent, BG_FindItemForPowerup( pw ), 0, timeLeft);
+			ent->client->ps.powerups[pw] = 0;
+
+			return;
+		}
+	}
+}
+
 void Cmd_DropArmor_f( gentity_t *ent ) {
     gitem_t		*item;
     gentity_t	*out;
@@ -3768,6 +3804,7 @@ commands_t cmds[ ] =
     { "gc", 0, Cmd_GameCommand_f },
     { "timeout", 0, Cmd_Timeout_f },
     { "ready", 0, Cmd_Ready_f },
+    { "droppowerup", 0, Cmd_DropPowerup_f },
     { "dropammo", 0, Cmd_DropAmmo_f },
     { "droparmor", 0, Cmd_DropArmor_f },
     { "drophealth", 0, Cmd_DropHealth_f },

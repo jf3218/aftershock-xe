@@ -71,6 +71,15 @@ int Pickup_Powerup( gentity_t *ent, gentity_t *other ) {
 		quantity = ent->item->quantity;
 	}
 
+	if (ent->powerupTimeLeft) {
+		// If a powerup is picked up after it was dropped we use the time left.
+		// We also remove 1 second from the time left as penalty.
+		quantity = (ent->powerupTimeLeft - 1);
+		if (quantity < 0) {
+			quantity = 0;
+		}
+	}
+
 	other->client->ps.powerups[ent->item->giTag] += quantity * 1000;
 
 	// give any nearby players a "denied" anti-reward
@@ -668,6 +677,41 @@ gentity_t *LaunchItem( gitem_t *item, vec3_t origin, vec3_t velocity ) {
 	return dropped;
 }
 
+gentity_t *LaunchItemPowerup( gitem_t *item, vec3_t origin, vec3_t velocity, int powerupTimeLeft ) {
+	gentity_t	*dropped;
+
+	dropped = G_Spawn();
+
+	dropped->s.eType = ET_ITEM;
+	dropped->s.modelindex = item - bg_itemlist;	// store item number in modelindex
+	dropped->s.modelindex2 = 1; // This is non-zero is it's a dropped item
+
+	dropped->classname = item->classname;
+	dropped->item = item;
+	VectorSet (dropped->r.mins, -ITEM_RADIUS, -ITEM_RADIUS, -ITEM_RADIUS);
+	VectorSet (dropped->r.maxs, ITEM_RADIUS, ITEM_RADIUS, ITEM_RADIUS);
+	dropped->r.contents = CONTENTS_TRIGGER;
+
+	dropped->touch = Touch_Item;
+
+	G_SetOrigin( dropped, origin );
+	dropped->s.pos.trType = TR_GRAVITY;
+	dropped->s.pos.trTime = level.time;
+	VectorCopy( velocity, dropped->s.pos.trDelta );
+
+	dropped->s.eFlags |= EF_BOUNCE_HALF;
+	dropped->think = G_FreeEntity;
+	dropped->nextthink = level.time + 30000;
+
+	dropped->flags = FL_DROPPED_ITEM;
+
+	dropped->powerupTimeLeft = powerupTimeLeft;
+
+	trap_LinkEntity (dropped);
+
+	return dropped;
+}
+
 /*
 ================
 LaunchItem
@@ -775,6 +819,30 @@ gentity_t *Drop_Item( gentity_t *ent, gitem_t *item, float angle ) {
 	velocity[2] += 200 + crandom() * 50;
 	
 	return LaunchItem( item, ent->s.pos.trBase, velocity );
+}
+
+gentity_t *Drop_Item_Powerup( gentity_t *ent, gitem_t *item, float angle, int time ) {
+	vec3_t	velocity;
+	vec3_t	angles;
+	vec3_t position;
+
+	VectorCopy( ent->s.apos.trBase, angles );
+	angles[YAW] += angle;
+	angles[PITCH] = 0;	// always forward
+
+	AngleVectors( angles, velocity, NULL, NULL );
+	VectorScale( velocity, 0, velocity );
+	VectorAdd( velocity, ent->s.pos.trBase, position );
+
+	AngleVectors( angles, velocity, NULL, NULL );
+	VectorScale( velocity, 150, velocity );
+	velocity[2] += 200 + crandom() * 50;
+
+	item->lastDrop = level.time;
+
+	ent->client->lastDrop = item->shortPickup_name;
+
+	return LaunchItemPowerup( item, position, velocity, time );
 }
 
 gentity_t *Drop_Item_Armor( gentity_t *ent, gitem_t *item, float angle ) {

@@ -183,6 +183,7 @@ struct gentity_s {
 	
 	int		dropTime;
 	int		ammoCount;
+	int     powerupTimeLeft;
 };
 
 typedef struct gitemInfos_s gitemInfos_t;
@@ -748,6 +749,7 @@ void PrecacheItem (gitem_t *it);
 gentity_t *Drop_Item( gentity_t *ent, gitem_t *item, float angle );
 gentity_t *LaunchItem( gitem_t *item, vec3_t origin, vec3_t velocity );
 gentity_t *LaunchItemWeapon( gitem_t *item, vec3_t origin, vec3_t velocity, int ammoCount, int dropTime );
+gentity_t *Drop_Item_Powerup( gentity_t *ent, gitem_t *item, float angle, int time );
 gentity_t *Drop_Item_Ammo( gentity_t *ent, gitem_t *item, float angle );
 gentity_t *Drop_Item_Armor( gentity_t *ent, gitem_t *item, float angle );
 gentity_t *Drop_Item_Health( gentity_t *ent, gitem_t *item, float angle );
