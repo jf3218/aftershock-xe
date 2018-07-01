@@ -1,6 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 2010-2011 Manuel Wiese
+Copyright (C) 2018 borg
 
 This file is part of AfterShock source code.
 
@@ -152,7 +153,7 @@ returns qtrue if the argument
 is a char we should skip
 =================
 */
-static qboolean SkippedChar ( char in ) {
+qboolean SkippedChar ( char in ) {
 	return ( in == '\n' || in == '\r' || in == ';' || in == '\t' || in == ' ' );
 }
 

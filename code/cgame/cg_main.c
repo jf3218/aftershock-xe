@@ -1,6 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 2018 borg
 
 This file is part of Quake III Arena source code.
 
@@ -52,7 +53,7 @@ int nomipModificationCount = 1;
 void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum );
 void CG_Shutdown( void );
 void CG_oaUnofficialCvars( void );
-
+void CG_ParseHitBeep( void );
 
 /*
 ================

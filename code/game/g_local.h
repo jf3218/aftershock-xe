@@ -1,6 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 2018 borg
 
 This file is part of Quake III Arena source code.
 
@@ -684,7 +685,7 @@ qboolean	G_SpawnInt( const char *key, const char *defaultString, int *out );
 qboolean	G_SpawnVector( const char *key, const char *defaultString, float *out );
 void		G_SpawnEntitiesFromString( void );
 char *G_NewString( const char *string );
-
+qboolean G_CallSpawn( gentity_t *ent );
 
 //
 // g_cmds.c
@@ -692,7 +693,7 @@ char *G_NewString( const char *string );
 void Cmd_Score_f (gentity_t *ent);
 void StopFollowing( gentity_t *ent );
 void BroadcastTeamChange( gclient_t *client, int oldTeam );
-void SetTeam( gentity_t *ent, char *s );
+int SetTeam( gentity_t *ent, char *s );
 void Cmd_FollowCycle_f( gentity_t *ent );  //KK-OAX Changed to match definition
 char *ConcatArgs( int start );  //KK-OAX This declaration moved from g_svccmds.c
 //KK-OAX Added this to make accessible from g_svcmds_ext.c
@@ -708,7 +709,9 @@ void SendReadymask( int clientnum );
 void Cmd_Timeout_f( gentity_t *player );
 void G_Timein( void );
 void G_SendLivingCount( void );
-
+void G_StopServerDemos( void );
+void G_StartServerDemos( void );
+void G_SendSpawnpoints( gentity_t *ent );
 
 // KK-OAX Added these in a seperate file to keep g_cmds.c familiar. 
 // g_cmds_ext.c
@@ -1015,7 +1018,7 @@ void ShuffleTeams(void);
 team_t G_TeamFromString( char *str );
 qboolean Team_GetDeathLocationMsg(gentity_t *ent, char *loc, int loclen);
 int G_FindNearestTeammate( gentity_t *ent );
-
+void TeamplaySpectatorMessage( void );
 //KK-OAX Removed these in Code in favor of bg_alloc.c from Tremulous
 // g_mem.c
 //
@@ -1090,6 +1093,7 @@ void G_drawAllowedMaps ( gentity_t *ent );
 void G_drawMapcycle ( gentity_t *ent );
 void G_sendMapcycle( void );
 void G_LoadMapcycle ( void );
+qboolean SkippedChar ( char in );
 
 //
 // g_mapfiles.c
