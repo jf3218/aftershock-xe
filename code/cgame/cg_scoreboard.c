@@ -74,6 +74,43 @@ typedef struct{
 	qboolean percent;
 } picBar_t;
 
+static char* CG_FormatKD( int value ) {
+	if(value > 9999) {
+		value = 9999;
+	}
+
+	return va( "%4i", value );
+}
+
+
+static char* CG_FormatDmg( int value ) {
+#if 0
+	if( value < 1000 ) {
+		return va( "%i", value );
+	} else if ( value < 10000 ) {
+		return va( "%.1fk", value/1000.0);
+	} else if ( value < 1000000 ) {
+		return va( "%ik", value/1000);
+	} else {
+		return va( "%.1fM", value/1000000.0);
+	}
+#endif
+	if(value > 99999) {
+		value = 99999;
+	}
+
+	return va( "%5i", value );
+}
+
+static char* CG_FormatTime( int value ) {
+	if ((value % 60) > 9) {
+		return va( "%i:%i", value / 60, value % 60);
+	} else {
+		return va( "%i:0%i", value / 60, value % 60);
+	}
+}
+
+
 static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, float *color ){
 	
 	clientInfo_t *ci;
@@ -86,7 +123,9 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 	}
 	
 	// don't draw the client while he's connecting
-	if( score->ping == -1 )return;
+	if( score->ping == -1 ) {
+		return;
+	}
 	
 	ci = &cgs.clientinfo[ score->client ];
 	
@@ -95,27 +134,30 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 	y += h/2;
 	
 	CG_DrawStringExt( x, y - SB_MEDCHAR_HEIGHT/2, ci->name, colorWhite, qfalse, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 31 );
-	CG_DrawStringExt( x + w*0.7, y - SB_MEDCHAR_HEIGHT/2, va( "%i", score->score ), colorWhite, qtrue, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 0 );
-	CG_DrawStringExt( x + w*0.8, y - SB_MEDCHAR_HEIGHT/2, va( "%i", score->ping ), colorWhite, qtrue, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 3 );
-	CG_DrawStringExt( x + w*0.88, y - SB_MEDCHAR_HEIGHT/2, va( "%i", score->time ), colorWhite, qtrue, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 3 );
-	
-	if( cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION ){
-		if( h >= SB_CHAR_HEIGHT*2 ){
-			CG_DrawStringExt( x + w*0.96, y - SB_CHAR_HEIGHT, va( "%i", ( int )( score->dmgdone/100 ) ), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-			CG_DrawStringExt( x + w*0.96, y, va( "%i", ( int )( score->dmgtaken/100 ) ), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-		}else{
-			strcpy( string, va( "^2%i^7/^1%i", ( int )( score->dmgdone/100 ), ( int )( score->dmgtaken/100 ) ) );
-			CG_DrawStringExt( x + w*0.96, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-		}
-	}/*else if( cgs.gametype == GT_TOURNAMENT ){
-		if( h >= SB_CHAR_HEIGHT*2 ){
-			CG_DrawStringExt( x + w*0.96, y - SB_CHAR_HEIGHT, va( "%i", ( int )( ci->wins/100 ) ), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-			CG_DrawStringExt( x + w*0.96, y, va( "%i", ( int )( ci->losses/100 ) ), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-		}else{
-			strcpy( string, va( "^2%i^7/^1%i", ( int )( ci->wins/100 ), ( int )( ci->losses/100 ) ) );
-			CG_DrawStringExt( x + w*0.96, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-		}
-	}*/
+
+	if( cgs.gametype == GT_CTF) {
+		CG_DrawStringExt( x + w*0.5, y - SB_MEDCHAR_HEIGHT/2, va( "%i / %i / %i", score->captures, score->assistCount, score->defendCount ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	}
+
+	if( h >= SB_CHAR_HEIGHT*2 ){
+		CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT, CG_FormatDmg(score->dmgdone), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.66, y, CG_FormatDmg(score->dmgtaken), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	}else{
+		strcpy( string, va( "^2%s^7/^1%s", CG_FormatDmg(score->dmgdone), CG_FormatDmg(score->dmgtaken) ) );
+		CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	}
+
+	if( h >= SB_CHAR_HEIGHT*2 ){
+		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT, CG_FormatKD( score->score ), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.74, y, CG_FormatKD( score->deathCount ), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	}else{
+		strcpy( string, va( "^2%s^7/^1%s", CG_FormatKD( score->score ), CG_FormatKD( score->deathCount ) ) );
+		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	}
+
+	CG_DrawStringExt( x + w*0.83, y - SB_MEDCHAR_HEIGHT/2, va( "%i", score->ping ), colorWhite, qtrue, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 3 );
+	CG_DrawStringExt( x + w*0.91, y - SB_MEDCHAR_HEIGHT/2, CG_FormatTime( score->time ), colorWhite, qtrue, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 4 );
+
 	
 	picSize = h*0.8;
 
@@ -155,15 +197,14 @@ static int CG_TeamScoreboard( int x, int y, int w, int h, team_t team, float *co
 	transparent[ 3 ] = 0;
 	
 	CG_DrawStringExt( x, y, "Name", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	CG_DrawStringExt( x + w*0.7, y, "Score", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	CG_DrawPic( x + w*0.8, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbPing );
-	CG_DrawPic( x + w*0.88, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbClock );
-	
-	if( cgs.gametype == GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION ){
-		CG_DrawStringExt( x + w*0.96, y, "Dmg", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	}/*else if( cgs.gametype == GT_TOURNAMENT ){
-		CG_DrawStringExt( x + w*0.96, y, "W/L", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	}*/
+	if( cgs.gametype == GT_CTF) {
+		CG_DrawStringExt( x + w*0.5, y, "C / A / D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	}
+	CG_DrawStringExt( x + w*0.69, y, "Dmg", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	CG_DrawStringExt( x + w*0.76, y, "K/D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	CG_DrawPic( x + w*0.83, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbPing );
+	CG_DrawPic( x + w*0.91, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbClock );
+
 	
 	y += 20;
 	
