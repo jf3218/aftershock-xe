@@ -2999,7 +2999,7 @@ void SetLeader(int team, int client) {
 	}
 	level.clients[client].sess.teamLeader = qtrue;
 	ClientUserinfoChanged( client );
-	PrintTeam(team, va("print \"%s is the new team leader\n\"", level.clients[client].pers.netname) );
+	PrintTeam(team, va("print \"%s" S_COLOR_WHITE " is the new team leader\n\"", level.clients[client].pers.netname) );
 }
 
 /*
