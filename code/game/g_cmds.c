@@ -1,6 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 2018 borg
 
 This file is part of Quake III Arena source code.
 
@@ -327,7 +328,7 @@ TODO: add teamspawnpoint color for teambased gametypes
 ==================
 */
 void G_SendSpawnpoints( gentity_t *ent ){
-	gentity_t *spot;
+	gentity_t *spot = NULL;
 	int spotnumber = 0;
 	char entry[64];
 	char string[2048];
