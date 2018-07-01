@@ -307,7 +307,7 @@ static void CG_DrawSpecs( void ){
 					
 				}
 				else {
-					strcat( string, "^7");
+					strcpy( string, "^7");
 					strcat( string, ci->name );
 				}
 				
