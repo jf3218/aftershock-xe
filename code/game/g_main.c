@@ -1,6 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 2018 borg
 
 This file is part of Quake III Arena source code.
 
@@ -1386,7 +1387,7 @@ void CalculateRanks( void ) {
 	level.numNonSpectatorClients = 0;
 	level.numPlayingClients = 0;
         humanplayers = 0; // don't count bots
-	for ( i = 0; i < TEAM_NUM_TEAMS; i++ ) {
+	for ( i = 0; i < 2; i++ ) {
 		level.numteamVotingClients[i] = 0;
 	}
 	for ( i = 0 ; i < level.maxclients ; i++ ) {
