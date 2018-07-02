@@ -1,3 +1,11 @@
+2018-07-01 AfterShock XE Revision 309
+
+		- fixed a bug when a player could rename themselves to "vote passed" and "vote failed" and the sounds would be played
+		- changed to xx.xk format for the damage on the scoreboard
+		- if a player accidentially joins a team he is already is on, he can join a new team immediately and does not have to wait 5 seconds anymore
+		- now a new line is started if spectator names don't fit in a single line
+		- various other bugfixes
+
 2018-07-01 AfterShock XE Revision 308
 
 		- disabled dropping Machinegun with dropweapon command
@@ -6,9 +14,9 @@
 		
 		- fixed the bug with flags disappearing from the scoreboard on CTF
 		
-		- extended CA and CTF scoreboards with full damage done and received, kills and death and time played that now includes seconds
+		- extended CA and CTF scoreboards with full damage done and received, kills and deaths
 		
-		- extended CTF scoreboard with the amount of captures, assit and defend rewards
+		- extended CTF scoreboard with the amount of captures, assist and defend rewards
 		
 		- the team leader info message is now always white
 		
