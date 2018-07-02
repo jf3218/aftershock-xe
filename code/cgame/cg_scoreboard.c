@@ -1,6 +1,7 @@
 /*
 ===========================================================================
 Copyright (C) 1999-2005 Id Software, Inc.
+Copyright (C) 2018 borg
 
 This file is part of Quake III Arena source code.
 
@@ -84,22 +85,17 @@ static char* CG_FormatKD( int value ) {
 
 
 static char* CG_FormatDmg( int value ) {
-#if 0
-	if( value < 1000 ) {
-		return va( "%i", value );
-	} else if ( value < 10000 ) {
-		return va( "%.1fk", value/1000.0);
-	} else if ( value < 1000000 ) {
-		return va( "%ik", value/1000);
-	} else {
-		return va( "%.1fM", value/1000000.0);
-	}
-#endif
 	if(value > 99999) {
 		value = 99999;
 	}
 
-	return va( "%5i", value );
+	if ( value < 1000 ) {
+		return va( " 0.%ik", value/100 );
+	} else if( value < 10000) {
+		return va( " %.1fk", value/1000.0);
+	}
+
+	return va( "%.1fk", value/1000.0);
 }
 
 static char* CG_FormatTime( int value ) {
