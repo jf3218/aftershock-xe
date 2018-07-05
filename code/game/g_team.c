@@ -2482,19 +2482,63 @@ int QDECL SortPlayers( const void *a, const void *b ) {
 
 ================
 */
+
+// Simple int comparison function for qsort
+int intCompare(const void *a, const void *b) {
+	const int *ia = (const int *)a;
+	const int *ib = (const int *)b;
+
+	// integer comparison: returns negative if b > a and positive if a > b
+	return *ia  - *ib;
+}
+
 void ShuffleTeams(void) {
-    int		sortPlayers[MAX_CLIENTS];
-    int i;
-    int nextTeam = TEAM_RED;
-    int count = 0;
+	int oldBlueTeam[MAX_CLIENTS];
+	int oldRedTeam[MAX_CLIENTS];
+	int newBlueTeam[MAX_CLIENTS];
+	int newRedTeam[MAX_CLIENTS];
+	int	sortPlayers[MAX_CLIENTS];
+	int blueCount = 0;
+	int redCount = 0;
+	int i;
+	int nextTeam = TEAM_RED;
+	int count = 0;
+	int isShuffled = 0;
+	int numPlayers = 0;
 
     if ( g_gametype.integer < GT_TEAM || g_ffa_gt==1)
         return;
 
+	// To make sure that the shuffle really did something we first save
+	// the composition of both teams.
+	for(i = 0; i < level.numConnectedClients; i++) {
+		if(!(g_entities[ &level.clients[level.sortedClients[i]] - level.clients].r.svFlags & SVF_BOT)) {
+			numPlayers++;
+		}
 
-    for ( i = 0; i < level.numConnectedClients; i++ ) {
         sortPlayers[i] = level.sortedClients[i];
+		if(level.clients[sortPlayers[i]].sess.sessionTeam == TEAM_BLUE) {
+			oldBlueTeam[blueCount] = sortPlayers[i];
+			blueCount++;
+		} else if(level.clients[sortPlayers[i]].sess.sessionTeam == TEAM_RED) {
+			oldRedTeam[redCount] = sortPlayers[i];
+			redCount++;
+		}
     }
+
+	// If there aren't at least two players there is nothing to shuffle
+	if(numPlayers < 2) {
+		return;
+	}
+
+	// And fill the rest of the array up with zeroes.
+	for(i = blueCount; i < level.numConnectedClients; i++) {
+		oldBlueTeam[i] = -1;
+	}
+
+	for(i = redCount; i < level.numConnectedClients; i++) {
+		oldRedTeam[i] = -1;
+	}
 
     qsort( sortPlayers, level.numConnectedClients, sizeof(sortPlayers[0]), SortPlayers );
 
@@ -2502,6 +2546,8 @@ void ShuffleTeams(void) {
 
         if ( g_entities[ &level.clients[level.sortedClients[i]] - level.clients].r.svFlags & SVF_BOT)
             continue;
+
+		numPlayers++;
 
         if ( level.clients[sortPlayers[i]].sess.sessionTeam==TEAM_RED || level.clients[sortPlayers[i]].sess.sessionTeam==TEAM_BLUE ) {
             level.clients[sortPlayers[i]].sess.sessionTeam = nextTeam;
@@ -2516,6 +2562,84 @@ void ShuffleTeams(void) {
             ClientBegin( sortPlayers[i] );
         }
     }
+
+
+
+	// After the shuffle we save the new composition.
+	blueCount = 0;
+	redCount = 0;
+	for(i = 0; i < level.numConnectedClients; i++) {
+		if(level.clients[sortPlayers[i]].sess.sessionTeam == TEAM_BLUE) {
+			newBlueTeam[blueCount] = sortPlayers[i];
+			blueCount++;
+		} else if(level.clients[sortPlayers[i]].sess.sessionTeam == TEAM_RED) {
+			newRedTeam[redCount] = sortPlayers[i];
+			redCount++;
+		}
+	}
+
+	// And fill the rest up again.
+	for(i = blueCount; i < level.numConnectedClients; i++) {
+		newBlueTeam[i] = -1;
+	}
+
+	for(i = redCount; i < level.numConnectedClients; i++) {
+		newRedTeam[i] = -1;
+	}
+
+	// Then we sort all of the arrays for easy comparability.
+	qsort(oldBlueTeam, level.numConnectedClients, sizeof(int), intCompare);
+	qsort(oldRedTeam,  level.numConnectedClients, sizeof(int), intCompare);
+	qsort(newBlueTeam, level.numConnectedClients, sizeof(int), intCompare);
+	qsort(newRedTeam,  level.numConnectedClients, sizeof(int), intCompare);
+
+
+	// Check if every item in the new/old array for both colors is the same.
+	// If it is not, we actually shuffled something.
+	for(i = 0; i < level.numConnectedClients; i++) {
+		if(oldBlueTeam[i] != newBlueTeam[i]) {
+			isShuffled = 1;
+			break;
+		}
+		if(oldRedTeam[i] != newRedTeam[i]) {
+			isShuffled = 1;
+			break;
+		}
+	}
+
+	if(!isShuffled) {
+		// Well, teams are still the same...
+		// We shuffle two players by hand.
+		for(i = 0; i < level.numConnectedClients; i++) {
+			if(newBlueTeam[i] < 0) {
+				continue;
+			}
+
+			if(g_entities[ &level.clients[newBlueTeam[i]] - level.clients].r.svFlags & SVF_BOT) {
+				continue;
+			}
+
+			level.clients[newBlueTeam[i]].sess.sessionTeam = TEAM_RED;
+			ClientUserinfoChanged(newBlueTeam[i]);
+			ClientBegin(newBlueTeam[i]);
+			break;
+		}
+
+		for(i = 0; i < level.numConnectedClients; i++) {
+			if(newRedTeam[i] < 0) {
+				continue;
+			}
+
+			if(g_entities[ &level.clients[newRedTeam[i]] - level.clients].r.svFlags & SVF_BOT) {
+				continue;
+			}
+
+			level.clients[newRedTeam[i]].sess.sessionTeam = TEAM_BLUE;
+			ClientUserinfoChanged(newRedTeam[i]);
+			ClientBegin(newRedTeam[i]);
+			break;
+		}
+	}
 
     //Restart!
     trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
