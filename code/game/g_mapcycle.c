@@ -287,7 +287,7 @@ static int G_getNextMapNumber ( int i ) {
 
 	for ( j = 0; j < mapcycle.mapcycleCount; j++ ) {
 		buffer = ( start+j ) %mapcycle.mapcycleCount;
-		if ( level.numConnectedClients <= mapcycle.maxplayers[buffer] && level.numConnectedClients >= mapcycle.minplayers[buffer] ) {
+		if ( level.numPlayingClients <= mapcycle.maxplayers[buffer] && level.numPlayingClients >= mapcycle.minplayers[buffer] ) {
 			return buffer;
 		}
 	}
