@@ -2607,7 +2607,23 @@ void ShuffleTeams(void) {
 		}
 	}
 
-	if(!isShuffled) {
+	// If it is shuffled, we also check if the teams
+	// stayed the same but only changed colors.
+	// In this case it is not really shuffled... is it?
+	if(isShuffled == 1) {
+		for(i = 0; i < level.numConnectedClients; i++) {
+			if(oldBlueTeam[i] != newRedTeam[i]) {
+				isShuffled = 2;
+				break;
+			}
+			if(oldRedTeam[i] != newBlueTeam[i]) {
+				isShuffled = 2;
+				break;
+			}
+		}
+	}
+
+	if(isShuffled != 2) {
 		// Well, teams are still the same...
 		// We shuffle two players by hand.
 		for(i = 0; i < level.numConnectedClients; i++) {
