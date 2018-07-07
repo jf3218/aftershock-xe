@@ -1,5 +1,6 @@
 AfterShock XE (AfterShock Extended Edition) is a (hopefully temporary) fork of the AfterShock mod for OpenArena FPS game.
-AfterShock is the mod that brings more competitive features and customization to OpenArena.
+AfterShock is a mod that brings more competitive features and customization to 
+OpenArena.
 The need for this fork arised because the development of AfterShock stopped and the AfterShock developers are currently out of reach, but we needed to add a few features.
 
 AfterShock XE codebase is available @ https://github.com/Irbyz/aftershock-xe
