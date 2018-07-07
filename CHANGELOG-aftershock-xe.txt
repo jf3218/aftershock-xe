@@ -1,9 +1,27 @@
+2018-07-07 AfterShock XE Revision 310
+
+		- now the teams never end up the same after shuffle anymore
+		
+		- cg_blood 0 now turns all the blood off including the splatters of blood on the screen when you get hit
+		
+		- mapcycle now relies on the number of players in game instead of the total number of clients on the server
+		
+		- the vote string for nextmap now displays the name of the next map in the brackets instead of the current map
+		
+		- added colors to the vote string, now "yes" votes are shown in green and "no" votes in red 
+		
+		- increased a maximum count of maps in mapcycle config from 64 to 128
+
 2018-07-01 AfterShock XE Revision 309
 
 		- fixed a bug when a player could rename themselves to "vote passed" and "vote failed" and the sounds would be played
+		
 		- changed to xx.xk format for the damage on the scoreboard
+		
 		- if a player accidentially joins a team he is already is on, he can join a new team immediately and does not have to wait 5 seconds anymore
+		
 		- now a new line is started if spectator names don't fit in a single line
+		
 		- various other bugfixes
 
 2018-07-01 AfterShock XE Revision 308
