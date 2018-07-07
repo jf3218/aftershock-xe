@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "g_local.h"
 
-#define MAX_MAPCYCLECOUNT 64
+#define MAX_MAPCYCLECOUNT 128
 #define MAX_MAPCYCLELENGTH 4096
 #define MAX_MAPCYCLETOKENS 512
 
