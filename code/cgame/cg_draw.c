@@ -3796,7 +3796,14 @@ static void CG_DrawVote ( void ) {
         sec = 0;
     }
 
-    s = va ( "VOTE(%i):%s yes:%i no:%i", sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
+	if(sec < 6) {
+		s = va ( "VOTE(" S_COLOR_RED "%i" S_COLOR_WHITE "):%s " S_COLOR_GREEN "yes:%i" S_COLOR_WHITE " - " S_COLOR_RED "no:%i" S_COLOR_WHITE, sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
+	} else if(sec < 11) {
+		s = va ( "VOTE(" S_COLOR_YELLOW "%i" S_COLOR_WHITE "):%s " S_COLOR_GREEN "yes:%i" S_COLOR_WHITE " - " S_COLOR_RED "no:%i" S_COLOR_WHITE, sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
+	} else {
+		s = va ( "VOTE(%i):%s " S_COLOR_GREEN "yes:%i" S_COLOR_WHITE " - " S_COLOR_RED "no:%i" S_COLOR_WHITE, sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
+	}
+
     CG_DrawStringHud ( HUD_VOTEMSG, qtrue, s );
 }
 
