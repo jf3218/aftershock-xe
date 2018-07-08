@@ -409,7 +409,15 @@ vmCvar_t 	cg_drawSpawnpoints;
 vmCvar_t 	cg_mapoverview;
 
 vmCvar_t 	cg_soundOption;
+vmCvar_t 	cg_soundOptionGauntlet;
+vmCvar_t 	cg_soundOptionLightning;
+vmCvar_t 	cg_soundOptionMachinegun;
+vmCvar_t 	cg_soundOptionShotgun;
+vmCvar_t 	cg_soundOptionRocket;
+vmCvar_t 	cg_soundOptionGrenade;
+vmCvar_t 	cg_soundOptionPlasma;
 vmCvar_t 	cg_soundOptionRail;
+vmCvar_t 	cg_soundOptionBFG;
 
 
 typedef struct {
@@ -672,7 +680,15 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_drawSpawnpoints, "cg_drawSpawnpoints", "1", CVAR_ARCHIVE },
 	{&cg_mapoverview, "cg_mapoverview", "0", CVAR_ARCHIVE | CVAR_CHEAT },
 	{&cg_soundOption, "cg_soundOption", "1", CVAR_ARCHIVE},
-	{&cg_soundOptionRail, "cg_soundOptionRail", "1", CVAR_ARCHIVE}
+	{&cg_soundOptionGauntlet, "cg_soundOptionGauntlet", "-1", CVAR_ARCHIVE},
+	{&cg_soundOptionLightning, "cg_soundOptionLightning", "-1", CVAR_ARCHIVE},
+	{&cg_soundOptionMachinegun, "cg_soundOptionMachinegun", "-1", CVAR_ARCHIVE},
+	{&cg_soundOptionShotgun, "cg_soundOptionShotgun", "-1", CVAR_ARCHIVE},
+	{&cg_soundOptionRocket, "cg_soundOptionRocket", "-1", CVAR_ARCHIVE},
+	{&cg_soundOptionGrenade, "cg_soundOptionGrenade", "-1", CVAR_ARCHIVE},
+	{&cg_soundOptionPlasma, "cg_soundOptionPlasma", "-1", CVAR_ARCHIVE},
+	{&cg_soundOptionRail, "cg_soundOptionRail", "-1", CVAR_ARCHIVE},
+	{&cg_soundOptionBFG, "cg_soundOptionBFG", "-1", CVAR_ARCHIVE}
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );
@@ -936,17 +952,21 @@ static sfxHandle_t CG_TryRegisterSoundOption(const char *sample, qboolean compre
 static sfxHandle_t CG_TryRegisterSoundOptionSpecial(const char *sample, qboolean compressed, int optionValue, const char *compareSample, qboolean *defaultSound) {
 	int ret = 0;
 
+	if(optionValue == -1) {
+		return ret;
+	}
+
 	if(Q_stricmp(sample, compareSample) == 0) {
 		// If the special sound option value is set to 0,
 		// we will use the default sample for this sound
 		if(optionValue == 0) {
 			*defaultSound = 1;
-			return 0;
+			return ret;
 		}
 
 		// Otherwise we will try to load the option if it is set to 1-9
-		if((cg_soundOptionRail.integer > 0) && (cg_soundOptionRail.integer < 10)) {
-			if((ret = CG_TryRegisterSoundOption(sample, compressed, cg_soundOptionRail.integer)) != 0) {
+		if((optionValue > 0) && (optionValue < 10)) {
+			if((ret = CG_TryRegisterSoundOption(sample, compressed, optionValue)) != 0) {
 				return ret;
 			}
 		}
@@ -961,12 +981,31 @@ sfxHandle_t CG_RegisterSoundOption(const char *sample, qboolean compressed) {
 
 
 	// First we test for sounds that can have special options
-	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionRail.integer, "sound/weapons/railgun/rg_hum.wav", &defaultSound)) != 0) {
-		return ret;
-	}
-	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionRail.integer, "sound/weapons/railgun/railgf1a.wav", &defaultSound)) != 0) {
-		return ret;
-	}
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionGauntlet.integer,  "sound/weapons/melee/fstrun.wav",         &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionGauntlet.integer,  "sound/weapons/melee/fstatck.wav",        &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionLightning.integer, "sound/weapons/melee/fsthum.wav",         &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionLightning.integer, "sound/weapons/lightning/lg_hum.wav",     &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionLightning.integer, "sound/weapons/lightning/lg_fire.wav",    &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionLightning.integer, "sound/weapons/lightning/lg_hit.wav",     &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionLightning.integer, "sound/weapons/lightning/lg_hit2.wav",    &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionLightning.integer, "sound/weapons/lightning/lg_hit3.wav",    &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionMachinegun.integer, "sound/weapons/machinegun/machgf1b.wav", &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionMachinegun.integer, "sound/weapons/machinegun/machgf2b.wav", &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionMachinegun.integer, "sound/weapons/machinegun/machgf3b.wav", &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionMachinegun.integer, "sound/weapons/machinegun/machgf4b.wav", &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionShotgun.integer,    "sound/weapons/shotgun/sshotf1b.wav",    &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionRocket.integer,     "sound/weapons/rocket/rockfly.wav",      &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionRocket.integer,    "sound/weapons/rocket/rocklf1a.wav",      &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionGrenade.integer,    "sound/weapons/grenade/grenlf1a.wav",    &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionPlasma.integer,     "sound/weapons/plasma/lasfly.wav",       &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionPlasma.integer,     "sound/weapons/plasma/hyprbf1a.wav",     &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionRail.integer,       "sound/weapons/railgun/rg_hum.wav",      &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionRail.integer,       "sound/weapons/railgun/railgf1a.wav",    &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionBFG.integer,        "sound/weapons/bfg/bfg_hum.wav",         &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionBFG.integer,        "sound/weapons/bfg/bfg_fire.wav",        &defaultSound)) != 0) { return ret; }
+	if((ret = CG_TryRegisterSoundOptionSpecial(sample, compressed, cg_soundOptionBFG.integer,        "sound/weapons/rocket/rockfly.wav",      &defaultSound)) != 0) { return ret; }
+
+
 
 	// Then test the default sound option if not turned off by special option
 	if(!defaultSound) {

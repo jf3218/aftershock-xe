@@ -1771,7 +1771,15 @@ extern vmCvar_t 		cg_explosion;
 extern vmCvar_t 		cg_drawSpawnpoints;
 extern vmCvar_t 		cg_mapoverview;
 extern vmCvar_t 		cg_soundOption;
+extern vmCvar_t 		cg_soundOptionGauntlet;
+extern vmCvar_t 		cg_soundOptionLightning;
+extern vmCvar_t 		cg_soundOptionMachinegun;
+extern vmCvar_t 		cg_soundOptionShotgun;
+extern vmCvar_t 		cg_soundOptionRocket;
+extern vmCvar_t 		cg_soundOptionGrenade;
+extern vmCvar_t 		cg_soundOptionPlasma;
 extern vmCvar_t 		cg_soundOptionRail;
+extern vmCvar_t 		cg_soundOptionBFG;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
