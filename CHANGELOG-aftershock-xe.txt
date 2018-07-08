@@ -1,26 +1,61 @@
+2018-07-07 AfterShock XE Revision 311
+
+		- added cg_soundOption <0-9> to alter between sound packs, 
+  default value is 1
+	Valid values for cg_soundOption are 0-9. A value of 0 sets all
+  sounds to default. A value of X (with X = 1-9) loads option X
+  for all sounds. A sound S.wav with option X has to have the name
+  S_optX.wav in the pk3.
+	If S_optX.wav does not exist it falls back to S.wav
+	
+	   - added cg_soundOption* <-1-9> to alter between individual sounds
+  for weapons:
+	* cg_soundOptionGauntlet
+    * cg_soundOptionLightning
+    * cg_soundOptionMachinegun
+    * cg_soundOptionShotgun
+    * cg_soundOptionRocket
+    * cg_soundOptionGrenade
+    * cg_soundOptionPlasma
+    * cg_soundOptionRail
+    * cg_soundOptionBFG
+    cg_soundOption* can overwrite the sounds set by cg_soundOption
+    If the option does not exist it falls back to cg_soundOption
+  (which falls back to the default sound)				
+
+
 2018-07-07 AfterShock XE Revision 310
 
 		- now the teams never end up the same after shuffle anymore
 		
-		- cg_blood 0 now turns all the blood off including the splatters of blood on the screen when you get hit
+		- cg_blood 0 now turns all the blood off including the splatters
+		of blood on the screen when you get hit
 		
-		- mapcycle now relies on the number of players in game instead of the total number of clients on the server
+		- mapcycle now relies on the number of players in game instead
+  of the total number of clients on the server
 		
-		- the vote string for nextmap now displays the name of the next map in the brackets instead of the current map
+		- the vote string for nextmap now displays the name of the next 
+  map in the brackets instead of the current map
 		
-		- added colors to the vote string, now "yes" votes are shown in green and "no" votes in red 
+		- added colors to the vote string, now "yes" votes are shown in
+  green and "no" votes in red 
 		
-		- increased a maximum count of maps in mapcycle config from 64 to 128
+		- increased a maximum count of maps in mapcycle config
+  from 64 to 128
 
 2018-07-01 AfterShock XE Revision 309
 
-		- fixed a bug when a player could rename themselves to "vote passed" and "vote failed" and the sounds would be played
+		- fixed a bug when a player could rename themselves to 
+  "vote passed" and "vote failed" and the sounds would be played
 		
 		- changed to xx.xk format for the damage on the scoreboard
 		
-		- if a player accidentially joins a team he is already is on, he can join a new team immediately and does not have to wait 5 seconds anymore
+		- if a player accidentially joins a team he is already is on, 
+  he can join a new team immediately and does not have to wait 5 seconds
+  anymore
 		
-		- now a new line is started if spectator names don't fit in a single line
+		- now a new line is started if spectator names don't fit in a 
+  single line
 		
 		- various other bugfixes
 
@@ -30,15 +65,19 @@
 		
 		- added droppowerup command
 		
-		- fixed the bug with flags disappearing from the scoreboard on CTF
+		- fixed the bug with flags disappearing from the scoreboard
+  on CTF
 		
-		- extended CA and CTF scoreboards with full damage done and received, kills and deaths
+		- extended CA and CTF scoreboards with full damage done and
+  received, kills and deaths
 		
-		- extended CTF scoreboard with the amount of captures, assist and defend rewards
+		- extended CTF scoreboard with the amount of captures, assist 
+  and defend rewards
 		
 		- the team leader info message is now always white
 		
-		- fixed the bug when spectator's name inherits color from spectator whose name is displayed before them
+		- fixed the bug when spectator's name inherits color from 
+  spectator whose name is displayed before them
 		
 		- fixed the !mute command not working
 		
@@ -47,17 +86,21 @@
 2018-06-28 AfterShock XE Revision 307
 
 		- added g_reduceMachinegunDamage <0|1>
-	(vanilla) 0 - Machinegun does 7 damage for all modes except Team Deathmatch where it's 5
-	(default) 1 - Machinegun does 6 damage for all modes except Team Deathmatch where it's 5
+	(vanilla) 0 - Machinegun does 7 damage for all modes
+  except Team Deathmatch where it's 5
+	(default) 1 - Machinegun does 6 damage for all modes
+  except Team Deathmatch where it's 5
 	
 		- added g_rocketVelocity <integer>
-	Specifies rocket speed in UPS, default value is 1000, vanilla used to be 900
+	Specifies rocket speed in UPS, default value is 1000, 
+  vanilla used to be 900
 	
 	    - added g_gravityModifier <float>
 	Sets a multiplier for g_gravity, default value is 1    
 	    
 	    - removed 125FPS lock
 	    
-	    - removed "not logged in" message since the AfterShock site is long gone
+	    - removed "not logged in" message since the AfterShock site is 
+  long gone
 	    
 	    - now compiles on GCC-4.8+
