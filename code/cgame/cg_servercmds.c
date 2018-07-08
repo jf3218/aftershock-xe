@@ -706,7 +706,7 @@ static void CG_ParseTimeout ( void ) {
     cgs.timeoutDelay = cgs.timeoutDelay + cgs.timeoutAdd;
     CG_Printf ( "Timeout for %f seconds\n", ( ( float ) cgs.timeoutAdd ) /1000.0f );
 
-    sound = trap_S_RegisterSound ( "sound/movers/doors/dr1_end.wav", qfalse );
+    sound = CG_RegisterSoundOption ( "sound/movers/doors/dr1_end.wav", qfalse );
     trap_S_StartLocalSound ( sound, CHAN_LOCAL_SOUND );
 
 }
@@ -1262,7 +1262,7 @@ static void CG_ConfigStringModified ( void ) {
         cgs.gameModels[ num-CS_MODELS ] = trap_R_RegisterModel ( str );
     } else if ( num >= CS_SOUNDS && num < CS_SOUNDS+MAX_SOUNDS ) {
         if ( str[0] != '*' ) {	// player specific sounds don't register here
-            cgs.gameSounds[ num-CS_SOUNDS] = trap_S_RegisterSound ( str, qfalse );
+            cgs.gameSounds[ num-CS_SOUNDS] = CG_RegisterSoundOption ( str, qfalse );
         }
     } else if ( num >= CS_PLAYERS && num < CS_PLAYERS+MAX_CLIENTS ) {
         CG_NewClientInfo ( num - CS_PLAYERS );
@@ -1689,7 +1689,7 @@ int CG_ParseVoiceChats ( const char *filename, voiceChatList_t *voiceChatList, i
             }
             if ( !Q_stricmp ( token, "}" ) )
                 break;
-            sound = trap_S_RegisterSound ( token, compress );
+            sound = CG_RegisterSoundOption ( token, compress );
             voiceChats[voiceChatList->numVoiceChats].sounds[voiceChats[voiceChatList->numVoiceChats].numSounds] = sound;
             token = COM_ParseExt ( p, qtrue );
             if ( !token || token[0] == 0 ) {

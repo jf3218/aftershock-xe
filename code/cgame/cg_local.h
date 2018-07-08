@@ -1770,6 +1770,8 @@ extern vmCvar_t 		cg_playerLean;
 extern vmCvar_t 		cg_explosion;
 extern vmCvar_t 		cg_drawSpawnpoints;
 extern vmCvar_t 		cg_mapoverview;
+extern vmCvar_t 		cg_soundOption;
+extern vmCvar_t 		cg_soundOptionRail;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
@@ -2200,6 +2202,7 @@ void		trap_S_UpdateEntityPosition( int entityNum, const vec3_t origin );
 // given entityNum and position
 void		trap_S_Respatialize( int entityNum, const vec3_t origin, vec3_t axis[3], int inwater );
 sfxHandle_t	trap_S_RegisterSound( const char *sample, qboolean compressed );		// returns buzz if not found
+sfxHandle_t	CG_RegisterSoundOption( const char *sample, qboolean compressed );		// Registers the sound chosen with cg_soundOption (uses trap_S_RegisterSound as fallback)
 void		trap_S_StartBackgroundTrack( const char *intro, const char *loop );	// empty name stops music
 void	trap_S_StopBackgroundTrack( void );
 
