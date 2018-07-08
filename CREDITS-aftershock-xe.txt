@@ -1,7 +1,14 @@
 borg - numerous new features, improvements and bug fixes
+
 f:x3r - g_reduceMachinegunDamage implementation
+
 miOw - mostly copy/paste and removal of other people's stuff
 
 Also the code was taken from the following projects:
-OATMEAL OpenArena mod by Dan Hetrick (dhetrick@gmail.com) https://github.com/lrq3000/oatmeal - g_rocketVelocity
-(more recent) OpenArena gamecode (OAX) https://github.com/OpenArena/gamecode - g_gravityModifier and GCC-4.8+ compatibility by sago007
+
+OATMEAL OpenArena mod by Dan Hetrick (dhetrick@gmail.com) 
+https://github.com/lrq3000/oatmeal - g_rocketVelocity
+
+(more recent) OpenArena gamecode (OAX)
+https://github.com/OpenArena/gamecode - g_gravityModifier and GCC-4.8+
+compatibility by sago007
