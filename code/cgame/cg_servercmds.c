@@ -2013,14 +2013,15 @@ static void CG_ServerCommand ( void ) {
         CG_Printf ( "%s", CG_Argv ( 1 ) );
         cmd = CG_Argv ( 1 );			// yes, this is obviously a hack, but so is the way we hear about
 
-		// First check if someone renamed himself to "vote passed" or "vote failed".
-		// In this case wie obviously don't want this to make any sound...
-		if( !Q_stristr ( cmd, "renamed" ) ) {
-			if ( !Q_stricmpn ( cmd, "vote failed", 11 ) || !Q_stricmpn ( cmd, "team vote failed", 16 ) ) {
-				trap_S_StartLocalSound ( cgs.media.voteFailed, CHAN_ANNOUNCER );
-			} else if ( !Q_stricmpn ( cmd, "vote passed", 11 ) || !Q_stricmpn ( cmd, "team vote passed", 16 ) ) {
-				trap_S_StartLocalSound ( cgs.media.votePassed, CHAN_ANNOUNCER );
-			}
+		// Check that cmd is exact failed/pass string with exact length.
+		// Otherwise the sound might can be triggered if someone renames to "vote passed"
+		// or someone with the name "vote passed" connects/disconnects
+		if(((Q_strncmp(cmd, "Vote failed.\n", 13) == 0) && (strlen(cmd) == 13)) ||
+		   ((Q_strncmp(cmd, "Team vote failed.\n", 18) == 0) && (strlen(cmd) == 18))) {
+			trap_S_StartLocalSound (cgs.media.voteFailed, CHAN_ANNOUNCER );
+		} else if(((Q_strncmp(cmd, "Vote passed.\n", 13) == 0) && (strlen(cmd) == 13)) ||
+				  ((Q_strncmp(cmd, "Team vote passed.\n", 18) == 0) && (strlen(cmd) == 18))) {
+			trap_S_StartLocalSound ( cgs.media.votePassed, CHAN_ANNOUNCER );
 		}
         return;
     }
