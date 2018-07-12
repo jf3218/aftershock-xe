@@ -193,6 +193,8 @@ vmCvar_t	cg_cameraOrbitDelay;
 vmCvar_t	cg_timescaleFadeEnd;
 vmCvar_t	cg_timescaleFadeSpeed;
 vmCvar_t	cg_timescale;
+vmCvar_t	cg_fastforward;
+vmCvar_t	cg_fastforwardSpeed;
 vmCvar_t	cg_smallFont;
 vmCvar_t	cg_bigFont;
 vmCvar_t	cg_noTaunt;
@@ -523,6 +525,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{ &cg_timescaleFadeEnd, "cg_timescaleFadeEnd", "1", 0},
 	{ &cg_timescaleFadeSpeed, "cg_timescaleFadeSpeed", "0", 0},
 	{ &cg_timescale, "timescale", "1", 0},
+	{ &cg_fastforward, "cg_fastforward", "0", 0},
+	{ &cg_fastforwardSpeed, "cg_fastforwardSpeed", "100", 0},
 	{ &cg_scorePlum, "cg_scorePlums", "1", CVAR_USERINFO | CVAR_ARCHIVE},
 //unlagged - smooth clients #2
 // this is done server-side now

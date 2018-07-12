@@ -873,6 +873,8 @@ typedef struct {
 	int numSpawnpoints;
 	qboolean forceChat;
 
+	int fastforwardEnd;
+	qboolean fastforwardRun;
 } cg_t;
 
 
@@ -1560,6 +1562,8 @@ extern	vmCvar_t		cg_cameraOrbitDelay;
 extern	vmCvar_t		cg_timescaleFadeEnd;
 extern	vmCvar_t		cg_timescaleFadeSpeed;
 extern	vmCvar_t		cg_timescale;
+extern	vmCvar_t		cg_fastforward;
+extern	vmCvar_t		cg_fastforwardSpeed;
 extern	vmCvar_t		cg_cameraMode;
 extern  vmCvar_t		cg_smallFont;
 extern  vmCvar_t		cg_bigFont;

@@ -1133,6 +1133,24 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
         cg.oldTime = cg.time;
         CG_AddLagometerFrameInfo();
     }
+
+
+	if(cg_fastforward.value > 0) {
+		cg.fastforwardEnd = serverTime + cg_fastforward.value*1000;
+		cg_timescaleFadeEnd.value = cg_fastforwardSpeed.value;
+		cg.fastforwardRun = qtrue;
+		cg_fastforward.value = 0;
+
+		trap_Cvar_Set("timescale", "50");
+	}
+
+
+	if(cg.fastforwardRun && (cg.fastforwardEnd < serverTime)) {
+		cg.fastforwardRun = qfalse;
+
+		trap_Cvar_Set("timescale", "1");
+	}
+
     if (cg_timescale.value != cg_timescaleFadeEnd.value) {
         if (cg_timescale.value < cg_timescaleFadeEnd.value) {
             cg_timescale.value += cg_timescaleFadeSpeed.value * ((float)cg.frametime) / 1000;
