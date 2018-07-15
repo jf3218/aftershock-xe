@@ -2792,7 +2792,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
         return;
     }
     if( level.time < g_disableVotingTime.integer * 1000 ) {
-        trap_SendServerCommand( ent-g_entities, va( "print \"You have to wait %i seconds to call a vote .\n\"", g_disableVotingTime.integer ) );
+        trap_SendServerCommand( ent-g_entities, va( "print \"You have to wait %i seconds to call a vote.\n\"", g_disableVotingTime.integer ) );
         return;
     }
 
