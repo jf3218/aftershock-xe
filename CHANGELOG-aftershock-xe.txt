@@ -1,3 +1,27 @@
+2018-07-16 AfterShock XE Revision 312
+
+		- fixed vote passed/vote failed bug completely
+		
+		- fixed a bug when flood limit would have false positives
+		
+		- added  cg_fastforward and cg_fastforwardSpeed
+	cg_fastforward gives the seconds a demo should be forwarded
+	cg_fastforwardSpeed gives the speed of the forwarding (like timescale)
+	So if you set cg_fastforwardSpeed = 100 and cg_fastforward = 600
+  the demo will forward 10 minutes (600 seconds) with 100x speed
+  
+		- fixed powerup disappearing bug
+  (that happens on ps37ctf-mmp map)
+  
+        - fixed a bug when maplist wouldn't be displayed if it got over 
+  1024 characters
+  
+        - players no longer drown in water after the timeout is over
+        
+        - the timer now shows the correct time during a timeout
+        
+        - the flags can no longer disappear during a timeout
+
 2018-07-07 AfterShock XE Revision 311
 
 		- added cg_soundOption <0-9> to alter between sound packs, 
