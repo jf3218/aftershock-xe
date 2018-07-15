@@ -1037,10 +1037,11 @@ void CG_DrawTimer ( void ) {
     if ( !cgs.hud[HUD_GAMETIME].inuse )
         return;
 
-    if ( !cgs.timeout )
+    if(!cgs.timeout) {
         msec = cg.time - cgs.timeoutDelay - cgs.levelStartTime;
-    else
-        msec = cgs.timeoutTime - cgs.levelStartTime;
+	} else {
+        msec = cgs.timeoutTime - cgs.timeoutDelay + cgs.timeoutAdd - cgs.levelStartTime;
+	}
 
     seconds = msec / 1000;
     if ( cg_inverseTimer.integer && cgs.timelimit ) {
