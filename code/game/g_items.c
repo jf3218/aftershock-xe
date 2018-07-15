@@ -391,19 +391,38 @@ void RespawnItem( gentity_t *ent ) {
 		gentity_t	*master;
 		int	count;
 		int choice;
+		qboolean is_powerup = ent->item->giType == IT_POWERUP;
+		qboolean choice_is_powerup = is_powerup;
 
 		if ( !ent->teammaster ) {
 			G_Error( "RespawnItem: bad teammaster");
 		}
 		master = ent->teammaster;
 
-		for (count = 0, ent = master; ent; ent = ent->teamchain, count++)
-			;
+		// Find size of teamchain
+		ent = master;
+		for(count = 0; ent; count++) {
+			ent = ent->teamchain;
+		}
 
-		choice = rand() % count;
+		// Pick random entity of teamchain
+		//
+		// Here we make sure that if it is a powerup teamchain that the picked
+		// ent is also a powerup. On some maps there are non-powerups in the
+		// teamchain (for example ps37ctf-mmp). In this case we can't use the
+		// non-powerup teamchain item.
+		do {
+			choice = rand() % count;
 
-		for (count = 0, ent = master; count < choice; ent = ent->teamchain, count++)
-			;
+			ent = master;
+			for(count = 0; count < choice; count++) {
+				ent = ent->teamchain;
+			}
+
+			if(is_powerup) {
+				choice_is_powerup = ent->item->giType == IT_POWERUP;
+			}
+		} while(is_powerup && !choice_is_powerup);
 	}
 
 	ent->r.contents = CONTENTS_TRIGGER;
