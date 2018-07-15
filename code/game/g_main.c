@@ -3217,46 +3217,40 @@ void G_RunFrame( int levelTime ) {
 	// check demo state
 	//CheckDemo( );
 	
-	if( level.timeout )
+	if(level.timeout) {
 		return;
+	}
 
-        if( (g_gametype.integer==GT_ELIMINATION || g_gametype.integer==GT_CTF_ELIMINATION) && !(g_elimflags.integer & EF_NO_FREESPEC) && g_elimination_lockspectator.integer>1)
-            trap_Cvar_Set("elimflags",va("%i",g_elimflags.integer|EF_NO_FREESPEC));
-        else
-        if( (g_elimflags.integer & EF_NO_FREESPEC) && g_elimination_lockspectator.integer<2)
-            trap_Cvar_Set("elimflags",va("%i",g_elimflags.integer&(~EF_NO_FREESPEC) ) );
+	if((g_gametype.integer==GT_ELIMINATION || g_gametype.integer==GT_CTF_ELIMINATION) && !(g_elimflags.integer & EF_NO_FREESPEC) && g_elimination_lockspectator.integer>1) {
+		trap_Cvar_Set("elimflags",va("%i",g_elimflags.integer|EF_NO_FREESPEC));
+	} else if((g_elimflags.integer & EF_NO_FREESPEC) && g_elimination_lockspectator.integer<2) {
+		trap_Cvar_Set("elimflags",va("%i",g_elimflags.integer&(~EF_NO_FREESPEC)));
+	}
 
-        if( g_elimination_ctf_oneway.integer && !(g_elimflags.integer & EF_ONEWAY) ) {
-            trap_Cvar_Set("elimflags",va("%i",g_elimflags.integer|EF_ONEWAY ) );
-            //If the server admin has enabled it midgame imidiantly braodcast attacking team
-            SendAttackingTeamMessageToAllClients();
-        }
-        else
-        if( !g_elimination_ctf_oneway.integer && (g_elimflags.integer & EF_ONEWAY) ) {
-            trap_Cvar_Set("elimflags",va("%i",g_elimflags.integer&(~EF_ONEWAY) ) );
-        }
-        
-        if( g_redLocked.integer && ( TeamCount( -1, TEAM_RED ) == 0 ) && (level.time-level.startTime) > 1000){
+	if(g_elimination_ctf_oneway.integer && !(g_elimflags.integer & EF_ONEWAY)) {
+		trap_Cvar_Set("elimflags",va("%i",g_elimflags.integer|EF_ONEWAY ));
+		//If the server admin has enabled it midgame imidiantly braodcast attacking team
+		SendAttackingTeamMessageToAllClients();
+	} else if(!g_elimination_ctf_oneway.integer && (g_elimflags.integer & EF_ONEWAY)) {
+		trap_Cvar_Set("elimflags",va("%i",g_elimflags.integer&(~EF_ONEWAY) ) );
+	}
+
+	if(g_redLocked.integer && (TeamCount(-1, TEAM_RED) == 0) && (level.time-level.startTime) > 1000) {
 		trap_Cvar_Set("g_redLocked","0");
 	}
 	
-	if( g_blueLocked.integer && ( TeamCount( -1, TEAM_BLUE ) == 0 ) && (level.time-level.startTime) > 1000){
+	if(g_blueLocked.integer && (TeamCount(-1, TEAM_BLUE) == 0 ) && (level.time-level.startTime) > 1000) {
 		trap_Cvar_Set("g_blueLocked","0");
 	}
 	
-	if( ( ( level.warmupTime == 0 ) && ( level.time - level.startTime > 2000 ) && !level.intermissionQueued && ( g_gametype.integer != GT_FFA ) ) && g_doWarmup.integer ){
-		//G_Printf("%i \n", g_gametype.integer );
-		//G_Printf("%i %i %i\n", level.numPlayingClients, TeamCount( -1, TEAM_RED ), TeamCount( -1, TEAM_BLUE ) );
-		if ( ( level.numPlayingClients < 2 ) && ( g_gametype.integer < GT_TEAM ) ) {
+	if(((level.warmupTime == 0) && (level.time - level.startTime > 2000) && !level.intermissionQueued && (g_gametype.integer != GT_FFA)) && g_doWarmup.integer ) {
+		if((level.numPlayingClients < 2) && (g_gametype.integer < GT_TEAM)) {
 			LogExit("opponent left");
 		}
 		
-		if( ( g_gametype.integer >= GT_TEAM ) && ( TeamCount( -1, TEAM_RED ) == 0 ) ){
-		//	G_Printf("red");
+		if((g_gametype.integer >= GT_TEAM) && (TeamCount(-1, TEAM_RED) == 0)) {
 			LogExit("Red team left");
-		}
-		else if( ( g_gametype.integer >= GT_TEAM ) && ( TeamCount( -1, TEAM_BLUE ) == 0 ) ){
-		//	G_Printf("blue");
+		} else if((g_gametype.integer >= GT_TEAM) && (TeamCount(-1, TEAM_BLUE) == 0)) {
 			LogExit("Blue team left");
 		}
 	}	
