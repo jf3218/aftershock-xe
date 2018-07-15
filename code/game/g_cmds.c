@@ -1126,37 +1126,49 @@ void Cmd_Timeout_f( gentity_t *player ) {
         return;
     }
 
-    if ( level.timeout )
-        trap_SendServerCommand( player-g_entities, va("timeout %i %i", level.timeoutTime, level.timeoutAdd ) );
-    else {
-        level.timeout = qtrue;
-        level.timeoutTime = level.time;
-        level.timeoutAdd = g_timeoutTime.integer;
-        level.timeoutDelay += level.timeoutAdd;
+	if(level.timeout) {
+		trap_SendServerCommand(player-g_entities, va("timeout %i %i", level.timeoutTime, level.timeoutAdd));
+	} else {
+		level.timeout = qtrue;
+		level.timeoutTime = level.time;
+		level.timeoutAdd = g_timeoutTime.integer;
+		level.timeoutDelay += level.timeoutAdd;
 
-        if ( !player->client->referee )
-            player->client->timeouts++;
+		// Increase player timeout counter
+		if(!player->client->referee) {
+			player->client->timeouts++;
+		}
 
-        ent = &g_entities[0];
-        for (i=0 ; i < level.num_entities ; i++, ent++) {
-            if ( ent->inuse ) {
-                if ( ent->nextthink > 0 )
-                    ent->nextthink += level.timeoutAdd;
-                if ( ent->eventTime > 0 )
-                    ent->eventTime += level.timeoutAdd;
-            }
-        }
+		// For each entity increase event and think time by timeout
+		ent = &g_entities[0];
+		for(i = 0; i < level.num_entities; i++, ent++) {
+			if(ent->inuse) {
+				if(ent->nextthink > 0) {
+					ent->nextthink += level.timeoutAdd;
+				}
+				if(ent->eventTime > 0) {
+					ent->eventTime += level.timeoutAdd;
+				}
+			}
+		}
 
-        for ( i = 0; i < level.numConnectedClients ;i++) {
-            for ( j = 0; j < MAX_POWERUPS; j++ ) {
-                if ( level.clients[i].ps.powerups[j] > 0 )
-                    level.clients->ps.powerups[j] += level.timeoutAdd;
-            }
-        }
+		// For each client increase time in water before air ends by timeout
+		for(i = 0; i < level.numConnectedClients; i++) {
+			level.clients[i].airOutTime += level.timeoutAdd;
+		}
 
-        trap_SendServerCommand(-1,va("screenPrint \"%s" S_COLOR_CYAN " called a timeout\"", player->client->pers.netname ) );
-        trap_SendServerCommand( -1, va("timeout %i %i", level.timeoutTime, level.timeoutAdd ) );
-    }
+		// For each client increase each collected powerup by timeout
+		for(i = 0; i < level.numConnectedClients; i++) {
+			for(j = 0; j < MAX_POWERUPS; j++) {
+				if(level.clients[i].ps.powerups[j] > 0) {
+					level.clients->ps.powerups[j] += level.timeoutAdd;
+				}
+			}
+		}
+
+		trap_SendServerCommand(-1,va("screenPrint \"%s" S_COLOR_CYAN " called a timeout\"", player->client->pers.netname));
+		trap_SendServerCommand(-1, va("timeout %i %i", level.timeoutTime, level.timeoutAdd));
+	}
 }
 
 void G_Timein( void ) {
