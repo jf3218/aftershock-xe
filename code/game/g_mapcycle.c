@@ -391,7 +391,7 @@ voteable maps
 */
 void G_drawAllowedMaps ( gentity_t *ent ) {
 	int i;
-	char buffer[2048];
+	char buffer[4001] = {'\0'};
 
 	strcpy ( buffer,va ( "Allowed maps are: " ) );
 
@@ -403,7 +403,17 @@ void G_drawAllowedMaps ( gentity_t *ent ) {
 	}
 
 	strcat ( buffer, va ( "\n" ) );
-	trap_SendServerCommand ( ent-g_entities, va ( "print \"%s\"", buffer ) );
+
+	for( i = 0; i < 4; i++) {
+		char tmp = buffer[(i+1)*1000];
+		buffer[(i+1)*1000] = '\0';
+		trap_SendServerCommand(ent-g_entities, va ("print \"%s\"", &buffer[i*1000]));
+		if(tmp == '\0') {
+			break;
+		}
+
+		buffer[(i+1)*1000] = tmp;
+	}
 }
 
 /*
@@ -415,18 +425,28 @@ information in the mapcycle
 */
 void G_drawMapcycle ( gentity_t *ent ) {
 	int i;
-	char buffer[2048];
+	char buffer[8001] = {'\0'};
 
 	for ( i = 0; i < mapcycle.mapcycleCount; i++ ) {
-		strcat ( buffer, va ( "^3%i ^2%s(%s) ^3%i %i\n", i, mapcycle.maps[i], mapcycle.mapfiles[i], mapcycle.minplayers[i], mapcycle.maxplayers[i] ) );
+		strcat ( buffer, va ( "^3%i ^2%s ^3%i %i\n", i, mapcycle.maps[i], mapcycle.minplayers[i], mapcycle.maxplayers[i] ) );
 	}
 	strcat ( buffer, va ( "\n" ) );
 	for ( i = 0; i < mapcycle.allowedMapsCount; i++ ) {
-		strcat ( buffer, va ( "^1%s(%s) ", mapcycle.allowedMaps[i], mapcycle.allowedmapfiles[i] ) );
+		strcat ( buffer, va ( "^1%s ", mapcycle.allowedMaps[i] ) );
 	}
 
 	strcat ( buffer, va ( "\n" ) );
-	trap_SendServerCommand ( ent-g_entities, va ( "print \"%s\"", buffer ) );
+
+	for( i = 0; i < 8; i++) {
+		char tmp = buffer[(i+1)*1000];
+		buffer[(i+1)*1000] = '\0';
+		trap_SendServerCommand(ent-g_entities, va ("print \"%s\"", &buffer[i*1000]));
+		if(tmp == '\0') {
+			break;
+		}
+
+		buffer[(i+1)*1000] = tmp;
+	}
 }
 
 /*
