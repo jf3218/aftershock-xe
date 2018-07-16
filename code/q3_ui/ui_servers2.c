@@ -96,6 +96,7 @@ MULTIPLAYER MENU (SERVER BROWSER)
 #define SORT_CLIENTS		2
 #define SORT_GAME			3
 #define SORT_PING			4
+#define SORT_HUMANS         5
 
 #define GAMES_ALL			0
 #define GAMES_FFA			1
@@ -146,6 +147,7 @@ static const char *sortkey_items[] = {
 	"Open Player Spots",
 	"Game Type",
 	"Ping Time",
+	"Human Players",
 	NULL
 };
 
@@ -350,6 +352,18 @@ static int QDECL ArenaServers_Compare( const void *arg1, const void *arg2 ) {
 			return 0;
 		}
 		return -1;
+
+	case SORT_HUMANS:
+			f1 = t1->humanclients;
+			f2 = t2->humanclients;
+
+			if( f1 < f2 ) {
+				return 1;
+			}
+			if( f1 == f2 ) {
+				return 0;
+			}
+			return -1;
 
 	case SORT_GAME:
 		if( t1->gametype < t2->gametype ) {
