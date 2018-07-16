@@ -1,3 +1,10 @@
+2018-07-17 AfterShock XE Revision 313
+
+		- added support for sorting servers by the amount of human 
+  players on them in the server browser
+  
+		- removed flood protection for admin commands
+
 2018-07-16 AfterShock XE Revision 312
 
 		- fixed vote passed/vote failed bug completely
