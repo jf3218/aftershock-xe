@@ -231,6 +231,7 @@ typedef enum {
 	LE_FADE_RGB,
 	LE_SCALE_FADE,
 	LE_SCOREPLUM,
+	LE_DAMAGEPLUM,
 	LE_KAMIKAZE,
 	LE_INVULIMPACT,
 	LE_INVULJUICED,
@@ -1774,6 +1775,7 @@ extern vmCvar_t 		cg_playerLean;
 extern vmCvar_t 		cg_explosion;
 extern vmCvar_t 		cg_drawSpawnpoints;
 extern vmCvar_t 		cg_mapoverview;
+extern vmCvar_t			cg_damagePlums;
 extern vmCvar_t 		cg_soundOption;
 extern vmCvar_t 		cg_soundOptionGauntlet;
 extern vmCvar_t 		cg_soundOptionLightning;
@@ -2046,7 +2048,7 @@ void CG_InvulnerabilityJuiced( vec3_t org );
 void CG_LightningBoltBeam( vec3_t start, vec3_t end );
 //#endif
 void CG_ScorePlum( int client, vec3_t org, int score );
-
+void CG_DamagePlum( int client, vec3_t org, int score );
 void CG_GibPlayer( vec3_t playerOrigin );
 void CG_BigExplode( vec3_t playerOrigin );
 

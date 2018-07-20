@@ -29,6 +29,9 @@ static	float	s_quadFactor;
 static	vec3_t	forward, right, up;
 static	vec3_t	muzzle;
 
+static gentity_t *oldTarg[DEFAULT_SHOTGUN_COUNT], *oldAttacker;
+int countTarg;
+
 #define NUM_NAILSHOTS 15
 
 /*
@@ -395,6 +398,7 @@ qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent ) {
 	vec3_t		tr_start, tr_end;
 
 	passent = ent->s.number;
+	oldAttacker = ent;
 	VectorCopy( start, tr_start );
 	VectorCopy( end, tr_end );
 	for (i = 0; i < 10; i++) {
@@ -407,6 +411,11 @@ qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent ) {
 		}
 
 		if ( traceEnt->takedamage) {
+			if ( oldTarg[countTarg-1] != traceEnt && countTarg < DEFAULT_SHOTGUN_COUNT ) {
+				oldTarg[countTarg] = traceEnt;
+				oldTarg[countTarg]->sumDamageShotgun = 0;
+				countTarg++;
+			}	
 			damage = DEFAULT_SHOTGUN_DAMAGE * s_quadFactor;
 			if ( traceEnt->client && traceEnt->client->invulnerabilityTime > level.time ) {
 				if (G_InvulnerabilityEffect( traceEnt, forward, tr.endpos, impactpoint, bouncedir )) {
@@ -457,6 +466,7 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 	PerpendicularVector( right, forward );
 	CrossProduct( forward, right, up );
 
+	countTarg = 0;
 	oldScore = ent->client->ps.persistant[PERS_SCORE];
 
 //unlagged - backward reconciliation #2
@@ -539,6 +549,12 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 				ent->client->accuracy_hits++;
 			}
 			hits++;
+		}
+	}
+
+	for ( i = 0 ; i < countTarg ; i++ ) {
+		if ( oldTarg[i]->sumDamageShotgun && oldTarg[i] != oldAttacker && g_damagePlums.integer ) {
+			DamagePlum( oldAttacker, oldTarg[i]->r.currentOrigin, oldTarg[i]->sumDamageShotgun );
 		}
 	}
 	if( hitClient )

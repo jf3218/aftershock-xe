@@ -155,6 +155,7 @@ struct gentity_s {
 	qboolean	takedamage;
 
 	int			damage;
+	int			sumDamageShotgun;
 	int			splashDamage;	// quad will increase this without increasing radius
 	int			splashRadius;
 	int			methodOfDeath;
@@ -828,6 +829,7 @@ void body_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 void TossClientItems( gentity_t *self );
 void TossClientPersistantPowerups( gentity_t *self );
 void TossClientCubes( gentity_t *self );
+void DamagePlum( gentity_t *ent, vec3_t origin, int score ); 
 
 // damage flags
 #define DAMAGE_RADIUS				0x00000001	// damage was indirect
@@ -1391,6 +1393,7 @@ extern vmCvar_t   g_autoServerDemos;
 extern vmCvar_t   g_autoRestart;
 extern vmCvar_t   g_writePlayerCoords;
 extern vmCvar_t   g_crosshairNamesFog;
+extern vmCvar_t   g_damagePlums;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

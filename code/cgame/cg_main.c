@@ -409,6 +409,7 @@ vmCvar_t 	cg_explosion;
 vmCvar_t 	cg_drawSpawnpoints;
 
 vmCvar_t 	cg_mapoverview;
+vmCvar_t 	cg_damagePlums;
 
 vmCvar_t 	cg_soundOption;
 vmCvar_t 	cg_soundOptionGauntlet;
@@ -684,6 +685,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_explosion, "cg_explosion", "255", CVAR_ARCHIVE },
 	{&cg_drawSpawnpoints, "cg_drawSpawnpoints", "1", CVAR_ARCHIVE },
 	{&cg_mapoverview, "cg_mapoverview", "0", CVAR_ARCHIVE | CVAR_CHEAT },
+	{&cg_damagePlums, "cg_damagePlums", "1", CVAR_USERINFO | CVAR_ARCHIVE },
 	{&cg_soundOption, "cg_soundOption", "1", CVAR_ARCHIVE},
 	{&cg_soundOptionGauntlet, "cg_soundOptionGauntlet", "-1", CVAR_ARCHIVE},
 	{&cg_soundOptionLightning, "cg_soundOptionLightning", "-1", CVAR_ARCHIVE},
