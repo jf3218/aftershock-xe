@@ -11,7 +11,7 @@ spark
 	}
 }
 
-plasmaSpark
+plasmaSparkAs
 {	
 	nopicmip
 	cull none
