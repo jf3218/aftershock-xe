@@ -507,7 +507,7 @@ void G_StopServerDemos( void ) {
 		if ( g_entities[ &level.clients[i] - level.clients].r.svFlags & SVF_BOT)
 			continue;
 		
-		trap_SendConsoleCommand(EXEC_APPEND, va("stopsvrecord %i \n", &level.clients[i] - level.clients ) );
+		trap_SendConsoleCommand(EXEC_APPEND, va("stopsvrecord %li \n", &level.clients[i] - level.clients ) );
 	}
 }
 
@@ -2194,7 +2194,7 @@ static void G_VoiceTo( gentity_t *ent, gentity_t *other, int mode, const char *i
         return;
     }
     // no chatting to players in tournements
-    if ( (g_gametype.integer == GT_TOURNAMENT )) {
+    if ( g_gametype.integer == GT_TOURNAMENT ) {
         return;
     }
 

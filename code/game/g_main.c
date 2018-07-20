@@ -837,7 +837,7 @@ void G_SendAllItems( void ){
 					continue;
 				if( !(ent->s.eType == ET_ITEM) )
 					continue;
-				if( (ent->flags == FL_DROPPED_ITEM) )
+				if( ent->flags == FL_DROPPED_ITEM )
 					continue;
 				//G_Printf("%s\n", ent->item->shortPickup_name);
 				if( ( G_ItemTeam( ent->s.number ) == TEAM_RED && j == 0 ) || ( G_ItemTeam( ent->s.number ) == TEAM_BLUE && j == 1 ) || ( G_ItemTeam( ent->s.number ) == -1 && j == 2 ) )
@@ -852,7 +852,7 @@ void G_SendAllItems( void ){
 				continue;
 			if( !(ent->s.eType == ET_ITEM) )
 				continue;
-			if( (ent->flags == FL_DROPPED_ITEM) )
+			if( ent->flags == FL_DROPPED_ITEM )
 				continue;
 			//G_Printf("%s\n", ent->item->shortPickup_name);
 			

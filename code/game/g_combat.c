@@ -1291,9 +1291,9 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 			targ->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
 		}
                 //Remeber the last person to hurt the player
-                if( /*!g_awardpushing.integer ||*/ targ==attacker || OnSameTeam (targ, attacker)) {
-                    targ->client->lastSentFlying = -1;
-                } else {
+		if( /*!g_awardpushing.integer ||*/ targ==attacker || OnSameTeam (targ, attacker)) {
+			targ->client->lastSentFlying = -1;
+		} else {
 	/*if ( pm->waterlevel <= 1 ) {
 		if ( pml.walking && !(pml.groundTrace.surfaceFlags & SURF_SLICK) ) {
 			// if getting knocked back, no friction
@@ -1464,8 +1464,8 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 		damage *= 0.5;
 	}
 
-        if(targ && targ->client && attacker->client )
-            damage = catchup_damage(damage, attacker->client->ps.persistant[PERS_SCORE], targ->client->ps.persistant[PERS_SCORE]);
+	if(targ && targ->client && attacker->client )
+		damage = catchup_damage(damage, attacker->client->ps.persistant[PERS_SCORE], targ->client->ps.persistant[PERS_SCORE]);
 
 	if ( damage < 1 ) {
 		damage = 1;

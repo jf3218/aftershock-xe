@@ -570,7 +570,7 @@ void respawn( gentity_t *ent ) {
 					LMSpoint();	
                                 //Sago: This is really bad
                                 //TODO: Try not to make people spectators here
-				ent->client->sess.spectatorState = PM_SPECTATOR;
+				ent->client->sess.spectatorState = (spectatorState_t)PM_SPECTATOR;
                                 //We have to force spawn imidiantly to prevent lag.
                                 ClientSpawn(ent);
 			}
@@ -2685,7 +2685,7 @@ void ClientSpawn(gentity_t *ent) {
 	
 	client->spawnTime = level.time;
 	//client->sendSpawnpoints = sendSpawnpoints;
-	/*if( !client->sendSpawnpoints /*&& g_gametype.integer < GT_TEAM*//* ){
+	/*if( !client->sendSpawnpoints && g_gametype.integer < GT_TEAM ){
 		G_SendSpawnpoints( ent );
 		client->sendSpawnpoints = qtrue;
 	}*/
