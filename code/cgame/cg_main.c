@@ -420,6 +420,7 @@ vmCvar_t 	cg_soundOptionGrenade;
 vmCvar_t 	cg_soundOptionPlasma;
 vmCvar_t 	cg_soundOptionRail;
 vmCvar_t 	cg_soundOptionBFG;
+vmCvar_t 	g_crosshairNamesFog;
 
 
 typedef struct {
@@ -693,6 +694,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_soundOptionPlasma, "cg_soundOptionPlasma", "-1", CVAR_ARCHIVE},
 	{&cg_soundOptionRail, "cg_soundOptionRail", "-1", CVAR_ARCHIVE},
 	{&cg_soundOptionBFG, "cg_soundOptionBFG", "-1", CVAR_ARCHIVE}
+	{&g_crosshairNamesFog, "g_crosshairNamesFog", "0", CVAR_SYSTEMINFO }
 };
 
 static int  cvarTableSize = sizeof( cvarTable ) / sizeof( cvarTable[0] );

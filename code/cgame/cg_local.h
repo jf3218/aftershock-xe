@@ -1784,6 +1784,7 @@ extern vmCvar_t 		cg_soundOptionGrenade;
 extern vmCvar_t 		cg_soundOptionPlasma;
 extern vmCvar_t 		cg_soundOptionRail;
 extern vmCvar_t 		cg_soundOptionBFG;
+extern vmCvar_t   		g_crosshairNamesFog;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
