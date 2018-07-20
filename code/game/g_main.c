@@ -1391,7 +1391,7 @@ void CalculateRanks( void ) {
 	level.numNonSpectatorClients = 0;
 	level.numPlayingClients = 0;
         humanplayers = 0; // don't count bots
-	for ( i = 0; i < 2; i++ ) {
+	for ( i = 0; i < TEAM_NUM_TEAMS; i++ ) {
 		level.numteamVotingClients[i] = 0;
 	}
 	for ( i = 0 ; i < level.maxclients ; i++ ) {
@@ -2340,6 +2340,8 @@ void G_SendEliminationStats( void ) {
 		}
 	}
 	
+	if (maxdmgdoneClientnum == -1)
+		maxdmgdoneClientnum = 0;
 	trap_SendServerCommand( -1, va( "print \"Max damage done: %s ^2%i\n\"", g_clients[maxdmgdoneClientnum].pers.netname, g_clients[maxdmgdoneClientnum].elimRoundDamage ) );
 	trap_SendServerCommand( -1, va( "print \"Min damage taken: %s ^1%i\n\"", g_clients[mindmgtakenClientnum].pers.netname, g_clients[mindmgtakenClientnum].elimRoundDamageTaken ) );
 	trap_SendServerCommand( -1, va( "print \"Max kills: %s ^3%i\n\"", g_clients[maxkillsClientnum].pers.netname, g_clients[maxkillsClientnum].elimRoundKills ) );

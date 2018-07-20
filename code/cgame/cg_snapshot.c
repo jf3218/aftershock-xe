@@ -144,7 +144,7 @@ static void CG_TransitionSnapshot( void ) {
 	CG_ExecuteNewServerCommands( cg.nextSnap->serverCommandSequence );
 
 	// if we had a map_restart, set everthing with initial
-	if ( !cg.snap ) {
+	if ( cg.mapRestart ) {
 	}
 
 	// clear the currentValid flag for all entities in the existing snapshot
