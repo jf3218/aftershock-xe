@@ -695,7 +695,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_soundOptionGrenade, "cg_soundOptionGrenade", "-1", CVAR_ARCHIVE},
 	{&cg_soundOptionPlasma, "cg_soundOptionPlasma", "-1", CVAR_ARCHIVE},
 	{&cg_soundOptionRail, "cg_soundOptionRail", "-1", CVAR_ARCHIVE},
-	{&cg_soundOptionBFG, "cg_soundOptionBFG", "-1", CVAR_ARCHIVE}
+	{&cg_soundOptionBFG, "cg_soundOptionBFG", "-1", CVAR_ARCHIVE},
 	{&g_crosshairNamesFog, "g_crosshairNamesFog", "0", CVAR_SYSTEMINFO }
 };
 
