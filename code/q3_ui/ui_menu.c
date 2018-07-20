@@ -167,12 +167,8 @@ TTimo: this function is common to the main menu and errorMessage menu
 
 static void Main_MenuDraw( void ) {
 	refdef_t		refdef;
-	//refEntity_t		ent;
-	vec3_t			origin;
-	//vec3_t			angles;
 	float			adjust;
 	float			x, y, w, h;
-	//vec4_t			color = {0.2, 0.2, 1.0, 1};
 	int 			i;
 
 	// setup the refdef
@@ -198,10 +194,6 @@ static void Main_MenuDraw( void ) {
 	refdef.fov_y = 19.6875 + adjust;
 
 	refdef.time = uis.realtime;
-
-	origin[0] = 300;
-	origin[1] = 0;
-	origin[2] = -32;
 
 	trap_R_ClearScene();
 

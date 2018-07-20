@@ -1553,6 +1553,7 @@ static void PM_BeginWeaponChange( int weapon ) {
 PM_DelayedWeaponChange
 ===============
 */
+#if 0
 static void PM_DelayedWeaponChange( void ) {
 	int		weapon;
 
@@ -1569,7 +1570,7 @@ static void PM_DelayedWeaponChange( void ) {
 	pm->ps->weaponstate = WEAPON_RAISING;
 	PM_StartTorsoAnim( TORSO_RAISE );
 }
-
+#endif
 
 /*
 ===============

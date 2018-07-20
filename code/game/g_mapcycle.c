@@ -165,9 +165,6 @@ if the map is not found return qfalse
 =================
 */
 static qboolean G_MapAvailable ( char* map ) {
-	fileHandle_t	file;           //To check that the map actually exists.
-
-
 	if( !trap_FS_FOpenFile ( va ( "maps/%s.bsp",map ), NULL,FS_READ ) )
 		return qfalse; //maps/MAPNAME.bsp does not exist
 	
@@ -331,7 +328,6 @@ map in the cycle
 */
 void G_GetMapfile ( char *map ) {
 	int i;
-	char	command[1024];
 
 	if ( mapcycle.mapcycleCount == 0 )
 		return;

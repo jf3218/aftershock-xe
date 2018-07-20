@@ -127,18 +127,12 @@ char*	allowed[] = {
 
 qboolean G_ClassnameAllowed( char *input ){
 	gitem_t	*it;
-	int i;
 	for ( it = bg_itemlist + 1 ; it->classname ; it++) {
 		if ( !strcmp(input, it->classname ) ) {
 			return qtrue;
 		}
 	}
-	
-	/*for( i = 0; allowed[i]; i++ ){
-		if ( !strcmp(input, allowed[i] ) ) {
-			return qtrue;
-		} 
-	}*/
+
 	return qfalse;
 }
 
@@ -303,9 +297,7 @@ char *G_ClearString( char *input ){
 
 static void G_LoadMapfileEntity( token_t *in, int min, int max ){
 	int i;
-	int j;
 	char *buf;
-	float	v;
 	vec3_t	vec;
 	
 	fieldCopy_t *field;

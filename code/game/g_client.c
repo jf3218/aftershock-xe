@@ -1364,12 +1364,9 @@ char *G_MD5String( const char *in )
 {
 	static char final[33] = {""};
 	unsigned char digest[16] = {""}; 
+	int i;
 
 	MD5_CTX md5;
-	byte buffer[2048];
-	int i;
-	int r = 0;
-	int total = 0;
 
 	Q_strncpyz( final, "", sizeof( final ) );
 
@@ -1430,7 +1427,6 @@ void ClientUserinfoChanged( int clientNum ) {
 	char	redTeam[MAX_INFO_STRING];
 	char	blueTeam[MAX_INFO_STRING];
 	char	userinfo[MAX_INFO_STRING];
-	int	i;
 	//char      buf[ MAX_INFO_STRING ];
 
 	ent = g_entities + clientNum;

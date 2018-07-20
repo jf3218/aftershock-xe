@@ -62,9 +62,6 @@ TeamMain_MenuEvent
 ===============
 */
 static void TeamMain_MenuEvent( void* ptr, int event ) {
-	int gametype;
-	char	info[MAX_INFO_STRING];
-
 	if( event != QM_ACTIVATED ) {
 		return;
 	}

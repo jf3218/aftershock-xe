@@ -272,7 +272,6 @@ void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime,
 	gentity_t	*ent;
 	int		i;
 	int team;
-	fileHandle_t f;
 
 	//G_Printf("entityNum %i, type %i, quantity %i, respawnTime %i, nextItemEntityNum %i\n", entityNum, type, quantity, respawnTime, nextItemEntityNum);
 
@@ -488,13 +487,12 @@ void G_StartServerDemos( void ) {
 		playerName[count] = '\0';
 		trap_Cvar_Set(va( "demopath%i", i ), va("%s/%s-POV(%s)", gamestring, matchstring, playerName));
 		//Com_sprintf(level.clients[i].demopath, MAX_QPATH, "%s/%s-POV(%s)", gamestring, matchstring, playerName );
-		trap_SendConsoleCommand(EXEC_APPEND, va("svrecord %i %s/%s-POV(%s) \n", &level.clients[i] - level.clients, gamestring, matchstring, playerName ) );
+		trap_SendConsoleCommand(EXEC_APPEND, va("svrecord %li %s/%s-POV(%s) \n", &level.clients[i] - level.clients, gamestring, matchstring, playerName ) );
 	}
 }
 
 void G_StopServerDemos( void ) {
 	int i;
-	char gamestring[128];
 	
 	//TODO: Add other gametypes
 	if( ( g_gametype.integer != GT_TOURNAMENT ) || !g_autoServerDemos.integer )
@@ -1246,7 +1244,7 @@ int SetTeam( gentity_t *ent, char *s ) {
     spectatorState_t	specState;
     int					specClient;
     int					teamLeader;
-    int				specOnly;
+    int				specOnly = 0;
     char	            userinfo[MAX_INFO_STRING];
     qboolean            force;
 	int ret = 0;
@@ -1598,7 +1596,6 @@ void Cmd_FollowCycle_f( gentity_t *ent ) {
     int     count;
     char    args[11];
     int     dir;
-    int i;
 
     /*for( i = 0 ; i < level.numConnectedClients; i++ ){
       if( level.clients[i].pers.demoClient )
@@ -3426,8 +3423,6 @@ void Cmd_GetMappage_f( gentity_t *ent ) {
 }
 
 void Cmd_DropPowerup_f( gentity_t *ent ) {
-	gitem_t	*item;
-	gentity_t *out;
 	int now;
 	int timeLeft;
 	int pw;
@@ -3447,7 +3442,7 @@ void Cmd_DropPowerup_f( gentity_t *ent ) {
 	// Only one powerup is dropped at a time.
 	for (pw = PW_QUAD; pw <= PW_FLIGHT; pw++) {
 		if ( ent->client->ps.powerups[pw] ) {
-			gitem_t *item = BG_FindItemForPowerup( pw );
+			BG_FindItemForPowerup( pw );
 			timeLeft = (ent->client->ps.powerups[pw] - now)/1000; // Time left for powerup
 			if (timeLeft < 0) {
 				timeLeft = 0;
@@ -3463,7 +3458,6 @@ void Cmd_DropPowerup_f( gentity_t *ent ) {
 
 void Cmd_DropArmor_f( gentity_t *ent ) {
     gitem_t		*item;
-    gentity_t	*out;
     char arg1[128];
     int amount;
 
@@ -3490,12 +3484,11 @@ void Cmd_DropArmor_f( gentity_t *ent ) {
     
     item = BG_FindArmorForQuantity( amount );
     
-    out = Drop_Item_Armor( ent, item, 0 );
+    Drop_Item_Armor( ent, item, 0 );
 }
 
 void Cmd_DropHealth_f( gentity_t *ent ) {
     gitem_t		*item;
-    gentity_t	*out;
     char arg1[128];
     int amount;
 
@@ -3522,12 +3515,11 @@ void Cmd_DropHealth_f( gentity_t *ent ) {
     
     item = BG_FindHealthForQuantity( amount );
     
-    out = Drop_Item_Health( ent, item, 0 );
+    Drop_Item_Health( ent, item, 0 );
 }
 
 void Cmd_DropAmmo_f( gentity_t *ent ) {
     gitem_t		*item;
-    gentity_t	*out;
     int			weapon;
     char arg1[128];
 
@@ -3548,13 +3540,12 @@ void Cmd_DropAmmo_f( gentity_t *ent ) {
     
     item = BG_FindAmmoForWeapon( weapon );
     if ( ( ent->client->ps.stats[STAT_WEAPONS] & ( 1 << item->giTag ) ) ) {
-        out = Drop_Item_Ammo( ent, item, 0 );
+        Drop_Item_Ammo( ent, item, 0 );
     }
 }
 
 void Cmd_DropWeapon_f( gentity_t *ent ) {
     gitem_t		*item;
-    gentity_t	*out;
     int			weapon;
     char arg1[128];
 
@@ -3575,7 +3566,7 @@ void Cmd_DropWeapon_f( gentity_t *ent ) {
 
     item = BG_FindItemForWeapon( weapon );
     if ( ( ent->client->ps.stats[STAT_WEAPONS] & ( 1 << item->giTag ) ) ) {
-        out = Drop_Item_Weapon( ent, item, 0 );
+        Drop_Item_Weapon( ent, item, 0 );
     }
 }
 

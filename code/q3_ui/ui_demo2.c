@@ -89,7 +89,6 @@ Demos_MenuEvent
 */
 static void Demos_MenuEvent( void *ptr, int event ) {
 	char *buffer;
-	int len;
 	char	path[512];
 	if( event != QM_ACTIVATED ) {
 		return;
@@ -103,7 +102,6 @@ static void Demos_MenuEvent( void *ptr, int event ) {
 		
 		//The current Item is not a demo
 		if( !buffer ){
-			len = strlen( s_demos.list.itemnames[s_demos.list.curvalue] );
 			//if( strcmp( s_demos.list.itemnames[s_demos.list.curvalue], ".." ) != 0 ){
 				if( currentFolder )
 					strcat(currentFolder, "/");
@@ -151,17 +149,15 @@ UI_DemosMenu_Key
 =================
 */
 static sfxHandle_t UI_DemosMenu_Key( int key ) {
-	menucommon_s	*item;
+	Menu_ItemAtCursor( &s_demos.menu );
 
-        item = Menu_ItemAtCursor( &s_demos.menu );
+	if( key == K_MWHEELUP ) {
+		ScrollList_Key( &s_demos.list, K_UPARROW );
+	}
 
-        if( key == K_MWHEELUP ) {
-            ScrollList_Key( &s_demos.list, K_UPARROW );
-        }
-
-        if( key == K_MWHEELDOWN ) {
-            ScrollList_Key( &s_demos.list, K_DOWNARROW );
-        }
+	if( key == K_MWHEELDOWN ) {
+		ScrollList_Key( &s_demos.list, K_DOWNARROW );
+	}
 
 	return Menu_DefaultKey( &s_demos.menu, key );
 }
@@ -193,7 +189,7 @@ Demos_MenuInit
 ===============
 */
 static void Demos_MenuInit( qboolean firstStart ) {
-	int		i,j;
+	int		i;
 	int		len;
 	char	*demoname, extension[16];
 	char	folder[128];

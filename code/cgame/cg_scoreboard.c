@@ -569,9 +569,9 @@ qboolean CG_DrawOldTourneyScoreboard( void ){
 	int i, j, k;
 	int side, loop, offset;
 	clientInfo_t *p1;
-	score_t *p1Score;
+	score_t *p1Score = 0;
 	clientInfo_t *p2;
-	score_t *p2Score;
+	score_t *p2Score = 0;
 	clientInfo_t *p;
 	score_t *score;
 	gitem_t *item;
