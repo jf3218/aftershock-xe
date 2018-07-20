@@ -1752,7 +1752,7 @@ static void CG_RegisterGraphics( void ) {
 
 #endif
 	cgs.media.particleSpark = trap_R_RegisterShader("spark");
-	cgs.media.particlePlasma = trap_R_RegisterShader("plasmaSpark");
+	cgs.media.particlePlasma = trap_R_RegisterShader("plasmaSparkAs");
 	
 	CG_ClearParticles ();
 	
