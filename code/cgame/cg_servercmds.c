@@ -208,9 +208,19 @@ CG_ParseScores
 =================
 */
 static void CG_ParseScores ( void ) {
-    int		i;
+	int i;
+	int num_and_start;
+	int start;
+	int num_in_packet;
 
-    cg.numScores = atoi ( CG_Argv ( 1 ) );
+	// The first parameter has the number of scores in it
+	// as well as the start of the scores in the data.
+	// This way the scores can be transferred in several packets
+	// if the score data gets too big.
+	num_and_start = atoi(CG_Argv(1));
+	start = (num_and_start >> 8) & 0xFF;
+	cg.numScores = num_and_start & 0xFF;
+
     if ( cg.numScores > MAX_CLIENTS ) {
         cg.numScores = MAX_CLIENTS;
     }
@@ -226,62 +236,65 @@ static void CG_ParseScores ( void ) {
         cgs.scores2 = cg.teamScores[1];
     }
 
-    memset ( cg.scores, 0, sizeof ( cg.scores ) );
+	if(start == 0) {
+		memset(cg.scores, 0, sizeof(cg.scores));
+	}
 
 #define NUM_DATA 26
 #define NUM_DATA_DUEL 47
 #define FIRST_DATA 4
 
-    for ( i = 0 ; i < cg.numScores ; i++ ) {
+    for ( i = start ; i < cg.numScores ; i++ ) {
+		num_in_packet = i - start;
         if ( cgs.gametype == GT_TOURNAMENT ) {
             //
-            cg.scores[i].client = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 1 ) );
-            cg.scores[i].score = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 2 ) );
-            cg.scores[i].ping = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 3 ) );
-            cg.scores[i].time = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 4 ) );
-            cg.scores[i].scoreFlags = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 5 ) );
-            cg.scores[i].powerUps = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 6 ) );
-            cg.scores[i].accuracy = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 7 ) );
-            cg.scores[i].impressiveCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 8 ) );
-            cg.scores[i].excellentCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 9 ) );
-            cg.scores[i].guantletCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 10 ) );
-            cg.scores[i].defendCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 11 ) );
-            cg.scores[i].assistCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 12 ) );
-            cg.scores[i].perfect = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 13 ) );
-            cg.scores[i].captures = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 14 ) );
-            cg.scores[i].isDead = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 15 ) );
-            cg.scores[i].dmgdone = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 16 ) );
-            cg.scores[i].dmgtaken = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 17 ) );
-            cg.scores[i].specOnly = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 18 ) );
-            cg.scores[i].deathCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 19 ) );
-            cg.scores[i].frags = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 20 ) );
-            cg.scores[i].airrocketCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 21 ) );
-            cg.scores[i].airgrenadeCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 22 ) );
-            cg.scores[i].fullshotgunCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 23 ) );
-            cg.scores[i].rocketRailCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 24 ) );
-            cg.scores[i].itemDeniedCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 25 ) );
-            cg.scores[i].health = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 26 ) );
-            cg.scores[i].armor = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 27 ) );
-            cg.scores[i].yellowArmor = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 28 ) );
-            cg.scores[i].redArmor = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 29 ) );
-            cg.scores[i].megaHealth = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 30 ) );
-            cg.scores[i].accuracys[0][0] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 31 ) );
-            cg.scores[i].accuracys[0][1] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 32 ) );
-            cg.scores[i].accuracys[1][0] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 33 ) );
-            cg.scores[i].accuracys[1][1] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 34 ) );
-            cg.scores[i].accuracys[2][0] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 35 ) );
-            cg.scores[i].accuracys[2][1] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 36 ) );
-            cg.scores[i].accuracys[3][0] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 37 ) );
-            cg.scores[i].accuracys[3][1] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 38 ) );
-            cg.scores[i].accuracys[4][0] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 39 ) );
-            cg.scores[i].accuracys[4][1] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 40 ) );
-            cg.scores[i].accuracys[5][0] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 41 ) );
-            cg.scores[i].accuracys[5][1] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 42 ) );
-            cg.scores[i].accuracys[6][0] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 43 ) );
-            cg.scores[i].accuracys[6][1] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 44 ) );
-            cg.scores[i].accuracys[7][0] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 45 ) );
-            cg.scores[i].accuracys[7][1] = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 46 ) );
-            cg.scores[i].spawnkillCount = atoi ( CG_Argv ( i * NUM_DATA_DUEL + FIRST_DATA + 47 ) );
+            cg.scores[i].client = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 1 ) );
+            cg.scores[i].score = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 2 ) );
+            cg.scores[i].ping = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 3 ) );
+            cg.scores[i].time = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 4 ) );
+            cg.scores[i].scoreFlags = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 5 ) );
+            cg.scores[i].powerUps = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 6 ) );
+            cg.scores[i].accuracy = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 7 ) );
+            cg.scores[i].impressiveCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 8 ) );
+            cg.scores[i].excellentCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 9 ) );
+            cg.scores[i].guantletCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 10 ) );
+            cg.scores[i].defendCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 11 ) );
+            cg.scores[i].assistCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 12 ) );
+            cg.scores[i].perfect = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 13 ) );
+            cg.scores[i].captures = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 14 ) );
+            cg.scores[i].isDead = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 15 ) );
+            cg.scores[i].dmgdone = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 16 ) );
+            cg.scores[i].dmgtaken = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 17 ) );
+            cg.scores[i].specOnly = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 18 ) );
+            cg.scores[i].deathCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 19 ) );
+            cg.scores[i].frags = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 20 ) );
+            cg.scores[i].airrocketCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 21 ) );
+            cg.scores[i].airgrenadeCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 22 ) );
+            cg.scores[i].fullshotgunCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 23 ) );
+            cg.scores[i].rocketRailCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 24 ) );
+            cg.scores[i].itemDeniedCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 25 ) );
+            cg.scores[i].health = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 26 ) );
+            cg.scores[i].armor = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 27 ) );
+            cg.scores[i].yellowArmor = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 28 ) );
+            cg.scores[i].redArmor = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 29 ) );
+            cg.scores[i].megaHealth = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 30 ) );
+            cg.scores[i].accuracys[0][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 31 ) );
+            cg.scores[i].accuracys[0][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 32 ) );
+            cg.scores[i].accuracys[1][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 33 ) );
+            cg.scores[i].accuracys[1][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 34 ) );
+            cg.scores[i].accuracys[2][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 35 ) );
+            cg.scores[i].accuracys[2][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 36 ) );
+            cg.scores[i].accuracys[3][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 37 ) );
+            cg.scores[i].accuracys[3][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 38 ) );
+            cg.scores[i].accuracys[4][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 39 ) );
+            cg.scores[i].accuracys[4][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 40 ) );
+            cg.scores[i].accuracys[5][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 41 ) );
+            cg.scores[i].accuracys[5][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 42 ) );
+            cg.scores[i].accuracys[6][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 43 ) );
+            cg.scores[i].accuracys[6][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 44 ) );
+            cg.scores[i].accuracys[7][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 45 ) );
+            cg.scores[i].accuracys[7][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 46 ) );
+            cg.scores[i].spawnkillCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 47 ) );
             //cgs.roundStartTime =
 
 
@@ -295,32 +308,32 @@ static void CG_ParseScores ( void ) {
             cg.scores[i].team = cgs.clientinfo[cg.scores[i].client].team;
         }
         else {
-            cg.scores[i].client = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 1 ) );
-            cg.scores[i].score = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 2 ) );
-            cg.scores[i].ping = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 3 ) );
-            cg.scores[i].time = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 4 ) );
-            cg.scores[i].scoreFlags = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 5 ) );
-            cg.scores[i].powerUps = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 6 ) );
-            cg.scores[i].accuracy = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 7 ) );
-            cg.scores[i].impressiveCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 8 ) );
-            cg.scores[i].excellentCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 9 ) );
-            cg.scores[i].guantletCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 10 ) );
-            cg.scores[i].defendCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 11 ) );
-            cg.scores[i].assistCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 12 ) );
-            cg.scores[i].perfect = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 13 ) );
-            cg.scores[i].captures = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 14 ) );
-            cg.scores[i].isDead = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 15 ) );
-            cg.scores[i].dmgdone = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 16 ) );
-            cg.scores[i].dmgtaken = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 17 ) );
-            cg.scores[i].specOnly = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 18 ) );
-            cg.scores[i].deathCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 19 ) );
-            cg.scores[i].frags = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 20 ) );
-            cg.scores[i].airrocketCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 21 ) );
-            cg.scores[i].airgrenadeCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 22 ) );
-            cg.scores[i].fullshotgunCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 23 ) );
-            cg.scores[i].rocketRailCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 24 ) );
-            cg.scores[i].itemDeniedCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 25 ) );
-            cg.scores[i].spawnkillCount = atoi ( CG_Argv ( i * NUM_DATA + FIRST_DATA + 26 ) );
+            cg.scores[i].client = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 1 ) );
+            cg.scores[i].score = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 2 ) );
+            cg.scores[i].ping = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 3 ) );
+            cg.scores[i].time = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 4 ) );
+            cg.scores[i].scoreFlags = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 5 ) );
+            cg.scores[i].powerUps = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 6 ) );
+            cg.scores[i].accuracy = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 7 ) );
+            cg.scores[i].impressiveCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 8 ) );
+            cg.scores[i].excellentCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 9 ) );
+            cg.scores[i].guantletCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 10 ) );
+            cg.scores[i].defendCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 11 ) );
+            cg.scores[i].assistCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 12 ) );
+            cg.scores[i].perfect = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 13 ) );
+            cg.scores[i].captures = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 14 ) );
+            cg.scores[i].isDead = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 15 ) );
+            cg.scores[i].dmgdone = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 16 ) );
+            cg.scores[i].dmgtaken = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 17 ) );
+            cg.scores[i].specOnly = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 18 ) );
+            cg.scores[i].deathCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 19 ) );
+            cg.scores[i].frags = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 20 ) );
+            cg.scores[i].airrocketCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 21 ) );
+            cg.scores[i].airgrenadeCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 22 ) );
+            cg.scores[i].fullshotgunCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 23 ) );
+            cg.scores[i].rocketRailCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 24 ) );
+            cg.scores[i].itemDeniedCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 25 ) );
+            cg.scores[i].spawnkillCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 26 ) );
             //cgs.roundStartTime =
 
 

@@ -38,6 +38,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 	int			i, j;
 	gclient_t	*cl;
 	int			numSorted, scoreFlags, accuracy, perfect;
+	int			start = 0;
 
 	// send the latest information on all clients
 	string[0] = 0;
@@ -159,8 +160,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 					cl->rewards[REWARD_ITEMDENIED],
 					cl->rewards[REWARD_SPAWNKILL]
 					);
-			}
-		else {
+			} else {
 			Com_sprintf (entry, sizeof(entry),
 				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 -1 ", level.sortedClients[i],
 				cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/1000,
@@ -179,21 +179,31 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 				cl->ps.persistant[PERS_KILLED],
 				cl->kills
 				);
+			}
 		}
-	}
 	
-        j = strlen(entry);
-        if (stringlength + j > 1024 ) {
-		G_Printf("Too many clients connected for scoreboard info!\n");
-		break;
-        }
-        strcpy (string + stringlength, entry);
-        stringlength += j;
+		j = strlen(entry);
+		if (stringlength + j > 1024 ) {
+			// If the score of the next player does not fit whitin 1024 byte
+			// (the max packet length), we send the scores that we have by now
+			// and send the rest with a second packet
+			//
+			// The first parameter has the number of scores in it
+			// as well as the start of the scores in the data.
+			// This way the scores can be transferred in several packets
+			// if the score data gets too big and there does not need to be
+			// any change in the protocol for now.
+			trap_SendServerCommand( ent-g_entities, va("scores %i %i %i %i%s", i | (start << 8), level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE], level.roundStartTime, string ) );
+			start = i;
+			stringlength = 0;
+		}
+		strcpy (string + stringlength, entry);
+		stringlength += j;
     }
 
-    trap_SendServerCommand( ent-g_entities, va("scores %i %i %i %i%s", i,
-                            level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE], level.roundStartTime,
-                            string ) );
+	if(stringlength != 0) {
+		trap_SendServerCommand( ent-g_entities, va("scores %i %i %i %i%s", i | (start << 8), level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE], level.roundStartTime, string ) );
+	}
 }
 
 /*
