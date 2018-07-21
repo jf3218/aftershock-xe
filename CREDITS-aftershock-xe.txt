@@ -2,8 +2,8 @@ borg - numerous new features, improvements and bug fixes
 
 f:x3r - g_reduceMachinegunDamage implementation
 
-pbrochart (aka Jack Mesrine) - damage plums (cg_damagePlums), 
-improvements and bug fixes
+pbrochart (aka Jack Mesrine) - damage plums (g_damagePlums and 
+cg_damagePlums), improvements and bug fixes
 
 miOw - mostly copy/paste and removal of other people's stuff
 
