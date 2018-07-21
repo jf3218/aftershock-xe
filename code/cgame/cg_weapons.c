@@ -2310,8 +2310,9 @@ void CG_DrawWeaponBar( int count, int bits, float *color ){
 			text_step = hudelement.fontWidth/2;
 	}
 	
-	if( iconsize < 0 )
+	if( iconsize < 0 ) {
 		iconsize = 0;
+	}
 			
 	
 		

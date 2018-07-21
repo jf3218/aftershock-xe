@@ -1362,10 +1362,11 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 					ent->client->ps.persistant[PERS_HITS] = cl->ps.persistant[PERS_HITS];
 					ent->client->ps.persistant[PERS_DAMAGE_DONE] = cl->ps.persistant[PERS_DAMAGE_DONE];
 				}
-				else
+				else {
 					ent->client->ps = cl->ps;
-					ent->client->ps.pm_flags |= PMF_FOLLOW;
-					ent->client->ps.eFlags = flags;
+				}
+				ent->client->ps.pm_flags |= PMF_FOLLOW;
+				ent->client->ps.eFlags = flags;
 				return;
 			} else {
 				// drop them to free spectators unless they are dedicated camera followers

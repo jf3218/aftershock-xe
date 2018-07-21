@@ -312,10 +312,9 @@ char *G_GetNextMap ( char *map ) {
 
 	if ( i == mapcycle.mapcycleCount ) {
 		return mapcycle.maps[G_getNextMapNumber ( ( int ) ( random() *mapcycle.mapcycleCount ) ) ];
-	} else {
-		return mapcycle.maps[G_getNextMapNumber ( i ) ];
-	}
-	return map;
+	} 
+
+	return mapcycle.maps[G_getNextMapNumber ( i ) ];
 }
 
 /*

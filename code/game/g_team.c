@@ -2506,8 +2506,9 @@ void ShuffleTeams(void) {
 	int isShuffled = 0;
 	int numPlayers = 0;
 
-    if ( g_gametype.integer < GT_TEAM || g_ffa_gt==1)
+    if ( g_gametype.integer < GT_TEAM || g_ffa_gt==1) {
         return;
+	}
 
 	// To make sure that the shuffle really did something we first save
 	// the composition of both teams.

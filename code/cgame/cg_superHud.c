@@ -424,6 +424,7 @@ static void CG_setHudElement( int hudnumber, token_t *in, int min, int max ){
 }
 
 void CG_WriteHudFile_f( void ){
+#if 0	
 	int i;
 	fileHandle_t f;
 	char *string;
@@ -432,7 +433,6 @@ void CG_WriteHudFile_f( void ){
 	
 	//disable
 	return;
-	
 	if( trap_Argc() < 2 ){
 		CG_Printf("error: Missing filename\n");
 		return;
@@ -511,6 +511,7 @@ void CG_WriteHudFile_f( void ){
 	trap_FS_FCloseFile(f);
 	
 	trap_Cvar_Set("cg_hud", filename);
+#endif
 }
 
 void CG_LoadHudFile( const char* hudFile ){

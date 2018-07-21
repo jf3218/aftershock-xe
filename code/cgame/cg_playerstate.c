@@ -375,7 +375,8 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 				trap_S_StartLocalSound( cgs.media.hitSound0, CHAN_LOCAL_SOUND );
 		}
 		else if( hitBeep == 4 ){
-			for( i = 0; i < 64; i++ ){
+			damage += cg.lastHitDamage[0];
+			for( i = 1; i < 64; i++ ){
 				if( cg.lastHitTime[i] > cg.time - 3000 )
 					damage += cg.lastHitDamage[i];
 			}
@@ -393,7 +394,8 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 			
 		}
 		else if( hitBeep == 5 ){
-			for( i = 0; i < 64; i++ ){
+			damage += cg.lastHitDamage[0];
+			for( i = 1; i < 64; i++ ){
 				if( cg.lastHitTime[i] > cg.time - 3000 )
 					damage += cg.lastHitDamage[i];
 			}

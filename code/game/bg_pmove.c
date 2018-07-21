@@ -1797,10 +1797,11 @@ static void PM_Weapon( void ) {
 	if( bg_itemlist[pm->ps->stats[STAT_PERSISTANT_POWERUP]].giTag == PW_AMMOREGEN ) {
 		addTime /= 1.3;
   }
-  else
+  else {
 	if ( pm->ps->powerups[PW_HASTE] ) {
 		addTime /= 1.3;
 	}
+  }
 
 	pm->ps->weaponTime += addTime;
 }
