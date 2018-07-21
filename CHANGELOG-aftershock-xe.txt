@@ -1,3 +1,20 @@
+2018-07-17 AfterShock XE Revision 314
+
+        - added g_damagePlums and cg_damagePlums (both default to 1)
+	These allow displaying damage plums on hit, g_damagePlums is a
+  server-side variable and cg_damagePlums is client-side      
+
+		- added g_crosshairNamesFog, default is 0
+	Setting this to 1 will allow names to be seen in the fog
+	
+	   - renamed plasmaSpark shader to plasmaSparkAs, because OpenArena 
+  0.8.8 has a shader with the same name
+  
+  	   - changed time format on the scoreboard from hh:mm to mm:ss
+  	   
+  	   - various other improvements and bugfixes
+    		
+
 2018-07-17 AfterShock XE Revision 313
 
 		- added support for sorting servers by the amount of human 
