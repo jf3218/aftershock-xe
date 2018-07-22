@@ -99,10 +99,22 @@ static char* CG_FormatDmg( int value ) {
 }
 
 static char* CG_FormatTime( int value ) {
-	if ((value % 60) > 9) {
-		return va( "%i:%i", value / 60, value % 60);
+	if(value > (59 + 60*99)) {
+		value = 59 + 60*99;
+	}
+
+	if((value % 60) > 9) {
+		if((value / 60) > 9) {
+			return va("%i:%i", value / 60, value % 60);
+		} else {
+			return va("0%i:%i", value / 60, value % 60);
+		}
 	} else {
-		return va( "%i:0%i", value / 60, value % 60);
+		if((value / 60) > 9) {
+			return va("%i:0%i", value / 60, value % 60);
+		} else {
+			return va("0%i:0%i", value / 60, value % 60);
+		}
 	}
 }
 
@@ -151,8 +163,8 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	}
 
-	CG_DrawStringExt( x + w*0.83, y - SB_MEDCHAR_HEIGHT/2, va( "%i", score->ping ), colorWhite, qtrue, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 3 );
-	CG_DrawStringExt( x + w*0.91, y - SB_MEDCHAR_HEIGHT/2, CG_FormatTime( score->time ), colorWhite, qtrue, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 4 );
+	CG_DrawStringExt( x + w*0.84, y - SB_MEDCHAR_HEIGHT/2, va( "%i", score->ping ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 3 );
+	CG_DrawStringExt( x + w*0.92, y - SB_MEDCHAR_HEIGHT/2, CG_FormatTime( score->time ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 5 );
 
 	
 	picSize = h*0.8;
@@ -198,8 +210,8 @@ static int CG_TeamScoreboard( int x, int y, int w, int h, team_t team, float *co
 	}
 	CG_DrawStringExt( x + w*0.69, y, "Dmg", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	CG_DrawStringExt( x + w*0.76, y, "K/D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	CG_DrawPic( x + w*0.83, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbPing );
-	CG_DrawPic( x + w*0.91, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbClock );
+	CG_DrawPic( x + w*0.84, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbPing );
+	CG_DrawPic( x + w*0.92, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbClock );
 
 	
 	y += 20;
