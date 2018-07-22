@@ -156,10 +156,10 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 	}
 
 	if( h >= SB_CHAR_HEIGHT*2 ){
-		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT, CG_FormatKD( score->score ), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT, CG_FormatKD( score->frags ), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 		CG_DrawStringExt( x + w*0.74, y, CG_FormatKD( score->deathCount ), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	}else{
-		strcpy( string, va( "^2%s^7/^1%s", CG_FormatKD( score->score ), CG_FormatKD( score->deathCount ) ) );
+		strcpy( string, va( "^2%s^7/^1%s", CG_FormatKD( score->frags ), CG_FormatKD( score->deathCount ) ) );
 		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	}
 
