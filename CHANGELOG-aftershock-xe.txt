@@ -1,3 +1,19 @@
+2018-07-22 AfterShock XE Revision 315
+
+        - fixed a bug when the scoreboard disappears with 6v6 and more
+        
+        - it now show frags instead of the score as kills on the
+  scoreboard  in CTF
+  
+        - the time on the scoreboard is now always printed with 5 
+  characters and the font with the same width as for the damages is now 
+  used for time and ping
+  
+        - "You have lost the lead" sound cue can never play twice in a 
+  row now
+
+       - various other bugfixes
+
 2018-07-17 AfterShock XE Revision 314
 
         - added g_damagePlums and cg_damagePlums (both default to 1)
