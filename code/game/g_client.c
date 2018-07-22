@@ -568,11 +568,12 @@ void respawn( gentity_t *ent ) {
 				ent->client->isEliminated = qtrue;
 				if((g_lms_mode.integer == 2 || g_lms_mode.integer == 3) && level.roundNumber == level.roundNumberStarted)
 					LMSpoint();	
-                                //Sago: This is really bad
-                                //TODO: Try not to make people spectators here
-				ent->client->sess.spectatorState = (spectatorState_t)PM_SPECTATOR;
-                                //We have to force spawn imidiantly to prevent lag.
-                                ClientSpawn(ent);
+
+				ent->client->sess.spectatorState = SPECTATOR_FOLLOW;
+				ent->client->ps.pm_type = PM_SPECTATOR;
+
+				// We have to force spawn imidiantly to prevent lag.
+				ClientSpawn(ent);
 			}
 			return;
 		}
