@@ -198,6 +198,15 @@ static int CG_TeamScoreboard( int x, int y, int w, int h, team_t team, float *co
 	float transparent[ 4 ];
 	qboolean notEnough;
 	score_t *localClient;
+
+	if(cg.scoresRequestTime + 1000 < cg.time) {
+		// The scores are more than one second out of data,
+		// so request new ones.
+		// This way we can also see the time increase if tab is
+		// pressed down for a longer time.
+		cg.scoresRequestTime = cg.time;
+		trap_SendClientCommand("score");
+	}
 	
 	transparent[ 0 ] = 0;
 	transparent[ 1 ] = 0;
