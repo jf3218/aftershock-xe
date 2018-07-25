@@ -1620,6 +1620,7 @@ typedef struct
     char    *cmdName;
     int     cmdFlags;
     void    ( *cmdHandler )( gentity_t *ent );
+	qboolean flood_limited;
 } commands_t;
 
 //
