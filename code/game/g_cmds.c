@@ -202,7 +202,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
     }
 
 	if(stringlength != 0) {
-		trap_SendServerCommand( ent-g_entities, va("scores %i %i %i %i%s", i | (start << 8), level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE], level.roundStartTime, string ) );
+		trap_SendServerCommand( ent-g_entities, va("scores %i %i %i %i%s", i | (start << 8) | (1 << 16), level.teamScores[TEAM_RED], level.teamScores[TEAM_BLUE], level.roundStartTime, string ) );
 	}
 }
 
