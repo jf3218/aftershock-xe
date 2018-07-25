@@ -1,9 +1,18 @@
+2018-07-25 AfterShock XE Revision 316
+
+        - fixed a number of scoreboard bugs
+        
+        - now when the scoreboard key is pressed down the scoreboard 
+  will update once a second
+
 2018-07-22 AfterShock XE Revision 315
 
         - fixed a bug when the scoreboard disappears with 6v6 and more
         
         - it now show frags instead of the score as kills on the
   scoreboard  in CTF
+  
+          - kills are now shown in warmup
   
         - the time on the scoreboard is now always printed with 5 
   characters and the font with the same width as for the damages is now 
@@ -14,7 +23,7 @@
 
        - various other bugfixes
 
-2018-07-17 AfterShock XE Revision 314
+2018-07-21 AfterShock XE Revision 314
 
         - added g_damagePlums and cg_damagePlums (both default to 1)
 	These allow displaying damage plums on hit, g_damagePlums is a
@@ -30,7 +39,6 @@
   	   
   	   - various other improvements and bugfixes
     		
-
 2018-07-17 AfterShock XE Revision 313
 
 		- added support for sorting servers by the amount of human 
