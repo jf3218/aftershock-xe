@@ -3776,75 +3776,75 @@ void Cmd_Forfeit_f( gentity_t *ent ) {
 commands_t cmds[ ] =
 {
     // normal commands
-    { "team", 0, Cmd_Team_f },
-    { "vote", 0, Cmd_Vote_f },
+    { "team", 0, Cmd_Team_f, qtrue },
+    { "vote", 0, Cmd_Vote_f, qtrue },
     /*{ "ignore", 0, Cmd_Ignore_f },
     { "unignore", 0, Cmd_Ignore_f },*/
 
     // communication commands
-    { "tell", CMD_MESSAGE, Cmd_Tell_f },
-    { "callvote", CMD_MESSAGE, Cmd_CallVote_f },
-    { "callteamvote", CMD_MESSAGE|CMD_TEAM, Cmd_CallTeamVote_f },
+    { "tell", CMD_MESSAGE, Cmd_Tell_f, qtrue },
+    { "callvote", CMD_MESSAGE, Cmd_CallVote_f, qtrue },
+    { "callteamvote", CMD_MESSAGE|CMD_TEAM, Cmd_CallTeamVote_f, qtrue },
     // can be used even during intermission
-    { "say", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Say_f },
-    { "say_team", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Say_f },
-    { "vsay", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f },
-    { "vsay_team", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f },
-    { "vsay_local", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f },
-    { "vtell", CMD_MESSAGE|CMD_INTERMISSION, Cmd_VoiceTell_f },
-    { "vosay", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f },
-    { "vosay_team", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f },
-    { "vosay_local", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f },
-    { "votell", CMD_MESSAGE|CMD_INTERMISSION, Cmd_VoiceTell_f },
-    { "vtaunt", CMD_MESSAGE|CMD_INTERMISSION, Cmd_VoiceTaunt_f },
-    /*{ "m", CMD_MESSAGE|CMD_INTERMISSION, Cmd_PrivateMessage_f },
-    { "mt", CMD_MESSAGE|CMD_INTERMISSION, Cmd_PrivateMessage_f },
-    { "a", CMD_MESSAGE|CMD_INTERMISSION, Cmd_AdminMessage_f },*/
+    { "say", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Say_f, qtrue },
+    { "say_team", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Say_f, qtrue },
+    { "vsay", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f, qtrue },
+    { "vsay_team", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f, qtrue },
+    { "vsay_local", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f, qtrue },
+    { "vtell", CMD_MESSAGE|CMD_INTERMISSION, Cmd_VoiceTell_f, qtrue },
+    { "vosay", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f, qtrue },
+    { "vosay_team", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f, qtrue },
+    { "vosay_local", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f, qtrue },
+    { "votell", CMD_MESSAGE|CMD_INTERMISSION, Cmd_VoiceTell_f, qtrue },
+    { "vtaunt", CMD_MESSAGE|CMD_INTERMISSION, Cmd_VoiceTaunt_f, qtrue },
+    /*{ "m", CMD_MESSAGE|CMD_INTERMISSION, Cmd_PrivateMessage_f, qtrue },
+    { "mt", CMD_MESSAGE|CMD_INTERMISSION, Cmd_PrivateMessage_f, qtrue },
+    { "a", CMD_MESSAGE|CMD_INTERMISSION, Cmd_AdminMessage_f, qtrue },*/
 
-    { "score", CMD_INTERMISSION, Cmd_Score_f },
-    { "acc", CMD_INTERMISSION, Cmd_Acc_f},
-    { "stats", CMD_INTERMISSION, G_SendStats },
+    { "score", CMD_INTERMISSION, Cmd_Score_f, qfalse },
+    { "acc", CMD_INTERMISSION, Cmd_Acc_f, qfalse},
+    { "stats", CMD_INTERMISSION, G_SendStats, qfalse },
 
     // cheats
-    { "give", CMD_CHEAT|CMD_LIVING, Cmd_Give_f },
-    { "god", CMD_CHEAT|CMD_LIVING, Cmd_God_f },
-    { "notarget", CMD_CHEAT|CMD_LIVING, Cmd_Notarget_f },
-    { "levelshot", CMD_CHEAT, Cmd_LevelShot_f },
-    { "setviewpos", CMD_CHEAT, Cmd_SetViewpos_f },
-    { "noclip", CMD_CHEAT, Cmd_Noclip_f },
+    { "give", CMD_CHEAT|CMD_LIVING, Cmd_Give_f, qfalse },
+    { "god", CMD_CHEAT|CMD_LIVING, Cmd_God_f, qfalse },
+    { "notarget", CMD_CHEAT|CMD_LIVING, Cmd_Notarget_f, qfalse },
+    { "levelshot", CMD_CHEAT, Cmd_LevelShot_f, qfalse },
+    { "setviewpos", CMD_CHEAT, Cmd_SetViewpos_f, qfalse },
+    { "noclip", CMD_CHEAT, Cmd_Noclip_f, qfalse },
 
-    { "kill", CMD_TEAM|CMD_LIVING, Cmd_Kill_f },
-    { "where", 0, Cmd_Where_f },
+    { "kill", CMD_TEAM|CMD_LIVING, Cmd_Kill_f, qfalse },
+    { "where", 0, Cmd_Where_f, qfalse },
 
     // game commands
 
-    { "follow", CMD_NOTEAM, Cmd_Follow_f },
-    { "follownext", CMD_NOTEAM, Cmd_FollowCycle_f },
-    { "followprev", CMD_NOTEAM, Cmd_FollowCycle_f },
+    { "follow", CMD_NOTEAM, Cmd_Follow_f, qfalse },
+    { "follownext", CMD_NOTEAM, Cmd_FollowCycle_f, qfalse },
+    { "followprev", CMD_NOTEAM, Cmd_FollowCycle_f, qfalse },
 
-    { "teamvote", CMD_TEAM, Cmd_TeamVote_f },
-    { "teamtask", CMD_TEAM, Cmd_TeamTask_f },
+    { "teamvote", CMD_TEAM, Cmd_TeamVote_f, qfalse },
+    { "teamtask", CMD_TEAM, Cmd_TeamTask_f, qfalse },
     //KK-OAX
-    { "freespectator", CMD_NOTEAM, StopFollowing },
-    { "getmappage", 0, Cmd_GetMappage_f },
-    { "gc", 0, Cmd_GameCommand_f },
-    { "timeout", 0, Cmd_Timeout_f },
-    { "ready", 0, Cmd_Ready_f },
-    { "droppowerup", 0, Cmd_DropPowerup_f },
-    { "dropammo", 0, Cmd_DropAmmo_f },
-    { "droparmor", 0, Cmd_DropArmor_f },
-    { "drophealth", 0, Cmd_DropHealth_f },
-    { "dropweapon", 0, Cmd_DropWeapon_f },
-    { "dropflag", 0, Cmd_DropFlag_f },
-    { "drop", 0, Cmd_Drop_f },
-    { "lock", 0, Cmd_Lock_f },
-    { "unlock", 0, Cmd_Unlock_f },
-    { "ref", 0, Cmd_Ref_f },
-    { "listplayers", 0, Cmd_Listplayers_f },
-    { "mapcycle", 0, Cmd_Listmapcycle_f },
-    { "mute", 0, Cmd_Mute_f },
-    { "unmute", 0, Cmd_Unmute_f },
-    { "forfeit", 0, Cmd_Forfeit_f }
+    { "freespectator", CMD_NOTEAM, StopFollowing, qfalse },
+    { "getmappage", 0, Cmd_GetMappage_f, qfalse },
+    { "gc", 0, Cmd_GameCommand_f, qfalse },
+    { "timeout", 0, Cmd_Timeout_f, qfalse },
+    { "ready", 0, Cmd_Ready_f, qfalse },
+    { "droppowerup", 0, Cmd_DropPowerup_f, qfalse },
+    { "dropammo", 0, Cmd_DropAmmo_f, qfalse },
+    { "droparmor", 0, Cmd_DropArmor_f, qfalse },
+    { "drophealth", 0, Cmd_DropHealth_f, qfalse },
+    { "dropweapon", 0, Cmd_DropWeapon_f, qfalse },
+    { "dropflag", 0, Cmd_DropFlag_f, qfalse },
+    { "drop", 0, Cmd_Drop_f, qfalse },
+    { "lock", 0, Cmd_Lock_f, qfalse },
+    { "unlock", 0, Cmd_Unlock_f, qfalse },
+    { "ref", 0, Cmd_Ref_f, qfalse },
+    { "listplayers", 0, Cmd_Listplayers_f, qfalse },
+    { "mapcycle", 0, Cmd_Listmapcycle_f, qfalse },
+    { "mute", 0, Cmd_Mute_f, qfalse },
+    { "unmute", 0, Cmd_Unmute_f, qfalse },
+    { "forfeit", 0, Cmd_Forfeit_f, qfalse }
 };
 
 static int numCmds = sizeof( cmds ) / sizeof( cmds[ 0 ] );
@@ -3893,8 +3893,10 @@ void ClientCommand( int clientNum )
         return;
     }
 
-	if(G_FloodLimited( ent )) {
-		return;
+	if(cmds[i].flood_limited) {
+		if(G_FloodLimited( ent )) {
+			return;
+		}
 	}
 
 	if( (ent->client->pers.muted && (cmds[i].cmdFlags & CMD_MESSAGE)) ) {
