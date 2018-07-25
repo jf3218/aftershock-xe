@@ -98,8 +98,8 @@ static void CG_ScoresDown_f( void ) {
 #ifdef MISSIONPACK
 		CG_BuildSpectatorString();
 #endif
-	if ( cg.scoresRequestTime + 2000 < cg.time ) {
-		// the scores are more than two seconds out of data,
+	if ( cg.scoresRequestTime + 1000 < cg.time ) {
+		// the scores are more than one second out of data,
 		// so request new ones
 		cg.scoresRequestTime = cg.time;
 		trap_SendClientCommand( "score" );

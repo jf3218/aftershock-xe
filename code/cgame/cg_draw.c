@@ -4509,7 +4509,7 @@ void CG_DrawActive ( stereoFrame_t stereoView, qboolean draw2d ) {
     // optionally draw the tournement scoreboard instead
     if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR &&
             ( cg.snap->ps.pm_flags & PMF_SCOREBOARD ) ) {
-        if ( cg.scoresRequestTime + 5000 < cg.time ) {
+        if ( cg.scoresRequestTime + 1000 < cg.time ) {
             cg.scoresRequestTime = cg.time;
             trap_SendClientCommand( "score" );
         }
