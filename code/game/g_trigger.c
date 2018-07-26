@@ -268,26 +268,27 @@ trigger_teleport
 ==============================================================================
 */
 
-void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace ) {
-	gentity_t	*dest;
+void trigger_teleporter_touch(gentity_t *self, gentity_t *other, trace_t *trace) {
+	gentity_t *dest;
 
-	if ( !other->client ) {
+	dest = G_PickTarget(self->target);
+	if(!dest) {
+		G_Printf("Couldn't find teleporter destination\n");
 		return;
 	}
 
-	if ( other->client->ps.pm_type == PM_DEAD ) {
+	// If this is called with a non-client it is likely rocket, grenade or plasma projectile
+	if(!other->client) {
+		TeleportEntity(self, other, trace, dest);
 		return;
 	}
+
+	if(other->client->ps.pm_type == PM_DEAD) {
+		return;
+	}
+
 	// Spectators only?
-	if ( ( self->spawnflags & 1 ) && 
-		(other->client->sess.sessionTeam != TEAM_SPECTATOR && other->client->ps.pm_type != PM_SPECTATOR) ) {
-		return;
-	}
-
-
-	dest = 	G_PickTarget( self->target );
-	if (!dest) {
-                G_Printf ("Couldn't find teleporter destination\n");
+	if((self->spawnflags & 1) && (other->client->sess.sessionTeam != TEAM_SPECTATOR && other->client->ps.pm_type != PM_SPECTATOR)) {
 		return;
 	}
 

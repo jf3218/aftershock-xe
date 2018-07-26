@@ -68,6 +68,12 @@ typedef enum {
 	MOVER_2TO1
 } moverState_t;
 
+typedef enum {
+	TELEPORT_PROJECTILE_ROCKET = 1,
+	TELEPORT_PROJECTILE_PLASMA = 2,
+	TELEPORT_PROJECTILE_GRENADE = 4
+} teleportProjectile_t;
+
 #define SP_PODIUM_MODEL		"models/mapobjects/podium/podium4.md3"
 
 //============================================================================
@@ -870,6 +876,7 @@ void trigger_teleporter_touch (gentity_t *self, gentity_t *other, trace_t *trace
 //
 // g_misc.c
 //
+void TeleportEntity(gentity_t *self, gentity_t *other, trace_t *trace, gentity_t *dest);
 void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles );
 void DropPortalSource( gentity_t *ent );
 void DropPortalDestination( gentity_t *ent );
@@ -1394,6 +1401,8 @@ extern vmCvar_t   g_autoRestart;
 extern vmCvar_t   g_writePlayerCoords;
 extern vmCvar_t   g_crosshairNamesFog;
 extern vmCvar_t   g_damagePlums;
+extern vmCvar_t   g_allowProjectileTeleport; // bit 0 = rocket, bit 1 = plasma, bit 2 = grenade
+extern vmCvar_t   g_projectileTeleportKeepAngle;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

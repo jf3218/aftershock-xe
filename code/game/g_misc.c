@@ -76,6 +76,65 @@ TELEPORTERS
 =================================================================================
 */
 
+void TeleportEntity(gentity_t *self, gentity_t *other, trace_t *trace, gentity_t *dest) {
+	vec3_t angles_teleporter;
+	vec3_t angles_destination;
+	vec3_t angles_origin;
+	vec3_t angles_normal_plane;
+	vec3_t origin_normalized;
+	vec3_t destination;
+	vec_t  speed;
+
+	if(g_projectileTeleportKeepAngle.integer == 1) {
+		VectorNormalize2(other->s.pos.trDelta, origin_normalized);
+
+		// Get angles of origin, teleporter exit and normal plane of teleporter
+		vectoangles(origin_normalized,   angles_origin);
+		VectorCopy(dest->s.angles,       angles_teleporter);
+		vectoangles(trace->plane.normal, angles_normal_plane);
+
+		// First add the origin and normal plane
+		VectorAdd(angles_origin, angles_normal_plane, angles_destination);
+
+		// Then remove 180° from y coordinate (to get straight line instead of normal)
+		// and add the angles of the exit teleporter
+		angles_destination[1] = angles_destination[1] -180 + angles_teleporter[1];
+
+		// Normalize angles
+		if(angles_destination[1] > 360) {
+			angles_destination[1] -= 360;
+		} else if(angles_destination[1] < -360) {
+			angles_destination[1] += 360;
+		}
+
+		// Now we don't really now if we calculated the angle to be the correct side
+		// of the teleporter. We figure this out by making sure that we are not more then
+		// 90 degree off the angle of the teleporter
+		if(abs(angles_destination[1] - angles_teleporter[1]) > 90) {
+			angles_destination[1] += 180;
+		}
+
+		// Calculate destination vector from angles
+		AngleVectors(angles_destination, destination, NULL, NULL );
+	} else {
+		// If angle should not be kept, use pre-defined angle 
+		// of teleporter exit as destination.
+		AngleVectors(dest->s.angles, destination, NULL, NULL );
+	}
+
+	// Set new origin vectors
+	VectorCopy(dest->s.origin, other->s.origin);
+	VectorCopy(dest->s.origin, other->r.currentOrigin);
+	VectorCopy(dest->s.origin, other->s.pos.trBase);
+
+	// Save speed of projectile
+	speed = VectorLength(other->s.pos.trDelta);
+
+	// and apply it to the destination
+	VectorScale(destination, speed, other->s.pos.trDelta);
+	other->s.pos.trTime = level.time;
+}
+
 void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles ) {
 	gentity_t	*tent;
 

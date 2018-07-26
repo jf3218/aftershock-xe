@@ -552,7 +552,20 @@ void G_RunMissile( gentity_t *ent ) {
 		passent = ent->r.ownerNum;
 	}
 	// trace a line from the previous position to the current position
-	trap_Trace( &tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, passent, ent->clipmask );
+	trap_Trace(&tr, ent->r.currentOrigin, ent->r.mins, ent->r.maxs, origin, passent, ent->clipmask | CONTENTS_TRIGGER);
+
+	if(tr.entityNum != ENTITYNUM_NONE) {
+		if(g_entities[tr.entityNum].s.eType == ET_TELEPORT_TRIGGER) {
+			// Here we know that a projectile hit the teleporter.
+			// Now figure out if the specific projectile is allowed to go through.
+			if(((ent->s.weapon == WP_ROCKET_LAUNCHER)  && (g_allowProjectileTeleport.integer & TELEPORT_PROJECTILE_ROCKET))  ||
+			   ((ent->s.weapon == WP_GRENADE_LAUNCHER) && (g_allowProjectileTeleport.integer & TELEPORT_PROJECTILE_GRENADE)) ||
+			   ((ent->s.weapon == WP_PLASMAGUN)        && (g_allowProjectileTeleport.integer & TELEPORT_PROJECTILE_PLASMA))) {
+				trigger_teleporter_touch(&g_entities[tr.entityNum], ent, &tr);
+				return;
+			}
+		}
+	}
 
 	if ( tr.startsolid || tr.allsolid ) {
 		// make sure the tr.entityNum is set to the entity we're stuck in
