@@ -1,3 +1,8 @@
+2018-07-27 AfterShock XE Revision 318
+
+        - fixed a bug when the projectiles would get stopped mid air in 
+  some places on some maps
+
 2018-07-27 AfterShock XE Revision 317
 
         - added support for shooting projectiles through teleporters 
@@ -10,7 +15,7 @@
             3 => allow rocket and grenade
 	2. g_projectileTeleportKeepAngle: This controls the angle of the
   projectile
-  If this is set to 1 (default, the projectile will go out of the 
+  If this is set to 1 (default), the projectile will go out of the 
   teleporter at the same angle it entered
   If this is set to 0, the projectile will always exit the teleporter
   straight. This is the behavior that players entering a teleporter
