@@ -92,7 +92,7 @@ SpotWouldTelefrag
 Returns qtrue if a client touches the spot
 ================
 */
-qboolean SpotWouldTelefrag( gentity_t *spot ) {
+gentity_t *SpotWouldTelefrag( gentity_t *spot ) {
 	int			i, num;
 	int			touch[MAX_GENTITIES];
 	gentity_t	*hit;
@@ -106,12 +106,12 @@ qboolean SpotWouldTelefrag( gentity_t *spot ) {
 		hit = &g_entities[touch[i]];
 		//if ( hit->client && hit->client->ps.stats[STAT_HEALTH] > 0 ) {
 		if ( hit->client) {
-			return qtrue;
+			return hit;
 		}
 
 	}
 
-	return qfalse;
+	return NULL;
 }
 
 /*
