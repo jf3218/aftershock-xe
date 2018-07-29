@@ -85,6 +85,9 @@ void TeleportEntity(gentity_t *self, gentity_t *other, trace_t *trace, gentity_t
 	vec3_t destination;
 	vec_t  speed;
 
+	G_TempEntity(dest->s.origin, EV_PROJECTILE_TELEPORT_OUT);
+	G_TempEntity(self->pos2, EV_PROJECTILE_TELEPORT_IN);
+
 	if(g_projectileTeleportKeepAngle.integer == 1) {
 		VectorNormalize2(other->s.pos.trDelta, origin_normalized);
 

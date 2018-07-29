@@ -1192,6 +1192,8 @@ static void CG_RegisterSounds( void ) {
 	
 #endif
 
+	cgs.media.teleInProjectileSound = CG_RegisterSoundOption( "sound/world/teleinProjectile.wav", qfalse );
+	cgs.media.teleOutProjectileSound = CG_RegisterSoundOption( "sound/world/teleoutProjectile.wav", qfalse );
 	cgs.media.teleInSound = CG_RegisterSoundOption( "sound/world/telein.wav", qfalse );
 	cgs.media.teleOutSound = CG_RegisterSoundOption( "sound/world/teleout.wav", qfalse );
 	cgs.media.respawnSound = CG_RegisterSoundOption( "sound/items/respawn1.wav", qfalse );

@@ -561,6 +561,9 @@ void G_RunMissile( gentity_t *ent ) {
 			if(((ent->s.weapon == WP_ROCKET_LAUNCHER)  && (g_allowProjectileTeleport.integer & TELEPORT_PROJECTILE_ROCKET))  ||
 			   ((ent->s.weapon == WP_GRENADE_LAUNCHER) && (g_allowProjectileTeleport.integer & TELEPORT_PROJECTILE_GRENADE)) ||
 			   ((ent->s.weapon == WP_PLASMAGUN)        && (g_allowProjectileTeleport.integer & TELEPORT_PROJECTILE_PLASMA))) {
+
+				// Save origin in otherwise unused pos2 field of entity
+				VectorCopy(origin, g_entities[tr.entityNum].pos2);
 				trigger_teleporter_touch(&g_entities[tr.entityNum], ent, &tr);
 				return;
 			}

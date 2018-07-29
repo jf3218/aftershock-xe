@@ -930,6 +930,18 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
         //
         // other events
         //
+    case EV_PROJECTILE_TELEPORT_IN:
+        DEBUGNAME("EV_PROJECTILE_TELEPORT_IN");
+        trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleInProjectileSound);
+        CG_SpawnEffect(position);
+        break;
+
+    case EV_PROJECTILE_TELEPORT_OUT:
+        DEBUGNAME("EV_PROJECTILE_TELEPORT_OUT");
+        trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.teleOutProjectileSound);
+        CG_SpawnEffect(position);
+        break;
+
     case EV_PLAYER_TELEPORT_IN:
         DEBUGNAME("EV_PLAYER_TELEPORT_IN");
         trap_S_StartSound (NULL, es->number, CHAN_AUTO, cgs.media.teleInSound );
