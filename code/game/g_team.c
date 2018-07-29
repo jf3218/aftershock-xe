@@ -24,8 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "g_local.h"
 
-gentity_t *SelectRandomDeathmatchSpawnPoint( void );
-
 typedef struct teamgame_s {
     float			last_flag_capture;
     int				last_capture_team;
@@ -1703,53 +1701,64 @@ go to a random point that doesn't telefrag
 #define	MAX_TEAM_SPAWN_POINTS	32
 gentity_t *SelectRandomTeamSpawnPoint( int teamstate, team_t team ) {
     gentity_t	*spot;
+    gentity_t   *spotPlayer;
     int			count;
     int			selection;
     gentity_t	*spots[MAX_TEAM_SPAWN_POINTS];
     char		*classname;
 
-    if (g_gametype.integer == GT_ELIMINATION) { //change sides every round
-        /*if((level.roundNumber+level.eliminationSides)%2==1){
-        	if(team == TEAM_RED)
-        		team = TEAM_BLUE;
-        	else if(team == TEAM_BLUE)
-        		team = TEAM_RED;
-        }*/
-        //Random Spawn
-        spot = SelectRandomDeathmatchSpawnPoint();
-        return spot;
-    }
-
-    if (teamstate == TEAM_BEGIN) {
-        if (team == TEAM_RED)
-            classname = "team_CTF_redplayer";
-        else if (team == TEAM_BLUE)
-            classname = "team_CTF_blueplayer";
-        else
-            return NULL;
+    if(g_gametype.integer == GT_ELIMINATION) {
+        classname = "info_player_deathmatch";
     } else {
-        if (team == TEAM_RED)
-            classname = "team_CTF_redspawn";
-        else if (team == TEAM_BLUE)
-            classname = "team_CTF_bluespawn";
-        else
-            return NULL;
+        if (teamstate == TEAM_BEGIN) {
+            if (team == TEAM_RED)
+                classname = "team_CTF_redplayer";
+            else if (team == TEAM_BLUE)
+                classname = "team_CTF_blueplayer";
+            else
+                return NULL;
+        } else {
+            if (team == TEAM_RED)
+                classname = "team_CTF_redspawn";
+            else if (team == TEAM_BLUE)
+                classname = "team_CTF_bluespawn";
+            else
+                return NULL;
+        }
     }
     count = 0;
 
     spot = NULL;
 
-    while ((spot = G_Find (spot, FOFS(classname), classname)) != NULL) {
-        if ( SpotWouldTelefrag( spot ) ) {
+    while((spot = G_Find(spot, FOFS(classname), classname)) != NULL) {
+        if(SpotWouldTelefrag(spot)) {
             continue;
         }
-        spots[ count ] = spot;
-        if (++count == MAX_TEAM_SPAWN_POINTS)
+
+        spots[count] = spot;
+        if(++count == MAX_TEAM_SPAWN_POINTS) {
             break;
+        }
     }
 
-    if ( !count ) {	// no spots that won't telefrag
-        return G_Find( NULL, FOFS(classname), classname);
+    if(count == 0) {
+        spot = NULL;
+        while((spot = G_Find(spot, FOFS(classname), classname)) != NULL) {
+            spotPlayer = SpotWouldTelefrag(spot);
+            if(!spotPlayer || !spotPlayer->client) {
+                continue;
+            }
+
+            if(spotPlayer->client->sess.sessionTeam == team) {
+                spots[count] = spot;
+                count++;
+            }
+        }
+    }
+
+    // No spots that won't telefrag...
+    if(count == 0) {
+        return G_Find(NULL, FOFS(classname), classname);
     }
 
     selection = rand() % count;
