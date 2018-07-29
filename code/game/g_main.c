@@ -276,6 +276,8 @@ vmCvar_t     g_damagePlums;
 vmCvar_t     g_allowProjectileTeleport;
 vmCvar_t     g_projectileTeleportKeepAngle;
 vmCvar_t     g_spawnPush;
+vmCvar_t     g_telefragTeamBehavior;
+
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -545,6 +547,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_allowProjectileTeleport, "g_allowProjectileTeleport", "7", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
 	{ &g_projectileTeleportKeepAngle, "g_projectileTeleportKeepAngle", "1", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
 	{ &g_spawnPush, "g_spawnPush", "1", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
+	{ &g_telefragTeamBehavior, "g_telefragTeamBehavior", "1", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse }
 };
 
 // bk001129 - made static to avoid aliasing

@@ -136,7 +136,77 @@ void TeleportEntity(gentity_t *self, gentity_t *other, trace_t *trace, gentity_t
 }
 
 void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles ) {
-	gentity_t	*tent;
+	gentity_t *tent;
+	int i, j, num;
+	int touch[MAX_GENTITIES];
+	gentity_t *hit;
+	vec3_t mins, maxs;
+	vec3_t delta, delta_normalized, end;
+	trace_t trace;
+	vec3_t torigin;
+
+	VectorCopy(origin, torigin);
+	torigin[2] += 1;
+
+	// For team games we check if the teleporter would transport us inside a team member
+	if((g_gametype.integer == GT_ELIMINATION) || (g_gametype.integer == GT_CTF_ELIMINATION) || (g_gametype.integer == GT_CTF)) {
+		// With g_telefragTeamBehavior = 1 we push the player forward if there is a team member in the way
+		// on the exit of the teleporter.
+		if(g_telefragTeamBehavior.integer == 1) {
+			AngleVectors(angles, delta, NULL, NULL);
+			VectorScale(delta, 10, delta_normalized);
+			i = 0;
+			// Try to push forward in 10 step increments until it fits 
+			for(i = 0; i < 100; i++) {
+				VectorAdd(torigin, player->r.mins, mins);
+				VectorAdd(torigin, player->r.maxs, maxs);
+				num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
+
+				hit = NULL;
+				for(j = 0; j < num; j++) {
+					hit = &g_entities[touch[j]];
+					if(hit && hit->client && (hit->client->sess.sessionTeam == player->client->sess.sessionTeam)) {
+						break;
+					}
+
+					hit = NULL;
+				}
+
+				// We don't hit a player anymore, use the current origin
+				if(!hit) {
+					break;
+				}
+
+				VectorAdd(torigin, delta_normalized, end);
+
+				// If we hit a wall with the next increment we give up.
+				// Better to spawn in a team member than in a wall.
+				trap_Trace(&trace, torigin, player->r.mins, player->r.maxs, end, player->s.number, player->clipmask & (~CONTENTS_BODY));
+				if(trace.allsolid) {
+					break;
+				}
+
+				VectorAdd(torigin, delta_normalized, torigin);
+			}
+
+		// With g_telefragTeamBehavior = 2 we dont allow the player to go through teleporter if a team member
+		// is in the way on the other side.
+		} else if(g_telefragTeamBehavior.integer == 2) {
+			VectorAdd(torigin, player->r.mins, mins);
+			VectorAdd(torigin, player->r.maxs, maxs);
+			num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
+
+			hit = NULL;
+			for(i = 0; i < num; i++) {
+				hit = &g_entities[touch[i]];
+				if(!hit || !hit->client || (hit->client->sess.sessionTeam != player->client->sess.sessionTeam)) {
+					continue;
+				}
+
+				return;
+			}
+		}
+	}
 
 	// use temp events at source and destination to prevent the effect
 	// from getting dropped by a second player event
@@ -151,8 +221,7 @@ void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles ) {
 	// unlink to make sure it can't possibly interfere with G_KillBox
 	trap_UnlinkEntity (player);
 
-	VectorCopy ( origin, player->client->ps.origin );
-	player->client->ps.origin[2] += 1;
+	VectorCopy ( torigin, player->client->ps.origin );
 
 	// spit the player out
 	AngleVectors( angles, player->client->ps.velocity, NULL, NULL );
