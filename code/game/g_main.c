@@ -275,6 +275,7 @@ vmCvar_t     g_crosshairNamesFog;
 vmCvar_t     g_damagePlums;
 vmCvar_t     g_allowProjectileTeleport;
 vmCvar_t     g_projectileTeleportKeepAngle;
+vmCvar_t     g_spawnPush;
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -542,7 +543,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_crosshairNamesFog, "g_crosshairNamesFog", "0", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
 	{ &g_damagePlums, "g_damagePlums", "1", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
 	{ &g_allowProjectileTeleport, "g_allowProjectileTeleport", "7", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
-	{ &g_projectileTeleportKeepAngle, "g_projectileTeleportKeepAngle", "1", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse }
+	{ &g_projectileTeleportKeepAngle, "g_projectileTeleportKeepAngle", "1", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
+	{ &g_spawnPush, "g_spawnPush", "1", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse },
 };
 
 // bk001129 - made static to avoid aliasing

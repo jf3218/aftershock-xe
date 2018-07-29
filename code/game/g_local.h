@@ -1403,6 +1403,7 @@ extern vmCvar_t   g_crosshairNamesFog;
 extern vmCvar_t   g_damagePlums;
 extern vmCvar_t   g_allowProjectileTeleport; // bit 0 = rocket, bit 1 = plasma, bit 2 = grenade
 extern vmCvar_t   g_projectileTeleportKeepAngle;
+extern vmCvar_t   g_spawnPush;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

@@ -2147,6 +2147,11 @@ void ClientSpawn(gentity_t *ent) {
 	
 	gcapture_t captures[ MAX_CAPTURES ];
 	int captureCount;
+	vec3_t delta;
+	vec3_t delta_normalized;
+	trace_t trace;
+	vec3_t end;
+	vec3_t spawn_origin_orig;
  
 
 	index = ent - g_entities;
@@ -2224,6 +2229,26 @@ void ClientSpawn(gentity_t *ent) {
 						client->sess.sessionTeam, 
 						client->pers.teamState.state, 
 						spawn_origin, spawn_angles);
+
+		if(g_spawnPush.integer == 1) {
+			VectorCopy(spawnPoint->s.origin, spawn_origin_orig);
+			AngleVectors(spawn_angles, delta, NULL, NULL);
+			VectorScale(delta, 10, delta_normalized);
+			i = 0;
+			while(SpotWouldTelefrag(spawnPoint) && (i < 100)) {
+				i++;
+				VectorAdd(spawnPoint->s.origin, delta_normalized, end);
+
+				trap_Trace(&trace, spawnPoint->s.origin, ent->r.mins, ent->r.maxs, end, ent->s.number, ent->clipmask & (~CONTENTS_BODY));
+				if (trace.allsolid) {
+					break;
+				}
+
+				VectorAdd(spawnPoint->s.origin, delta_normalized, spawnPoint->s.origin);
+				VectorAdd(spawn_origin, delta_normalized, spawn_origin);
+			}
+			VectorCopy(spawn_origin_orig, spawnPoint->s.origin);
+		}
 	} else {
 		do {
 			// the first spawn should be at a good looking spot
