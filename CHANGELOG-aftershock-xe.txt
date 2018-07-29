@@ -1,3 +1,28 @@
+2018-07-29 AfterShock XE Revision 319
+
+        - improved spawn behavior in team modes
+        
+        - added g_spawnPush cvar for improved spawn behavior
+	If g_spawnPush is set to 1, a player that spawns inside of a team
+  member will get pushed forward and spawn infront of him
+	If g_spawnPush is set to 0, a player that spawns inside of a team
+  member will get stuck (default OA behavior)
+        
+        - added g_telefragTeamBehavior cvar for improved telefrag 
+  behavior
+	g_telefragTeamBehavior = 0: If a player teleports into a team
+  member, they both will get stuck (default OA behavior)
+	g_telefragTeamBehavior = 1: If a player teleports into a team
+  member, the player wil be pushed forward and spawn in front of him
+	g_telefragTeamBehavior = 2: If a player would teleport into a team
+  member, the teleporter will not work and the player will stay at the
+  teleporter entry until the team member moved
+  
+        - added support for projectile teleportation sound (in/out)  
+	The new sound files can be put in:
+  sound/world/teleinProjectile.wav
+  sound/world/teleoutProjectile.wav
+      
 2018-07-27 AfterShock XE Revision 318
 
         - fixed a bug when the projectiles would get stopped mid air in 
