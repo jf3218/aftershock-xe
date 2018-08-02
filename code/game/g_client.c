@@ -2235,6 +2235,11 @@ void ClientSpawn(gentity_t *ent) {
 			AngleVectors(spawn_angles, delta, NULL, NULL);
 			VectorScale(delta, 10, delta_normalized);
 			i = 0;
+
+			// In some maps the spawn point is set a tiny bit to low.
+			// We add a bit to the origin so we don't get false positives in the tests against trace.sold
+			spawnPoint->s.origin[2] += 9;
+			spawn_origin[2] += 9;
 			while(SpotWouldTelefrag(spawnPoint) && (i < 100)) {
 				i++;
 				VectorAdd(spawnPoint->s.origin, delta_normalized, end);
