@@ -1,3 +1,11 @@
+2018-08-09 AfterShock XE Revision 320
+
+        - the flag icons on the HUD are now properly displayed for 
+  spectators
+  
+        - fixed a bug when players would still get stuck on the same 
+  spawn point on some maps
+  
 2018-07-29 AfterShock XE Revision 319
 
         - improved spawn behavior in team modes
