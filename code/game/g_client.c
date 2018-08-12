@@ -2126,6 +2126,7 @@ qboolean TestSpawnIncrements(gentity_t *ent, vec3_t spawn_origin, vec3_t delta_n
 			return qtrue;
 		}
 
+		VectorAdd(spawn_origin, delta_normalized, end);
 		trap_Trace(&trace, spawn_origin, ent->r.mins, ent->r.maxs, end, ent->s.number, ent->clipmask & (~CONTENTS_BODY));
 		if(trace.allsolid) {
 			return qfalse;
