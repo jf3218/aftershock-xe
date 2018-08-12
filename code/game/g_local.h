@@ -1405,6 +1405,7 @@ extern vmCvar_t   g_allowProjectileTeleport; // bit 0 = rocket, bit 1 = plasma, 
 extern vmCvar_t   g_projectileTeleportKeepAngle;
 extern vmCvar_t   g_spawnPush;
 extern vmCvar_t   g_telefragTeamBehavior;
+extern vmCvar_t   g_furthestTeamSpawns;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

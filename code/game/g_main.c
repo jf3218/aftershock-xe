@@ -277,6 +277,7 @@ vmCvar_t     g_allowProjectileTeleport;
 vmCvar_t     g_projectileTeleportKeepAngle;
 vmCvar_t     g_spawnPush;
 vmCvar_t     g_telefragTeamBehavior;
+vmCvar_t     g_furthestTeamSpawns;
 
 
 // bk001129 - made static to avoid aliasing
@@ -547,7 +548,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_allowProjectileTeleport, "g_allowProjectileTeleport", "7", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_projectileTeleportKeepAngle, "g_projectileTeleportKeepAngle", "1", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_spawnPush, "g_spawnPush", "1", CVAR_ARCHIVE, 0, qfalse },
-	{ &g_telefragTeamBehavior, "g_telefragTeamBehavior", "1", CVAR_ARCHIVE, 0, qfalse }
+	{ &g_telefragTeamBehavior, "g_telefragTeamBehavior", "1", CVAR_ARCHIVE, 0, qfalse },
+	{ &g_furthestTeamSpawns, "g_furthestTeamSpawns", "0", CVAR_ARCHIVE, 0, qfalse }
 };
 
 // bk001129 - made static to avoid aliasing

@@ -1690,7 +1690,37 @@ qboolean Team_GetDeathLocationMsg(gentity_t *ent, char *loc, int loclen)
 
 
 /*---------------------------------------------------------------------------*/
+gentity_t *SelectFurthestTeamSpawnPoint(int teamstate, team_t team) {
+	gentity_t *spot_red, *spot_blue, *spot_furthest;
+	vec3_t delta;
+	float dist, dist_furthest;
+    team_t team_compare;
 
+    if(level.roundNumber % 2) {
+        team_compare = TEAM_BLUE;
+    } else {
+        team_compare = TEAM_RED;
+    }
+
+    spot_blue = G_Find(NULL, FOFS(classname), "info_player_deathmatch");
+    if(team == team_compare) {
+        return spot_blue;
+    }
+
+    dist_furthest = 0;
+    spot_furthest = spot_blue;
+    spot_red = spot_blue;
+	while((spot_red = G_Find(spot_red, FOFS(classname), "info_player_deathmatch")) != NULL) {
+		VectorSubtract(spot_red->s.origin, spot_blue->s.origin, delta);
+		dist = VectorLength(delta);
+        if(dist > dist_furthest) {
+            dist_furthest = dist;
+            spot_furthest = spot_red;
+        }
+	}
+
+    return spot_furthest;
+}
 /*
 ================
 SelectRandomDeathmatchSpawnPoint
@@ -1847,7 +1877,11 @@ SelectCTFSpawnPoint
 gentity_t *SelectCTFSpawnPoint ( team_t team, int teamstate, vec3_t origin, vec3_t angles ) {
     gentity_t	*spot;
 
-    spot = SelectRandomTeamSpawnPoint ( teamstate, team );
+    if((g_gametype.integer == GT_ELIMINATION) && (g_furthestTeamSpawns.integer == 1)) {
+        spot = SelectFurthestTeamSpawnPoint(teamstate, team);
+    } else {
+        spot = SelectRandomTeamSpawnPoint(teamstate, team);
+    }
 
     if (!spot) {
         return SelectSpawnPoint( vec3_origin, origin, angles );
