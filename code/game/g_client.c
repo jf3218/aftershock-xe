@@ -2273,27 +2273,31 @@ void ClientSpawn(gentity_t *ent) {
 
 			// In some maps the spawn point is set a tiny bit to low.
 			// We add a bit to the origin so we don't get false positives in the tests against trace.sold
-			spawn_origin[2] += 9;
-			// Try to spawn forward
 			if(!TestSpawnIncrements(ent, spawn_origin, delta_normalized)) {
 				VectorCopy(spawn_origin_orig, spawn_origin);
+				VectorScale(delta, 10, delta_normalized);
 				spawn_origin[2] += 9;
-				VectorScale(delta, -10, delta_normalized);
-				// If that does not work try to spawn backward
+				// Try to spawn forward
 				if(!TestSpawnIncrements(ent, spawn_origin, delta_normalized)) {
 					VectorCopy(spawn_origin_orig, spawn_origin);
-					spawn_origin[2] += 100;
-					VectorScale(delta, 10, delta_normalized);
-					// If that does not work try to spawn on top forward
+					spawn_origin[2] += 9;
+					VectorScale(delta, -10, delta_normalized);
+					// If that does not work try to spawn backward
 					if(!TestSpawnIncrements(ent, spawn_origin, delta_normalized)) {
 						VectorCopy(spawn_origin_orig, spawn_origin);
 						spawn_origin[2] += 100;
-						VectorScale(delta, -10, delta_normalized);
-						// If that does not work try to spawn on top backward
+						VectorScale(delta, 10, delta_normalized);
+						// If that does not work try to spawn on top forward
 						if(!TestSpawnIncrements(ent, spawn_origin, delta_normalized)) {
-							// If that does not work we spawn the player in the original position
 							VectorCopy(spawn_origin_orig, spawn_origin);
-							spawn_origin[2] += 9;
+							spawn_origin[2] += 100;
+							VectorScale(delta, -10, delta_normalized);
+							// If that does not work try to spawn on top backward
+							if(!TestSpawnIncrements(ent, spawn_origin, delta_normalized)) {
+								// If that does not work we spawn the player in the original position
+								VectorCopy(spawn_origin_orig, spawn_origin);
+								spawn_origin[2] += 9;
+							}
 						}
 					}
 				}
