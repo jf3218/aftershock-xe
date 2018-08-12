@@ -1140,11 +1140,13 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 
     case EV_GLOBAL_SOUND:	// play from the player's head so it never diminishes
         DEBUGNAME("EV_GLOBAL_SOUND");
-        if ( cgs.gameSounds[ es->eventParm ] ) {
-            trap_S_StartSound (NULL, cg.snap->ps.clientNum, CHAN_AUTO, cgs.gameSounds[ es->eventParm ] );
-        } else {
-            s = CG_ConfigString( CS_SOUNDS + es->eventParm );
-            trap_S_StartSound (NULL, cg.snap->ps.clientNum, CHAN_AUTO, CG_CustomSound( es->number, s ) );
+        if(!(s_ambient.integer == 0 && cent->currentState.eType == ET_SPEAKER)) {
+            if ( cgs.gameSounds[ es->eventParm ] ) {
+                trap_S_StartSound (NULL, cg.snap->ps.clientNum, CHAN_AUTO, cgs.gameSounds[ es->eventParm ] );
+            } else {
+                s = CG_ConfigString( CS_SOUNDS + es->eventParm );
+                trap_S_StartSound (NULL, cg.snap->ps.clientNum, CHAN_AUTO, CG_CustomSound( es->number, s ) );
+            }
         }
         break;
 
