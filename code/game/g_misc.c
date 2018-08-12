@@ -138,18 +138,60 @@ void TeleportEntity(gentity_t *self, gentity_t *other, trace_t *trace, gentity_t
 	other->s.pos.trTime = level.time;
 }
 
+qboolean TestTeleportIncrements(gentity_t *player, vec3_t torigin, vec3_t delta_normalized) {
+	int i, j, num;
+	gentity_t *hit;
+	vec3_t mins, maxs, end;
+	int touch[MAX_GENTITIES];
+	trace_t trace;
+
+	// Try to push forward in 10 step increments until it fits 
+	for(i = 0; i < 100; i++) {
+		VectorAdd(torigin, player->r.mins, mins);
+		VectorAdd(torigin, player->r.maxs, maxs);
+		num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
+
+		hit = NULL;
+		for(j = 0; j < num; j++) {
+			hit = &g_entities[touch[j]];
+			if(hit && hit->client && (hit->client->sess.sessionTeam == player->client->sess.sessionTeam)) {
+				break;
+			}
+
+			hit = NULL;
+		}
+
+		// We don't hit a player anymore, use the current origin
+		if(!hit) {
+			return qtrue;
+		}
+
+		VectorAdd(torigin, delta_normalized, end);
+
+		// If we hit a wall with the next increment we give up.
+		// Better to spawn in a team member than in a wall.
+		trap_Trace(&trace, torigin, player->r.mins, player->r.maxs, end, player->s.number, player->clipmask & (~CONTENTS_BODY));
+		if(trace.allsolid) {
+			return qfalse;
+		}
+
+		VectorAdd(torigin, delta_normalized, torigin);
+	}
+
+	return qfalse;
+}
+
 void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles ) {
 	gentity_t *tent;
-	int i, j, num;
+	int i, num;
 	int touch[MAX_GENTITIES];
 	gentity_t *hit;
 	vec3_t mins, maxs;
-	vec3_t delta, delta_normalized, end;
-	trace_t trace;
+	vec3_t delta, delta_normalized;
 	vec3_t torigin;
 
 	VectorCopy(origin, torigin);
-	torigin[2] += 1;
+	torigin[2] += 9;
 
 	// For team games we check if the teleporter would transport us inside a team member
 	if((g_gametype.integer == GT_ELIMINATION) || (g_gametype.integer == GT_CTF_ELIMINATION) || (g_gametype.integer == GT_CTF)) {
@@ -158,38 +200,30 @@ void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles ) {
 		if(g_telefragTeamBehavior.integer == 1) {
 			AngleVectors(angles, delta, NULL, NULL);
 			VectorScale(delta, 10, delta_normalized);
-			i = 0;
-			// Try to push forward in 10 step increments until it fits 
-			for(i = 0; i < 100; i++) {
-				VectorAdd(torigin, player->r.mins, mins);
-				VectorAdd(torigin, player->r.maxs, maxs);
-				num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
 
-				hit = NULL;
-				for(j = 0; j < num; j++) {
-					hit = &g_entities[touch[j]];
-					if(hit && hit->client && (hit->client->sess.sessionTeam == player->client->sess.sessionTeam)) {
-						break;
+			// Try to spawn forward
+			if(!TestTeleportIncrements(player, torigin, delta_normalized)) {
+				VectorCopy(origin, torigin);
+				torigin[2] += 9;
+				VectorScale(delta, -10, delta_normalized);
+				// If that does not work try to spawn backward
+				if(!TestTeleportIncrements(player, torigin, delta_normalized)) {
+					VectorCopy(origin, torigin);
+					torigin[2] += 100;
+					VectorScale(delta, 10, delta_normalized);
+					// If that does not work try to spawn on top forward
+					if(!TestTeleportIncrements(player, torigin, delta_normalized)) {
+						VectorCopy(origin, torigin);
+						torigin[2] += 100;
+						VectorScale(delta, -10, delta_normalized);
+						// If that does not work try to spawn on top backward
+						if(!TestTeleportIncrements(player, torigin, delta_normalized)) {
+							// If that does not work we spawn the player in the original position
+							VectorCopy(origin, torigin);
+							torigin[2] += 9;
+						}
 					}
-
-					hit = NULL;
 				}
-
-				// We don't hit a player anymore, use the current origin
-				if(!hit) {
-					break;
-				}
-
-				VectorAdd(torigin, delta_normalized, end);
-
-				// If we hit a wall with the next increment we give up.
-				// Better to spawn in a team member than in a wall.
-				trap_Trace(&trace, torigin, player->r.mins, player->r.maxs, end, player->s.number, player->clipmask & (~CONTENTS_BODY));
-				if(trace.allsolid) {
-					break;
-				}
-
-				VectorAdd(torigin, delta_normalized, torigin);
 			}
 
 		// With g_telefragTeamBehavior = 2 we dont allow the player to go through teleporter if a team member

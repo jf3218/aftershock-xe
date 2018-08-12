@@ -2100,6 +2100,43 @@ void ClientBegin( int clientNum ) {
 	G_SendSpawnpoints( ent );
 }
 
+
+qboolean TestSpawnIncrements(gentity_t *ent, vec3_t spawn_origin, vec3_t delta_normalized) {
+	int			i, num;
+	int			touch[MAX_GENTITIES];
+	gentity_t	*hit;
+	vec3_t		mins, maxs, end;
+	trace_t     trace;
+
+	for(i = 0; i < 100; i++) {
+		VectorAdd(spawn_origin, playerMins, mins);
+		VectorAdd(spawn_origin, playerMaxs, maxs);
+		num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
+
+		hit = NULL;
+		for(i = 0; i < num; i++) {
+			hit = &g_entities[touch[i]];
+			if(hit && hit->client) {
+				break;
+			}
+		}
+
+		// We don't hit a player anymore, use this position as spawn point
+		if(hit == NULL) {
+			return qtrue;
+		}
+
+		trap_Trace(&trace, spawn_origin, ent->r.mins, ent->r.maxs, end, ent->s.number, ent->clipmask & (~CONTENTS_BODY));
+		if(trace.allsolid) {
+			return qfalse;
+		}
+
+		VectorAdd(spawn_origin, delta_normalized, spawn_origin);
+	}
+
+	return qfalse;
+}
+
 /*
 ===========
 ClientSpawn
@@ -2149,8 +2186,6 @@ void ClientSpawn(gentity_t *ent) {
 	int captureCount;
 	vec3_t delta;
 	vec3_t delta_normalized;
-	trace_t trace;
-	vec3_t end;
 	vec3_t spawn_origin_orig;
  
 
@@ -2234,25 +2269,34 @@ void ClientSpawn(gentity_t *ent) {
 			VectorCopy(spawnPoint->s.origin, spawn_origin_orig);
 			AngleVectors(spawn_angles, delta, NULL, NULL);
 			VectorScale(delta, 10, delta_normalized);
-			i = 0;
 
 			// In some maps the spawn point is set a tiny bit to low.
 			// We add a bit to the origin so we don't get false positives in the tests against trace.sold
-			spawnPoint->s.origin[2] += 9;
 			spawn_origin[2] += 9;
-			while(SpotWouldTelefrag(spawnPoint) && (i < 100)) {
-				i++;
-				VectorAdd(spawnPoint->s.origin, delta_normalized, end);
-
-				trap_Trace(&trace, spawnPoint->s.origin, ent->r.mins, ent->r.maxs, end, ent->s.number, ent->clipmask & (~CONTENTS_BODY));
-				if (trace.allsolid) {
-					break;
+			// Try to spawn forward
+			if(!TestSpawnIncrements(ent, spawn_origin, delta_normalized)) {
+				VectorCopy(spawn_origin_orig, spawn_origin);
+				spawn_origin[2] += 9;
+				VectorScale(delta, -10, delta_normalized);
+				// If that does not work try to spawn backward
+				if(!TestSpawnIncrements(ent, spawn_origin, delta_normalized)) {
+					VectorCopy(spawn_origin_orig, spawn_origin);
+					spawn_origin[2] += 100;
+					VectorScale(delta, 10, delta_normalized);
+					// If that does not work try to spawn on top forward
+					if(!TestSpawnIncrements(ent, spawn_origin, delta_normalized)) {
+						VectorCopy(spawn_origin_orig, spawn_origin);
+						spawn_origin[2] += 100;
+						VectorScale(delta, -10, delta_normalized);
+						// If that does not work try to spawn on top backward
+						if(!TestSpawnIncrements(ent, spawn_origin, delta_normalized)) {
+							// If that does not work we spawn the player in the original position
+							VectorCopy(spawn_origin_orig, spawn_origin);
+							spawn_origin[2] += 9;
+						}
+					}
 				}
-
-				VectorAdd(spawnPoint->s.origin, delta_normalized, spawnPoint->s.origin);
-				VectorAdd(spawn_origin, delta_normalized, spawn_origin);
 			}
-			VectorCopy(spawn_origin_orig, spawnPoint->s.origin);
 		}
 	} else {
 		do {
