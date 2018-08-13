@@ -1,3 +1,17 @@
+2018-08-13 AfterShock XE Revision 321
+
+        - added g_furthestTeamSpawns, default is 0
+	If g_furthestTeamSpawns is 1 and the mode is CA/Elimination, a 
+  random spawn point will be picked for one team and other team will be
+  spawned at the furthest away spawn point. The two same spawn points
+  will be used every round but the teams will switch between them
+  alternatingly
+ 
+        - the global sounds and ET_MOVER loop sounds are no longer
+  played when s_ambient is 0
+        
+        - spawn and teleport bugfixes                 
+
 2018-08-09 AfterShock XE Revision 320
 
         - the flag icons on the HUD are now properly displayed for 
