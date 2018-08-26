@@ -1374,8 +1374,6 @@ extern vmCvar_t	    g_useMapcycle;
 extern vmCvar_t	    g_allowMultiview;
 extern vmCvar_t	    g_disableSpecs;
 
-extern vmCvar_t	    g_aftershockPhysic;
-
 extern vmCvar_t	    g_friendsThroughWalls;
 
 extern vmCvar_t	    g_allowKill;
@@ -1406,6 +1404,7 @@ extern vmCvar_t   g_projectileTeleportKeepAngle;
 extern vmCvar_t   g_spawnPush;
 extern vmCvar_t   g_telefragTeamBehavior;
 extern vmCvar_t   g_furthestTeamSpawns;
+extern vmCvar_t	  g_ruleset;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

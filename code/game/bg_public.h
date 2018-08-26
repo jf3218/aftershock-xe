@@ -188,6 +188,13 @@ typedef enum {
 
 #define	PMF_ALL_TIMES	(PMF_TIME_WATERJUMP|PMF_TIME_LAND|PMF_TIME_KNOCKBACK)
 
+typedef enum {
+	RULESET_VQ3,
+	RULESET_AS,
+	RULESET_CPM,
+	RULESET_QW
+} ruleset_t;
+
 #define	MAXTOUCH	32
 typedef struct {
 	// state (in / out)
@@ -212,6 +219,7 @@ typedef struct {
 	int			waterlevel;
 
 	float		xyspeed;
+	ruleset_t	ruleset;
 
 	// for fixed msec Pmove
 	int			pmove_fixed;
@@ -245,7 +253,8 @@ typedef enum {
 	STAT_DEAD_YAW,					// look this direction when dead (FIXME: get rid of?)
 	STAT_CLIENTS_READY,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
 	STAT_MAX_HEALTH,					// health / armor limit, changable by handicap
-	STAT_JUMPTIME					//rampjump
+	STAT_JUMPTIME,					//rampjump
+	STAT_RAILTIME					// CPM: Added for allowchange
 } statIndex_t;
 
 
@@ -776,6 +785,7 @@ qboolean	BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 #define VF_fraglimit    128
 #define VF_custom       256
 #define VF_shuffle      512
+#define VF_ruleset      1024
 
 // content masks
 #define	MASK_ALL				(-1)

@@ -489,7 +489,7 @@ void Matchinfo_f( void ) {
 	G_Printf("\\capturelimit\\%i", g_capturelimit.integer);
 	G_Printf("\\g_needpass\\%i", g_needpass.integer);
 	G_Printf("\\g_rockets\\%i", g_rockets.integer);
-	G_Printf("\\g_aftershockPhysic\\%i", g_aftershockPhysic.integer);
+	G_Printf("\\g_ruleset\\%i", g_ruleset.string);
 	G_Printf("\\g_reduceLightningDamage\\%i", g_reduceLightningDamage.integer);
 	G_Printf("\\g_reduceRailDamage\\%i", g_reduceRailDamage.integer);
 	G_Printf("\\g_reduceMachinegunDamage\\%i", g_reduceMachinegunDamage.integer);	

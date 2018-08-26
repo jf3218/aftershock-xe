@@ -29,31 +29,64 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "bg_local.h"
 #include "g_local.h"
 
-extern vmCvar_t g_aftershockPhysic;
+#define GAME_SPEED_MULTIPLIER 1.25
 
 pmove_t		*pm;
 pml_t		pml;
 
 // movement parameters
-float	pm_stopspeed = 100.0f;
-float	pm_duckScale = 0.25f;
-float	pm_swimScale = 0.50f;
-float	pm_wadeScale = 0.70f;
+float pm_stopspeed = 100.0f;
+float pm_duckScale = 0.25f;
+float pm_swimScale = 0.50f;
+float pm_wadeScale = 0.70f;
 
-float	pm_accelerate = 10.0f;
-float	pm_airaccelerate = 1.0f;
-float  pm_airaccelerateas = 1.0f;
-float	pm_wateraccelerate = 4.0f;
-float	pm_flyaccelerate = 8.0f;
+float pm_accelerate = 10.0f;
+float pm_airaccelerate = 1.0f;
+float pm_airaccelerateas = 1.0f;
+float pm_wateraccelerate = 4.0f;
+float pm_flyaccelerate = 8.0f;
 
-float	pm_friction = 6.0f;
-float	pm_waterfriction = 1.0f;
-float	pm_flightfriction = 3.0f;
-float	pm_spectatorfriction = 5.0f;
-float   pm_slidefriction = 1.0f;
-float	pm_slideminspeed = 400.0f;
+float pm_friction = 6.0f;
+float pm_waterfriction = 1.0f;
+float pm_flightfriction = 3.0f;
+float pm_spectatorfriction = 5.0f;
+float pm_slidefriction = 1.0f;
+float pm_slideminspeed = 400.0f;
 
-int		c_pmove = 0;
+int c_pmove = 0;
+
+// weapon parameters
+float pm_weapondrop = 200;
+float pm_weaponraise = 250;
+float pm_outofammodelay = 500;
+
+float pm_as_weapondrop = 100;
+float pm_as_weaponraise = 125;
+
+float pm_cpm_weapondrop = 25;
+float pm_cpm_weaponraise = 25;
+float pm_cpm_outofammodelay = 100;
+
+// QW physics
+float pm_qw_friction = 4.0f * GAME_SPEED_MULTIPLIER;
+float pm_qw_friction_strain = 0.5f;
+
+float pm_qw_swimScale = 0.75f;
+
+float pm_qw_accelerate = 15.0f * GAME_SPEED_MULTIPLIER;
+float pm_qw_airstopaccelerate = 3.0f;
+float pm_qw_aircontrol = 150.0f;
+float pm_qw_strafeaccelerate = 70.0f;
+float pm_qw_wishspeed = 15.0f * GAME_SPEED_MULTIPLIER;
+
+// CPM physics
+float pm_cpm_accelerate = 15.0f * GAME_SPEED_MULTIPLIER;
+float pm_cpm_friction = 6.0f * GAME_SPEED_MULTIPLIER;
+float pm_cpm_airstopaccelerate = 2.5f;
+float pm_cpm_aircontrol = 150.0f;
+float pm_cpm_strafeaccelerate = 70.0f;
+float pm_cpm_wishspeed = 30.0f * GAME_SPEED_MULTIPLIER;
+float pm_cpm_jump_z = 100;
 
 /*
 ===============
@@ -203,10 +236,14 @@ static void PM_Friction( void ) {
 		if ( pml.walking && !(pml.groundTrace.surfaceFlags & SURF_SLICK) ) {
 			// if getting knocked back, no friction
 			if ( ! (pm->ps->pm_flags & PMF_TIME_KNOCKBACK) ) {
-				if( g_aftershockPhysic.integer && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed) ){
+				control = speed < pm_stopspeed ? pm_stopspeed : speed;
+				if((pm->ruleset == RULESET_AS) && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed)) {
 					drop += speed*pm_slidefriction*pml.frametime;
-				} else {
-					control = speed < pm_stopspeed ? pm_stopspeed : speed;
+				} else if(pm->ruleset == RULESET_QW){
+					drop += control*pm_qw_friction*pml.frametime;
+				} else if(pm->ruleset == RULESET_CPM) {
+					drop += control*pm_cpm_friction*pml.frametime;
+				} else { // RULESET_VQ3
 					drop += control*pm_friction*pml.frametime;
 				}
 			}
@@ -371,7 +408,7 @@ PM_CheckJump
 =============
 */
 static qboolean PM_CheckJump( void ) {
-
+	float speed;
 
 	if ( pm->ps->pm_flags & PMF_RESPAWNED ) {
 		return qfalse;		// don't allow jump until all buttons are up
@@ -399,7 +436,7 @@ static qboolean PM_CheckJump( void ) {
 
 	pm->ps->groundEntityNum = ENTITYNUM_NONE;
 	
-	if ( g_aftershockPhysic.integer && /*( pm->ps->origin[2] > pml.preJumpHeight ) &&*/ (pm->ps->velocity[2] >= 0) ) {
+	if((pm->ruleset == RULESET_AS) && (pm->ps->velocity[2] >= 0)) {
 		if (pm->ps->stats[STAT_JUMPTIME] > 0) {
 			float speed = sqrt(pml.forward[0]*pml.forward[0] + pml.forward[1]*pml.forward[1]);
 			pm->ps->velocity[2] += JUMP_VELOCITY + 100;
@@ -411,11 +448,29 @@ static qboolean PM_CheckJump( void ) {
 		} else {
 			pm->ps->velocity[2] += JUMP_VELOCITY;
 		}
-	} else {
+		pm->ps->stats[STAT_JUMPTIME] = 400;
+	} else if((pm->ruleset == RULESET_CPM) && (pm->ps->velocity[2] >= 0)) {
+		pm->ps->velocity[2] += JUMP_VELOCITY;
+	    if (pm->ps->stats[STAT_JUMPTIME] > 0) {
+			pm->ps->velocity[2] += pm_cpm_jump_z;
+		}
+		pm->ps->stats[STAT_JUMPTIME] = 400 / GAME_SPEED_MULTIPLIER;
+	} else if((pm->ruleset == RULESET_QW)  && (pm->ps->velocity[2] >= 0)) {
+		pm->ps->velocity[2] += JUMP_VELOCITY;
+
+		// speed increase on ramp jump
+		if (pm->ps->stats[STAT_JUMPTIME] > 0) {
+			speed = sqrt(pml.forward[0]*pml.forward[0] + pml.forward[1]*pml.forward[1]);
+			pm->ps->velocity[0] += (pml.forward[0]/speed)*80 * GAME_SPEED_MULTIPLIER;
+			pm->ps->velocity[1] += (pml.forward[1]/speed)*80 * GAME_SPEED_MULTIPLIER;
+			pm->ps->velocity[2] *= 1.25;
+		}
+		pm->ps->stats[STAT_JUMPTIME] = 400 / GAME_SPEED_MULTIPLIER;
+	} else { // RULESET_VQ3
 		pm->ps->velocity[2] = JUMP_VELOCITY;
+		pm->ps->stats[STAT_JUMPTIME] = 400;
 	}
 	
-	pm->ps->stats[STAT_JUMPTIME] = 400;
 	
 	//pm->ps->velocity[2] = JUMP_VELOCITY;
 	PM_AddEvent( EV_JUMP );
@@ -553,8 +608,15 @@ static void PM_WaterMove( void ) {
 	VectorCopy (wishvel, wishdir);
 	wishspeed = VectorNormalize(wishdir);
 
-	if ( wishspeed > pm->ps->speed * pm_swimScale ) {
-		wishspeed = pm->ps->speed * pm_swimScale;
+
+	if((pm->ruleset == RULESET_QW) || (pm->ruleset == RULESET_CPM)) {
+		if(wishspeed > pm->ps->speed * pm_qw_swimScale) {
+			wishspeed = pm->ps->speed * pm_qw_swimScale;
+		}
+	} else { // VQ3 + AS
+		if(wishspeed > pm->ps->speed * pm_swimScale) {
+			wishspeed = pm->ps->speed * pm_swimScale;
+		}
 	}
 
 	PM_Accelerate (wishdir, wishspeed, pm_wateraccelerate);
@@ -628,6 +690,35 @@ static void PM_FlyMove( void ) {
 	PM_StepSlideMove( qfalse );
 }
 
+void PM_CPM_Aircontrol(pmove_t *pm, vec3_t wishdir, float wishspeed) {
+	float zspeed, speed, dot, k;
+	int i;
+
+	if((pm->ps->movementDir && pm->ps->movementDir !=4 && pm->ps->movementDir != -4 && pm->ps->movementDir != 12) || wishspeed == 0.0) {
+		return; // can't control movement if not moveing forward or backward
+	}
+
+	zspeed = pm->ps->velocity[2];
+	pm->ps->velocity[2] = 0;
+	speed = VectorNormalize(pm->ps->velocity);
+
+	dot = DotProduct(pm->ps->velocity,wishdir);
+	k = 32;
+	k *= pm_cpm_aircontrol*dot*dot*pml.frametime;
+
+	if(dot > 0) { // we can't change direction while slowing down
+		for (i=0; i < 2; i++) {
+			pm->ps->velocity[i] = pm->ps->velocity[i]*speed + wishdir[i]*k;
+		}
+		VectorNormalize(pm->ps->velocity);
+	}
+
+	for(i = 0; i < 2; i++) {
+		pm->ps->velocity[i] *= speed;
+	}
+
+	pm->ps->velocity[2] = zspeed;
+}
 
 /*
 ===================
@@ -640,9 +731,10 @@ static void PM_AirMove( void ) {
 	vec3_t		wishvel;
 	float		fmove, smove;
 	vec3_t		wishdir;
-	float		wishspeed;
+	float		wishspeed, wishspeed2;
 	float		scale;
 	usercmd_t	cmd;
+	float		accel;
 
 	PM_Friction();
 
@@ -669,11 +761,59 @@ static void PM_AirMove( void ) {
 	VectorCopy (wishvel, wishdir);
 	wishspeed = VectorNormalize(wishdir);
 	wishspeed *= scale;
-	if( g_aftershockPhysic.integer )
-	  PM_Accelerate(wishdir, wishspeed, pm_airaccelerateas);
-	else
-	// not on ground, so little effect on velocity
-	  PM_Accelerate (wishdir, wishspeed, pm_airaccelerate);
+
+	switch(pm->ruleset) {
+		case RULESET_QW: {
+			// alt air control
+			if(DotProduct(pm->ps->velocity, wishdir) < 0) {
+				accel = pm_qw_airstopaccelerate;
+			} else {
+				accel = pm_qw_accelerate;
+			}
+
+			if(wishspeed > pm_qw_wishspeed) {
+				wishspeed = pm_qw_wishspeed;
+				accel = pm_qw_strafeaccelerate;
+			}
+			PM_Accelerate(wishdir, wishspeed, accel);
+
+			break;
+		}
+
+		case RULESET_CPM: {
+			wishspeed2 = wishspeed;
+			if(DotProduct(pm->ps->velocity, wishdir) < 0) {
+				accel = pm_cpm_airstopaccelerate;
+			} else {
+				accel = pm_airaccelerate;
+			}
+
+			if((pm->ps->movementDir == 2 || pm->ps->movementDir == -2 || pm->ps->movementDir == 10) || (pm->ps->movementDir == 6 || pm->ps->movementDir == -6 || pm->ps->movementDir == 14)) {
+				if(wishspeed > pm_cpm_wishspeed) {
+					wishspeed = pm_cpm_wishspeed;
+				}
+				accel = pm_cpm_strafeaccelerate;
+			}
+			PM_Accelerate(wishdir, wishspeed, accel);
+			PM_CPM_Aircontrol(pm, wishdir, wishspeed2);
+
+			break;
+		}
+
+		case RULESET_AS: {
+			PM_Accelerate(wishdir, wishspeed, pm_airaccelerateas);
+
+			break;
+		}
+
+		case RULESET_VQ3: // fall-through
+		default: {
+			// not on ground, so little effect on velocity
+			PM_Accelerate (wishdir, wishspeed, pm_airaccelerate);
+
+			break;
+		}
+	}
 
 	// we may have a ground plane that is very steep, even
 	// though we don't have a groundentity
@@ -799,7 +939,7 @@ static void PM_WalkMove( void ) {
 		}
 
 		speed = VectorLength(vec);
-		if( g_aftershockPhysic.integer && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed) ){
+		if( pm->ruleset > RULESET_VQ3 && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed) ){
 			if ( wishspeed > pm->ps->speed * pm_duckScale * 2 ) {
 				wishspeed = pm->ps->speed * pm_duckScale * 2;
 			}
@@ -815,7 +955,12 @@ static void PM_WalkMove( void ) {
 		float	waterScale;
 
 		waterScale = pm->waterlevel / 3.0;
-		waterScale = 1.0 - ( 1.0 - pm_swimScale ) * waterScale;
+		if((pm->ruleset == RULESET_QW) || (pm->ruleset == RULESET_CPM)) {
+			waterScale = 1.0 - ( 1.0 - pm_qw_swimScale ) * waterScale;
+		} else { // AS + VQ3
+			waterScale = 1.0 - ( 1.0 - pm_swimScale ) * waterScale;
+		}
+
 		if ( wishspeed > pm->ps->speed * waterScale ) {
 			wishspeed = pm->ps->speed * waterScale;
 		}
@@ -824,9 +969,19 @@ static void PM_WalkMove( void ) {
 	// when a player gets hit, they temporarily lose
 	// full control, which allows them to be moved a bit
 	if ( ( pml.groundTrace.surfaceFlags & SURF_SLICK ) || pm->ps->pm_flags & PMF_TIME_KNOCKBACK ) {
-		accelerate = pm_airaccelerate;
+		if((pm->ruleset == RULESET_QW) || (pm->ruleset == RULESET_CPM)) {
+			accelerate = pm_qw_aircontrol;
+		} else { // AS + VQ3
+			accelerate = pm_airaccelerate;
+		}
 	} else {
-		accelerate = pm_accelerate;
+		if(pm->ruleset == RULESET_QW) {
+			accelerate = pm_qw_accelerate;
+		} else if(pm->ruleset == RULESET_CPM) {
+			accelerate = pm_cpm_accelerate;
+		} else { // AS + VQ3
+			accelerate = pm_accelerate;
+		}
 	}
 
 	PM_Accelerate (wishdir, wishspeed, accelerate);
@@ -1535,14 +1690,15 @@ static void PM_BeginWeaponChange( int weapon ) {
 
 	PM_AddEvent( EV_CHANGE_WEAPON );
 	pm->ps->weaponstate = WEAPON_DROPPING;
-	if( !g_aftershockPhysic.integer ){
-		pm->ps->weaponTime += 200;
-	}
-	else {
-		pm->ps->weaponTime += 100;
+	if(pm->ruleset == RULESET_VQ3){
+		pm->ps->weaponTime += pm_weapondrop;
+	} else if(pm->ruleset == RULESET_CPM) {
+		pm->ps->weaponTime += pm_cpm_weapondrop;
+	} else {
+		pm->ps->weaponTime += pm_as_weapondrop;
 	}
 	PM_StartTorsoAnim( TORSO_DROP );
-	if( g_aftershockPhysic.integer ) {
+	if( pm->ruleset == RULESET_VQ3 ) {
 		if( pm->ps->weaponTime > 500 )
 		    pm->ps->weaponTime = 500;
 	}
@@ -1591,11 +1747,12 @@ static void PM_FinishWeaponChange( void ) {
 
 	pm->ps->weapon = weapon;
 	pm->ps->weaponstate = WEAPON_RAISING;
-	if( !g_aftershockPhysic.integer ){
-		pm->ps->weaponTime += 250;
-	}
-	else {
-		pm->ps->weaponTime += 125;
+	if(pm->ruleset == RULESET_VQ3){
+		pm->ps->weaponTime += pm_weaponraise;
+	} else if(pm->ruleset == RULESET_CPM) {
+		pm->ps->weaponTime += pm_cpm_weaponraise;
+	} else {
+		pm->ps->weaponTime += pm_as_weaponraise;
 	}
 	PM_StartTorsoAnim( TORSO_RAISE );
 }
@@ -1669,6 +1826,11 @@ static void PM_Weapon( void ) {
 		pm->ps->pm_flags &= ~PMF_USE_ITEM_HELD;
 	}
 
+	if(pm->ruleset == RULESET_CPM) {
+		if(pm->ps->stats[STAT_RAILTIME] > 0) {
+			pm->ps->stats[STAT_RAILTIME] -= pml.msec;
+		}
+	}
 
 	// make weapon function
 	if ( pm->ps->weaponTime > 0 ) {
@@ -1694,7 +1856,23 @@ static void PM_Weapon( void ) {
 		return;
 	}
 
+	if(pm->ruleset == RULESET_CPM) {
+		if(pm->ps->weapon == WP_RAILGUN && pm->ps->stats[STAT_RAILTIME] > 0) {
+			return;
+		}
+	}
+
 	if ( pm->ps->weaponstate == WEAPON_RAISING ) {
+		if(pm->ruleset == RULESET_CPM) {
+			if ((pm->ps->weapon == WP_RAILGUN) && (pm->ps->stats[STAT_RAILTIME] > 0)) {
+				// the player has switched back to railgun before it has reloaded
+				// setup so that the player now is in "firing state"
+				pm->ps->weaponTime = pm->ps->stats[STAT_RAILTIME];
+				pm->ps->weaponstate = WEAPON_FIRING;
+				return;
+			}
+		}
+
 		pm->ps->weaponstate = WEAPON_READY;
 		if ( pm->ps->weapon == WP_GAUNTLET ) {
 			PM_StartTorsoAnim( TORSO_STAND2 );
@@ -1733,7 +1911,11 @@ static void PM_Weapon( void ) {
 	// check for out of ammo
 	if ( ! pm->ps->ammo[ pm->ps->weapon ] ) {
 		PM_AddEvent( EV_NOAMMO );
-		pm->ps->weaponTime += 500;
+		if(pm->ruleset == RULESET_CPM) {
+			pm->ps->weaponTime += pm_cpm_outofammodelay;
+		} else {
+			pm->ps->weaponTime += pm_outofammodelay;
+		}
 		return;
 	}
 
@@ -1769,7 +1951,12 @@ static void PM_Weapon( void ) {
 		addTime = 100;
 		break;
 	case WP_RAILGUN:
-		addTime = 1500;
+		if(pm->ruleset == RULESET_CPM) {
+			addTime = 1500;
+			pm->ps->stats[STAT_RAILTIME] = 1500;
+		} else {
+			addTime = 1500;
+		}
 		break;
 	case WP_BFG:
 		addTime = 200;

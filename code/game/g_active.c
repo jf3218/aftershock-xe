@@ -1146,7 +1146,19 @@ void ClientThink_real( gentity_t *ent ) {
 
 	pm.pmove_fixed = pmove_fixed.integer | client->pers.pmoveFixed;
 	pm.pmove_msec = pmove_msec.integer;
-        pm.pmove_float = pmove_float.integer;
+	pm.pmove_float = pmove_float.integer;
+
+	if(Q_stricmp(g_ruleset.string, "vq3") == 0) {
+		pm.ruleset = RULESET_VQ3;
+	} else if(Q_stricmp(g_ruleset.string, "as") == 0) {
+		pm.ruleset = RULESET_AS;
+	} else if(Q_stricmp(g_ruleset.string, "cpm") == 0) {
+		pm.ruleset = RULESET_CPM;
+	} else if(Q_stricmp(g_ruleset.string, "qw") == 0) {
+		pm.ruleset = RULESET_QW;
+	} else {
+		pm.ruleset = RULESET_AS; // default is AS
+	}
 
 	VectorCopy( client->ps.origin, client->oldOrigin );
 

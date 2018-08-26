@@ -246,8 +246,6 @@ vmCvar_t     g_allowMultiview;
 
 vmCvar_t     g_disableSpecs;
 
-vmCvar_t     g_aftershockPhysic;
-
 vmCvar_t     g_friendsThroughWalls;
 vmCvar_t     g_allowKill;
 vmCvar_t     g_fadeToBlack;
@@ -278,6 +276,7 @@ vmCvar_t     g_projectileTeleportKeepAngle;
 vmCvar_t     g_spawnPush;
 vmCvar_t     g_telefragTeamBehavior;
 vmCvar_t     g_furthestTeamSpawns;
+vmCvar_t     g_ruleset;
 
 
 // bk001129 - made static to avoid aliasing
@@ -348,7 +347,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_allowVote, "g_allowVote", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qfalse },
         
         //new in beta 19
-        { &g_voteNames, "g_voteNames", "/map_restart/nextmap/map/g_gametype/kick/clientkick/timelimit/fraglimit/shuffle/", CVAR_ARCHIVE, 0, qfalse }, //clientkick g_doWarmup timelimit fraglimit
+        { &g_voteNames, "g_voteNames", "/map_restart/nextmap/map/g_gametype/kick/clientkick/timelimit/fraglimit/shuffle/ruleset/", CVAR_ARCHIVE, 0, qfalse }, //clientkick g_doWarmup timelimit fraglimit
         { &g_voteGametypes, "g_voteGametypes", "/0/1/3/4/5/6/7/8/9/10/11/12/", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qfalse },
         { &g_voteMaxTimelimit, "g_voteMaxTimelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qfalse },
         { &g_voteMinTimelimit, "g_voteMinTimelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qfalse },
@@ -524,7 +523,6 @@ static cvarTable_t		gameCvarTable[] = {
 	// demo state
 	//{ &g_demoState, "sv_demoState", "", 0, 0, qfalse },
 	{ &g_disableSpecs, "g_disableSpecs", "0", CVAR_ARCHIVE, 0, qfalse },
-	{ &g_aftershockPhysic, "g_aftershockPhysic", "0", CVAR_SERVERINFO, 0, qfalse },
 	{ &g_friendsThroughWalls, "g_friendsThroughWalls", "0", CVAR_SERVERINFO, 0, qfalse },
 	
 	{ &g_allowKill, "g_allowKill", "1", CVAR_SERVERINFO, 0, qfalse },
@@ -549,7 +547,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_projectileTeleportKeepAngle, "g_projectileTeleportKeepAngle", "1", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_spawnPush, "g_spawnPush", "1", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_telefragTeamBehavior, "g_telefragTeamBehavior", "1", CVAR_ARCHIVE, 0, qfalse },
-	{ &g_furthestTeamSpawns, "g_furthestTeamSpawns", "0", CVAR_ARCHIVE, 0, qfalse }
+	{ &g_furthestTeamSpawns, "g_furthestTeamSpawns", "0", CVAR_ARCHIVE, 0, qfalse },
+	{ &g_ruleset, "g_ruleset", "as", CVAR_SERVERINFO, 0, qfalse  },
 };
 
 // bk001129 - made static to avoid aliasing
