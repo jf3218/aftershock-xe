@@ -751,6 +751,18 @@ void G_RegisterCvars( void ) {
 	}
 
 	level.warmupModificationCount = g_warmup.modificationCount;
+
+	if(Q_stricmp(g_ruleset.string, "vq3") == 0) {
+		g_ruleset.integer = RULESET_VQ3;
+	} else if(Q_stricmp(g_ruleset.string, "as") == 0) {
+		g_ruleset.integer = RULESET_AS;
+	} else if(Q_stricmp(g_ruleset.string, "cpm") == 0) {
+		g_ruleset.integer = RULESET_CPM;
+	} else if(Q_stricmp(g_ruleset.string, "qw") == 0) {
+		g_ruleset.integer = RULESET_QW;
+	} else {
+		g_ruleset.integer = RULESET_AS; // default is AS
+	}
 }
 
 /*
@@ -805,6 +817,9 @@ void G_UpdateCvars( void ) {
                                     if( allowedVote("fraglimit") )
                                         voteflags|=VF_fraglimit;
 
+                                    if( allowedVote("ruleset") )
+                                        voteflags|=VF_ruleset;
+
                                     if( allowedVote("custom") )
                                         voteflags|=VF_custom;
 
@@ -820,6 +835,18 @@ void G_UpdateCvars( void ) {
 
 	if (remapped) {
 		G_RemapTeamShaders();
+	}
+
+	if(Q_stricmp(g_ruleset.string, "vq3") == 0) {
+		g_ruleset.integer = RULESET_VQ3;
+	} else if(Q_stricmp(g_ruleset.string, "as") == 0) {
+		g_ruleset.integer = RULESET_AS;
+	} else if(Q_stricmp(g_ruleset.string, "cpm") == 0) {
+		g_ruleset.integer = RULESET_CPM;
+	} else if(Q_stricmp(g_ruleset.string, "qw") == 0) {
+		g_ruleset.integer = RULESET_QW;
+	} else {
+		g_ruleset.integer = RULESET_AS; // default is AS
 	}
 }
 
@@ -1098,6 +1125,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 
             if( allowedVote("fraglimit") )
                 voteflags|=VF_fraglimit;
+
+            if( allowedVote("ruleset") )
+                voteflags|=VF_ruleset;
 
             if( allowedVote("custom") )
                 voteflags|=VF_custom;

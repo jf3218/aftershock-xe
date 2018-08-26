@@ -432,6 +432,19 @@ void	Svcmd_ForceTeam_f( void ) {
 	SetTeam( &g_entities[cl - level.clients], str );
 }
 
+void Ruleset_f(void) {
+	char str[MAX_TOKEN_CHARS];
+	trap_Argv(1, str, sizeof(str));
+
+	if((Q_stricmp(str, "vq3") != 0) && (Q_stricmp(str, "as") != 0) && (Q_stricmp(str, "cpm") != 0) && (Q_stricmp(str, "qw") != 0)) {
+		G_Printf("Server: ruleset '%s' is not valid, use <vq3|as|cpm|qw>", str);
+		return;
+	}
+
+	trap_Cvar_Set("g_ruleset", str);
+	trap_SendConsoleCommand(EXEC_APPEND, "map_restart");
+}
+
 void	ClientKick_f( void ) {
         int idnum, i;
         char	str[MAX_TOKEN_CHARS];
@@ -555,6 +568,7 @@ struct
   { "bp", qtrue, Svcmd_BannerPrint_f }, */
   //Shuffle the teams
   { "shuffle", qfalse, ShuffleTeams },
+  { "ruleset", qfalse, Ruleset_f },
   //Kicks a player by number in the game logic rather than the server number
   { "clientkick_game", qfalse, ClientKick_f },
   { "matchinfo", qfalse, Matchinfo_f },

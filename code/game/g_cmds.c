@@ -2854,6 +2854,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
     } else if ( !Q_stricmp( arg1, "fraglimit" ) ) {
     } else if ( !Q_stricmp( arg1, "custom" ) ) {
     } else if ( !Q_stricmp( arg1, "shuffle" ) ) {
+    } else if ( !Q_stricmp( arg1, "ruleset" ) ) {
     } else {
         trap_SendServerCommand( ent-g_entities, "print \"Invalid vote string.\n\"" );
         //trap_SendServerCommand( ent-g_entities, "print \"Vote commands are: map_restart, nextmap, map <mapname>, g_gametype <n>, kick <player>, clientkick <clientnum>, g_doWarmup, timelimit <time>, fraglimit <frags>.\n\"" );
@@ -2879,6 +2880,8 @@ void Cmd_CallVote_f( gentity_t *ent ) {
             strcat(buffer, "fraglimit <frags>, ");
         if (allowedVote("shuffle"))
             strcat(buffer, "shuffle, ");
+        if (allowedVote("ruleset"))
+            strcat(buffer, "ruleset <vq3|as|cpm|qw>, ");
         if (allowedVote("custom"))
             strcat(buffer, "custom <special>, ");
         buffer[strlen(buffer)-2] = 0;
@@ -2911,6 +2914,8 @@ void Cmd_CallVote_f( gentity_t *ent ) {
             strcat(buffer, "timelimit <time>, ");
         if (allowedVote("fraglimit"))
             strcat(buffer, "fraglimit <frags>, ");
+        if (allowedVote("ruleset"))
+            strcat(buffer, "ruleset <vq3|as|cpm|qw>, ");
         if (allowedVote("custom"))
             strcat(buffer, "custom <special>, ");
         buffer[strlen(buffer)-2] = 0;
@@ -3093,6 +3098,14 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 
         Com_sprintf( level.voteString, sizeof( level.voteString ), "clientkick_game \"%d\"", i );
         Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Kick %s?" , level.clients[i].pers.netname );
+    } else if ( !Q_stricmp( arg1, "ruleset" ) ) {
+		if((Q_stricmp(arg2, "vq3") != 0) && (Q_stricmp(arg2, "as") != 0) && (Q_stricmp(arg2, "cpm") != 0) && (Q_stricmp(arg2, "qw") != 0)) {
+			trap_SendServerCommand(ent-g_entities, va("print \"ruleset '%s' is not valid, use <vq3|as|cpm|qw>\n\"",  arg2));
+			return;
+		}
+
+		Com_sprintf(level.voteString, sizeof( level.voteString ), "ruleset %s", arg2);
+		Com_sprintf(level.voteDisplayString, sizeof( level.voteDisplayString ), "Change ruleset to %s?", arg2);
     } else if ( !Q_stricmp( arg1, "custom" ) ) {
         t_customvote customvote;
         //Sago: There must always be a test to ensure that length(arg2) is non-zero or the client might be able to execute random commands.
