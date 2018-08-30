@@ -694,7 +694,7 @@ void PM_CPM_Aircontrol(pmove_t *pm, vec3_t wishdir, float wishspeed) {
 	float zspeed, speed, dot, k;
 	int i;
 
-	if((pm->ps->movementDir && pm->ps->movementDir !=4 && pm->ps->movementDir != -4 && pm->ps->movementDir != 12) || wishspeed == 0.0) {
+	if(((pm->ps->movementDir != 0) && (pm->ps->movementDir != 4)) || (wishspeed == 0.0)) {
 		return; // can't control movement if not moveing forward or backward
 	}
 
@@ -788,7 +788,7 @@ static void PM_AirMove( void ) {
 				accel = pm_airaccelerate;
 			}
 
-			if((pm->ps->movementDir == 2 || pm->ps->movementDir == -2 || pm->ps->movementDir == 10) || (pm->ps->movementDir == 6 || pm->ps->movementDir == -6 || pm->ps->movementDir == 14)) {
+			if((pm->ps->movementDir == 2) || (pm->ps->movementDir == 6)) {
 				if(wishspeed > pm_cpm_wishspeed) {
 					wishspeed = pm_cpm_wishspeed;
 				}
