@@ -756,6 +756,8 @@ void G_RegisterCvars( void ) {
 		g_ruleset.integer = RULESET_VQ3;
 	} else if(Q_stricmp(g_ruleset.string, "as") == 0) {
 		g_ruleset.integer = RULESET_AS;
+	} else if(Q_stricmp(g_ruleset.string, "asxe") == 0) {
+		g_ruleset.integer = RULESET_ASXE;
 	} else if(Q_stricmp(g_ruleset.string, "cpm") == 0) {
 		g_ruleset.integer = RULESET_CPM;
 	} else if(Q_stricmp(g_ruleset.string, "qw") == 0) {
@@ -841,6 +843,8 @@ void G_UpdateCvars( void ) {
 		g_ruleset.integer = RULESET_VQ3;
 	} else if(Q_stricmp(g_ruleset.string, "as") == 0) {
 		g_ruleset.integer = RULESET_AS;
+	} else if(Q_stricmp(g_ruleset.string, "asxe") == 0) {
+		g_ruleset.integer = RULESET_ASXE;
 	} else if(Q_stricmp(g_ruleset.string, "cpm") == 0) {
 		g_ruleset.integer = RULESET_CPM;
 	} else if(Q_stricmp(g_ruleset.string, "qw") == 0) {

@@ -436,8 +436,8 @@ void Ruleset_f(void) {
 	char str[MAX_TOKEN_CHARS];
 	trap_Argv(1, str, sizeof(str));
 
-	if((Q_stricmp(str, "vq3") != 0) && (Q_stricmp(str, "as") != 0) && (Q_stricmp(str, "cpm") != 0) && (Q_stricmp(str, "qw") != 0)) {
-		G_Printf("Server: ruleset '%s' is not valid, use <vq3|as|cpm|qw>", str);
+	if((Q_stricmp(str, "vq3") != 0) && (Q_stricmp(str, "as") != 0) && (Q_stricmp(str, "asxe") != 0) && (Q_stricmp(str, "cpm") != 0) && (Q_stricmp(str, "qw") != 0)) {
+		G_Printf("Server: ruleset '%s' is not valid, use <vq3|as|asxe|cpm|qw>", str);
 		return;
 	}
 

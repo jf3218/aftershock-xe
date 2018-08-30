@@ -1152,6 +1152,8 @@ void ClientThink_real( gentity_t *ent ) {
 		pm.ruleset = RULESET_VQ3;
 	} else if(Q_stricmp(g_ruleset.string, "as") == 0) {
 		pm.ruleset = RULESET_AS;
+	} else if(Q_stricmp(g_ruleset.string, "asxe") == 0) {
+		pm.ruleset = RULESET_ASXE;
 	} else if(Q_stricmp(g_ruleset.string, "cpm") == 0) {
 		pm.ruleset = RULESET_CPM;
 	} else if(Q_stricmp(g_ruleset.string, "qw") == 0) {

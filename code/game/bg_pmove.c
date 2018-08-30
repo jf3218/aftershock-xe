@@ -88,6 +88,11 @@ float pm_cpm_strafeaccelerate = 70.0f;
 float pm_cpm_wishspeed = 30.0f * GAME_SPEED_MULTIPLIER;
 float pm_cpm_jump_z = 100;
 
+// ASXE physics
+float pm_asxe_aircontrol = 75.0f;
+float pm_asxe_strafeaccelerate = 35.0f;
+
+
 /*
 ===============
 PM_AddEvent
@@ -237,7 +242,7 @@ static void PM_Friction( void ) {
 			// if getting knocked back, no friction
 			if ( ! (pm->ps->pm_flags & PMF_TIME_KNOCKBACK) ) {
 				control = speed < pm_stopspeed ? pm_stopspeed : speed;
-				if((pm->ruleset == RULESET_AS) && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed)) {
+				if((pm->ruleset == RULESET_AS || pm->ruleset == RULESET_ASXE) && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed)) {
 					drop += speed*pm_slidefriction*pml.frametime;
 				} else if(pm->ruleset == RULESET_QW){
 					drop += control*pm_qw_friction*pml.frametime;
@@ -436,7 +441,7 @@ static qboolean PM_CheckJump( void ) {
 
 	pm->ps->groundEntityNum = ENTITYNUM_NONE;
 	
-	if((pm->ruleset == RULESET_AS) && (pm->ps->velocity[2] >= 0)) {
+	if((pm->ruleset == RULESET_AS || pm->ruleset == RULESET_ASXE) && (pm->ps->velocity[2] >= 0)) {
 		if (pm->ps->stats[STAT_JUMPTIME] > 0) {
 			float speed = sqrt(pml.forward[0]*pml.forward[0] + pml.forward[1]*pml.forward[1]);
 			pm->ps->velocity[2] += JUMP_VELOCITY + 100;
@@ -613,7 +618,7 @@ static void PM_WaterMove( void ) {
 		if(wishspeed > pm->ps->speed * pm_qw_swimScale) {
 			wishspeed = pm->ps->speed * pm_qw_swimScale;
 		}
-	} else { // VQ3 + AS
+	} else { // VQ3 + AS + ASXE
 		if(wishspeed > pm->ps->speed * pm_swimScale) {
 			wishspeed = pm->ps->speed * pm_swimScale;
 		}
@@ -690,7 +695,7 @@ static void PM_FlyMove( void ) {
 	PM_StepSlideMove( qfalse );
 }
 
-void PM_CPM_Aircontrol(pmove_t *pm, vec3_t wishdir, float wishspeed) {
+void PM_CPM_Aircontrol(pmove_t *pm, vec3_t wishdir, float wishspeed, float aircontrol) {
 	float zspeed, speed, dot, k;
 	int i;
 
@@ -704,7 +709,7 @@ void PM_CPM_Aircontrol(pmove_t *pm, vec3_t wishdir, float wishspeed) {
 
 	dot = DotProduct(pm->ps->velocity,wishdir);
 	k = 32;
-	k *= pm_cpm_aircontrol*dot*dot*pml.frametime;
+	k *= aircontrol*dot*dot*pml.frametime;
 
 	if(dot > 0) { // we can't change direction while slowing down
 		for (i=0; i < 2; i++) {
@@ -795,7 +800,23 @@ static void PM_AirMove( void ) {
 				accel = pm_cpm_strafeaccelerate;
 			}
 			PM_Accelerate(wishdir, wishspeed, accel);
-			PM_CPM_Aircontrol(pm, wishdir, wishspeed2);
+			PM_CPM_Aircontrol(pm, wishdir, wishspeed2, pm_cpm_aircontrol);
+
+			break;
+		}
+
+		case RULESET_ASXE: {
+			wishspeed2 = wishspeed;
+			accel = pm_airaccelerateas;
+
+			if((pm->ps->movementDir == 2) || (pm->ps->movementDir == 6)) {
+				if(wishspeed > pm_cpm_wishspeed) {
+					wishspeed = pm_cpm_wishspeed;
+				}
+				accel = pm_asxe_strafeaccelerate;
+			}
+			PM_Accelerate(wishdir, wishspeed, accel);
+			PM_CPM_Aircontrol(pm, wishdir, wishspeed2, pm_asxe_aircontrol);
 
 			break;
 		}
@@ -957,7 +978,7 @@ static void PM_WalkMove( void ) {
 		waterScale = pm->waterlevel / 3.0;
 		if((pm->ruleset == RULESET_QW) || (pm->ruleset == RULESET_CPM)) {
 			waterScale = 1.0 - ( 1.0 - pm_qw_swimScale ) * waterScale;
-		} else { // AS + VQ3
+		} else { // AS + VQ3 + ASXE
 			waterScale = 1.0 - ( 1.0 - pm_swimScale ) * waterScale;
 		}
 
@@ -971,7 +992,7 @@ static void PM_WalkMove( void ) {
 	if ( ( pml.groundTrace.surfaceFlags & SURF_SLICK ) || pm->ps->pm_flags & PMF_TIME_KNOCKBACK ) {
 		if((pm->ruleset == RULESET_QW) || (pm->ruleset == RULESET_CPM)) {
 			accelerate = pm_qw_aircontrol;
-		} else { // AS + VQ3
+		} else { // AS + VQ3 + ASXE
 			accelerate = pm_airaccelerate;
 		}
 	} else {
@@ -979,7 +1000,7 @@ static void PM_WalkMove( void ) {
 			accelerate = pm_qw_accelerate;
 		} else if(pm->ruleset == RULESET_CPM) {
 			accelerate = pm_cpm_accelerate;
-		} else { // AS + VQ3
+		} else { // AS + VQ3 + ASXE
 			accelerate = pm_accelerate;
 		}
 	}

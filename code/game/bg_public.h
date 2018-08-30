@@ -191,6 +191,7 @@ typedef enum {
 typedef enum {
 	RULESET_VQ3,
 	RULESET_AS,
+	RULESET_ASXE,
 	RULESET_CPM,
 	RULESET_QW
 } ruleset_t;
