@@ -15,3 +15,8 @@ https://github.com/lrq3000/oatmeal - g_rocketVelocity
 (more recent) OpenArena gamecode (OAX)
 https://github.com/OpenArena/gamecode - g_gravityModifier and GCC-4.8+
 compatibility by sago007
+
+cpm1_dev_docs tutorial
+http://games.linuxdude.com/tamaps/archive/cpm1_dev_docs/ - CPM ruleset
+
+MFArena by Metro-MP https://mmpgames.wordpress.com/ - QW rulest
