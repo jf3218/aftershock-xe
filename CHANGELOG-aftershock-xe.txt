@@ -1,3 +1,18 @@
+2018-08-31 AfterShock XE Revision 322
+
+        - added an experimental ASXE based on AS one with a very light 
+  version of air control. This ruleset will be shaped with the 
+  feedback from the community to create a better default ruleset 
+  for the mod
+
+        - added CPM and QW rulesets with g_ruleset cvar that replaces 
+  g_aftershockPhysic
+  	Available options are: as (default), asxe, as, vq3, cpm, qw
+  	
+  	    - added callvote ruleset
+  	    
+  	    - removed unused movement checks
+
 2018-08-13 AfterShock XE Revision 321
 
         - added g_furthestTeamSpawns, default is 0
