@@ -3785,6 +3785,22 @@ void Cmd_Forfeit_f( gentity_t *ent ) {
   
 }
 
+void Cmd_Zoomed_f(gentity_t *ent) {
+	char arg1[MAX_STRING_TOKENS];
+
+	if(trap_Argc() != 2) {
+		return;
+	}
+
+	trap_Argv(1, arg1, sizeof(arg1));
+
+	if((arg1[0] != '0') && (arg1[0] != '1')) {
+		return;
+	}
+
+	ent->client->ps.stats[STAT_ZOOMED] = arg1[0] == '1';
+}
+
 //KK-OAX This is the table that ClientCommands runs the console entry against.
 commands_t cmds[ ] =
 {
@@ -3857,7 +3873,8 @@ commands_t cmds[ ] =
     { "mapcycle", 0, Cmd_Listmapcycle_f, qfalse },
     { "mute", 0, Cmd_Mute_f, qfalse },
     { "unmute", 0, Cmd_Unmute_f, qfalse },
-    { "forfeit", 0, Cmd_Forfeit_f, qfalse }
+    { "forfeit", 0, Cmd_Forfeit_f, qfalse },
+    { "zoomed", 0, Cmd_Zoomed_f, qfalse }
 };
 
 static int numCmds = sizeof( cmds ) / sizeof( cmds[ 0 ] );

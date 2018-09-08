@@ -255,7 +255,8 @@ typedef enum {
 	STAT_CLIENTS_READY,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
 	STAT_MAX_HEALTH,					// health / armor limit, changable by handicap
 	STAT_JUMPTIME,					//rampjump
-	STAT_RAILTIME					// CPM: Added for allowchange
+	STAT_RAILTIME,					// CPM: Added for allowchange
+	STAT_ZOOMED						// Current zoom status of the player, so spectators can see if player zooms or not
 } statIndex_t;
 
 

@@ -448,30 +448,40 @@ static void CG_OffsetFirstPersonView( void ) {
 //======================================================================
 
 void CG_ZoomDown_f( void ) {
-    if( cg_zoomToggle.integer ){
-	if( cg.zoomed )
-	    cg.zoomed = qfalse;
-	else
-	    cg.zoomed = qtrue;
-	cg.zoomTime = cg.time;
-    }
-    else{
-	if ( cg.zoomed ) {
-	    return;
+	if((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && (cg_spectatorZoom.integer)) {
+		return;
 	}
-	cg.zoomed = qtrue;
-	cg.zoomTime = cg.time;
-    }
+
+	if(cg_zoomToggle.integer) {
+		if(cg.zoomed) {
+			cg.zoomed = qfalse;
+		} else {
+			cg.zoomed = qtrue;
+		}
+		cg.zoomTime = cg.time;
+	} else if(!cg.zoomed) {
+		cg.zoomed = qtrue;
+		cg.zoomTime = cg.time;
+	}
+
+	trap_SendClientCommand(va("zoomed %i\n", cg.zoomed));
 }
 
 void CG_ZoomUp_f( void ) {
-    if( cg_zoomToggle.integer )
-	return;
-    if ( !cg.zoomed ) {
-        return;
+	if((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && (cg_spectatorZoom.integer)) {
+		return;
+	}
+
+	if(cg_zoomToggle.integer) {
+		return;
+	}
+
+	if(cg.zoomed) {
+		cg.zoomed = qfalse;
+		cg.zoomTime = cg.time;
     }
-    cg.zoomed = qfalse;
-    cg.zoomTime = cg.time;
+
+	trap_SendClientCommand(va("zoomed %i\n", cg.zoomed));
 }
 
 /*
@@ -493,6 +503,7 @@ static int CG_CalcFov( void ) {
     float	zoomFov;
     float	f;
     int		inwater;
+	int     zoomed;
 
     if ( cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
         // if in intermission, use a fixed value
@@ -531,8 +542,13 @@ static int CG_CalcFov( void ) {
             /*if ( (cgs.fairflags & FF_LOCK_CVARS_BASIC) && zoomFov>140 )
                 zoomFov = 140;*/
         }
+		
+		zoomed = cg.zoomed;
+		if((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && (cg_spectatorZoom.integer)) {
+			zoomed = cg.snap->ps.stats[STAT_ZOOMED];
+		}
 
-        if ( cg.zoomed ) {
+        if ( zoomed ) {
 	    if( cg_zoomScaling.value > 0 )
 		f = ( cg.time - cg.zoomTime ) / (float)(cg_zoomScaling.value * ZOOM_TIME);
 	    else
