@@ -495,6 +495,7 @@ Fixed fov at intermissions, otherwise account for fov variable and zooms.
 #define	WAVE_FREQUENCY	0.4
 
 static int CG_CalcFov( void ) {
+	static int last_zoomed = qfalse;
     float	x;
     float	phase;
     float	v;
@@ -504,6 +505,7 @@ static int CG_CalcFov( void ) {
     float	f;
     int		inwater;
 	int     zoomed;
+	int     zoomed_tmp;
 
     if ( cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
         // if in intermission, use a fixed value
@@ -545,7 +547,12 @@ static int CG_CalcFov( void ) {
 		
 		zoomed = cg.zoomed;
 		if((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && (cg_spectatorZoom.integer)) {
-			zoomed = cg.snap->ps.stats[STAT_ZOOMED];
+			zoomed_tmp = cg.snap->ps.stats[STAT_ZOOMED] ? qtrue : qfalse;
+			if(last_zoomed != zoomed_tmp) {
+				last_zoomed = zoomed_tmp;
+				cg.zoomTime = cg.time;
+			}
+			zoomed |= zoomed_tmp;
 		}
 
         if ( zoomed ) {
@@ -603,7 +610,7 @@ static int CG_CalcFov( void ) {
     cg.refdef.fov_x = fov_x;
     cg.refdef.fov_y = fov_y;
 
-    if ( !cg.zoomed ) {
+    if ( !zoomed ) {
         cg.zoomSensitivity = 1;
     } else {
         cg.zoomSensitivity = cg.refdef.fov_y / 75.0;
