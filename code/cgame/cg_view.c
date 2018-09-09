@@ -448,40 +448,42 @@ static void CG_OffsetFirstPersonView( void ) {
 //======================================================================
 
 void CG_ZoomDown_f( void ) {
-	if((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && (cg_spectatorZoom.integer)) {
-		return;
-	}
-
 	if(cg_zoomToggle.integer) {
 		if(cg.zoomed) {
 			cg.zoomed = qfalse;
 		} else {
 			cg.zoomed = qtrue;
 		}
-		cg.zoomTime = cg.time;
+		if((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) || (cg.snap->ps.stats[STAT_ZOOMED] == 0) || (cg_spectatorZoom.integer == 0)) {
+			cg.zoomTime = cg.time;
+		}
 	} else if(!cg.zoomed) {
 		cg.zoomed = qtrue;
-		cg.zoomTime = cg.time;
+		if((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) || (cg.snap->ps.stats[STAT_ZOOMED] == 0) || (cg_spectatorZoom.integer == 0)) {
+			cg.zoomTime = cg.time;
+		}
 	}
 
-	trap_SendClientCommand(va("zoomed %i\n", cg.zoomed));
+	if(cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) {
+		trap_SendClientCommand(va("zoomed %i\n", cg.zoomed));
+	}
 }
 
 void CG_ZoomUp_f( void ) {
-	if((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && (cg_spectatorZoom.integer)) {
-		return;
-	}
-
 	if(cg_zoomToggle.integer) {
 		return;
 	}
 
 	if(cg.zoomed) {
 		cg.zoomed = qfalse;
-		cg.zoomTime = cg.time;
+		if((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) || (cg.snap->ps.stats[STAT_ZOOMED] == 0) || (cg_spectatorZoom.integer == 0)) {
+			cg.zoomTime = cg.time;
+		}
     }
 
-	trap_SendClientCommand(va("zoomed %i\n", cg.zoomed));
+	if(cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) {
+		trap_SendClientCommand(va("zoomed %i\n", cg.zoomed));
+	}
 }
 
 /*
