@@ -454,12 +454,12 @@ void CG_ZoomDown_f( void ) {
 		} else {
 			cg.zoomed = qtrue;
 		}
-		if((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) || (cg.snap->ps.stats[STAT_ZOOMED] == 0) || (cg_spectatorZoom.integer == 0)) {
+		if(((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) && !cgs.clientinfo[cg.clientNum].isDead) || (cg.snap->ps.stats[STAT_ZOOMED] == 0) || (cg_spectatorZoom.integer == 0)) {
 			cg.zoomTime = cg.time;
 		}
 	} else if(!cg.zoomed) {
 		cg.zoomed = qtrue;
-		if((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) || (cg.snap->ps.stats[STAT_ZOOMED] == 0) || (cg_spectatorZoom.integer == 0)) {
+		if(((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) && !cgs.clientinfo[cg.clientNum].isDead) || (cg.snap->ps.stats[STAT_ZOOMED] == 0) || (cg_spectatorZoom.integer == 0)) {
 			cg.zoomTime = cg.time;
 		}
 	}
@@ -476,7 +476,7 @@ void CG_ZoomUp_f( void ) {
 
 	if(cg.zoomed) {
 		cg.zoomed = qfalse;
-		if((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) || (cg.snap->ps.stats[STAT_ZOOMED] == 0) || (cg_spectatorZoom.integer == 0)) {
+		if(((cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR) && !cgs.clientinfo[cg.clientNum].isDead) || (cg.snap->ps.stats[STAT_ZOOMED] == 0) || (cg_spectatorZoom.integer == 0)) {
 			cg.zoomTime = cg.time;
 		}
     }
@@ -548,7 +548,7 @@ static int CG_CalcFov( void ) {
         }
 		
 		zoomed = cg.zoomed;
-		if((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) && (cg_spectatorZoom.integer)) {
+		if(((cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR) || cgs.clientinfo[cg.clientNum].isDead) && (cg_spectatorZoom.integer)) {
 			zoomed_tmp = cg.snap->ps.stats[STAT_ZOOMED] ? qtrue : qfalse;
 			if(last_zoomed != zoomed_tmp) {
 				last_zoomed = zoomed_tmp;
