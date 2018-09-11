@@ -522,7 +522,6 @@ typedef enum {
 
 	EV_GIB_PLAYER,			// gib a previously living player
 	EV_SCOREPLUM,			// score plum
-	EV_DAMAGEPLUM,			// damage plum
 
 	EV_PROXIMITY_MINE_STICK,
 	EV_PROXIMITY_MINE_TRIGGER,
@@ -543,7 +542,9 @@ typedef enum {
 	EV_TAUNT_GUARDBASE,
 	EV_TAUNT_PATROL,
 	
-	EV_WEAPONDROP
+	EV_WEAPONDROP,
+
+	EV_DAMAGEPLUM,			// damage plum
 
 } entity_event_t;
 
