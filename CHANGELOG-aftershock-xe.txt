@@ -1,3 +1,13 @@
+2018-09-12 AfterShock XE Revision 323
+
+        - added an option for spectators to see when players zoom
+  	cg_spectatorZoom 1 (default) = on
+  	cg_spectatorZoom 0 = off (old behavior)
+  	
+        - improved demos compatibility with q3mme by moving changes to 
+  the bottom of the event and item list so that the other elements are
+  in the same order as in vanilla Q3
+
 2018-08-31 AfterShock XE Revision 322
 
         - added an experimental ASXE based on AS one with a very light 
