@@ -211,6 +211,10 @@ static void CG_Speaker( centity_t *cent ) {
 		return;
 	}
 
+	if ( s_ambient.integer == 0 ) {
+		return;
+	}
+
 	trap_S_StartSound (NULL, cent->currentState.number, CHAN_ITEM, cgs.gameSounds[cent->currentState.eventParm] );
 
 	//	ent->s.frame = ent->wait * 10;
