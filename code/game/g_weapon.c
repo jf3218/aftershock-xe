@@ -344,11 +344,13 @@ void Bullet_Fire (gentity_t *ent, float spread, int damage ) {
 void Weapon_MachinegunFire( gentity_t *ent ) {
     int damage;
 
+	// Don't apply quad factor here, it is added
+	// in Bullet_Fire function
     if (g_reduceMachinegunDamage.integer) {
-        damage = MACHINEGUN_DAMAGE_REDUCED * s_quadFactor;
+        damage = MACHINEGUN_DAMAGE_REDUCED;
     }
     else {
-        damage = MACHINEGUN_DAMAGE * s_quadFactor;
+        damage = MACHINEGUN_DAMAGE;
     }
 
     if ( g_gametype.integer != GT_TEAM ) {
