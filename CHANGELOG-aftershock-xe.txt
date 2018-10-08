@@ -3,7 +3,7 @@
 		- speaker sounds are no longer played if s_ambient is set to 0
 		
 		- fixed a bug when a "quad factor" was applied twice to 
-		machinegun
+  machinegun
 
 2018-09-12 AfterShock XE Revision 323
 
