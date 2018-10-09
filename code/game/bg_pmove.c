@@ -1808,6 +1808,7 @@ Make this thing stop during warmup (done)
 ==============
 */
 static void PM_Weapon( void ) {
+	char buf[32];
 	int		addTime;
 
 	// don't allow attack until all buttons are up
@@ -1951,36 +1952,45 @@ static void PM_Weapon( void ) {
 	switch( pm->ps->weapon ) {
 	default:
 	case WP_GAUNTLET:
-		addTime = 400;
+		trap_Cvar_VariableStringBuffer("g_gauntletRate", buf, sizeof(buf));
+		addTime = atoi(buf);
 		break;
 	case WP_LIGHTNING:
-		addTime = 50;
+		trap_Cvar_VariableStringBuffer("g_lightningRate", buf, sizeof(buf));
+		addTime = atoi(buf);
 		break;
 	case WP_SHOTGUN:
-		addTime = 1000;
+		trap_Cvar_VariableStringBuffer("g_shotgunRate", buf, sizeof(buf));
+		addTime = atoi(buf);
 		break;
 	case WP_MACHINEGUN:
-		addTime = 100;
+		trap_Cvar_VariableStringBuffer("g_machinegunRate", buf, sizeof(buf));
+		addTime = atoi(buf);
 		break;
 	case WP_GRENADE_LAUNCHER:
-		addTime = 800;
+		trap_Cvar_VariableStringBuffer("g_grenadeRate", buf, sizeof(buf));
+		addTime = atoi(buf);
 		break;
 	case WP_ROCKET_LAUNCHER:
-		addTime = 800;
+		trap_Cvar_VariableStringBuffer("g_rocketRate", buf, sizeof(buf));
+		addTime = atoi(buf);
 		break;
 	case WP_PLASMAGUN:
-		addTime = 100;
+		trap_Cvar_VariableStringBuffer("g_plasmaRate", buf, sizeof(buf));
+		addTime = atoi(buf);
 		break;
 	case WP_RAILGUN:
+		trap_Cvar_VariableStringBuffer("g_railRate", buf, sizeof(buf));
 		if(pm->ruleset == RULESET_CPM) {
-			addTime = 1500;
-			pm->ps->stats[STAT_RAILTIME] = 1500;
+			addTime = atoi(buf);
+			pm->ps->stats[STAT_RAILTIME] = addTime;
 		} else {
-			addTime = 1500;
+			addTime = atoi(buf);
 		}
 		break;
 	case WP_BFG:
-		addTime = 200;
+		trap_Cvar_VariableStringBuffer("g_bfgRate", buf, sizeof(buf));
+		addTime = atoi(buf);
 		break;
 	case WP_GRAPPLING_HOOK:
 		addTime = 400;

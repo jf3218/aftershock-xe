@@ -3081,7 +3081,15 @@ void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum
 	vec3_t		end;
 	vec3_t		forward, right, up;
 	int		outery, outerx;
-	
+	int spread;
+	int count;
+	char buf[32];
+
+	trap_Cvar_VariableStringBuffer("g_shotgunSpread", buf, sizeof(buf));
+	spread = atoi(buf);
+	trap_Cvar_VariableStringBuffer("g_shotgunCount", buf, sizeof(buf));
+	count = atoi(buf);
+
 	outery = sin(60 * (2*M_PI/360 ) ) * OUTERRADIUS;
 	outerx = cos(60 * (2*M_PI/360 ) ) * OUTERRADIUS;
 
@@ -3092,7 +3100,7 @@ void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum
 	CrossProduct( forward, right, up );
 
 	// generate the "random" spread pattern
-	for ( i = 0 ; i < DEFAULT_SHOTGUN_COUNT ; i++ ) {
+	for ( i = 0 ; i < count ; i++ ) {
 		/*r = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
 		u = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;*/
 		
@@ -3147,8 +3155,8 @@ void CG_ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, int otherEntNum
 				u = 0;
 		}
 		
-		r += Q_crandom( &seed ) * ( DEFAULT_SHOTGUN_SPREAD * 16 - OUTERRADIUS );
-		u += Q_crandom( &seed ) * ( DEFAULT_SHOTGUN_SPREAD * 16 - OUTERRADIUS );
+		r += Q_crandom( &seed ) * ( spread * 16 - OUTERRADIUS );
+		u += Q_crandom( &seed ) * ( spread * 16 - OUTERRADIUS );
 		//NEW sg-pattern
 		
 		VectorMA( origin, 8192 * 16, forward, end);

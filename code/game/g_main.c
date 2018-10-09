@@ -229,8 +229,6 @@ vmCvar_t     g_reduceRailDamage;
 vmCvar_t     g_reduceLightningDamage;
 vmCvar_t     g_reduceMachinegunDamage;
 
-vmCvar_t     g_rocketVelocity;
-
 vmCvar_t     g_extrapolateFrames;
 
 vmCvar_t     g_refPassword;
@@ -277,6 +275,66 @@ vmCvar_t     g_spawnPush;
 vmCvar_t     g_telefragTeamBehavior;
 vmCvar_t     g_furthestTeamSpawns;
 vmCvar_t     g_ruleset;
+
+// Weapon CVARs
+
+// Gauntlet
+vmCvar_t     g_gauntletRate;
+vmCvar_t     g_gauntletDamage;
+
+// Machinegun
+vmCvar_t     g_machinegunRate;
+vmCvar_t     g_machinegunDamage;
+vmCvar_t     g_machinegunDamageReduced;
+vmCvar_t     g_machinegunDamageTeam;
+vmCvar_t     g_machinegunSpread;
+
+// Shotgun
+vmCvar_t     g_shotgunRate;
+vmCvar_t     g_shotgunDamage;
+vmCvar_t     g_shotgunCount;
+vmCvar_t     g_shotgunSpread;
+
+// Plasma
+vmCvar_t     g_plasmaRate;
+vmCvar_t     g_plasmaDamage;
+vmCvar_t     g_plasmaSplashDamage;
+vmCvar_t     g_plasmaSplashRadius;
+vmCvar_t     g_plasmaVelocity;
+
+// Lightning Gun
+vmCvar_t     g_lightningRate;
+vmCvar_t     g_lightningDamage;
+vmCvar_t     g_lightningDamageReduced;
+vmCvar_t     g_lightningRange;
+
+// Grenade Launcher
+vmCvar_t     g_grenadeRate;
+vmCvar_t     g_grenadeDamage;
+vmCvar_t     g_grenadeSplashDamage;
+vmCvar_t     g_grenadeSplashRadius;
+vmCvar_t     g_grenadeVelocity;
+vmCvar_t     g_grenadeLifetime;
+
+// Rocket
+vmCvar_t     g_rocketRate;
+vmCvar_t     g_rocketDamage;
+vmCvar_t     g_rocketSplashDamage;
+vmCvar_t     g_rocketSplashRadius;
+vmCvar_t     g_rocketVelocity;
+
+// Railgun
+vmCvar_t     g_railRate;
+vmCvar_t     g_railDamage;
+vmCvar_t     g_railDamageReduced;
+
+// BFG
+vmCvar_t     g_bfgRate;
+vmCvar_t     g_bfgDamage;
+vmCvar_t     g_bfgSplashDamage;
+vmCvar_t     g_bfgSplashRadius;
+vmCvar_t     g_bfgVelocity;
+
 
 
 // bk001129 - made static to avoid aliasing
@@ -511,7 +569,6 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_reduceRailDamage, "g_reduceRailDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_reduceLightningDamage, "g_reduceLightningDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_reduceMachinegunDamage, "g_reduceMachinegunDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
-	{ &g_rocketVelocity, "g_rocketVelocity", "1000", 0, 0, qtrue  },
 	{ &g_extrapolateFrames, "g_extrapolateFrames", "2", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_refPassword, "g_refPassword", "", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_refNames, "g_refNames", "/map_restart/nextmap/map/g_gametype/kick/clientkick/timelimit/fraglimit/remove/clientremove/lock/unlock/startgame/", CVAR_ARCHIVE, 0, qfalse },
@@ -548,7 +605,46 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_spawnPush, "g_spawnPush", "1", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_telefragTeamBehavior, "g_telefragTeamBehavior", "1", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_furthestTeamSpawns, "g_furthestTeamSpawns", "0", CVAR_ARCHIVE, 0, qfalse },
-	{ &g_ruleset, "g_ruleset", "as", CVAR_SERVERINFO, 0, qfalse  },
+	{ &g_ruleset, "g_ruleset", "as", CVAR_SERVERINFO, 0, qfalse },
+	{ &g_gauntletRate, "g_gauntletRate", "400", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_gauntletDamage, "g_gauntletDamage", "50", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_machinegunRate, "g_machinegunRate", "100", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_machinegunDamage, "g_machinegunDamage", "7", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_machinegunDamageReduced, "g_machinegunDamageReduced", "6", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_machinegunDamageTeam, "g_machinegunDamageTeam", "5", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_machinegunSpread, "g_machinegunSpread", "200", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_shotgunRate, "g_shotgunRate", "1000", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_shotgunDamage, "g_shotgunDamage", "10", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_shotgunCount, "g_shotgunCount", "11", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_shotgunSpread, "g_shotgunSpread", "1400", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_plasmaRate, "g_plasmaRate", "100", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_plasmaDamage, "g_plasmaDamage", "20", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_plasmaSplashDamage, "g_plasmaSplashDamage", "15", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_plasmaSplashRadius, "g_plasmaSplashRadius", "20", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_plasmaVelocity, "g_plasmaVelocity", "2000", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_lightningRate, "g_lightningRate", "50", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_lightningDamage, "g_lightningDamage", "8", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_lightningDamageReduced, "g_lightningDamageReduced", "7", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_lightningRange, "g_lightningRange", "768", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_grenadeRate, "g_grenadeRate", "800", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_grenadeDamage, "g_grenadeDamage", "100", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_grenadeSplashDamage, "g_grenadeSplashDamage", "100", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_grenadeSplashRadius, "g_grenadeSplashRadius", "150", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_grenadeVelocity, "g_grenadeVelocity", "700", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_grenadeLifetime, "g_grenadeLifetime", "2500", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_rocketRate, "g_rocketRate", "800", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_rocketDamage, "g_rocketDamage", "100", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_rocketSplashDamage, "g_rocketSplashDamage", "100", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_rocketSplashRadius, "g_rocketSplashRadius", "120", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_rocketVelocity, "g_rocketVelocity", "1000", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_railRate, "g_railRate", "1500", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_railDamage, "g_railDamage", "100", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_railDamageReduced, "g_railDamageReduced", "80", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_bfgRate, "g_bfgRate", "200", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_bfgDamage, "g_bfgDamage", "100", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_bfgSplashDamage, "g_bfgSplashDamage", "100", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_bfgSplashRadius, "g_bfgSplashRadius", "120", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_bfgVelocity, "g_bfgVelocity", "2000", CVAR_ARCHIVE, 0, qtrue },
 };
 
 // bk001129 - made static to avoid aliasing

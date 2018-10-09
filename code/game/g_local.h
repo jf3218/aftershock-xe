@@ -1359,8 +1359,6 @@ extern vmCvar_t	    g_reduceRailDamage;
 extern vmCvar_t	    g_reduceLightningDamage;
 extern vmCvar_t     g_reduceMachinegunDamage;
 
-extern vmCvar_t     g_rocketVelocity;
-
 extern vmCvar_t	    g_extrapolateFrames;
 
 extern vmCvar_t	    g_refPassword;
@@ -1382,29 +1380,88 @@ extern vmCvar_t     g_spawnProtection;
 
 extern vmCvar_t     g_disableVotingTime;
 
-extern  vmCvar_t  g_maxWarp;
-extern  vmCvar_t  g_skipCorrection;
+extern vmCvar_t     g_maxWarp;
+extern vmCvar_t     g_skipCorrection;
 
-extern  vmCvar_t  g_selfdamage;
+extern vmCvar_t     g_selfdamage;
 
-extern vmCvar_t   g_overtime;
-extern vmCvar_t   g_overtime_ctf_respawnDelay;
+extern vmCvar_t     g_overtime;
+extern vmCvar_t     g_overtime_ctf_respawnDelay;
 
-extern vmCvar_t   g_thrufloors;
-extern vmCvar_t   g_forceIntermissionExit;
-extern vmCvar_t   g_aftershockRespawn;
-extern vmCvar_t   g_nameCheck;
-extern vmCvar_t   g_autoServerDemos;
-extern vmCvar_t   g_autoRestart;
-extern vmCvar_t   g_writePlayerCoords;
-extern vmCvar_t   g_crosshairNamesFog;
-extern vmCvar_t   g_damagePlums;
-extern vmCvar_t   g_allowProjectileTeleport; // bit 0 = rocket, bit 1 = plasma, bit 2 = grenade
-extern vmCvar_t   g_projectileTeleportKeepAngle;
-extern vmCvar_t   g_spawnPush;
-extern vmCvar_t   g_telefragTeamBehavior;
-extern vmCvar_t   g_furthestTeamSpawns;
-extern vmCvar_t	  g_ruleset;
+extern vmCvar_t     g_thrufloors;
+extern vmCvar_t     g_forceIntermissionExit;
+extern vmCvar_t     g_aftershockRespawn;
+extern vmCvar_t     g_nameCheck;
+extern vmCvar_t     g_autoServerDemos;
+extern vmCvar_t     g_autoRestart;
+extern vmCvar_t     g_writePlayerCoords;
+extern vmCvar_t     g_crosshairNamesFog;
+extern vmCvar_t     g_damagePlums;
+extern vmCvar_t     g_allowProjectileTeleport; // bit 0 = rocket, bit 1 = plasma, bit 2 = grenade
+extern vmCvar_t     g_projectileTeleportKeepAngle;
+extern vmCvar_t     g_spawnPush;
+extern vmCvar_t     g_telefragTeamBehavior;
+extern vmCvar_t     g_furthestTeamSpawns;
+extern vmCvar_t	    g_ruleset;
+
+// Weapon CVARs
+
+// Gauntlet
+extern vmCvar_t     g_gauntletRate;
+extern vmCvar_t     g_gauntletDamage;
+
+// Machinegun
+extern vmCvar_t     g_machinegunRate;
+extern vmCvar_t     g_machinegunDamage;
+extern vmCvar_t     g_machinegunDamageReduced;
+extern vmCvar_t     g_machinegunDamageTeam;
+extern vmCvar_t     g_machinegunSpread;
+
+// Shotgun
+extern vmCvar_t     g_shotgunRate;
+extern vmCvar_t     g_shotgunDamage;
+extern vmCvar_t     g_shotgunCount;
+extern vmCvar_t     g_shotgunSpread;
+
+// Plasma
+extern vmCvar_t     g_plasmaRate;
+extern vmCvar_t     g_plasmaDamage;
+extern vmCvar_t     g_plasmaSplashDamage;
+extern vmCvar_t     g_plasmaSplashRadius;
+extern vmCvar_t     g_plasmaVelocity;
+
+// Lightning Gun
+extern vmCvar_t     g_lightningRate;
+extern vmCvar_t     g_lightningDamage;
+extern vmCvar_t     g_lightningDamageReduced;
+extern vmCvar_t     g_lightningRange;
+
+// Grenade Launcher
+extern vmCvar_t     g_grenadeRate;
+extern vmCvar_t     g_grenadeDamage;
+extern vmCvar_t     g_grenadeSplashDamage;
+extern vmCvar_t     g_grenadeSplashRadius;
+extern vmCvar_t     g_grenadeVelocity;
+extern vmCvar_t     g_grenadeLifetime;
+
+// Rocket
+extern vmCvar_t     g_rocketRate;
+extern vmCvar_t     g_rocketDamage;
+extern vmCvar_t     g_rocketSplashDamage;
+extern vmCvar_t     g_rocketSplashRadius;
+extern vmCvar_t     g_rocketVelocity;
+
+// Railgun
+extern vmCvar_t     g_railRate;
+extern vmCvar_t     g_railDamage;
+extern vmCvar_t     g_railDamageReduced;
+
+// BFG
+extern vmCvar_t     g_bfgRate;
+extern vmCvar_t     g_bfgDamage;
+extern vmCvar_t     g_bfgSplashDamage;
+extern vmCvar_t     g_bfgSplashRadius;
+extern vmCvar_t     g_bfgVelocity;
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

@@ -25,11 +25,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "g_local.h"
 
+#define MAXIMUM_SHOTGUN_COUNT 32
+
 static	float	s_quadFactor;
 static	vec3_t	forward, right, up;
 static	vec3_t	muzzle;
 
-static gentity_t *oldTarg[DEFAULT_SHOTGUN_COUNT], *oldAttacker;
+static gentity_t *oldTarg[MAXIMUM_SHOTGUN_COUNT], *oldAttacker;
 int countTarg;
 
 #define NUM_NAILSHOTS 15
@@ -154,7 +156,7 @@ qboolean CheckGauntletAttack( gentity_t *ent ) {
 	if(g_instantgib.integer)
 		damage = 500; //High damage in instant gib (normally enough to gib)
 	else
-		damage = 50 * s_quadFactor;
+		damage = g_gauntletDamage.integer * s_quadFactor;
 	G_Damage( traceEnt, ent, ent, forward, tr.endpos,
 		damage, 0, MOD_GAUNTLET );
 
@@ -347,17 +349,17 @@ void Weapon_MachinegunFire( gentity_t *ent ) {
 	// Don't apply quad factor here, it is added
 	// in Bullet_Fire function
     if (g_reduceMachinegunDamage.integer) {
-        damage = MACHINEGUN_DAMAGE_REDUCED;
+        damage = g_machinegunDamageReduced.integer;
     }
     else {
-        damage = MACHINEGUN_DAMAGE;
+        damage = g_machinegunDamage.integer;
     }
 
     if ( g_gametype.integer != GT_TEAM ) {
-        Bullet_Fire( ent, MACHINEGUN_SPREAD, damage );
+        Bullet_Fire( ent, g_machinegunSpread.integer, damage );
     }
     else {
-         Bullet_Fire( ent, MACHINEGUN_SPREAD, MACHINEGUN_TEAM_DAMAGE );
+         Bullet_Fire( ent, g_machinegunSpread.integer, g_machinegunDamageTeam.integer );
     }
 }
 
@@ -413,12 +415,12 @@ qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent ) {
 		}
 
 		if ( traceEnt->takedamage) {
-			if ( oldTarg[countTarg-1] != traceEnt && countTarg < DEFAULT_SHOTGUN_COUNT ) {
+			if ( oldTarg[countTarg-1] != traceEnt && countTarg < g_shotgunCount.integer ) {
 				oldTarg[countTarg] = traceEnt;
 				oldTarg[countTarg]->sumDamageShotgun = 0;
 				countTarg++;
 			}	
-			damage = DEFAULT_SHOTGUN_DAMAGE * s_quadFactor;
+			damage = g_shotgunDamage.integer * s_quadFactor;
 			if ( traceEnt->client && traceEnt->client->invulnerabilityTime > level.time ) {
 				if (G_InvulnerabilityEffect( traceEnt, forward, tr.endpos, impactpoint, bouncedir )) {
 					G_BounceProjectile( tr_start, impactpoint, bouncedir, tr_end );
@@ -478,7 +480,7 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 	outerx = cos(60 * (2*M_PI/360 ) ) * OUTERRADIUS;
 
 	// generate the "random" spread pattern
-	for ( i = 0 ; i < DEFAULT_SHOTGUN_COUNT ; i++ ) {
+	for ( i = 0 ; i < g_shotgunCount.integer ; i++ ) {
 		
 		/*r = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
 		u = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;*/
@@ -534,8 +536,8 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 				u = 0;
 		}
 		
-		r += Q_crandom( &seed ) * ( DEFAULT_SHOTGUN_SPREAD * 16 - OUTERRADIUS );
-		u += Q_crandom( &seed ) * ( DEFAULT_SHOTGUN_SPREAD * 16 - OUTERRADIUS );
+		r += Q_crandom( &seed ) * ( g_shotgunSpread.integer * 16 - OUTERRADIUS );
+		u += Q_crandom( &seed ) * ( g_shotgunSpread.integer * 16 - OUTERRADIUS );
 		//NEW sg-pattern
 		
 		//G_Printf("r: %f, u: %f\n", r, u);
@@ -559,7 +561,7 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 	}
 	if( hitClient )
 		ent->client->accuracy[WP_SHOTGUN][1]++;
-	if( hits == DEFAULT_SHOTGUN_COUNT ){
+	if( hits == g_shotgunCount.integer ){
 		ent->client->rewards[REWARD_FULLSG]++;
 		RewardMessage( ent, REWARD_FULLSG, ent->client->rewards[REWARD_FULLSG] );
 	}
@@ -681,9 +683,9 @@ void weapon_railgun_fire (gentity_t *ent) {
 
 	
 	if( g_reduceRailDamage.integer )
-		damage = RAIL_DMG_REDUCED * s_quadFactor;
+		damage = g_railDamageReduced.integer * s_quadFactor;
 	else
-		damage = RAIL_DMG_NORMAL * s_quadFactor;
+		damage = g_railDamage.integer * s_quadFactor;
 		
 	if(g_instantgib.integer)
 		damage = 800;
@@ -862,13 +864,13 @@ void Weapon_LightningFire( gentity_t *ent ) {
 
 	
 	if( g_reduceLightningDamage.integer )
-		damage = LG_DMG_REDUCED * s_quadFactor;
+		damage = g_lightningDamageReduced.integer * s_quadFactor;
 	else
-		damage = LG_DMG_NORMAL * s_quadFactor;
+		damage = g_lightningDamage.integer * s_quadFactor;
 
 	passent = ent->s.number;
 	for (i = 0; i < 10; i++) {
-		VectorMA( muzzle, LIGHTNING_RANGE, forward, end );
+		VectorMA( muzzle, g_lightningRange.integer, forward, end );
 
 //Sago: I'm not sure this should recieve backward reconciliation. It is not a real instant hit weapon, it can normally be dogded
 //unlagged - backward reconciliation #2

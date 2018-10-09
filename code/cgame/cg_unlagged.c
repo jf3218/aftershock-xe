@@ -200,12 +200,17 @@ void CG_PredictWeaponEffects( centity_t *cent ) {
 			qboolean flesh;
 			int fleshEntityNum = 0;
 			vec3_t endPoint;
+			int spread;
+			char buf[32];
+
+			trap_Cvar_VariableStringBuffer("g_machinegunSpread", buf, sizeof(buf));
+			spread = atoi(buf);
 
 			// do everything exactly like the server does
 
 			r = Q_random(&seed) * M_PI * 2.0f;
-			u = sin(r) * Q_crandom(&seed) * MACHINEGUN_SPREAD * 16;
-			r = cos(r) * Q_crandom(&seed) * MACHINEGUN_SPREAD * 16;
+			u = sin(r) * Q_crandom(&seed) * spread * 16;
+			r = cos(r) * Q_crandom(&seed) * spread * 16;
 
 			VectorMA( muzzlePoint, 8192*16, forward, endPoint );
 			VectorMA( endPoint, r, right, endPoint );
