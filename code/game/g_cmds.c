@@ -370,6 +370,16 @@ void G_SendSpawnpoints( gentity_t *ent ){
 	trap_SendServerCommand( ent-g_entities, va( "spawnPoints %i %s", spotnumber, string ));
 }
 
+void G_SendWeaponProperties(gentity_t *ent) {
+	char string[2048];
+	Com_sprintf(string, sizeof(string), "%i %i %i %i %i %i %i %i %i %i %i %i",
+	            wp_gauntletRate, wp_machinegunRate, wp_machinegunSpread, 
+				wp_shotgunRate, wp_shotgunCount, wp_shotgunSpread, wp_plasmaRate, 
+				wp_lightningRate, wp_grenadeRate, wp_rocketRate, wp_railRate, wp_bfgRate);
+	trap_SendServerCommand(ent-g_entities, va( "weaponProperties %s", string));
+}
+
+
 /*
 ==================
 G_SendStartGame

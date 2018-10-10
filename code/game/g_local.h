@@ -719,6 +719,8 @@ void G_SendLivingCount( void );
 void G_StopServerDemos( void );
 void G_StartServerDemos( void );
 void G_SendSpawnpoints( gentity_t *ent );
+void G_SendWeaponProperties( gentity_t *ent );
+void G_UpdateWeaponProperties(void);
 
 // KK-OAX Added these in a seperate file to keep g_cmds.c familiar. 
 // g_cmds_ext.c
@@ -1462,6 +1464,24 @@ extern vmCvar_t     g_bfgDamage;
 extern vmCvar_t     g_bfgSplashDamage;
 extern vmCvar_t     g_bfgSplashRadius;
 extern vmCvar_t     g_bfgVelocity;
+
+
+
+// Weapon properties (used by server and client)
+// If you change something here, you have to change it client-side too!
+extern int wp_gauntletRate;
+extern int wp_machinegunRate;
+extern int wp_machinegunSpread;
+extern int wp_shotgunRate;
+extern int wp_shotgunCount;
+extern int wp_shotgunSpread;
+extern int wp_plasmaRate;
+extern int wp_lightningRate;
+extern int wp_grenadeRate;
+extern int wp_rocketRate;
+extern int wp_railRate;
+extern int wp_bfgRate;
+
 
 void	trap_Printf( const char *fmt );
 void	trap_Error( const char *fmt );

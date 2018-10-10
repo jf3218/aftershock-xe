@@ -1005,6 +1005,21 @@ static void CG_ParseTeamInfo ( void ) {
     }
 }
 
+static void CG_ParseWeaponProperties(void) {
+	wp_gauntletRate     = atoi(CG_Argv(1));
+	wp_machinegunRate   = atoi(CG_Argv(2));
+	wp_machinegunSpread = atoi(CG_Argv(3));
+	wp_shotgunRate      = atoi(CG_Argv(4));
+	wp_shotgunCount     = atoi(CG_Argv(5));
+	wp_shotgunSpread    = atoi(CG_Argv(6));
+	wp_plasmaRate       = atoi(CG_Argv(7));
+	wp_lightningRate    = atoi(CG_Argv(8));
+	wp_grenadeRate      = atoi(CG_Argv(9));
+	wp_rocketRate       = atoi(CG_Argv(10));
+	wp_railRate         = atoi(CG_Argv(11));
+	wp_bfgRate          = atoi(CG_Argv(12));
+}
+
 
 /*
 ================
@@ -1040,6 +1055,7 @@ void CG_ParseServerinfo ( void ) {
     cgs.lms_mode = atoi ( Info_ValueForKey ( info, "g_lms_mode" ) );
     cgs.altExcellent = atoi ( Info_ValueForKey ( info, "g_altExcellent" ) );
     cgs.overtime = atoi ( Info_ValueForKey( info, "g_overtime" ) );
+
     mapname = Info_ValueForKey ( info, "mapname" );
     Com_sprintf ( cgs.mapname, sizeof ( cgs.mapname ), "maps/%s.bsp", mapname );
     Q_strncpyz ( cgs.redTeam, Info_ValueForKey ( info, "g_redTeam" ), sizeof ( cgs.redTeam ) );
@@ -2174,6 +2190,11 @@ static void CG_ServerCommand ( void ) {
 
     if ( !strcmp ( cmd, "team" ) ) {
         CG_ParseTeam();
+        return;
+    }
+
+	if ( !strcmp ( cmd, "weaponProperties" ) ) {
+        CG_ParseWeaponProperties();
         return;
     }
 

@@ -425,6 +425,21 @@ vmCvar_t 	g_crosshairNamesFog;
 vmCvar_t 	cg_spectatorZoom;
 
 
+// Weapon properties (set by weapon property message from server)
+int wp_gauntletRate;
+int wp_machinegunRate;
+int wp_machinegunSpread;
+int wp_shotgunRate;
+int wp_shotgunCount;
+int wp_shotgunSpread;
+int wp_plasmaRate;
+int wp_lightningRate;
+int wp_grenadeRate;
+int wp_rocketRate;
+int wp_railRate;
+int wp_bfgRate;
+
+
 typedef struct {
 	vmCvar_t	*vmCvar;
 	char		*cvarName;
@@ -2562,6 +2577,21 @@ void CG_mapConfigs( void ){
 	return;
 }
 
+void CG_SetDefaultWeaponProperties(void) {
+	wp_gauntletRate = 400;
+	wp_machinegunRate = 100;
+	wp_machinegunSpread = 200;
+	wp_shotgunRate = 1000;
+	wp_shotgunCount = 11;
+	wp_shotgunSpread = 1400;
+	wp_plasmaRate = 100;
+	wp_lightningRate = 50;
+	wp_grenadeRate = 800;
+	wp_rocketRate = 800;
+	wp_railRate = 1500;
+	wp_bfgRate = 200;
+}
+
 /*
 =================
 CG_Init
@@ -2668,6 +2698,8 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 
 	// Make sure we have update values (scores)
 	CG_SetConfigValues();
+
+	CG_SetDefaultWeaponProperties();
 
 	CG_StartMusic();
 

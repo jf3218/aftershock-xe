@@ -2098,6 +2098,7 @@ void ClientBegin( int clientNum ) {
 	/*if( client->sess.sessionTeam == TEAM_SPECTATOR )
 		G_ReadSessionDataRestart( client );*/
 	G_SendSpawnpoints( ent );
+	G_SendWeaponProperties( ent );
 }
 
 

@@ -1795,6 +1795,20 @@ extern vmCvar_t   		g_crosshairNamesFog;
 extern vmCvar_t   		cg_spectatorZoom;
 
 
+// Weapon properties (set by weapon property message from server)
+extern int wp_gauntletRate;
+extern int wp_machinegunRate;
+extern int wp_machinegunSpread;
+extern int wp_shotgunRate;
+extern int wp_shotgunCount;
+extern int wp_shotgunSpread;
+extern int wp_plasmaRate;
+extern int wp_lightningRate;
+extern int wp_grenadeRate;
+extern int wp_rocketRate;
+extern int wp_railRate;
+extern int wp_bfgRate;
+
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
 //void CG_AddBoundingBox( centity_t *cent );
@@ -2340,5 +2354,3 @@ void	CG_ParticleMisc (qhandle_t pshader, vec3_t origin, int size, int duration, 
 void	CG_ParticleExplosion (char *animStr, vec3_t origin, vec3_t vel, int duration, int sizeStart, int sizeEnd);
 extern qboolean		initparticles;
 int CG_NewParticleArea ( int num );
-
-

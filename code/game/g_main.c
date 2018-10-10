@@ -335,7 +335,20 @@ vmCvar_t     g_bfgSplashDamage;
 vmCvar_t     g_bfgSplashRadius;
 vmCvar_t     g_bfgVelocity;
 
-
+// Weapon properties (used by server and client)
+// If you change something here, you have to change it client-side too!
+int wp_gauntletRate;
+int wp_machinegunRate;
+int wp_machinegunSpread;
+int wp_shotgunRate;
+int wp_shotgunCount;
+int wp_shotgunSpread;
+int wp_plasmaRate;
+int wp_lightningRate;
+int wp_grenadeRate;
+int wp_rocketRate;
+int wp_railRate;
+int wp_bfgRate;
 
 // bk001129 - made static to avoid aliasing
 static cvarTable_t		gameCvarTable[] = {
@@ -999,6 +1012,21 @@ void G_SendAllItems( void ){
 			
 		
 }
+
+void G_UpdateWeaponProperties(void) {
+	wp_gauntletRate = g_gauntletRate.integer;
+	wp_machinegunRate = g_machinegunRate.integer;
+	wp_machinegunSpread = g_machinegunSpread.integer;
+	wp_shotgunRate = g_shotgunRate.integer;
+	wp_shotgunCount = g_shotgunCount.integer;
+	wp_shotgunSpread = g_shotgunSpread.integer;
+	wp_plasmaRate = g_plasmaRate.integer;
+	wp_lightningRate = g_lightningRate.integer;
+	wp_grenadeRate = g_grenadeRate.integer;
+	wp_rocketRate = g_rocketRate.integer;
+	wp_railRate = g_railRate.integer;
+	wp_bfgRate = g_bfgRate.integer;
+}
 /*
 ============
 G_InitGame
@@ -1172,6 +1200,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	}
 
 	G_RemapTeamShaders();
+
+	G_UpdateWeaponProperties();
 
 	//elimination:
 	level.roundNumber = 1;
