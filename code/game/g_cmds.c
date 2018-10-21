@@ -1170,6 +1170,9 @@ void Cmd_Timeout_f( gentity_t *player ) {
 			}
 		}
 
+		// Increase round start time by timeout for elimination timer
+		level.roundStartTime += level.timeoutAdd;
+
 		// For each client increase time in water before air ends by timeout
 		for(i = 0; i < level.numConnectedClients; i++) {
 			level.clients[i].airOutTime += level.timeoutAdd;
@@ -1190,7 +1193,7 @@ void Cmd_Timeout_f( gentity_t *player ) {
 		}
 
 		trap_SendServerCommand(-1,va("screenPrint \"%s" S_COLOR_CYAN " called a timeout\"", player->client->pers.netname));
-		trap_SendServerCommand(-1, va("timeout %i %i", level.timeoutTime, level.timeoutAdd));
+		trap_SendServerCommand(-1, va("timeout %i %i %i", level.timeoutTime, level.timeoutAdd, level.roundStartTime));
 	}
 }
 

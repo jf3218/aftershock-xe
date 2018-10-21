@@ -258,7 +258,6 @@ static void CG_ParseScores ( void ) {
             scores[i].accuracys[7][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 45 ) );
             scores[i].accuracys[7][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 46 ) );
             scores[i].spawnkillCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 47 ) );
-            //cgs.roundStartTime =
 
 
 
@@ -290,7 +289,6 @@ static void CG_ParseScores ( void ) {
             scores[i].rocketRailCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 24 ) );
             scores[i].itemDeniedCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 25 ) );
             scores[i].spawnkillCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 26 ) );
-            //cgs.roundStartTime =
 
 
 
@@ -696,7 +694,9 @@ static void CG_ParseTimeout ( void ) {
     cgs.timeout = qtrue;
     cgs.timeoutTime = atoi ( CG_Argv ( 1 ) );
     cgs.timeoutAdd = atoi ( CG_Argv ( 2 ) );
+    cgs.roundStartTime = atoi ( CG_Argv ( 3 ) );
     cgs.timeoutDelay = cgs.timeoutDelay + cgs.timeoutAdd;
+
     CG_Printf ( "Timeout for %f seconds\n", ( ( float ) cgs.timeoutAdd ) /1000.0f );
 
     sound = CG_RegisterSoundOption ( "sound/movers/doors/dr1_end.wav", qfalse );

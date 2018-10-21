@@ -1173,34 +1173,37 @@ CG_DrawEliminationTimer
 static void CG_DrawEliminationTimer ( void ) {
     const char		*s;
     int			mins, seconds, tens, sec;
-    int			msec;
+    int			msec, rst;
     vec4_t			color;
     char	*st;
-    int rst;
 
-    rst = cgs.roundStartTime;
+    if(!cgs.timeout) {
+		rst = cgs.roundStartTime;
+		msec = rst + cgs.roundtime*1000 - cg.time;
+	} else {
+		rst = cgs.roundStartTime - cgs.timeoutAdd;
+		msec = rst + cgs.roundtime*1000 - cgs.timeoutTime;
+	}
 
     //default color is white
     memcpy ( color,g_color_table[ColorIndex ( COLOR_WHITE ) ],sizeof ( color ) );
 
-    //msec = cg.time - cgs.levelStartTime;
-    if ( cg.time>rst ) { //We are started
-        msec = cgs.roundtime*1000 - ( cg.time -rst );
+    if ( cg.time > rst ) { //We are started
         if ( msec<=30*1000-1 ) //<= 30 seconds
             memcpy ( color,g_color_table[ColorIndex ( COLOR_YELLOW ) ],sizeof ( color ) );
         if ( msec<=10*1000-1 ) //<= 10 seconds
             memcpy ( color,g_color_table[ColorIndex ( COLOR_RED ) ],sizeof ( color ) );
         msec += 1000; //120-1 instead of 119-0
     } else {
+		msec -= cgs.roundtime*1000;
         //Warmup
-        msec = -cg.time +rst;
         memcpy ( color,g_color_table[ColorIndex ( COLOR_GREEN ) ],sizeof ( color ) );
         sec = msec/1000;
         msec += 1000; //5-1 instead of 4-0
         /***
         Lots of stuff
         ****/
-        if ( cg.warmup == 0 ) {
+        if ( (cg.warmup == 0) && (!cgs.timeout) ) {
             st = va ( "Round in: %i", sec + 1 );
             if ( sec != cg.warmupCount ) {
                 cg.warmupCount = sec;
