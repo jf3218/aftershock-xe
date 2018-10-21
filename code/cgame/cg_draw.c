@@ -1232,10 +1232,13 @@ static void CG_DrawEliminationTimer ( void ) {
     tens = seconds / 10;
     seconds -= tens * 10;
 
-    if ( msec>=0 )
-        s = va ( "%i:%i%i", mins, tens, seconds ); //TODO: %02i, removes  one division
-    else
-        s = va ( "^1Overtime" );
+	if(cg.warmup != 0) {
+		s = va("Warmup");
+	} else if (msec >= 0) {
+		s = va("%i:%i%i", mins, tens, seconds);
+	} else {
+		s = va("^1Overtime");
+	}
 
     CG_DrawStringHud ( HUD_CATIME, qtrue, s );
 
