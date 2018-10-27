@@ -1,3 +1,24 @@
+2018-10-27 AfterShock XE Revision 325
+
+		- added cvars to change weapon properties:
+  g_gauntletRate, g_gauntletDamage, g_machinegunRate,
+  g_machinegunDamage, g_machinegunDamageReduced, g_machinegunDamageTeam,
+  g_machinegunSpread, g_shotgunRate, g_shotgunDamage, g_shotgunCount,
+  g_shotgunSpread, g_plasmaRate, g_plasmaDamage, g_plasmaSplashDamage,
+  g_plasmaSplashRadius, g_plasmaVelocity, g_lightningRate,
+  g_lightningDamage, g_lightningDamageReduced, g_lightningRange,
+  g_grenadeRate, g_grenadeDamage, g_grenadeSplashDamage,
+  g_grenadeSplashRadius, g_grenadeVelocity, g_grenadeLifetime,
+  g_rocketRate, g_rocketDamage, g_rocketSplashDamage,
+  g_rocketSplashRadius, g_rocketVelocity,g_railRate, g_railDamage,
+  g_railDamageReduced, g_bfgRate, g_bfgDamage, g_bfgSplashDamage,
+  g_bfgSplashRadius, g_bfgVelocity
+
+		- now during a warmup "Warmup" sign is shown instead of bogus 
+  round time
+
+		- the round timer in Elimination mode now stops during a timeout
+
 2018-10-08 AfterShock XE Revision 324
 
 		- speaker sounds are no longer played if s_ambient is set to 0
