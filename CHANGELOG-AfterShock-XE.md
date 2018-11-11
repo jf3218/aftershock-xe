@@ -1,5 +1,5 @@
 # AfterShock XE Changelog
-### 2018-10-27 Revision 325
+## 2018-10-27 [Revision 325]
 - Added cvars to change weapon properties:
   - `g_gauntletRate`, `g_gauntletDamage`,
   - `g_machinegunRate`, `g_machinegunDamage`,
@@ -22,11 +22,11 @@
 time.
 - The round timer in Elimination mode now stops during a timeout.
 
-### 2018-10-08 Revision 324
+## 2018-10-08 [Revision 324]
 - Speaker sounds are no longer played if `s_ambient` is set to `0`.
 - Fixed a bug when the "quad factor" was applied twice to Machinegun.
 
-### 2018-09-12 Revision 323
+## 2018-09-12 [Revision 323]
 - Added an option for spectators to see when players use zoom:
   - `cg_spectatorZoom 1` (default) = on,
   - `cg_spectatorZoom 0` = off (old behavior).
@@ -35,7 +35,7 @@ time.
 bottom of the event and item list so that the other elements are in the
 same order as in vanilla Quake 3.
 
-### 2018-08-31 Revision 322
+## 2018-08-31 [Revision 322]
 - Added an experimental ASXE ruleset based on AS one with a very light
 version of air control. This ruleset will be shaped with community
 feedback to create a better default ruleset for the mod.
@@ -50,7 +50,7 @@ feedback to create a better default ruleset for the mod.
 - Added `callvote ruleset`.
 - Removed unused movement checks.
 
-### 2018-08-13 Revision 321
+## 2018-08-13 [Revision 321]
 - Added `g_furthestTeamSpawns`, default is`0`.  
  If `g_furthestTeamSpawns` is `1` and the mode is CA/Elimination, a
 random spawn point will be picked for one team and the other team will
@@ -61,12 +61,12 @@ alternatingly.
 `s_ambient` is `0`.
 - Spawn and teleport bug fixes.
 
-### 2018-08-09 Revision 320
+## 2018-08-09 [Revision 320]
 - Flag icons on the HUD are now properly displayed for spectators.
 - Fixed a bug when players would still get stuck on the same spawn
 point on some maps.
 
-### 2018-07-29 Revision 319
+## 2018-07-29 [Revision 319]
 - Improved spawn behavior in team modes.
 - Added `g_spawnPush` cvar for improved spawn behavior.
   - If `g_spawnPush` is set to `1`, a player that spawns inside of a
@@ -87,11 +87,11 @@ teleport entry until the team member moved.
   - `sound/world/teleinProjectile.wav`,
   - `sound/world/teleoutProjectile.wav`.
 
-### 2018-07-27 Revision 318
+## 2018-07-27 [Revision 318]
 - Fixed a bug when the projectiles would get stopped mid air in some
 places on some maps.
 
-### 2018-07-27 Revision 317
+## 2018-07-27 [Revision 317]
 - Added support for shooting projectiles through teleports with two new
 cvars.
   - `g_allowProjectileTeleport` is a bitmask:
@@ -110,12 +110,12 @@ the teleport at the same angle it entered,
 teleport straight. This is the behavior that players entering a
 teleport have.
 
-### 2018-07-25 Revision 316
+## 2018-07-25 [Revision 316]
 - Fixed a number of scoreboard bugs.
 - Now when the scoreboard key is pressed down the scoreboard will
 update once a second.
 
-### 2018-07-22 Revision 315
+## 2018-07-22 [Revision 315]
 - Fixed a bug when the scoreboard disappears with 6v6 and more.
 - Frags are now shown instead of the score as kills on the scoreboard
 in CTF.
@@ -127,22 +127,22 @@ used for time and ping.
 anymore.
 - Various other bug fixes.
 
-### 2018-07-21 Revision 314
+## 2018-07-21 [Revision 314]
 - Added `g_damagePlums` and `cg_damagePlums` (both default to `1`).  
 These allow displaying damage plums on hit, `g_damagePlums` is a
 server-side variable and `cg_damagePlums` is client-side.
 - Added `g_crosshairNamesFog`, default is `0`.  
 Setting this to `1` will allow names to be seen in the fog.
-- Renamed plasmaSpark shader to plasmaSparkAs, because OpenArena 0.8.8
-has a shader with the same name.
+- Renamed `plasmaSpark` shader to `plasmaSparkAs`, because OpenArena
+0.8.8 has a shader with the same name.
 - Changed time format on the scoreboard from `hh:mm` to `mm:ss`.
 - Various other improvements and bug fixes.
 
-### 2018-07-17 Revision 313
+## 2018-07-17 [Revision 313]
 - Added support for sorting servers by the number of human players.
 - Removed flood protection for admin commands.
 
-### 2018-07-16 Revision 312
+## 2018-07-16 [Revision 312]
 - Fixed vote passed/vote failed bug completely.
 - Fixed a bug when flood limit would have false positives.
 - Added `cg_fastforward` and `cg_fastforwardSpeed`.
@@ -159,12 +159,12 @@ characters.
 - The timer now shows the correct time during a timeout.
 - The flags can no longer disappear during a timeout.
 
-### 2018-07-07 Revision 311
+## 2018-07-07 [Revision 311]
 - added `cg_soundOption <0-9>` to alter between sound packs,
 default value is `1`.  
 A value of `0` sets all sounds to default. A value of `X`(with `X` =
 `1-9`) loads option `X` for all sounds. A sound S.wav with option X has
-to have the name `S_optX.wav` in the `*.pk3`.  
+to have the name `S_optX.wav` in the `.pk3`.  
 If `S_optX.wav` does not exist it falls back to `S.wav`.
 - Added `cg_soundOption* <-1-9>` to alter between individual sounds
 for weapons:
@@ -182,7 +182,7 @@ for weapons:
 If the option does not exist it falls back to `cg_soundOption` (which
 falls back to the default sound).
 
-### 2018-07-07 Revision 310
+## 2018-07-07 [Revision 310]
 - Teams can never end up the same after shuffle anymore.
 - `cg_blood 0` now turns all the blood off including the splatters of
 blood on the screen when you get hit.
@@ -194,7 +194,7 @@ map in the brackets instead of the current map.
 and "no" votes in red.
 - Increased a maximum count of maps in mapcycle config from 64 to 128.
 
-### 2018-07-01 Revision 309
+## 2018-07-01 [Revision 309]
 - Fixed a bug when a player could rename themselves to "vote passed"
 and "vote failed" and the corresponding sounds were played.
 - Changed to `xx.xk` format for the damage on the scoreboard.
@@ -205,7 +205,7 @@ anymore.
 line.
 - Various other bug fixes.
 
-### 2018-07-01 Revision 308
+## 2018-07-01 [Revision 308]
 - Disabled dropping Machinegun with `dropweapon` command.
 - Added `droppowerup` command.
 - Fixed a bug with flags disappearing from the scoreboard on CTF.
@@ -219,7 +219,7 @@ name is displayed before them.
 - Fixed `!mute` command not working.
 - Added support for flood limiting.
 
-### 2018-06-28 Revision 307
+## 2018-06-28 [Revision 307]
 - added `g_reduceMachinegunDamage <0|1>`.
   - `0` (vanilla) - Machinegun does 7 damage for all modes except Team
 Deathmatch where it's 5.
@@ -234,3 +234,23 @@ Sets a multiplier for `g_gravity`, default value is `1`.
 - Removed "not logged in" message since the AfterShock site is long
 gone.
 - Now compiles with GCC-4.8+.
+
+[Revision 325]:https://github.com/Irbyz/aftershock-xe/compare/324...325
+[Revision 324]:https://github.com/Irbyz/aftershock-xe/compare/323...324
+[Revision 323]:https://github.com/Irbyz/aftershock-xe/compare/322...323
+[Revision 322]:https://github.com/Irbyz/aftershock-xe/compare/321...322
+[Revision 321]:https://github.com/Irbyz/aftershock-xe/compare/320...321
+[Revision 320]:https://github.com/Irbyz/aftershock-xe/compare/319...320
+[Revision 319]:https://github.com/Irbyz/aftershock-xe/compare/318...319
+[Revision 318]:https://github.com/Irbyz/aftershock-xe/compare/317...318
+[Revision 317]:https://github.com/Irbyz/aftershock-xe/compare/316...317
+[Revision 316]:https://github.com/Irbyz/aftershock-xe/compare/315...316
+[Revision 315]:https://github.com/Irbyz/aftershock-xe/compare/314...315
+[Revision 314]:https://github.com/Irbyz/aftershock-xe/compare/313...314
+[Revision 313]:https://github.com/Irbyz/aftershock-xe/compare/312...313
+[Revision 312]:https://github.com/Irbyz/aftershock-xe/compare/311...312
+[Revision 311]:https://github.com/Irbyz/aftershock-xe/compare/310...311
+[Revision 310]:https://github.com/Irbyz/aftershock-xe/compare/309...310
+[Revision 309]:https://github.com/Irbyz/aftershock-xe/compare/308...309
+[Revision 308]:https://github.com/Irbyz/aftershock-xe/compare/307...308
+[Revision 307]:https://github.com/Irbyz/aftershock-xe/compare/299...307
