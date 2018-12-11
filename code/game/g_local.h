@@ -1406,6 +1406,8 @@ extern vmCvar_t     g_telefragTeamBehavior;
 extern vmCvar_t     g_furthestTeamSpawns;
 extern vmCvar_t	    g_ruleset;
 
+
+extern vmCvar_t	    g_legacyWeaponAmmo;
 // Weapon CVARs
 
 // Gauntlet
