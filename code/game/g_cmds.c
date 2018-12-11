@@ -1102,7 +1102,7 @@ void Cmd_Kill_f( gentity_t *ent ) {
 		return;
 	}
   
-	if ( !g_allowKill.integer ) {
+  if ( !g_allowKill.integer  || ((g_allowKill.integer == -1) && ( level.warmupTime != 0 ))) {
 		trap_SendServerCommand( ent-g_entities,
                                 "print \"Selfkill not allowed on this server\n\"" );
 		return;
