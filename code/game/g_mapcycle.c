@@ -88,7 +88,7 @@ static int G_setTokenType ( char* value ) {
 			rpar = qtrue;
 		else if ( value[count] >= '0' && value[count] <= '9' )
 			number = qtrue;
-		else if ( ( value[count] >= 'a' && value[count] <= 'z' ) || ( value[count] >= 'A' && value[count] <= 'Z' ) )
+		else if ( ( value[count] >= 'a' && value[count] <= 'z' ) || ( value[count] >= 'A' && value[count] <= 'Z' ) || (value[count] == '+' ) )
 			character = qtrue;
 		count++;
 	}
