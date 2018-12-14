@@ -1477,6 +1477,7 @@ typedef struct {
 	int 		csStatus;
 	int 		hitBeep[ WP_NUM_WEAPONS ];
 	int 		overtime;
+  int     instagib;
 } cgs_t;
 
 //==============================================================================
