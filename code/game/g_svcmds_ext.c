@@ -24,10 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "g_local.h"
 
-
-// forward declare
-void default_Svcmd_Status_f();
-
 /*
 ============
 Svcmd_status_f
@@ -35,11 +31,6 @@ Does Server Status from Console
 ============
 */
 void Svcmd_Status_f( void )
-{
-  default_Svcmd_Status_f();
-}
-
-void default_Svcmd_Status_f( void )
 {
     int       i;
     gclient_t *cl;
