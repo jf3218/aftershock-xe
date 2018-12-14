@@ -148,7 +148,7 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 	}
 
   if (cgs.instagib == 1) {
-    strcpy( string, va( "%i%% Acc", ( ( int )( 100*( float )score->accuracys[ WP_RAILGUN ][ 1 ]/( float )score->accuracys[ WP_RAILGUN ][ 0 ] ) ) ) );
+    strcpy( string, va( "%i%% Acc", ( ( int )( score->accuracy ) ) ) );
     CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
   } else {
     if( h >= SB_CHAR_HEIGHT*2 ){
