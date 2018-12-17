@@ -1052,6 +1052,7 @@ void CG_ParseServerinfo ( void ) {
     cgs.maxclients = atoi ( Info_ValueForKey ( info, "sv_maxclients" ) );
     cgs.roundtime = atoi ( Info_ValueForKey ( info, "elimination_roundtime" ) );
     cgs.nopickup = atoi ( Info_ValueForKey ( info, "g_rockets" ) ) + atoi ( Info_ValueForKey ( info, "g_instantgib" ) ) + atoi ( Info_ValueForKey ( info, "g_elimination" ) );
+    cgs.instagib =  atoi ( Info_ValueForKey ( info, "g_instantgib" ) ) ;
     cgs.lms_mode = atoi ( Info_ValueForKey ( info, "g_lms_mode" ) );
     cgs.altExcellent = atoi ( Info_ValueForKey ( info, "g_altExcellent" ) );
     cgs.overtime = atoi ( Info_ValueForKey( info, "g_overtime" ) );

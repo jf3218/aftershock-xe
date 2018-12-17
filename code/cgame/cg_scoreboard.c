@@ -147,13 +147,18 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 		CG_DrawStringExt( x + w*0.5, y - SB_MEDCHAR_HEIGHT/2, va( "%i / %i / %i", score->captures, score->assistCount, score->defendCount ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	}
 
-	if( h >= SB_CHAR_HEIGHT*2 ){
-		CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT, CG_FormatDmg(score->dmgdone), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-		CG_DrawStringExt( x + w*0.66, y, CG_FormatDmg(score->dmgtaken), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	}else{
-		strcpy( string, va( "^2%s^7/^1%s", CG_FormatDmg(score->dmgdone), CG_FormatDmg(score->dmgtaken) ) );
-		CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	}
+  if (cgs.instagib == 1) {
+    strcpy( string, va( "%i%% Acc", ( ( int )( score->accuracy ) ) ) );
+    CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+  } else {
+    if( h >= SB_CHAR_HEIGHT*2 ){
+      CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT, CG_FormatDmg(score->dmgdone), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+      CG_DrawStringExt( x + w*0.66, y, CG_FormatDmg(score->dmgtaken), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+    }else{
+      strcpy( string, va( "^2%s^7/^1%s", CG_FormatDmg(score->dmgdone), CG_FormatDmg(score->dmgtaken) ) );
+      CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+    }
+  }
 
 	if( h >= SB_CHAR_HEIGHT*2 ){
 		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT, CG_FormatKD( score->frags ), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
