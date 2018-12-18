@@ -1840,6 +1840,7 @@ char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot ) {
 	// read or initialize the session data
 	if ( firstTime || level.newSession ) {
 		G_InitSessionData( client, userinfo );
+    memset(&client->ps.persistant,0,sizeof(client->ps.persistant));
 	}
 	G_ReadSessionData( client );
 
