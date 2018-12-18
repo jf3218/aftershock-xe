@@ -1956,6 +1956,8 @@ void ClientBegin( int clientNum ) {
 	int		countRed, countBlue, countFree;
         char		userinfo[MAX_INFO_STRING];
 	//char      buffer[ MAX_INFO_STRING ] = "";
+  int i;
+	int		persistant[MAX_PERSISTANT];
 	
         trap_GetUserinfo( clientNum, userinfo, sizeof( userinfo ) );
 
@@ -2013,14 +2015,28 @@ void ClientBegin( int clientNum ) {
 	// cause this to happen with a valid entity, and we
 	// want to make sure the teleport bit is set right
 	// so the viewpoint doesn't interpolate through the
-	// world to the new position
+	// world to the new position 
+  // also store the persistant variables to prevent clearing the deaths and certain awards
+  // could be extended to accuracy and rewards? see the ClientSpawn function 
 	flags = client->ps.eFlags;
-	memset( &client->ps, 0, sizeof( client->ps ) );
+	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
+		persistant[i] = client->ps.persistant[i];
+	}
 	
+  // do the memset 0
+  memset( &client->ps, 0, sizeof( client->ps ) );
+
+  // restore what needs to be restored
+
         /*if( client->sess.sessionTeam != TEAM_SPECTATOR )
             PlayerStore_restore(Info_ValueForKey(userinfo,"cl_guid"),&(client->ps));*/
 	
 	client->ps.eFlags = flags;
+	for ( i = 0 ; i < MAX_PERSISTANT ; i++ ) {
+		client->ps.persistant[i] = persistant[i];
+	}
+	client->ps.persistant[PERS_TEAM] = client->sess.sessionTeam;
+	
 
 	if( ( g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ) && ( client->sess.sessionTeam == TEAM_SPECTATOR ) ){
 			client->sess.spectatorState = SPECTATOR_FREE;
