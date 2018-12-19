@@ -148,7 +148,7 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 	}
 
   if (cgs.instagib == 1) {
-    strcpy( string, va( "%i%% Acc", ( ( int )( score->accuracy ) ) ) );
+    strcpy( string, va( "%i%%", ( ( int )( score->accuracy ) ) ) );
     CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
   } else {
     if( h >= SB_CHAR_HEIGHT*2 ){
@@ -222,7 +222,11 @@ static int CG_TeamScoreboard( int x, int y, int w, int h, team_t team, float *co
 	if( cgs.gametype == GT_CTF) {
 		CG_DrawStringExt( x + w*0.5, y, "C / A / D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	}
-	CG_DrawStringExt( x + w*0.69, y, "Dmg", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+  if (cgs.instagib == 1) {
+	  CG_DrawStringExt( x + w*0.69, y, "Acc", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+  } else {
+	  CG_DrawStringExt( x + w*0.69, y, "Dmg", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+  }
 	CG_DrawStringExt( x + w*0.76, y, "K/D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	CG_DrawPic( x + w*0.84, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbPing );
 	CG_DrawPic( x + w*0.92, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbClock );
