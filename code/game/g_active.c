@@ -1472,7 +1472,8 @@ void ClientEndFrame( gentity_t *ent ) {
 
 	// turn off any expired powerups
 	for ( i = 0 ; i < MAX_POWERUPS ; i++ ) {
-		if ( ent->client->ps.powerups[ i ] < level.time ) {
+		if ( ( ent->client->ps.powerups[ i ] != 0 ) && ( ent->client->ps.powerups[ i ] < level.time )) {
+      Com_Printf("Powerup: %i ended for %s\n" , i , ent->client->pers.netname );
 			ent->client->ps.powerups[ i ] = 0;
 		}
 	}
