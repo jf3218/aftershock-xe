@@ -1071,6 +1071,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 
 	G_RegisterCvars();
 	
+    G_UpdateTimestamp();
+	
 	if( restart == 0 ){
 		trap_Cvar_Set("g_redLocked","0");
 		trap_Cvar_Set("g_blueLocked","0");
