@@ -124,6 +124,7 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 	clientInfo_t *ci;
 	char string[ 128 ];
 	int picSize;
+  int len;
 	
 	if( score->client < 0 || score->client >= cgs.maxclients ){
 		Com_Printf( "Bad score->client: %i\n", score->client );
@@ -149,7 +150,8 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 
   if (cgs.instagib == 1) {
     strcpy( string, va( "%i%%", ( ( int )( score->accuracy ) ) ) );
-    CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+    len = strlen( string );
+    CG_DrawStringExt( x + w*0.69+(4-len)*SB_CHAR_WIDTH, y - SB_CHAR_HEIGHT/2, string, colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 4 );
   } else {
     if( h >= SB_CHAR_HEIGHT*2 ){
       CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT, CG_FormatDmg(score->dmgdone), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
