@@ -187,6 +187,8 @@ vmCvar_t        g_warningExpire;
 vmCvar_t        g_minNameChangePeriod;
 vmCvar_t        g_maxNameChanges;
 
+vmCvar_t        g_timestamp_startgame;
+
 vmCvar_t        g_newItemHeight;
 
 #ifndef MISSIONPACK
@@ -541,6 +543,8 @@ static cvarTable_t		gameCvarTable[] = {
 	    
 	    { &g_minNameChangePeriod, "g_minNameChangePeriod", "5", 0, 0, qfalse},
         { &g_maxNameChanges, "g_maxNameChanges", "5", 0, 0, qfalse},
+        
+        { &g_timestamp_startgame, "g_timestamp", "0001-01-01 00:00:00", CVAR_SERVERINFO, 0, qfalse},
 	
 	{ &g_newItemHeight, "g_newItemHeight", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 
@@ -876,6 +880,20 @@ void G_RegisterCvars( void ) {
 	} else {
 		g_ruleset.integer = RULESET_AS; // default is AS
 	}
+}
+
+/*
+ Sets the cvar g_timestamp. Return 0 if success or !0 for errors.
+ */
+static int G_UpdateTimestamp( void )
+{
+	int ret = 0;
+	qtime_t timestamp;
+	ret = trap_RealTime(&timestamp);
+	trap_Cvar_Set("g_timestamp",va("%04i-%02i-%02i %02i:%02i:%02i",
+	                               1900+timestamp.tm_year,1+timestamp.tm_mon, timestamp.tm_mday,
+	                               timestamp.tm_hour,timestamp.tm_min,timestamp.tm_sec));
+	return ret;
 }
 
 /*
