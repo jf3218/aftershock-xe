@@ -1179,18 +1179,22 @@ void Cmd_Timeout_f( gentity_t *player ) {
 		}
 
 		// For each client increase each collected powerup by timeout
-		for(i = 0; i < level.numConnectedClients; i++) {
+	for ( i = 0 ; i < level.maxclients ; i++ ) {
+		if ( level.clients[i].pers.connected != CON_DISCONNECTED ) {
 			for(j = 0; j < MAX_POWERUPS; j++) {
 				if(level.clients[i].ps.powerups[j] > 0) {
 					// The flag "powerups" are set to INT_MAX, if we increase them
 					// they will overflow and might disappear in the game...
 					// So we ignore them here
 					if((j != PW_REDFLAG) && (j != PW_BLUEFLAG) && (j != PW_NEUTRALFLAG)) {
-						level.clients->ps.powerups[j] += level.timeoutAdd;
+            Com_Printf("Timeout: updating powerup %i from %i => ", j , level.clients[i].ps.powerups[j]); 
+						level.clients[i].ps.powerups[j] += level.timeoutAdd;
+            Com_Printf("%i for %s \n", level.clients[i].ps.powerups[j], level.clients[i].pers.netname); 
 					}
 				}
 			}
 		}
+  }
 
 		trap_SendServerCommand(-1,va("screenPrint \"%s" S_COLOR_CYAN " called a timeout\"", player->client->pers.netname));
 		trap_SendServerCommand(-1, va("timeout %i %i %i", level.timeoutTime, level.timeoutAdd, level.roundStartTime));
