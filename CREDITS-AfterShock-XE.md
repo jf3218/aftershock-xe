@@ -7,6 +7,8 @@ damage plums (`g_damagePlums` and `cg_damagePlums`), improvements and
 bug fixes
 - [**miOw**](https://github.com/Irbyz) - mostly copy/paste and removal
 of other people's stuff
+- [**Davidd (van Deijk)**](https://github.com/dedavidd) - numerous 
+bugfixes, improvements and new features 
 
 #### Also the code was taken from the following projects:
 - [**OATMEAL OpenArena mod**](https://github.com/danhetrick/oatmeal) by
