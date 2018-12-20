@@ -958,11 +958,11 @@ void Team_TakeFlagSound( gentity_t *ent, int team ) {
     }
 
     // only play sound when the flag was at the base
-    // or not picked up the last 10 seconds
+    // or not picked up the last 10 miliseconds
     switch (team) {
     case TEAM_RED:
         if ( teamgame.blueStatus != FLAG_ATBASE ) {
-            if (teamgame.blueTakenTime > level.time - 10000 && g_gametype.integer != GT_CTF_ELIMINATION)
+            if (teamgame.blueTakenTime > level.time - 10 && g_gametype.integer != GT_CTF_ELIMINATION)
                 return;
         }
         teamgame.blueTakenTime = level.time;
@@ -970,7 +970,7 @@ void Team_TakeFlagSound( gentity_t *ent, int team ) {
 
     case TEAM_BLUE:	// CTF
         if ( teamgame.redStatus != FLAG_ATBASE ) {
-            if (teamgame.redTakenTime > level.time - 10000 && g_gametype.integer != GT_CTF_ELIMINATION)
+            if (teamgame.redTakenTime > level.time - 10 && g_gametype.integer != GT_CTF_ELIMINATION)
                 return;
         }
         teamgame.redTakenTime = level.time;
