@@ -1,4 +1,26 @@
 # AfterShock XE Changelog
+## 2018-12-22 [Revision 326]
+- Added `g_legacyWeaponAmmo` cvar.
+  - When set to `0` weapons you pick up will always add the "standard"
+amount of ammo and all ammo you picked up before picking up a weapon
+will be kept.
+  - When set to `1` (default) weapon pickups will fill up the ammo of a
+player to "standard" amount and add 1 bullet if already reached the 
+"standard" amount and if you picked ammo before picking a weapon it
+will add 1 bullet.
+- Added `g_allowKill -1` that allows `kill` during warmup but disables
+it during the game.
+- `g_gametype 5` (One Flag Capture), `6` (Overload) and `7` (Harvester)
+names are now properly displayed on the map loading screen.
+- On instagib the scoreboard now shows Railgun accuracy instead of
+damage done and received.
+- Death and award count are now kept when switching team or joining 
+spectators. When joining spectators it adds 1 more death unless a 
+player was already dead.
+- Backported `g_timestamp` from OpenArena gamecode.
+- Fixed a bug when powerups would run out during a timeout.
+- Fixed a bug when sound cues for flag dropped/taken would not play.
+
 ## 2018-10-27 [Revision 325]
 - Added cvars to change weapon properties:
   - `g_gauntletRate`, `g_gauntletDamage`,
@@ -235,6 +257,7 @@ Sets a multiplier for `g_gravity`, default value is `1`.
 gone.
 - Now compiles with GCC-4.8+.
 
+[Revision 326]:https://github.com/Irbyz/aftershock-xe/compare/325...326
 [Revision 325]:https://github.com/Irbyz/aftershock-xe/compare/324...325
 [Revision 324]:https://github.com/Irbyz/aftershock-xe/compare/323...324
 [Revision 323]:https://github.com/Irbyz/aftershock-xe/compare/322...323
