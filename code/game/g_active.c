@@ -1372,6 +1372,7 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 						preservedScore[i] = ent->client->ps.persistant[i];
 					
 					ent->client->ps = cl->ps;
+
 					for(i = 0; i < MAX_PERSISTANT; i++)
 						ent->client->ps.persistant[i] = preservedScore[i];
 					
@@ -1383,7 +1384,7 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 				}
 				ent->client->ps.pm_flags |= PMF_FOLLOW;
 				ent->client->ps.eFlags = flags;
-				return;
+			//	return;
 			} else {
 				// drop them to free spectators unless they are dedicated camera followers
 				if ( ent->client->sess.spectatorClient >= 0 ) {
@@ -1408,7 +1409,8 @@ void SpectatorClientUpdatePortals( gentity_t *player ) {
     int i;
     int clientNumSpec;
     cl = player->client;
-    clientNumSpec = ( player->client - level.clients );
+    //clientNumSpec = ( player->client - level.clients );
+    clientNumSpec = cl->ps.clientNum;
     for ( i = 0 ; i < level.maxclients ; i++ ) {
         if ( count >= MAX_SPECTATOR_PORTALS ) {
             continue;
@@ -1435,7 +1437,7 @@ void SpectatorClientUpdatePortals( gentity_t *player ) {
             ent = cl->spectatorClientPortals[count-1];
             ent->r.svFlags |= SVF_SINGLECLIENT;
             ent->r.svFlags |= SVF_PORTAL;
-            ent->r.singleClient = clientNumSpec;
+            ent->s.generic1 = qfalse;
             //ent->r.contents = CONTENTS_CORPSE | CONTENTS_TRIGGER;
             //ent->takedamage = qtrue;
             //ent->health = 200;
@@ -1455,6 +1457,7 @@ void SpectatorClientUpdatePortals( gentity_t *player ) {
             VectorCopy( player->r.mins, ent->r.mins );
             VectorCopy( player->r.maxs, ent->r.maxs );
 
+            ent->r.singleClient = clientNumSpec;
             ent->classname = "spectator_portal source";
 
             //ent->s.pos.trType = TR_STATIONARY;
