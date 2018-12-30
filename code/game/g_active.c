@@ -1434,7 +1434,8 @@ void SpectatorClientUpdatePortals( gentity_t *player ) {
             cl->spectatorClientPortals[count-1] =  G_Spawn();
             ent = cl->spectatorClientPortals[count-1];
             ent->r.svFlags |= SVF_SINGLECLIENT;
-            ent->r.singleClient |= clientNumSpec;
+            ent->r.svFlags |= SVF_PORTAL;
+            ent->r.singleClient = clientNumSpec;
             //ent->r.contents = CONTENTS_CORPSE | CONTENTS_TRIGGER;
             //ent->takedamage = qtrue;
             //ent->health = 200;
