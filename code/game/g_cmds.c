@@ -1208,6 +1208,35 @@ void G_Timein( void ) {
 
 /*
 =================
+Cmd_Coinflip_f
+=================
+*/
+void Cmd_Coinflip_f( gentity_t *ent ) {
+    //char string[20];
+
+    //if ( level.warmupTime != -1 )
+      //  return;
+
+    //string = "Heads"; // gives compiler error
+    //string = "Tails";
+
+    if (rand() % 2) {
+    //if ( g_startWhenReady.integer == 3 ) {
+        trap_SendServerCommand(-1,va("screenPrint \"Coinflip called by %s resulted in %s\"",ent->client->pers.netname ,"Heads")  );
+        trap_SendServerCommand(-1,va("print \"Coinflip called by %s resulted in %s\"" ,ent->client->pers.netname,"Heads" ));
+       // return;
+    //}
+    } else {
+        trap_SendServerCommand(-1,va("screenPrint \"Coinflip called by %s resulted in %s\"",ent->client->pers.netname ,"Tails")  );
+        trap_SendServerCommand(-1,va("print \"Coinflip called by %s resulted in %s\"" ,ent->client->pers.netname,"Tails" ));
+    }
+
+
+}
+
+
+/*
+=================
 Cmd_Ready_f
 =================
 */
@@ -3822,6 +3851,8 @@ void Cmd_Zoomed_f(gentity_t *ent) {
 //KK-OAX This is the table that ClientCommands runs the console entry against.
 commands_t cmds[ ] =
 {
+    // format:
+    // { commandstring, cmdFlags, callback function , floodlimited }
     // normal commands
     { "team", 0, Cmd_Team_f, qtrue },
     { "vote", 0, Cmd_Vote_f, qtrue },
@@ -3832,6 +3863,7 @@ commands_t cmds[ ] =
     { "tell", CMD_MESSAGE, Cmd_Tell_f, qtrue },
     { "callvote", CMD_MESSAGE, Cmd_CallVote_f, qtrue },
     { "callteamvote", CMD_MESSAGE|CMD_TEAM, Cmd_CallTeamVote_f, qtrue },
+    { "coinflip", CMD_MESSAGE , Cmd_Coinflip_f, qtrue },
     // can be used even during intermission
     { "say", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Say_f, qtrue },
     { "say_team", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Say_f, qtrue },
