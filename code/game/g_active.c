@@ -1401,10 +1401,7 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 
 void SpectatorClientUpdatePortals( gentity_t *player ) {
 	  gclient_t	*cl;
-    //gentity_t *portal;
             gentity_t	*ent;
-            gentity_t	*destination;
-            vec3_t		snapped;
     int count = 0;
     int i;
     int clientNumSpec;
@@ -1438,10 +1435,6 @@ void SpectatorClientUpdatePortals( gentity_t *player ) {
             ent->r.svFlags |= SVF_SINGLECLIENT;
             ent->r.svFlags |= SVF_PORTAL;
             ent->s.generic1 = qfalse;
-            //ent->r.contents = CONTENTS_CORPSE | CONTENTS_TRIGGER;
-            //ent->takedamage = qtrue;
-            //ent->health = 200;
-            //ent->die = PortalDie;
         } else {
             // TODO: sanity check existing portals and spawn if error 
         }
@@ -1450,9 +1443,6 @@ void SpectatorClientUpdatePortals( gentity_t *player ) {
             ent = cl->spectatorClientPortals[count-1];
             //ent->s.modelindex = G_ModelIndex( "models/powerups/teleporter/tele_enter.md3" );
 
-            //VectorCopy( player->s.pos.trBase, snapped );
-            //SnapVector( snapped );
-            //G_SetOrigin( ent, snapped );
             G_SetOrigin( ent, cl->ps.origin );
             VectorCopy( player->r.mins, ent->r.mins );
             VectorCopy( player->r.maxs, ent->r.maxs );
@@ -1460,30 +1450,11 @@ void SpectatorClientUpdatePortals( gentity_t *player ) {
             ent->r.singleClient = clientNumSpec;
             ent->classname = "spectator_portal source";
 
-            //ent->s.pos.trType = TR_STATIONARY;
-
-
             trap_LinkEntity( ent );
 
             ent->count = i;
             VectorCopy(level.clients[i].ps.origin , ent->pos1 );
             VectorCopy(level.clients[i].ps.origin , ent->s.origin2 );
-            //ent->count = player->client->portalID;
-            //player->client->portalID = 0;
-
-            //	ent->spawnflags = player->client->ps.persistant[PERS_TEAM];
-
-            //ent->nextthink = level.time + 1000;
-            //ent->think = PortalEnable;
-
-            // find the destination
-            //destination = NULL;
-            //while( (destination = G_Find(destination, FOFS(classname), "hi_portal destination")) != NULL ) {
-                //if( destination->count == ent->count ) {
-                    //VectorCopy( destination->s.pos.trBase, ent->pos1 );
-                    //break;
-                //}
-            //}
 
         }
     }

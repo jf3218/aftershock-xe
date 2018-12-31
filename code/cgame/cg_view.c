@@ -877,7 +877,11 @@ static int start;
 static int CG_GetEntityNumForMV( int window ) {
     int clientNum = -1;
     int i;
-
+ 
+  	clientInfo_t *localPlayer;
+  	localPlayer = &cgs.clientinfo[cg.clientNum];
+    if (localPlayer->team == TEAM_SPECTATOR) {
+        // only allow handpicked follows from spectators
     switch (window) {
     case 2:
         clientNum = cg_multiview2_client.integer;
@@ -891,10 +895,18 @@ static int CG_GetEntityNumForMV( int window ) {
     default:
         return -1;
     }
+    } else {
+        if ( window<2 || window>4 ) {
+          return -1;
+        }
+    }
 
     if ( clientNum == -1 ) {
         for ( i = start; i < cg.snap->numEntities; i++ ) {
             if ( ( cg.snap->entities[i].eType == ET_PLAYER ) && ( cg.snap->ps.clientNum != cg.snap->entities[i].clientNum ) && CG_EntityNumIsAllowed( cg.snap->entities[i].clientNum ) ) {
+                if ( ( localPlayer->team != TEAM_SPECTATOR) && ( cgs.clientinfo[cg.snap->entities[i].clientNum].team != localPlayer->team) )
+                    continue;
+
                 if ( cg.snap->entities[i].eFlags & EF_DEAD )
                     continue;
                 start = i+1;
@@ -1224,7 +1236,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
     if ( cg_stats.integer ) {
         CG_Printf( "cg.clientFrame:%i\n", cg.clientFrame );
     }
-    if ( cgs.allowMultiview && ( cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR ) && cg_multiview.integer > 1 ) {
+    if ( cgs.allowMultiview && ( ((cg.snap->ps.pm_flags & PMF_FOLLOW )  /*&& (cg.snap->ps.pm_type == PM_SPECTATOR) */ ) || /* isEliminated || */( cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR )) && cg_multiview.integer > 1 ) {
         CG_AddMultiviewWindow( stereoView );
         cg.refdef.x = 0;
         cg.refdef.y = 0;
