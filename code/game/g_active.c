@@ -1317,6 +1317,7 @@ void G_RunClient( gentity_t *ent ) {
 }
 
 
+void SpectatorClientUpdatePortals( gentity_t *ent );
 /*
 ==================
 SpectatorClientEndFrame
@@ -1331,8 +1332,9 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 	if( ent->client->pers.multiview >= 2 && g_allowMultiview.integer && ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) ){
 		for( i = 0 ; i < MAX_GENTITIES; i++ ){
 			if( g_entities[i].inuse ){
-				g_entities[i].r.svFlags |= SVF_CLIENTMASKVISIBLE;
-				g_entities[i].r.singleClient |= (1 << ( ent->s.clientNum ) );
+        // this makes entities invisible to anybody but the spectator
+				//g_entities[i].r.svFlags |= SVF_CLIENTMASKVISIBLE;
+				//g_entities[i].r.singleClient |= (1 << ( ent->s.clientNum ) );
 				//G_Printf("%s %i %i\n", ent->client->pers.netname, ent->s.clientNum, i );
 			}
 		}
@@ -1370,6 +1372,7 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 						preservedScore[i] = ent->client->ps.persistant[i];
 					
 					ent->client->ps = cl->ps;
+
 					for(i = 0; i < MAX_PERSISTANT; i++)
 						ent->client->ps.persistant[i] = preservedScore[i];
 					
@@ -1381,7 +1384,7 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 				}
 				ent->client->ps.pm_flags |= PMF_FOLLOW;
 				ent->client->ps.eFlags = flags;
-				return;
+			//	return;
 			} else {
 				// drop them to free spectators unless they are dedicated camera followers
 				if ( ent->client->sess.spectatorClient >= 0 ) {
@@ -1391,8 +1394,75 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 			}
 		}	
 	}
+	if( ent->client->pers.multiview >= 2 && g_allowMultiview.integer ){
+      SpectatorClientUpdatePortals( ent );
+  }
 }
 
+void SpectatorClientUpdatePortals( gentity_t *player ) {
+	  gclient_t	*cl;
+            gentity_t	*ent;
+    int count = 0;
+    int i;
+    int clientNumSpec;
+    cl = player->client;
+    //clientNumSpec = ( player->client - level.clients );
+    clientNumSpec = cl->ps.clientNum;
+    for ( i = 0 ; i < level.maxclients ; i++ ) {
+        if ( count >= MAX_SPECTATOR_PORTALS ) {
+            continue;
+        }
+        if ( level.clients[i].pers.connected == CON_DISCONNECTED ) {
+            continue;
+        }
+        if (( level.clients[i].sess.sessionTeam == TEAM_SPECTATOR) || level.clients[i].isEliminated ) {
+            continue;
+        }
+        if ( ( cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR ) /*|| cl->pers.demoClient*/ ) {
+            if ( cl->sess.sessionTeam != level.clients[i].sess.sessionTeam) {
+                continue;
+            }
+        } else {
+            if ( cl->sess.spectatorClient == level.clients[i].ps.clientNum ) {
+                continue;
+            }
+        }
+        count++;
+        if (count > cl->numSpectatorClientPortals) {
+            // create the portal source
+            cl->spectatorClientPortals[count-1] =  G_Spawn();
+            ent = cl->spectatorClientPortals[count-1];
+            ent->r.svFlags |= SVF_SINGLECLIENT;
+            ent->r.svFlags |= SVF_PORTAL;
+            ent->s.generic1 = qfalse;
+        } else {
+            // TODO: sanity check existing portals and spawn if error 
+        }
+        if( cl->pers.multiview >= 2 && g_allowMultiview.integer ){
+
+            ent = cl->spectatorClientPortals[count-1];
+            //ent->s.modelindex = G_ModelIndex( "models/powerups/teleporter/tele_enter.md3" );
+
+            G_SetOrigin( ent, cl->ps.origin );
+            VectorCopy( player->r.mins, ent->r.mins );
+            VectorCopy( player->r.maxs, ent->r.maxs );
+
+            ent->r.singleClient = clientNumSpec;
+            ent->classname = "spectator_portal source";
+
+            trap_LinkEntity( ent );
+
+            ent->count = i;
+            VectorCopy(level.clients[i].ps.origin , ent->pos1 );
+            VectorCopy(level.clients[i].ps.origin , ent->s.origin2 );
+
+        }
+    }
+    for (i = count ; i<cl->numSpectatorClientPortals ; i++) {
+        G_FreeEntity(cl->spectatorClientPortals[i]);
+    }
+    cl->numSpectatorClientPortals = count;
+}
  /*
  ==============
  G_PredictPmove

@@ -4254,6 +4254,7 @@ void CG_DrawMVDhud ( stereoFrame_t stereoFrame ) {
     if ( !cg.showScores ) {
         CG_Predecorate();
         CG_DrawStatusBar();
+            CG_DrawCrosshairNames();
         //CG_DrawPowerups(); //TODO
         CG_Postdecorate();
     }

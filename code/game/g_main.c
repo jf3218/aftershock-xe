@@ -594,7 +594,7 @@ static cvarTable_t		gameCvarTable[] = {
 	
 	{ &g_mapcycle, "g_mapcycle", "mapcycle.cfg", CVAR_ARCHIVE, 0, qfalse},
 	{ &g_useMapcycle, "g_useMapcycle", "0", CVAR_ARCHIVE | CVAR_LATCH, 0, qfalse},
-	{ &g_allowMultiview, "g_allowMultiview", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
+	{ &g_allowMultiview, "g_allowMultiview", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
 	// demo state
 	//{ &g_demoState, "sv_demoState", "", 0, 0, qfalse },
 	{ &g_disableSpecs, "g_disableSpecs", "0", CVAR_ARCHIVE, 0, qfalse },

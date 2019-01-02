@@ -361,6 +361,7 @@ typedef struct{
 	int gametime;
 } gcapture_t;
 
+#define MAX_SPECTATOR_PORTALS 8
 #define MAX_HITS 30
 // this structure is cleared on each ClientSpawn(),
 // except for 'client->pers' and 'client->sess'
@@ -519,6 +520,8 @@ struct gclient_s {
 	int 		    elimRoundKills;
 	
 	//qboolean	    sendSpawnpoints;
+	int     	numSpectatorClientPortals;
+	gentity_t	*spectatorClientPortals[MAX_SPECTATOR_PORTALS];
 	
 };
 
