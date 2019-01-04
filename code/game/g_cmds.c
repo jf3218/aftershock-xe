@@ -1222,13 +1222,13 @@ void Cmd_Coinflip_f( gentity_t *ent ) {
 
     if (rand() % 2) {
     //if ( g_startWhenReady.integer == 3 ) {
-        trap_SendServerCommand(-1,va("screenPrint \"Coinflip called by %s resulted in %s\"",ent->client->pers.netname ,"Heads")  );
-        trap_SendServerCommand(-1,va("print \"Coinflip called by %s resulted in %s\"" ,ent->client->pers.netname,"Heads" ));
+        trap_SendServerCommand(-1,va("screenPrint \"Coinflip called by %s" S_COLOR_WHITE " resulted in %s\"",ent->client->pers.netname , S_COLOR_BLUE "H" S_COLOR_GREEN "eads")  );
+        trap_SendServerCommand(-1,va("print \"Coinflip called by %s" S_COLOR_WHITE " resulted in %s\"" ,ent->client->pers.netname, S_COLOR_BLUE "H" S_COLOR_GREEN "eads\n" ));
        // return;
     //}
     } else {
-        trap_SendServerCommand(-1,va("screenPrint \"Coinflip called by %s resulted in %s\"",ent->client->pers.netname ,"Tails")  );
-        trap_SendServerCommand(-1,va("print \"Coinflip called by %s resulted in %s\"" ,ent->client->pers.netname,"Tails" ));
+        trap_SendServerCommand(-1,va("screenPrint \"Coinflip called by %s" S_COLOR_WHITE " resulted in %s\"",ent->client->pers.netname , S_COLOR_RED "T" S_COLOR_GREEN "ails")  );
+        trap_SendServerCommand(-1,va("print \"Coinflip called by %s" S_COLOR_WHITE " resulted in %s\"" ,ent->client->pers.netname, S_COLOR_RED "T" S_COLOR_GREEN "ails\n" ));
     }
 
 
