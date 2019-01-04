@@ -2597,7 +2597,8 @@ void ShuffleTeams(void) {
             if ( level.clients[sortPlayers[i]].sess.sessionTeam != nextTeam) {
                 level.clients[sortPlayers[i]].sess.sessionTeam = nextTeam;
                 ClientUserinfoChanged( sortPlayers[i] );
-                ClientBegin( sortPlayers[i] );
+                //ClientBegin( sortPlayers[i] );
+                //trap_SendServerCommand( sortPlayers[i], "loadModel" );
             }
             count++;
             //G_Printf("%i\n", nextTeam);
@@ -2683,7 +2684,7 @@ void ShuffleTeams(void) {
 
 			level.clients[newBlueTeam[i]].sess.sessionTeam = TEAM_RED;
 			ClientUserinfoChanged(newBlueTeam[i]);
-			ClientBegin(newBlueTeam[i]);
+			//ClientBegin(newBlueTeam[i]);
 			break;
 		}
 
@@ -2698,13 +2699,13 @@ void ShuffleTeams(void) {
 
 			level.clients[newRedTeam[i]].sess.sessionTeam = TEAM_BLUE;
 			ClientUserinfoChanged(newRedTeam[i]);
-			ClientBegin(newRedTeam[i]);
+			//ClientBegin(newRedTeam[i]);
 			break;
 		}
 	}
 
     //Restart!
-    trap_SendConsoleCommand( EXEC_APPEND, "map_restart 1\n" );
+    trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
 
 }
 
