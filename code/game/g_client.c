@@ -2924,6 +2924,9 @@ void ClientDisconnect( int clientNum ) {
 		BotAIShutdownClient( clientNum, qfalse );
 	}
 	
+  memset(&ent->client->ps.persistant,0,sizeof(ent->client->ps.persistant));
+	ent->client->ps.persistant[PERS_TEAM] = TEAM_FREE;
+
 	SendReadymask( -1 );
 }
 
