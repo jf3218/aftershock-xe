@@ -1304,6 +1304,7 @@ int SetTeam( gentity_t *ent, char *s ) {
     char	            userinfo[MAX_INFO_STRING];
     qboolean            force;
 	int ret = 0;
+  int i = 0;
 
     force = G_admin_permission(ent, ADMF_FORCETEAMCHANGE);
 
@@ -1401,9 +1402,22 @@ int SetTeam( gentity_t *ent, char *s ) {
     }
 
     //
-    // decide if we will allow the change
+    // make sure we have correct persistant/preserved score
     //
     oldTeam = client->sess.sessionTeam;
+    if (oldTeam == TEAM_SPECTATOR) {
+        // restore persistant
+					for(i = 0; i < MAX_PERSISTANT; i++)
+						ent->client->ps.persistant[i] = ent->client->preservedScore[i];
+    } 
+    if (team == TEAM_SPECTATOR) {
+        // store persistant
+					for(i = 0; i < MAX_PERSISTANT; i++)
+						ent->client->preservedScore[i] = ent->client->ps.persistant[i];
+    }
+    //
+    // decide if we will allow the change
+    //
     if ( team == oldTeam ) {
 		if( team == TEAM_SPECTATOR ) {
 			// If a player is spec and rejoins as spec he gets
