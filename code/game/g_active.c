@@ -1366,7 +1366,7 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 			if ( ( cl->pers.connected == CON_CONNECTED && cl->sess.sessionTeam != TEAM_SPECTATOR ) /*|| cl->pers.demoClient*/ ) {
 				flags = (cl->ps.eFlags & ~(EF_VOTED | EF_TEAMVOTED)) | (ent->client->ps.eFlags & (EF_VOTED | EF_TEAMVOTED));
 				//this is here LMS/Elimination goes wrong with player follow
-				if(ent->client->sess.sessionTeam!=TEAM_SPECTATOR){
+//				if(ent->client->sess.sessionTeam!=TEAM_SPECTATOR){
 				  
 					for(i = 0; i < MAX_PERSISTANT; i++)
 						preservedScore[i] = ent->client->ps.persistant[i];
@@ -1376,12 +1376,13 @@ void SpectatorClientEndFrame( gentity_t *ent ) {
 					for(i = 0; i < MAX_PERSISTANT; i++)
 						ent->client->ps.persistant[i] = preservedScore[i];
 					
-					ent->client->ps.persistant[PERS_HITS] = cl->ps.persistant[PERS_HITS];
-					ent->client->ps.persistant[PERS_DAMAGE_DONE] = cl->ps.persistant[PERS_DAMAGE_DONE];
-				}
-				else {
-					ent->client->ps = cl->ps;
-				}
+          // why send PERS_HITS and PERS_DAMAGE_DONE to the spectator instead of saving them?
+//					ent->client->ps.persistant[PERS_HITS] = cl->ps.persistant[PERS_HITS];
+//					ent->client->ps.persistant[PERS_DAMAGE_DONE] = cl->ps.persistant[PERS_DAMAGE_DONE];
+//				}
+//				else {
+//					ent->client->ps = cl->ps;
+//				}
 				ent->client->ps.pm_flags |= PMF_FOLLOW;
 				ent->client->ps.eFlags = flags;
 			//	return;
