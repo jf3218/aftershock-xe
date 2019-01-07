@@ -2008,6 +2008,7 @@ void ExitLevel (void) {
 	char d1[MAX_STRING_CHARS];
 	char	command[1024];
 	char    mapname[MAX_MAPNAME];
+	char    nextmapname[MAX_MAPNAME];
 
 	//bot interbreeding
 	BotInterbreedEndMatch();
@@ -2026,17 +2027,38 @@ void ExitLevel (void) {
 	}
 	if( g_useMapcycle.integer ){
 	    trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
-            Com_sprintf(command, sizeof( command ),"map %s\n", G_GetNextMap(mapname));
+      Com_sprintf(nextmapname, sizeof( nextmapname ),"%s", G_GetNextMap(mapname));
+      if( !Q_stricmp( nextmapname, mapname ))  {
+          if ( !level.restarted ) {
+              trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
+              level.restarted = qtrue;
+              level.changemap = NULL;
+              level.intermissiontime = 0;
+          }
+          return;	
+      } else {
+            Com_sprintf(command, sizeof( command ),"map %s\n", nextmapname );
+      }
 	    trap_SendConsoleCommand( EXEC_APPEND, command );
 	}
 	else {
 	    trap_Cvar_VariableStringBuffer( "nextmap", nextmap, sizeof(nextmap) );
 	    trap_Cvar_VariableStringBuffer( "d1", d1, sizeof(d1) );
 
-	    if( !Q_stricmp( nextmap, "map_restart 0" ) && Q_stricmp( d1, "" ) ) {
-		    trap_Cvar_Set( "nextmap", "vstr d2" );
-		    trap_SendConsoleCommand( EXEC_APPEND, "vstr d1\n" );
-	    } else {
+      if( !Q_stricmp( nextmap, "map_restart 0" ))  {
+          if ( Q_stricmp( d1, "" ) ) {
+              trap_Cvar_Set( "nextmap", "vstr d2" );
+              trap_SendConsoleCommand( EXEC_APPEND, "vstr d1\n" );
+          } else {
+              if ( !level.restarted ) {
+                  trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
+                  level.restarted = qtrue;
+                  level.changemap = NULL;
+                  level.intermissiontime = 0;
+              }
+              return;	
+          }
+      } else {
 		    trap_SendConsoleCommand( EXEC_APPEND, "vstr nextmap\n" );
 	    }
 	}
