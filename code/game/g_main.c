@@ -2027,7 +2027,6 @@ void ExitLevel (void) {
 	}
 	if( g_useMapcycle.integer ){
 	    trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
-			trap_SendConsoleCommand( EXEC_APPEND, "map_restart 0\n" );
       Com_sprintf(nextmapname, sizeof( nextmapname ),"%s", G_GetNextMap(mapname));
       if( !Q_stricmp( nextmapname, mapname ))  {
           if ( !level.restarted ) {
