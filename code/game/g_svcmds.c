@@ -520,9 +520,16 @@ void Matchinfo_f( void ) {
 		if( cl->pers.connected == CON_DISCONNECTED )
 			continue;
 
-		G_Printf(" \"%s\" \"%s\" \"%s\" %i %i %i %i %i", 
+		G_Printf(" \"%s\" \"%s\" \"%s\" %i %i %i %i %i %i %i %i %i %i", 
 			  cl->pers.netname, cl->aftershock_name, cl->aftershock_hash, cl->sess.sessionTeam, cl->ps.persistant[ PERS_SCORE ], 
-			  cl->kills, cl->ps.persistant[ PERS_KILLED ], (int)((level.time - cl->pers.enterTime)/1000) );
+			  cl->kills, cl->ps.persistant[ PERS_KILLED ], (int)((level.time - cl->pers.enterTime)/1000) ,
+					cl->dmgdone,
+					cl->dmgtaken,
+					cl->ps.persistant[PERS_DEFEND_COUNT],
+					cl->ps.persistant[PERS_ASSIST_COUNT],
+					cl->ps.persistant[PERS_CAPTURES]
+       );
+
 	} 
 	G_Printf("\n");
 }
