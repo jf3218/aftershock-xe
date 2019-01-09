@@ -480,7 +480,7 @@ void GotoOtherServerForce_f( void ) {
   int i;
 
 	if ( trap_Argc() < 3 ) {
-                G_Printf("Usage: gotootherserverforce <clientnum or *> <otherserver>\n");
+                G_Printf("Usage: switchserverforce <clientnum or *> <otherserver>\n");
 		return;
 	}
 
@@ -607,6 +607,7 @@ struct
   { "clientkick_game", qfalse, ClientKick_f },
   { "matchinfo", qfalse, Matchinfo_f },
   { "gotootherserverforce", qfalse, GotoOtherServerForce_f },
+  { "switchserverforce", qfalse, GotoOtherServerForce_f },
   { "getmapcycle", qfalse, G_sendMapcycle },
   { "writeMapfile", qfalse, G_WriteMapfile_f },
   { "loadMapfile", qfalse, G_LoadMapfile_f }
