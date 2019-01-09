@@ -474,6 +474,33 @@ void	ClientKick_f( void ) {
         
 }
 
+void GotoOtherServerForce_f( void ) {
+	char		str[MAX_TOKEN_CHARS];
+	char		otherserver[MAX_TOKEN_CHARS];
+  int i;
+
+	if ( trap_Argc() < 3 ) {
+                G_Printf("Usage: gotootherserverforce <clientnum or *> <otherserver>\n");
+		return;
+	}
+
+	trap_Argv( 1, str, sizeof( str ) );
+	trap_Argv( 2, otherserver, sizeof( otherserver ) );
+  if ( !strcmp(str,"*") ) {
+    G_Printf("Sorry, gotoOtherServerForce * is not implemented yet\n");
+  } else {
+    for (i = 0; str[i]; i++) {
+      if (str[i] < '0' || str[i] > '9') {
+        G_Printf("not a valid client number: \"%s\"\n",str);
+        return;
+      }
+    }
+
+    i = atoi(str);
+    trap_SendServerCommand( i, va("gotoserverforce %s", otherserver ) );
+  }
+}
+
 void Matchinfo_f( void ) {
 	int i;
 	gclient_t *cl;
@@ -579,6 +606,7 @@ struct
   //Kicks a player by number in the game logic rather than the server number
   { "clientkick_game", qfalse, ClientKick_f },
   { "matchinfo", qfalse, Matchinfo_f },
+  { "gotootherserverforce", qfalse, GotoOtherServerForce_f },
   { "getmapcycle", qfalse, G_sendMapcycle },
   { "writeMapfile", qfalse, G_WriteMapfile_f },
   { "loadMapfile", qfalse, G_LoadMapfile_f }
@@ -618,3 +646,13 @@ qboolean  ConsoleCommand( void )
   return qfalse;
 }
 
+void G_RegisterOAXcommands( void )
+{
+  int i;
+  for( i = 0; i < sizeof( svcmds ) / sizeof( svcmds[ 0 ] ); i++ ) {
+    // on the clientside this would add tablcompletion and cmdlist
+    // TODO: fix this for server side
+    //trap_AddCommand(svcmds[i].cmd);
+    
+  }
+}

@@ -948,6 +948,7 @@ gentity_t *SpotWouldTelefrag( gentity_t *spot );
 qboolean	ConsoleCommand( void );
 void G_ProcessIPBans(void);
 qboolean G_FilterPacket (char *from);
+void G_RegisterOAXcommands( void );
 
 //KK-OAX Added this to make accessible from g_svcmds_ext.c
 gclient_t	*ClientForString( const char *s );
