@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "g_public.h"
 #include "challenges.h"
 
+
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date
@@ -942,6 +943,16 @@ void AddScore( gentity_t *ent, vec3_t origin, int score );
 void CalculateRanks( void );
 gentity_t *SpotWouldTelefrag( gentity_t *spot );
 
+//
+// g_crypt.c
+//
+typedef struct MD5Context {
+	unsigned int  buf[4];
+	unsigned int  bits[2];
+	unsigned char in[64];
+} MD5_CTX;
+
+char *G_MD5String( const char *in );
 //
 // g_svcmds.c
 //
