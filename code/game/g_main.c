@@ -1070,7 +1070,8 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	srand( randomSeed );
 
 	G_RegisterCvars();
-	
+	G_RegisterOAXcommands();
+
     G_UpdateTimestamp();
 	
 	if( restart == 0 ){
