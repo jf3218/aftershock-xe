@@ -467,6 +467,9 @@ void G_SpawnGEntityFromSpawnVars( void ) {
 		return;
 	}
 #endif
+	G_SpawnInt( "arena", "0", &i );
+  if ( i ) {
+  }
 
 	if( G_SpawnString( "gametype", NULL, &value ) ) {
 		if( g_gametype.integer >= GT_FFA && g_gametype.integer < GT_MAX_GAME_TYPE ) {
