@@ -248,6 +248,7 @@ vmCvar_t     g_disableSpecs;
 
 vmCvar_t     g_friendsThroughWalls;
 vmCvar_t     g_legacyWeaponAmmo;
+vmCvar_t     g_lockArena;
 vmCvar_t     g_allowKill;
 vmCvar_t     g_fadeToBlack;
 
@@ -601,6 +602,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_friendsThroughWalls, "g_friendsThroughWalls", "0", CVAR_SERVERINFO, 0, qfalse },
 	
 	{ &g_legacyWeaponAmmo, "g_legacyWeaponAmmo", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse },
+	{ &g_lockArena, "g_lockArena", "0", CVAR_ARCHIVE , 0, qfalse },
 	{ &g_allowKill, "g_allowKill", "1", CVAR_SERVERINFO, 0, qfalse },
 	{ &g_fadeToBlack, "g_fadeToBlack", "0", CVAR_SERVERINFO, 0, qfalse },
 	{ &g_spawnProtection, "g_spawnProtection", "0", CVAR_ARCHIVE, 0, qfalse },
