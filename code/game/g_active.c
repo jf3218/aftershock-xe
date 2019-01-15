@@ -673,6 +673,9 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 					ent->client->ps.generic1 = 0;
 				}
 			}
+      if ( level.multiArenaMap ) {
+        level.curMultiArenaMap = ent->client->curArena;
+      }
 			SelectSpawnPoint( ent->client->ps.origin, origin, angles );
 			TeleportPlayer( ent, origin, angles );
 			break;
