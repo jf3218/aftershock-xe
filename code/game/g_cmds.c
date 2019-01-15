@@ -1546,6 +1546,7 @@ void Cmd_Arena_f( gentity_t *ent ) {
     int			oldArena;
     char		s[MAX_TOKEN_CHARS];
     qboolean    force;
+    gentity_t *intermission;
 
     if (!level.multiArenaMap) {
             trap_SendServerCommand( ent-g_entities, "print \"not a multiarena map\n\"" );
@@ -1556,6 +1557,16 @@ void Cmd_Arena_f( gentity_t *ent ) {
         oldArena = ent->client->curArena;
         trap_SendServerCommand( ent-g_entities, va("print \"Current Arena %i\n\"" , oldArena) );
         trap_SendServerCommand( ent-g_entities, va("screenPrint \"Current Arena %i\"" , oldArena) );
+        intermission = G_Find (NULL, FOFS(classname), "info_player_intermission");
+        if ( level.multiArenaMap ) {
+          while (intermission != NULL && intermission->r.singleClient != ent->client->curArena) {
+            intermission = G_Find (intermission, FOFS(classname), "info_player_intermission");
+          }
+        }
+        if (intermission) {
+          trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"" , intermission->message ) );
+          trap_SendServerCommand( ent-g_entities, va("screenPrint \"%s\"" , intermission->message ) );
+        }
         return;
     }
 
@@ -1582,11 +1593,24 @@ void Cmd_Arena_f( gentity_t *ent ) {
 
     trap_Argv( 1, s, sizeof( s ) );
 
-    if (s[0]>='0' && s[0]<='9') {
+    if (s[0]>='0' && s[0]<='9' && s[0] <= '0' + level.multiArenaMap) {
       ent->client->curArena = s[0]-'0';
 //    	ent->client->switchTeamTime = level.time + 5000;
+    } else {
+            trap_SendServerCommand( ent-g_entities, "print \"not a legal arena.\n\"" );
     }
     trap_SendServerCommand( ent-g_entities, va("screenPrint \"next spawn in Arena %i\"" , ent->client->curArena) );
+	intermission = G_Find (NULL, FOFS(classname), "info_player_intermission");
+  if ( level.multiArenaMap ) {
+    while (intermission != NULL && intermission->r.singleClient != ent->client->curArena) {
+	    intermission = G_Find (intermission, FOFS(classname), "info_player_intermission");
+    }
+  }
+  if (intermission) {
+    trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"" , intermission->message ) );
+    trap_SendServerCommand( ent-g_entities, va("screenPrint \"%s\"" , intermission->message ) );
+  }
+   
 }
 
 
