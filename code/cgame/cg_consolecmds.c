@@ -799,8 +799,10 @@ void CG_InitConsoleCommands( void ) {
   trap_AddCommand("mapcycle");
   trap_AddCommand("mute");
   trap_AddCommand("unmute");
-  trap_AddCommand("forfeit");
   trap_AddCommand("zoomed");
+  // multimap select arena
+  trap_AddCommand("arena");
+
 }
 
 /*

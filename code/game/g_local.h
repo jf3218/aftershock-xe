@@ -523,6 +523,7 @@ struct gclient_s {
 	//qboolean	    sendSpawnpoints;
 	int     	numSpectatorClientPortals;
 	gentity_t	*spectatorClientPortals[MAX_SPECTATOR_PORTALS];
+  int       curArena;
 	
 };
 
@@ -678,6 +679,9 @@ typedef struct {
     qboolean captureRedFlagPerfect;
     
     int 	overtimeCount;
+
+    int   multiArenaMap;
+    int   curMultiArenaMap;
     
 } level_locals_t;
 

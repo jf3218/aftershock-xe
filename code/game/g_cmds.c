@@ -1539,6 +1539,60 @@ void StopFollowing( gentity_t *ent ) {
 
 /*
 =================
+Cmd_Arena_f
+=================
+*/
+void Cmd_Arena_f( gentity_t *ent ) {
+    int			oldArena;
+    char		s[MAX_TOKEN_CHARS];
+    qboolean    force;
+
+    if (!level.multiArenaMap) {
+            trap_SendServerCommand( ent-g_entities, "print \"not a multiarena map\n\"" );
+            return;
+    }
+
+    if ( trap_Argc() != 2 ) {
+        oldArena = ent->client->curArena;
+        trap_SendServerCommand( ent-g_entities, va("print \"Current Arena %i\n\"" , oldArena) );
+        trap_SendServerCommand( ent-g_entities, va("screenPrint \"Current Arena %i\"" , oldArena) );
+        return;
+    }
+
+    force = G_admin_permission(ent, ADMF_FORCETEAMCHANGE);
+
+    if ( !force ) {
+        if ( ent->client->switchTeamTime > level.time ) {
+            trap_SendServerCommand( ent-g_entities, "print \"May not switch teams/arena more than once per 5 seconds.\n\"" );
+            return;
+        }
+    }
+
+    /*if( level.demoState == DS_PLAYBACK ) {
+        trap_SendServerCommand( ent-g_entities, "print \"You cannot join a team "
+          "while a demo is being played\n\"" );
+        return;
+    }*/
+
+    // if they are playing a tournement game, count as a loss
+    if ( (g_gametype.integer == GT_TOURNAMENT )
+            && ent->client->sess.sessionTeam == TEAM_FREE && !level.warmupTime ) {
+        ent->client->sess.losses++;
+    }
+
+    trap_Argv( 1, s, sizeof( s ) );
+
+    if (s[0]>='0' && s[0]<='9') {
+      ent->client->curArena = s[0]-'0';
+//    	ent->client->switchTeamTime = level.time + 5000;
+    }
+    trap_SendServerCommand( ent-g_entities, va("screenPrint \"next spawn in Arena %i\"" , ent->client->curArena) );
+}
+
+
+
+/*
+=================
 Cmd_Team_f
 =================
 */
@@ -3869,6 +3923,7 @@ commands_t cmds[ ] =
     // { commandstring, cmdFlags, callback function , floodlimited }
     // normal commands
     { "team", 0, Cmd_Team_f, qtrue },
+    { "arena", 0, Cmd_Arena_f, qtrue },
     { "vote", 0, Cmd_Vote_f, qtrue },
     /*{ "ignore", 0, Cmd_Ignore_f },
     { "unignore", 0, Cmd_Ignore_f },*/

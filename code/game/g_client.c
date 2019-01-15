@@ -46,6 +46,9 @@ void SP_info_player_deathmatch( gentity_t *ent ) {
 	if ( i ) {
 		ent->flags |= FL_NO_HUMANS;
 	}
+  if ( level.multiArenaMap ) {
+    G_SpawnInt( "arena", "0", &ent->r.singleClient);
+  }
 }
 
 /*QUAKED info_player_start (1 0 0) (-16 -16 -24) (16 16 32)
@@ -168,6 +171,11 @@ gentity_t *SelectRandomDeathmatchSpawnPoint( void ) {
 		if ( SpotWouldTelefrag( spot ) ) {
 			continue;
 		}
+    if ( level.multiArenaMap ) {
+      if (spot->r.singleClient != level.curMultiArenaMap) {
+        continue;
+      }
+    }
 		spots[ count ] = spot;
 		count++;
 	}
@@ -203,6 +211,11 @@ gentity_t *SelectRandomFurthestSpawnPoint ( vec3_t avoidPoint, vec3_t origin, ve
 		if ( SpotWouldTelefrag( spot ) ) {
 			continue;
 		}
+    if ( level.multiArenaMap ) {
+      if (spot->r.singleClient != level.curMultiArenaMap) {
+        continue;
+      }
+    }
 		//get distance from avoid point
 		VectorSubtract( spot->s.origin, avoidPoint, delta );
 		dist = VectorLength( delta );
@@ -2006,6 +2019,9 @@ void ClientSpawn(gentity_t *ent) {
 	// find a spawn point
 	// do it before setting health back up, so farthest
 	// ranging doesn't count this client
+  if ( level.multiArenaMap ) {
+    level.curMultiArenaMap = client->curArena;
+  }
 	if ((client->sess.sessionTeam == TEAM_SPECTATOR) 
 			|| ( (client->ps.pm_type == PM_SPECTATOR || client->isEliminated )  && (g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION) ) ) {
 		spawnPoint = SelectSpectatorSpawnPoint ( spawn_origin, spawn_angles);
@@ -2288,6 +2304,7 @@ void ClientSpawn(gentity_t *ent) {
 	VectorCopy (playerMaxs, ent->r.maxs);
 
 	client->ps.clientNum = index;
+  client->curArena = level.curMultiArenaMap;
 
 	if(g_gametype.integer != GT_ELIMINATION && g_gametype.integer != GT_CTF_ELIMINATION && g_gametype.integer != GT_LMS && 
 	    !g_elimination_allgametypes.integer) {

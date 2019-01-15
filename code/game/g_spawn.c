@@ -467,6 +467,9 @@ void G_SpawnGEntityFromSpawnVars( void ) {
 		return;
 	}
 #endif
+	G_SpawnInt( "arena", "0", &i );
+  if ( i ) {
+  }
 
 	if( G_SpawnString( "gametype", NULL, &value ) ) {
 		if( g_gametype.integer >= GT_FFA && g_gametype.integer < GT_MAX_GAME_TYPE ) {
@@ -612,6 +615,14 @@ void SP_worldspawn( void ) {
 
 	G_SpawnString( "enableBreath", "0", &s );
 	trap_Cvar_Set( "g_enableBreath", s );
+
+	G_SpawnString( "arena", "", &s );
+  if (strlen(s)) {
+    level.multiArenaMap = atoi( s );
+  } else {
+    level.multiArenaMap = 0;
+  }
+    G_Printf("multiarena %i\n",level.multiArenaMap );
 
 	g_entities[ENTITYNUM_WORLD].s.number = ENTITYNUM_WORLD;
 	g_entities[ENTITYNUM_WORLD].classname = "worldspawn";
