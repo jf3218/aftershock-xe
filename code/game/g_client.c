@@ -2020,7 +2020,11 @@ void ClientSpawn(gentity_t *ent) {
 	// do it before setting health back up, so farthest
 	// ranging doesn't count this client
   if ( level.multiArenaMap ) {
-    level.curMultiArenaMap = client->curArena;
+      if ( g_lockArena.integer ) {
+        level.curMultiArenaMap = g_lockArena.integer;
+      } else {
+        level.curMultiArenaMap = ent->client->curArena;
+      }
   }
 	if ((client->sess.sessionTeam == TEAM_SPECTATOR) 
 			|| ( (client->ps.pm_type == PM_SPECTATOR || client->isEliminated )  && (g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION) ) ) {

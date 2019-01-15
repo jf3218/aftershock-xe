@@ -1427,6 +1427,7 @@ extern vmCvar_t	    g_ruleset;
 
 
 extern vmCvar_t	    g_legacyWeaponAmmo;
+extern vmCvar_t	    g_lockArena;
 // Weapon CVARs
 
 // Gauntlet

@@ -674,7 +674,11 @@ void ClientEvents( gentity_t *ent, int oldEventSequence ) {
 				}
 			}
       if ( level.multiArenaMap ) {
-        level.curMultiArenaMap = ent->client->curArena;
+        if ( g_lockArena.integer ) {
+          level.curMultiArenaMap = g_lockArena.integer;
+        } else {
+          level.curMultiArenaMap = ent->client->curArena;
+        }
       }
 			SelectSpawnPoint( ent->client->ps.origin, origin, angles );
 			TeleportPlayer( ent, origin, angles );
