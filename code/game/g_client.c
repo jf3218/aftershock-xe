@@ -75,6 +75,9 @@ void SP_domination_point(gentity_t *ent) {
 The intermission will be viewed from this point.  Target an info_notnull for the view direction.
 */
 void SP_info_player_intermission( gentity_t *ent ) {
+  if ( level.multiArenaMap ) {
+    G_SpawnInt( "arena", "0", &ent->r.singleClient);
+  }
 
 }
 

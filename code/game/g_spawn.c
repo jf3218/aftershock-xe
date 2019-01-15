@@ -619,10 +619,15 @@ void SP_worldspawn( void ) {
 	G_SpawnString( "arena", "", &s );
   if (strlen(s)) {
     level.multiArenaMap = atoi( s );
+    G_Printf("multiarena %i\n",level.multiArenaMap );
+    if (g_lockArena.integer > level.multiArenaMap) {
+      // if the Arenalock is bigger than the amount of arenas, set it lower
+		  trap_Cvar_Set( "g_lockArena", va("%i",level.multiArenaMap ));
+    }
+
   } else {
     level.multiArenaMap = 0;
   }
-    G_Printf("multiarena %i\n",level.multiArenaMap );
 
 	g_entities[ENTITYNUM_WORLD].s.number = ENTITYNUM_WORLD;
 	g_entities[ENTITYNUM_WORLD].classname = "worldspawn";
