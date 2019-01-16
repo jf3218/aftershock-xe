@@ -2916,6 +2916,29 @@ void Cmd_Ref_f( gentity_t *ent ) {
 
 /*
 ==================
+G_CheckCustomVote
+==================
+*/
+void G_CheckCustomVote( gentity_t *ent, char* arg ) {
+        t_customvote customvote;
+        //Sago: There must always be a test to ensure that length(arg) is non-zero or the client might be able to execute random commands.
+        if (strlen(arg)<1) {
+            trap_SendServerCommand( ent-g_entities, va("print \"Custom vote commands are: %s\n\"",custom_vote_info) );
+            return;
+        }
+        customvote = getCustomVote(arg);
+        if (Q_stricmp(customvote.votename,arg)) {
+            trap_SendServerCommand( ent-g_entities, "print \"Command could not be found\n\"" );
+            return;
+        }
+        Com_sprintf( level.voteString, sizeof( level.voteString ), "%s", customvote.command );
+        if (strlen(customvote.displayname))
+            Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", customvote.displayname );
+        else
+            Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", customvote.command );
+}
+/*
+==================
 Cmd_CallVote_f
 ==================
 */
@@ -2995,6 +3018,9 @@ void Cmd_CallVote_f( gentity_t *ent ) {
     } else if ( !Q_stricmp( arg1, "shuffle" ) ) {
     } else if ( !Q_stricmp( arg1, "ruleset" ) ) {
     } else {
+      t_customvote customvote;
+      customvote = getCustomVote(arg1);
+      if (Q_stricmp(customvote.votename,arg1)) {
         trap_SendServerCommand( ent-g_entities, "print \"Invalid vote string.\n\"" );
         //trap_SendServerCommand( ent-g_entities, "print \"Vote commands are: map_restart, nextmap, map <mapname>, g_gametype <n>, kick <player>, clientkick <clientnum>, g_doWarmup, timelimit <time>, fraglimit <frags>.\n\"" );
         buffer[0] = 0;
@@ -3026,7 +3052,17 @@ void Cmd_CallVote_f( gentity_t *ent ) {
         buffer[strlen(buffer)-2] = 0;
         strcat(buffer, ".\"");
         trap_SendServerCommand( ent-g_entities, buffer);
+        trap_SendServerCommand( ent-g_entities, va("print \"Custom vote commands are: %s\n\"",custom_vote_info) );
         return;
+      } else {
+        // correct custom vote. 
+        if (allowedVote("custom")) {
+          memcpy(&arg2,arg1,sizeof(arg2));
+          Com_sprintf( arg1, sizeof( arg1 ), "custom" );
+        }
+
+      }
+
     }
 
     if (!allowedVote(arg1)) {
@@ -3263,10 +3299,24 @@ void Cmd_CallVote_f( gentity_t *ent ) {
         else
             Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", customvote.command );
     } else {
-        //Com_sprintf( level.voteString, sizeof( level.voteString ), "%s \"%s\"", arg1, arg2 );
-        //Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
-        trap_SendServerCommand( ent-g_entities, "print \"Server vality check failed, appears to be my fault. Sorry\n\"" );
-        return;
+        t_customvote customvote;
+        //Sago: There must always be a test to ensure that length(arg1) is non-zero or the client might be able to execute random commands.
+        if (strlen(arg1)<1) {
+            trap_SendServerCommand( ent-g_entities, va("print \"Custom vote commands are: %s\n\"",custom_vote_info) );
+            return;
+        }
+        customvote = getCustomVote(arg1);
+        if (Q_stricmp(customvote.votename,arg1)) {
+          //Com_sprintf( level.voteString, sizeof( level.voteString ), "%s \"%s\"", arg1, arg1 );
+          //Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
+          trap_SendServerCommand( ent-g_entities, "print \"Server vality check failed, appears to be my fault. Sorry\n\"" );
+          return;
+        }
+        Com_sprintf( level.voteString, sizeof( level.voteString ), "%s", customvote.command );
+        if (strlen(customvote.displayname))
+            Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", customvote.displayname );
+        else
+            Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", customvote.command );
     }
 
     ent->client->pers.voteCount++;
