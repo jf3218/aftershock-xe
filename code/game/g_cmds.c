@@ -2916,29 +2916,6 @@ void Cmd_Ref_f( gentity_t *ent ) {
 
 /*
 ==================
-G_CheckCustomVote
-==================
-*/
-void G_CheckCustomVote( gentity_t *ent, char* arg ) {
-        t_customvote customvote;
-        //Sago: There must always be a test to ensure that length(arg) is non-zero or the client might be able to execute random commands.
-        if (strlen(arg)<1) {
-            trap_SendServerCommand( ent-g_entities, va("print \"Custom vote commands are: %s\n\"",custom_vote_info) );
-            return;
-        }
-        customvote = getCustomVote(arg);
-        if (Q_stricmp(customvote.votename,arg)) {
-            trap_SendServerCommand( ent-g_entities, "print \"Command could not be found\n\"" );
-            return;
-        }
-        Com_sprintf( level.voteString, sizeof( level.voteString ), "%s", customvote.command );
-        if (strlen(customvote.displayname))
-            Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", customvote.displayname );
-        else
-            Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", customvote.command );
-}
-/*
-==================
 Cmd_CallVote_f
 ==================
 */
