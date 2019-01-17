@@ -1547,9 +1547,16 @@ void Cmd_Arena_f( gentity_t *ent ) {
     char		s[MAX_TOKEN_CHARS];
     qboolean    force;
     gentity_t *intermission;
+    int clientNum;
+    clientNum = ent-g_entities;
 
     if (!level.multiArenaMap) {
             trap_SendServerCommand( ent-g_entities, "print \"not a multiarena map\n\"" );
+            return;
+    }
+
+    if (g_lockArena.integer) {
+            trap_SendServerCommand( ent-g_entities, "print \"arena locked\n\"" );
             return;
     }
 
@@ -1594,7 +1601,13 @@ void Cmd_Arena_f( gentity_t *ent ) {
     trap_Argv( 1, s, sizeof( s ) );
 
     if (s[0]>='0' && s[0]<='9' && s[0] <= '0' + level.multiArenaMap) {
-      ent->client->curArena = s[0]-'0';
+        int oldarena = ent->client->curArena;
+        ent->client->curArena = s[0]-'0';
+        if ((oldarena != ent->client->curArena) && (!ent->client->isEliminated) && (ent->client->sess.sessionTeam != TEAM_SPECTATOR)) {
+           player_die (ent, ent, ent, 100000, MOD_SUICIDE);
+           //ClientUserinfoChanged( clientNum );
+           ClientBegin( clientNum );
+        }
 //    	ent->client->switchTeamTime = level.time + 5000;
     } else {
             trap_SendServerCommand( ent-g_entities, "print \"not a legal arena.\n\"" );
@@ -2983,9 +2996,11 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 
 
     if ( !Q_stricmp( arg1, "map_restart" ) ) {
+    } else if ( strlen( arg1) == 0 ) {
     } else if ( !Q_stricmp( arg1, "nextmap" ) ) {
     } else if ( !Q_stricmp( arg1, "map" ) ) {
     } else if ( !Q_stricmp( arg1, "g_gametype" ) ) {
+    } else if ( !Q_stricmp( arg1, "g_lockArena" ) ) {
     } else if ( !Q_stricmp( arg1, "kick" ) ) {
     } else if ( !Q_stricmp( arg1, "clientkick" ) ) {
     } else if ( !Q_stricmp( arg1, "g_doWarmup" ) ) {
@@ -3010,6 +3025,8 @@ void Cmd_CallVote_f( gentity_t *ent ) {
             strcat(buffer, "map <mapname>, ");
         if (allowedVote("g_gametype"))
             strcat(buffer, "g_gametype <n>, ");
+        if (allowedVote("g_lockArena"))
+            strcat(buffer, "g_lockArena <n>, ");
         if (allowedVote("kick"))
             strcat(buffer, "kick <player>, ");
         if (allowedVote("clientkick"))
@@ -3054,6 +3071,8 @@ void Cmd_CallVote_f( gentity_t *ent ) {
             strcat(buffer, "map <mapname>, ");
         if (allowedVote("g_gametype"))
             strcat(buffer, "g_gametype <n>, ");
+        if (allowedVote("g_lockArena"))
+            strcat(buffer, "g_lockArena <n>, ");
         if (allowedVote("kick"))
             strcat(buffer, "kick <player>, ");
         if (allowedVote("clientkick"))
@@ -3073,6 +3092,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
         buffer[strlen(buffer)-2] = 0;
         strcat(buffer, ".\"");
         trap_SendServerCommand( ent-g_entities, buffer);
+        trap_SendServerCommand( ent-g_entities, va("print \"Custom vote commands are: %s\n\"",custom_vote_info) );
         return;
     }
 
@@ -3195,6 +3215,18 @@ void Cmd_CallVote_f( gentity_t *ent ) {
             Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change fraglimit to: %d", i );
         else
             Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Remove fraglimit?");
+    } else if ( !Q_stricmp( arg1, "g_lockArena" ) ) {
+        i = atoi(arg2);
+        if (i > level.multiArenaMap) {
+            trap_SendServerCommand( ent-g_entities, "print \"not a legal arena\n\"" );
+            return;
+        }
+
+        Com_sprintf( level.voteString, sizeof( level.voteString ), "%s \"%d\"", arg1, i );
+        if (i)
+            Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change g_lockArena to: %d", i );
+        else
+            Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Remove g_lockArena?" );
     } else if ( !Q_stricmp( arg1, "timelimit" ) ) {
         i = atoi(arg2);
         if (!allowedTimelimit(i)) {
