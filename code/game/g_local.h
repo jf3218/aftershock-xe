@@ -993,6 +993,7 @@ void DominationPointNamesMessage (gentity_t *client);
 void DominationPointStatusMessage( gentity_t *ent );
 void ChallengeMessage( gentity_t *ent, int challengeNumber );
 void SendCustomVoteCommands(int clientNum);
+void G_JoinArena( gentity_t *ent, int newArena );
 
 //
 // g_pweapon.c

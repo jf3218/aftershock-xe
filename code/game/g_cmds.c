@@ -1539,6 +1539,24 @@ void StopFollowing( gentity_t *ent ) {
 
 /*
 =================
+G_JoinArena
+=================
+*/
+void G_JoinArena( gentity_t *ent, int newArena ) {
+    int clientNum;
+    clientNum = ent-g_entities;
+    if (newArena == ent->client->curArena) {
+      return;
+    }
+    ent->client->curArena = newArena;
+    if ( (!ent->client->isEliminated) && (ent->client->sess.sessionTeam != TEAM_SPECTATOR)) {
+      player_die (ent, ent, ent, 100000, MOD_SUICIDE);
+    }
+    ClientBegin( clientNum );
+    //    	ent->client->switchTeamTime = level.time + 5000;
+}
+/*
+=================
 Cmd_Arena_f
 =================
 */
@@ -1601,14 +1619,7 @@ void Cmd_Arena_f( gentity_t *ent ) {
     trap_Argv( 1, s, sizeof( s ) );
 
     if (s[0]>='0' && s[0]<='9' && s[0] <= '0' + level.multiArenaMap) {
-        int oldarena = ent->client->curArena;
-        ent->client->curArena = s[0]-'0';
-        if ((oldarena != ent->client->curArena) && (!ent->client->isEliminated) && (ent->client->sess.sessionTeam != TEAM_SPECTATOR)) {
-           player_die (ent, ent, ent, 100000, MOD_SUICIDE);
-           //ClientUserinfoChanged( clientNum );
-           ClientBegin( clientNum );
-        }
-//    	ent->client->switchTeamTime = level.time + 5000;
+        G_JoinArena(ent,s[0]-'0');
     } else {
             trap_SendServerCommand( ent-g_entities, "print \"not a legal arena.\n\"" );
     }
