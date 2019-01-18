@@ -1544,16 +1544,29 @@ G_JoinArena
 */
 void G_JoinArena( gentity_t *ent, int newArena ) {
     int clientNum;
+    gentity_t *intermission;
     clientNum = ent-g_entities;
     if (newArena == ent->client->curArena) {
       return;
     }
     ent->client->curArena = newArena;
-    if ( (!ent->client->isEliminated) && (ent->client->sess.sessionTeam != TEAM_SPECTATOR)) {
-      player_die (ent, ent, ent, 100000, MOD_SUICIDE);
-    }
     ClientBegin( clientNum );
     //    	ent->client->switchTeamTime = level.time + 5000;
+    if (  (ent->client->sess.sessionTeam != TEAM_SPECTATOR)) {
+      trap_SendServerCommand( -1, va("screenPrint \"%s^7 joined Arena %i\"" , ent->client->pers.netname, ent->client->curArena) );
+    }
+    intermission = G_Find (NULL, FOFS(classname), "info_player_intermission");
+    if ( level.multiArenaMap ) {
+      while (intermission != NULL && intermission->r.singleClient != ent->client->curArena) {
+        intermission = G_Find (intermission, FOFS(classname), "info_player_intermission");
+      }
+    }
+    if (intermission) {
+      if (intermission->message) {
+        trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"" , intermission->message ) );
+        trap_SendServerCommand( ent-g_entities, va("screenPrint \"%s\"" , intermission->message ) );
+      }
+    }
 }
 /*
 =================
@@ -1562,6 +1575,7 @@ Cmd_Arena_f
 */
 void Cmd_Arena_f( gentity_t *ent ) {
     int			oldArena;
+    int			newArena;
     char		s[MAX_TOKEN_CHARS];
     qboolean    force;
     gentity_t *intermission;
@@ -1573,13 +1587,15 @@ void Cmd_Arena_f( gentity_t *ent ) {
             return;
     }
 
-    if (g_lockArena.integer) {
-            trap_SendServerCommand( ent-g_entities, "print \"arena locked\n\"" );
-            return;
-    }
 
-    if ( trap_Argc() != 2 ) {
-        oldArena = ent->client->curArena;
+    trap_Argv( 1, s, sizeof( s ) );
+    oldArena = ent->client->curArena;
+    if (s[0]>='0' && s[0]<='9' && s[0] <= '0' + level.multiArenaMap) {
+      newArena = s[0] - '0';
+    } else {
+      newArena = oldArena;
+    }
+    if ( (trap_Argc() != 2) || (newArena == oldArena) ) {
         trap_SendServerCommand( ent-g_entities, va("print \"Current Arena %i\n\"" , oldArena) );
         trap_SendServerCommand( ent-g_entities, va("screenPrint \"Current Arena %i\"" , oldArena) );
         intermission = G_Find (NULL, FOFS(classname), "info_player_intermission");
@@ -1589,8 +1605,10 @@ void Cmd_Arena_f( gentity_t *ent ) {
           }
         }
         if (intermission) {
-          trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"" , intermission->message ) );
-          trap_SendServerCommand( ent-g_entities, va("screenPrint \"%s\"" , intermission->message ) );
+          if (intermission->message) {
+            trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"" , intermission->message ) );
+            trap_SendServerCommand( ent-g_entities, va("screenPrint \"%s\"" , intermission->message ) );
+          }
         }
         return;
     }
@@ -1601,6 +1619,10 @@ void Cmd_Arena_f( gentity_t *ent ) {
         if ( ent->client->switchTeamTime > level.time ) {
             trap_SendServerCommand( ent-g_entities, "print \"May not switch teams/arena more than once per 5 seconds.\n\"" );
             return;
+        }
+        if (g_lockArena.integer) {
+                trap_SendServerCommand( ent-g_entities, "print \"arena locked\n\"" );
+                return;
         }
     }
 
@@ -1616,24 +1638,15 @@ void Cmd_Arena_f( gentity_t *ent ) {
         ent->client->sess.losses++;
     }
 
-    trap_Argv( 1, s, sizeof( s ) );
 
     if (s[0]>='0' && s[0]<='9' && s[0] <= '0' + level.multiArenaMap) {
+        if ( (!ent->client->isEliminated) && (ent->client->sess.sessionTeam != TEAM_SPECTATOR)) {
+          player_die (ent, ent, ent, 100000, MOD_SUICIDE);
+        }
         G_JoinArena(ent,s[0]-'0');
     } else {
             trap_SendServerCommand( ent-g_entities, "print \"not a legal arena.\n\"" );
     }
-    trap_SendServerCommand( ent-g_entities, va("screenPrint \"next spawn in Arena %i\"" , ent->client->curArena) );
-	intermission = G_Find (NULL, FOFS(classname), "info_player_intermission");
-  if ( level.multiArenaMap ) {
-    while (intermission != NULL && intermission->r.singleClient != ent->client->curArena) {
-	    intermission = G_Find (intermission, FOFS(classname), "info_player_intermission");
-    }
-  }
-  if (intermission) {
-    trap_SendServerCommand( ent-g_entities, va("print \"%s\n\"" , intermission->message ) );
-    trap_SendServerCommand( ent-g_entities, va("screenPrint \"%s\"" , intermission->message ) );
-  }
    
 }
 
