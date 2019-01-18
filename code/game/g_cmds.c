@@ -2821,6 +2821,8 @@ void Cmd_Ref_f( gentity_t *ent ) {
         if ( g_useMapcycle.integer ) {
             trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
             Com_sprintf(command, sizeof( command ),"map %s", G_GetNextMap(mapname));
+            Com_sprintf(command, sizeof( command ),"map %s ; set g_lockArena %i", G_GetNextMap(mapname), G_GetMapLockArena(G_GetNextMap(mapname)));
+            // XXX
         }
         else {
 
@@ -3186,6 +3188,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
         // special case for map changes, we want to reset the nextmap setting
         // this allows a player to change maps, but not upset the map rotation
         char	s[MAX_STRING_CHARS];
+        int lockarena;
 
         if ( g_useMapcycle.integer ) {
             if ( !G_mapIsVoteable( arg2 ) ) {
@@ -3201,21 +3204,43 @@ void Cmd_CallVote_f( gentity_t *ent ) {
             }
         }
 
+        lockarena = -1;
+        if (strlen(arg3)) {
+           if (arg3[0]>='0' && arg3[0]<='9') {
+               lockarena = arg3[0]-'0';
+           }
+        }
+
+
         trap_Cvar_VariableStringBuffer( "nextmap", s, sizeof(s) );
         if (*s) {
+          if (lockarena>=0) {
+            Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %s; set g_lockArena %i ; set nextmap \"%s\"", arg1, arg2, lockarena, s );
+          } else {
             Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %s; set nextmap \"%s\"", arg1, arg2, s );
+          }
         } else {
+          if (lockarena>=0) {
+            Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %s; set g_lockArena %i", arg1, arg2, lockarena );
+          } else {
             Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %s", arg1, arg2 );
+          }
+            G_Printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.%s\n",level.voteString);
         }
         //Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
-        Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change map to: %s?", arg2 );
+        if (lockarena>=0) {
+          Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change map to: %s, arena %i?", arg2, lockarena );
+        } else {
+          Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Change map to: %s?", arg2 );
+        }
     } else if ( !Q_stricmp( arg1, "nextmap" ) ) {
         char s[MAX_STRING_CHARS];
         char mapname[MAX_MAPNAME];
 
         if(g_useMapcycle.integer) {
             trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
-            Com_sprintf(level.voteString, sizeof( level.voteString ),"map %s", G_GetNextMap(mapname));
+            Com_sprintf(level.voteString, sizeof( level.voteString ),"map %s ; set g_lockArena %i", G_GetNextMap(mapname), G_GetMapLockArena(G_GetNextMap(mapname)));
+            G_Printf("%s\n",level.voteString);
 	        Com_sprintf(level.voteDisplayString, sizeof( level.voteDisplayString ), "%s (%s)", "Next map?", G_GetNextMap(mapname));
         } else {
             trap_Cvar_VariableStringBuffer( "nextmap", s, sizeof(s) );

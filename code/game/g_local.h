@@ -1125,6 +1125,7 @@ void G_drawMapcycle ( gentity_t *ent );
 void G_sendMapcycle( void );
 void G_LoadMapcycle ( void );
 qboolean SkippedChar ( char in );
+int G_GetMapLockArena ( char *map );
 
 //
 // g_mapfiles.c

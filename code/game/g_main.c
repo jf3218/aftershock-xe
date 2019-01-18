@@ -2046,6 +2046,7 @@ void ExitLevel (void) {
           return;	
       } else {
             Com_sprintf(command, sizeof( command ),"map %s\n", nextmapname );
+              trap_Cvar_Set( "g_lockArena", va("%i", G_GetMapLockArena(nextmapname)) );
       }
 	    trap_SendConsoleCommand( EXEC_APPEND, command );
 	}
