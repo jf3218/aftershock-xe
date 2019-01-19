@@ -3225,7 +3225,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
           } else {
             Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %s", arg1, arg2 );
           }
-            G_Printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.%s\n",level.voteString);
+            G_Printf("voting for %s\n",level.voteString);
         }
         //Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "%s", level.voteString );
         if (lockarena>=0) {

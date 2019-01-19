@@ -682,6 +682,7 @@ typedef struct {
 
     int   multiArenaMap;
     int   curMultiArenaMap;
+    int   multiArenasWithSpawns;
     
 } level_locals_t;
 
