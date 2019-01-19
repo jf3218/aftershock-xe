@@ -48,6 +48,7 @@ void SP_info_player_deathmatch( gentity_t *ent ) {
 	}
   if ( level.multiArenaMap ) {
     G_SpawnInt( "arena", "0", &ent->r.singleClient);
+    level.multiArenasWithSpawns |= 1 << ent->r.singleClient;
   }
 }
 
@@ -2024,9 +2025,42 @@ void ClientSpawn(gentity_t *ent) {
 	// ranging doesn't count this client
   if ( level.multiArenaMap ) {
       if ( g_lockArena.integer ) {
-        level.curMultiArenaMap = g_lockArena.integer;
+        if ((1 << g_lockArena.integer ) & level.multiArenasWithSpawns) {
+          level.curMultiArenaMap = g_lockArena.integer;
+        } else {
+          // by removing lock arena next spawn will fall to the else case below
+          trap_Cvar_Set("g_lockArena",0); 
+          // dont ser the curMultiArenaMap, lets hope we will find something.
+          //level.curMultiArenaMap = 0;
+          
+        }
       } else {
-        level.curMultiArenaMap = ent->client->curArena;
+        if ((1 << ent->client->curArena) & level.multiArenasWithSpawns) {
+          level.curMultiArenaMap = ent->client->curArena;
+        } else {
+          if (level.multiArenasWithSpawns) {
+            int countarenas = 0;
+            int tmp = level.multiArenasWithSpawns;
+            int lastseen = -1;
+            int ar = 0;
+            while (tmp) {
+              if (tmp & 1) {
+                countarenas++;
+                lastseen=ar;
+              }
+              ar++;
+              tmp >>= 1;
+            }
+            if (countarenas <2) {
+              level.multiArenaMap = 0;
+            } else {
+              level.curMultiArenaMap = lastseen;
+            }
+
+          } else {
+            level.multiArenaMap = 0;
+          }
+        }
       }
   }
 	if ((client->sess.sessionTeam == TEAM_SPECTATOR) 
