@@ -18,10 +18,11 @@ Usage: `switchserverforce <client number> <ip:port>`.
   arenas or `arena <number>`.
   - `g_lockArena <number>` allows forcing everyone into the same arena 
   and locking it. If it's set to `0` (the default) people will spawn in 
-  the lobby arena and there will be no lock.
+  the lobby arena and there will be no lock.  
+  `g_lockArena` is votable by default (included in `g_voteNames`).
   - `callvote <RA3 map name> <arena number>` to vote for a particular
   arena (it automatically sets `g_lockArena` to the `<number>`
-  you chose), for example `callvote ra3map20 4`.  
+  you chose), for example `callvote map ra3map20 4`.  
   If you just do `callvote <RA3 map name>` without specifying a number 
   of the arena it will keep `g_lockArena` on the same value it used to
   have.
@@ -32,7 +33,7 @@ Usage: `switchserverforce <client number> <ip:port>`.
 So instead of `callvote custom <vote name>` you can do `callvote 
 <vote name>`. For example `callvote ctf` instead of 
 `callvote custom ctf`.
-- Now on `callvote <map>` a map image is displayed in the top-left 
+- Now on `callvote <map name>` a map image is displayed in the top-left 
 corner.
 
 ## 2018-12-22 [Revision 326]
