@@ -4368,10 +4368,10 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
     }
 
     CG_DrawDeathNotice();
+    CG_DrawVote();
     CG_DrawChat ( qfalse );
     CG_DrawConsole();
 
-    CG_DrawVote();
     CG_DrawTeamVote();
 
     //CG_DrawUpperRight();
