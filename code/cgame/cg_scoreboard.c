@@ -419,7 +419,7 @@ static void CG_DrawMapInfo( void ){
     qhandle_t levelshot;
     const char      *info;
 	
-    if (qtrue) 
+    if (qfalse) 
     {
         info = CG_ConfigString( CS_SERVERINFO );
         s = Info_ValueForKey( info, "mapname" );

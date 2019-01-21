@@ -3778,45 +3778,19 @@ static void CG_DrawSpectator ( void ) {
     }
 }
 
-#define VOTEPOS_X 0
-#define VOTEPOS_Y 58
-
 /*
 =================
-CG_DrawVote
+CG_DrawVoteMap
 =================
 */
-static void CG_DrawVote ( void ) {
+static void CG_DrawVoteMap ( void ) {
     char	*s;
-    int		sec;
     qhandle_t levelshot;
-    const char      *info;
     char mapstring[32];
 
     if ( !cgs.voteTime ) {
         return;
     }
-
-    // play a talk beep whenever it is modified
-    if ( cgs.voteModified ) {
-        cgs.voteModified = qfalse;
-        trap_S_StartLocalSound ( cgs.media.talkSound, CHAN_LOCAL_SOUND );
-    }
-
-    sec = ( VOTE_TIME - ( cg.time - cgs.voteTime ) ) / 1000;
-    if ( sec < 0 ) {			//We could add an inline function for that
-        sec = 0;
-    }
-
-	if(sec < 6) {
-		s = va ( "VOTE(" S_COLOR_RED "%i" S_COLOR_WHITE "):%s " S_COLOR_GREEN "yes:%i" S_COLOR_WHITE " - " S_COLOR_RED "no:%i" S_COLOR_WHITE, sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
-	} else if(sec < 11) {
-		s = va ( "VOTE(" S_COLOR_YELLOW "%i" S_COLOR_WHITE "):%s " S_COLOR_GREEN "yes:%i" S_COLOR_WHITE " - " S_COLOR_RED "no:%i" S_COLOR_WHITE, sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
-	} else {
-		s = va ( "VOTE(%i):%s " S_COLOR_GREEN "yes:%i" S_COLOR_WHITE " - " S_COLOR_RED "no:%i" S_COLOR_WHITE, sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
-	}
-
-    CG_DrawStringHud ( HUD_VOTEMSG, qtrue, s );
     s = strstr(cgs.voteString,"map to: ");
     if (s) {
         int i=0;
@@ -3842,6 +3816,44 @@ static void CG_DrawVote ( void ) {
         trap_R_SetColor( NULL );
         CG_DrawPic( 0, 0, 100, 100 , levelshot );
     }
+}
+
+#define VOTEPOS_X 0
+#define VOTEPOS_Y 58
+
+/*
+=================
+CG_DrawVote
+=================
+*/
+static void CG_DrawVote ( void ) {
+    char	*s;
+    int		sec;
+
+    if ( !cgs.voteTime ) {
+        return;
+    }
+
+    // play a talk beep whenever it is modified
+    if ( cgs.voteModified ) {
+        cgs.voteModified = qfalse;
+        trap_S_StartLocalSound ( cgs.media.talkSound, CHAN_LOCAL_SOUND );
+    }
+
+    sec = ( VOTE_TIME - ( cg.time - cgs.voteTime ) ) / 1000;
+    if ( sec < 0 ) {			//We could add an inline function for that
+        sec = 0;
+    }
+
+	if(sec < 6) {
+		s = va ( "VOTE(" S_COLOR_RED "%i" S_COLOR_WHITE "):%s " S_COLOR_GREEN "yes:%i" S_COLOR_WHITE " - " S_COLOR_RED "no:%i" S_COLOR_WHITE, sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
+	} else if(sec < 11) {
+		s = va ( "VOTE(" S_COLOR_YELLOW "%i" S_COLOR_WHITE "):%s " S_COLOR_GREEN "yes:%i" S_COLOR_WHITE " - " S_COLOR_RED "no:%i" S_COLOR_WHITE, sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
+	} else {
+		s = va ( "VOTE(%i):%s " S_COLOR_GREEN "yes:%i" S_COLOR_WHITE " - " S_COLOR_RED "no:%i" S_COLOR_WHITE, sec, cgs.voteString, cgs.voteYes, cgs.voteNo );
+	}
+
+    CG_DrawStringHud ( HUD_VOTEMSG, qtrue, s );
 }
 
 /*
@@ -4368,10 +4380,11 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
     }
 
     CG_DrawDeathNotice();
-    CG_DrawVote();
+    CG_DrawVoteMap();
     CG_DrawChat ( qfalse );
     CG_DrawConsole();
 
+    CG_DrawVote();
     CG_DrawTeamVote();
 
     //CG_DrawUpperRight();
