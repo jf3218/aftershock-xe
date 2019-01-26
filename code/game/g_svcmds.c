@@ -487,7 +487,8 @@ void GotoOtherServerForce_f( void ) {
 	trap_Argv( 1, str, sizeof( str ) );
 	trap_Argv( 2, otherserver, sizeof( otherserver ) );
   if ( !strcmp(str,"*") ) {
-    G_Printf("Sorry, gotoOtherServerForce * is not implemented yet\n");
+    trap_SendServerCommand( -1, va("gotoserverforce %s", otherserver ) );
+    return;
   } else {
     for (i = 0; str[i]; i++) {
       if (str[i] < '0' || str[i] > '9') {
