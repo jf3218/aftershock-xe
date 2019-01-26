@@ -1145,7 +1145,7 @@ void Cmd_Timeout_f( gentity_t *player ) {
     }
 
 	if(level.timeout) {
-		trap_SendServerCommand(player-g_entities, va("timeout %i %i", level.timeoutTime, level.timeoutAdd));
+		trap_SendServerCommand(player-g_entities, va("print \"already in timeout\""));
 	} else {
 		level.timeout = qtrue;
 		level.timeoutTime = level.time;
