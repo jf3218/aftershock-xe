@@ -619,6 +619,7 @@ typedef struct {
 	int			portalSequence;
 	//Added for elimination:
 	int roundStartTime;		//time the current round was started
+	int lastRoundStartTime;		//time the previous round was started
 	int roundNumber;			//The round number we have reached
 	int roundNumberStarted;			//1 less than roundNumber if we are allowed to spawn
 	int roundRedPlayers;			//How many players was there at start of round
@@ -925,6 +926,7 @@ void G_TimeShiftOneClient( gentity_t *ent );
 team_t TeamCount( int ignoreClientNum, int team );
 team_t TeamLivingCount( int ignoreClientNum, int team ); //Elimination
 team_t TeamHealthCount( int ignoreClientNum, int team ); //Elimination
+//void RespawnRedRoverAllDead(qboolean onlydead); //For round elimination under redrover
 void RespawnAll(void); //For round elimination
 void RespawnDead(void);
 void EnableWeapons(void);
@@ -1378,6 +1380,7 @@ extern vmCvar_t	    g_statsPath;
 extern vmCvar_t	    g_teamLock;
 extern vmCvar_t     g_redLocked;
 extern vmCvar_t	    g_blueLocked;
+extern vmCvar_t     g_redrover;
 
 extern vmCvar_t	    g_reduceRailDamage;
 extern vmCvar_t	    g_reduceLightningDamage;

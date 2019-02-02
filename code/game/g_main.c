@@ -226,6 +226,7 @@ vmCvar_t     g_statsPath;
 vmCvar_t     g_teamLock;
 vmCvar_t     g_redLocked;
 vmCvar_t     g_blueLocked;
+vmCvar_t     g_redrover;
 
 vmCvar_t     g_reduceRailDamage;
 vmCvar_t     g_reduceLightningDamage;
@@ -584,6 +585,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_teamLock, "g_teamLock", "0", CVAR_SERVERINFO |CVAR_NORESTART, 0, qfalse },
 	{ &g_redLocked, "g_redLocked", "0", CVAR_SERVERINFO | CVAR_NORESTART, 0, qfalse },
 	{ &g_blueLocked, "g_blueLocked", "0", CVAR_SERVERINFO | CVAR_NORESTART, 0, qfalse },
+	{ &g_redrover, "g_redrover", "0", CVAR_ARCHIVE  , 0, qfalse },
 
 	{ &g_reduceRailDamage, "g_reduceRailDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_reduceLightningDamage, "g_reduceLightningDamage", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
@@ -1231,6 +1233,7 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	//elimination:
 	level.roundNumber = 1;
 	level.roundNumberStarted = 0;
+	level.lastRoundStartTime = level.time;
 	level.roundStartTime = level.time+g_elimination_warmup.integer*1000;
 	level.roundRespawned = qfalse;
 	level.eliminationSides = rand()%2; //0 or 1
@@ -2581,6 +2584,7 @@ void EndEliminationRound(void)
 	G_SendEliminationStats();
 	DisableWeapons();
 	level.roundNumber++;
+  level.lastRoundStartTime = level.roundStartTime;
 	level.roundStartTime = level.time+1000*g_elimination_warmup.integer;
 	SendEliminationMessageToAllClients();
         CalculateRanks();
