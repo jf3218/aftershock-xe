@@ -504,11 +504,12 @@ static int CG_CalcFov( void ) {
     int		contents;
     float	fov_x, fov_y;
     float	zoomFov;
-    float	f;
+    float	f,scale;
     int		inwater;
 	int     zoomed;
 	int     zoomed_tmp;
 
+    f = 2.1;
     if ( cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
         // if in intermission, use a fixed value
         fov_x = 90;
@@ -614,8 +615,35 @@ static int CG_CalcFov( void ) {
 
     if ( !zoomed ) {
         cg.zoomSensitivity = 1;
+        if (cg_zoomSensitivityASmode.integer == 2) {
+                if (f <= 3.0) {
+                    scale = tan(cg.refdef.fov_x * M_PI/360.0) /tan(cg_fovbase.value * M_PI/360.0)  ;
+                    trap_Cvar_Set("m_pitch",va("%f",scale * 0.022));
+                    trap_Cvar_Set("m_yaw",va("%f",scale * 0.022));
+                }
+        }
     } else {
-        cg.zoomSensitivity = cg.refdef.fov_y / 75.0;
+        switch (cg_zoomSensitivityASmode.integer) {
+            default:
+            case 0:
+                cg.zoomSensitivity = cg.refdef.fov_y / cg_fovbasevertical.value;
+                break;
+            case 1:
+                cg.zoomSensitivity = tan(cg.refdef.fov_x * M_PI/360.0) /tan(cg_fovbase.value * M_PI/360.0)  ;
+                break;
+            case 2:
+                //cg.zoomSensitivity = cg.refdef.fov_y / cg_fovbasevertical.value;
+                cg.zoomSensitivity = 1;
+                if (f <= 3.0) {
+                    scale = tan(cg.refdef.fov_x * M_PI/360.0) /tan(cg_fovbase.value * M_PI/360.0)  ;
+                    trap_Cvar_Set("m_pitch",va("%f",scale * 0.022));
+                    trap_Cvar_Set("m_yaw",va("%f",scale * 0.022));
+                }
+                break;
+            case 3:
+                cg.zoomSensitivity = cg.refdef.fov_x  /cg_fovbase.value ;
+                break;
+        }
     }
 
     return inwater;
