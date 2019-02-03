@@ -681,9 +681,10 @@ typedef struct {
     
     int 	overtimeCount;
 
-    int   multiArenaMap;
+    int   multiArenaMap;     // support for rocketarena, 0 if not
     int   curMultiArenaMap;
     int   multiArenasWithSpawns;
+    int leavedead[MAX_CLIENTS]; // redrover
     
 } level_locals_t;
 
