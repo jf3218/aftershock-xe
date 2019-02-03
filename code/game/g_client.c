@@ -943,7 +943,10 @@ void RespawnRedRoverAllDead(qboolean onlydead)
       }
       if (redroverspec) {
           // not playing this round
-			    trap_SendServerCommand( i , va("screenPrint \"" S_COLOR_RED "You are not playing this round\"") );
+          if (!onlydead) {
+              // only send this once
+			        trap_SendServerCommand( i , va("screenPrint \"" S_COLOR_RED "You are not playing this round (benched)\"") );
+          }
           client->client->ps.pm_type = PM_SPECTATOR;
           continue;
       }
