@@ -390,6 +390,9 @@ vmCvar_t 	cg_oldScoreboard;
 vmCvar_t 	cg_chatBeep;
 vmCvar_t 	cg_teamChatBeep;
 
+vmCvar_t 	cg_fovbase;
+vmCvar_t 	cg_fovbasevertical;
+vmCvar_t 	cg_zoomSensitivityASmode;
 vmCvar_t 	cg_zoomScaling;
 vmCvar_t 	cg_zoomToggle;
 vmCvar_t 	cg_selfOnTeamOverlay;
@@ -686,6 +689,9 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_oldScoreboard, "cg_oldScoreboard", "0", CVAR_ARCHIVE },
 	{&cg_chatBeep, "cg_chatBeep", "1", CVAR_ARCHIVE },
 	{&cg_teamChatBeep, "cg_teamChatBeep", "1", CVAR_ARCHIVE },
+	{&cg_fovbase, "cg_fovbase", "115", CVAR_ARCHIVE },
+	{&cg_fovbasevertical, "cg_fovbasevertical", "75", CVAR_ARCHIVE },
+	{&cg_zoomSensitivityASmode, "cg_zoomSensitivityASmode", "0", CVAR_ARCHIVE },
 	{&cg_zoomScaling, "cg_zoomScaling", "1", CVAR_ARCHIVE },
 	{&cg_zoomToggle, "cg_zoomToggle", "0", CVAR_ARCHIVE },
 	{&cg_selfOnTeamOverlay, "cg_selfOnTeamOverlay", "1", CVAR_ARCHIVE },
