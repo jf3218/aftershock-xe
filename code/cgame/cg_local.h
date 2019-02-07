@@ -1764,11 +1764,12 @@ extern vmCvar_t			cg_plasmaTrail;
 extern vmCvar_t 		cg_oldScoreboard;
 
 extern vmCvar_t   	cg_fovbase;
-extern vmCvar_t 	  cg_fovbasevertical;
+// extern vmCvar_t 	  cg_fovbasevertical; // removed because was confusing
 
 extern vmCvar_t			cg_chatBeep;
 extern vmCvar_t			cg_teamChatBeep;
 extern vmCvar_t    	cg_zoomSensitivityASmode;
+extern vmCvar_t 	cg_zoomSensitivityAScorrection;
 extern vmCvar_t			cg_zoomScaling;
 extern vmCvar_t 		cg_zoomToggle;
 extern vmCvar_t			cg_selfOnTeamOverlay;

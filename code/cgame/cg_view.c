@@ -504,7 +504,7 @@ static int CG_CalcFov( void ) {
     int		contents;
     float	fov_x, fov_y;
     float	zoomFov;
-    float	f,scale;
+    float	f;
     int		inwater;
 	int     zoomed;
 	int     zoomed_tmp;
@@ -513,6 +513,7 @@ static int CG_CalcFov( void ) {
     if ( cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
         // if in intermission, use a fixed value
         fov_x = 90;
+        zoomed = qfalse;
     } else {
         // user selectable
         if ( cgs.dmflags & DF_FIXED_FOV ) {
@@ -613,35 +614,44 @@ static int CG_CalcFov( void ) {
     cg.refdef.fov_x = fov_x;
     cg.refdef.fov_y = fov_y;
 
+    // set the zoom mouse sensitivity factor that will be passed on to the engine.
+    // cg_zoomSensitivityASmode default 0 which algorithm to use
+                // 0 old q3 / openarena algorithm based on vertical fov
+                // 1 based on ods formula from http://openarena.wikia.com/wiki/Configuration_examples/Scale_mouse_sensitivity_with_zoom
+                // 2 based on ods formula but also calculated when unzoomed for people with a fov for each weapon
+                // 3 similar to the old q3 but based on horizontal fov_x and also calculated unzoomed
+    // cg_zoomSensitivityAScorrection default 1.0 factor applied after the algorithm to do fine tuning
+    // cg_fovbase default 115 asume the sensitivity is set for this horizontal fov
     if ( !zoomed ) {
-        cg.zoomSensitivity = 1;
-        if (cg_zoomSensitivityASmode.integer == 2) {
-                if (f <= 3.0) {
-                    scale = tan(cg.refdef.fov_x * M_PI/360.0) /tan(cg_fovbase.value * M_PI/360.0)  ;
-                    trap_Cvar_Set("m_pitch",va("%f",scale * 0.022));
-                    trap_Cvar_Set("m_yaw",va("%f",scale * 0.022));
-                }
-        }
-    } else {
+        // no longer zoomed, revert to sensitivity for normal fov
         switch (cg_zoomSensitivityASmode.integer) {
             default:
             case 0:
-                cg.zoomSensitivity = cg.refdef.fov_y / cg_fovbasevertical.value;
-                break;
             case 1:
-                cg.zoomSensitivity = tan(cg.refdef.fov_x * M_PI/360.0) /tan(cg_fovbase.value * M_PI/360.0)  ;
+                cg.zoomSensitivity = 1;
                 break;
             case 2:
-                //cg.zoomSensitivity = cg.refdef.fov_y / cg_fovbasevertical.value;
-                cg.zoomSensitivity = 1;
-                if (f <= 3.0) {
-                    scale = tan(cg.refdef.fov_x * M_PI/360.0) /tan(cg_fovbase.value * M_PI/360.0)  ;
-                    trap_Cvar_Set("m_pitch",va("%f",scale * 0.022));
-                    trap_Cvar_Set("m_yaw",va("%f",scale * 0.022));
-                }
+                cg.zoomSensitivity = tan(cg.refdef.fov_x * M_PI/360.0) /tan(cg_fovbase.value * M_PI/360.0)  ;
                 break;
             case 3:
                 cg.zoomSensitivity = cg.refdef.fov_x  /cg_fovbase.value ;
+                break;
+        }
+    } else {
+        // zoomed, set sensitivity lower to get the same mouse feel when zoomed, 
+        switch (cg_zoomSensitivityASmode.integer) {
+            default:
+            case 0:
+                // old q3 / openarena algorithm based on vertical fov
+                // cg.zoomSensitivity = cg_zoomSensitivityAScorrection.value * cg.refdef.fov_y / cg_fovbasevertical.value;
+                cg.zoomSensitivity = cg_zoomSensitivityAScorrection.value * cg.refdef.fov_y / 75.0;
+                break;
+            case 1:
+            case 2:
+                cg.zoomSensitivity = cg_zoomSensitivityAScorrection.value * tan(cg.refdef.fov_x * M_PI/360.0) /tan(cg_fovbase.value * M_PI/360.0)  ;
+                break;
+            case 3:
+                cg.zoomSensitivity = cg_zoomSensitivityAScorrection.value * cg.refdef.fov_x  /cg_fovbase.value ;
                 break;
         }
     }
