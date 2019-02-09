@@ -1121,6 +1121,8 @@ void CountVotes( void );
 //
 // g_mapcycle.c
 //
+void G_GotoNextMapCycle ( void );
+char *G_GetNextMapCycle ( char *map );
 char *G_GetNextMap ( char *map );
 void G_GetMapfile ( char *map );
 qboolean G_mapIsVoteable ( char* map );
@@ -1396,6 +1398,7 @@ extern vmCvar_t     g_muteSpec;
 
 extern vmCvar_t	    g_mapcycle;
 extern vmCvar_t	    g_useMapcycle;
+extern vmCvar_t	    g_mapcycleposition;
 
 extern vmCvar_t	    g_allowMultiview;
 extern vmCvar_t	    g_disableSpecs;

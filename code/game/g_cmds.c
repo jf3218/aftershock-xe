@@ -2825,8 +2825,9 @@ void Cmd_Ref_f( gentity_t *ent ) {
 
         if ( g_useMapcycle.integer ) {
             trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
-            Com_sprintf(command, sizeof( command ),"map %s", G_GetNextMap(mapname));
-            Com_sprintf(command, sizeof( command ),"map %s ; set g_lockArena %i", G_GetNextMap(mapname), G_GetMapLockArena(G_GetNextMap(mapname)));
+            Com_sprintf(command, sizeof( command ),"nextmapcycle");
+            //Com_sprintf(command, sizeof( command ),"map %s", G_GetNextMapCycle(mapname));
+            //Com_sprintf(command, sizeof( command ),"map %s ; set g_lockArena %i", G_GetNextMap(mapname), G_GetMapLockArena(G_GetNextMap(mapname)));
             // XXX
         }
         else {
@@ -3244,9 +3245,10 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 
         if(g_useMapcycle.integer) {
             trap_Cvar_VariableStringBuffer("mapname", mapname, sizeof(mapname));
-            Com_sprintf(level.voteString, sizeof( level.voteString ),"map %s ; set g_lockArena %i", G_GetNextMap(mapname), G_GetMapLockArena(G_GetNextMap(mapname)));
-            G_Printf("%s\n",level.voteString);
-	        Com_sprintf(level.voteDisplayString, sizeof( level.voteDisplayString ), "%s (%s)", "Next map?", G_GetNextMap(mapname));
+            Com_sprintf(level.voteString, sizeof( level.voteString ),"nextmapcycle");
+            //Com_sprintf(level.voteString, sizeof( level.voteString ),"map %s ; set g_lockArena %i", G_GetNextMap(mapname), G_GetMapLockArena(G_GetNextMap(mapname)));
+            //G_Printf("%s\n",level.voteString);
+	        Com_sprintf(level.voteDisplayString, sizeof( level.voteDisplayString ), "%s (%s)", "Next map?", G_GetNextMapCycle(mapname));
         } else {
             trap_Cvar_VariableStringBuffer( "nextmap", s, sizeof(s) );
             if(!*s) {
