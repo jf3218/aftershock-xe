@@ -413,7 +413,7 @@ void G_SendStats( gentity_t *ent ) {
 	char		entry[2048];
 	char		string[2800];
 	int			stringlength;
-	int			i, j;
+	int			i, j, num = 0;
 	gclient_t	*cl;
 	int			numSorted;
 
@@ -459,13 +459,18 @@ void G_SendStats( gentity_t *ent ) {
 			cl->rewards[REWARD_SPAWNKILL]*/); //TOO much for the engine
 
 		j = strlen(entry);
-		if (stringlength + j > 2048)
-			break;
+		if (stringlength + j > 1000) {
+        // split over several packets
+        trap_SendServerCommand( ent-g_entities, va("prestatistics %i %s", num, string ) );
+        stringlength=0;
+        num = 0;
+    }
 		strcpy (string + stringlength, entry);
 		stringlength += j;
+    num++;
 	}
 
-	trap_SendServerCommand( ent-g_entities, va("statistics %i %s", i, string ) );
+	trap_SendServerCommand( ent-g_entities, va("statistics %i %s", num, string ) );
 }
 
 void G_StartServerDemos( void ) {

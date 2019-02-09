@@ -2377,6 +2377,8 @@ void CheckExitRules( void ) {
 		}
 #else
 		if ( level.time - level.intermissionQueued >= INTERMISSION_DELAY_TIME ) {
+        // if the intermission is already queued and the score gets to a tie we should
+        // overtime instead
 			level.intermissionQueued = 0;
 			BeginIntermission();
 		}
