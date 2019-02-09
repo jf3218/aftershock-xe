@@ -2130,6 +2130,8 @@ void CG_InitConsoleCommands( void );
 //
 // cg_servercmds.c
 //
+extern int  clientStatsPresent;
+
 void CG_ExecuteNewServerCommands( int latestSequence );
 void CG_ParseServerinfo( void );
 void CG_SetConfigValues( void );
