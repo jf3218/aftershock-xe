@@ -584,6 +584,8 @@ typedef struct {
 	int			voteYes;
 	int			voteNo;
 	int			numVotingClients;		// set by CountVotes
+  // map voting
+  int     mapVote;
 
 	// team voting state
 	char		teamVoteString[2][MAX_STRING_CHARS];
@@ -720,6 +722,8 @@ void RewardMessage(gentity_t *ent, int reward, int rewardCount);
 
 void G_SendAllItems( void );
 void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum, int clientNum );
+
+void Cmd_MapVote_f (gentity_t *ent);
 
 void G_SendEndGame( void );
 void G_SendStartGame( void );
@@ -998,6 +1002,8 @@ void DominationPointStatusMessage( gentity_t *ent );
 void ChallengeMessage( gentity_t *ent, int challengeNumber );
 void SendCustomVoteCommands(int clientNum);
 void G_JoinArena( gentity_t *ent, int newArena );
+void G_CallMapVote_f( void );
+void Cmd_CallMapVote_f( gentity_t *ent  );
 
 //
 // g_pweapon.c
@@ -1117,6 +1123,7 @@ int allowedVote(char *commandStr);
 int allowedRef(char *commandStr);
 void CheckVote( void );
 void CountVotes( void );
+void G_PickMap_f ( void );
 
 //
 // g_mapcycle.c

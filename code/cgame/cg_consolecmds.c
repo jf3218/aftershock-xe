@@ -802,6 +802,7 @@ void CG_InitConsoleCommands( void ) {
   trap_AddCommand("zoomed");
   // multimap select arena
   trap_AddCommand("arena");
+  trap_AddCommand("callmapvote");
   // gtv commands for tabcompletion
   // gtv normal commands
   trap_AddCommand("gtv_watch");
