@@ -443,7 +443,7 @@ static void CG_PreParseStatistics ( void ) {
     for ( i = clientStatsPresent ; i < clientStatsPresent+numStats ; i++ ) {
 
         for ( j = 0; j < STATISTIC_MAX; j++ ) {
-            clientStats[i][j] = atoi ( CG_Argv ( i * NUM_DATA_STATS + FIRST_DATA_STATS + 1 + j ) );
+            clientStats[i][j] = atoi ( CG_Argv ( (i-clientStatsPresent) * NUM_DATA_STATS + FIRST_DATA_STATS + 1 + j ) );
         }
     }
     clientStatsPresent = i;
@@ -491,7 +491,7 @@ static void CG_ParseStatistics ( void ) {
     for ( i = clientStatsPresent ; i < clientStatsPresent+numStats ; i++ ) {
 
         for ( j = 0; j < STATISTIC_MAX; j++ ) {
-            clientStats[i][j] = atoi ( CG_Argv ( i * NUM_DATA_STATS + FIRST_DATA_STATS + 1 + j ) );
+            clientStats[i][j] = atoi ( CG_Argv ( (i-clientStatsPresent) * NUM_DATA_STATS + FIRST_DATA_STATS + 1 + j ) );
         }
     }
     clientStatsPresent = i;
