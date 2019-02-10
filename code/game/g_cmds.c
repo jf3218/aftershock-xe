@@ -2965,11 +2965,9 @@ G_CallMapVote_f
 ==================
 */
 void G_CallMapVote_f( void ) {
-    char*	c;
     int		i,j;
     char	arg1[MAX_STRING_TOKENS];
     char	arg2[MAX_STRING_TOKENS];
-    //char	arg3[MAX_STRING_TOKENS];
     int curarg;
     char  entry[256];
     char  string[256];
@@ -2978,18 +2976,14 @@ void G_CallMapVote_f( void ) {
 
 
     trap_Argv( 1, arg1, sizeof( arg1 ) );
-    //trap_Argv( 2, arg2, sizeof( arg2 ) );
-    //trap_Argv( 3, arg3, sizeof( arg3 ) );
     
-    if (strlen(arg1)!=1 || arg1[0]<'0' || arg1[0]>'9') {
+    if (strlen(arg1)!=1 || arg1[0]<'2' || arg1[0]>'9') {
         G_Printf("callmapvote: not like that\n");
         return;
     } else {
       level.mapVote = atoi(arg1);
     }
 
-    // sanity check arg1
-    //
     Com_sprintf (entry, sizeof(entry), "%i ",
             level.mapVote);
     j = strlen(entry);
@@ -3011,6 +3005,10 @@ void G_CallMapVote_f( void ) {
             // not enough maps as parameter
             level.mapVote = i;
             string[0]='0'+i;
+            if (i<2) {
+                G_Printf("callmapvote: not enough maps\n");
+                return;
+            }
             break;
         }
 
@@ -3050,6 +3048,41 @@ Cmd_CallMapVote_f
 ==================
 */
 void Cmd_CallMapVote_f( gentity_t *ent ) {
+    if ( !g_allowVote.integer ) {
+        trap_SendServerCommand( ent-g_entities, "print \"Voting not allowed here.\n\"" );
+        return;
+    }
+    
+    if( g_allowVote.integer == 3 ) {
+	if ( level.warmupTime != -1 ){
+	    trap_SendServerCommand( ent-g_entities, "print \"Voting only allowed during warmup.\n\"" );
+	    return;
+	}
+    }
+
+    if ( level.voteTime ) {
+        trap_SendServerCommand( ent-g_entities, "print \"A vote is already in progress.\n\"" );
+        return;
+    }
+    if ( ent->client->pers.voteCount >= MAX_VOTE_COUNT ) {
+        trap_SendServerCommand( ent-g_entities, "print \"You have called the maximum number of votes.\n\"" );
+        return;
+    }
+    if ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
+        trap_SendServerCommand( ent-g_entities, "print \"Not allowed to call a vote as spectator.\n\"" );
+        return;
+    }
+    if( level.time < g_disableVotingTime.integer * 1000 ) {
+        trap_SendServerCommand( ent-g_entities, va( "print \"You have to wait %i seconds to call a vote.\n\"", g_disableVotingTime.integer ) );
+        return;
+    }
+    if( g_allowVote.integer == 2  ){
+        if ( level.warmupTime != -1 ){
+            trap_SendServerCommand( ent-g_entities, "print \"Voting maps only allowed during warmup.\n\"" );
+            return;
+        }
+    }
+
     trap_SendServerCommand( -1, va("print \"%s called a vote.\n\"", ent->client->pers.netname ) );
     G_CallMapVote_f();
 }
