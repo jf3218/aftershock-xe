@@ -2961,6 +2961,101 @@ void Cmd_Ref_f( gentity_t *ent ) {
 
 /*
 ==================
+G_CallMapVote_f
+==================
+*/
+void G_CallMapVote_f( void ) {
+    char*	c;
+    int		i,j;
+    char	arg1[MAX_STRING_TOKENS];
+    char	arg2[MAX_STRING_TOKENS];
+    //char	arg3[MAX_STRING_TOKENS];
+    int curarg;
+    char  entry[256];
+    char  string[256];
+    int stringlength=0;
+    int arena;
+
+
+    trap_Argv( 1, arg1, sizeof( arg1 ) );
+    //trap_Argv( 2, arg2, sizeof( arg2 ) );
+    //trap_Argv( 3, arg3, sizeof( arg3 ) );
+    
+    if (strlen(arg1)!=1 || arg1[0]<'0' || arg1[0]>'9') {
+        G_Printf("callmapvote: not like that\n");
+        return;
+    } else {
+      level.mapVote = atoi(arg1);
+    }
+
+    // sanity check arg1
+    //
+    Com_sprintf (entry, sizeof(entry), "%i ",
+            level.mapVote);
+    j = strlen(entry);
+    strcpy (string + stringlength, entry);
+    stringlength += j;
+    curarg = 2;
+    for (i=0;i<level.mapVote;i++) {
+        trap_Argv( curarg, arg1, sizeof( arg1 ) );
+        trap_Argv( curarg+1, arg2, sizeof( arg2 ) );
+        if (strlen(arg2)!=1 || arg2[0]<'0' || arg2[0]>'9') {
+            arena = 0;
+            curarg++;
+        } else {
+            curarg+=2;
+            arena = atoi(arg2);
+        }
+
+        if (!strlen(arg1)) {
+            // not enough maps as parameter
+            level.mapVote = i;
+            string[0]='0'+i;
+            break;
+        }
+
+        Com_sprintf (entry, sizeof(entry), "%s %i ",
+                arg1,arena);
+        j = strlen(entry);
+        strcpy (string + stringlength, entry);
+        stringlength += j;
+    }
+
+    Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Select Map: %s", string );
+    Com_sprintf( level.voteString, sizeof( level.voteString ), "__pickmap %s", string );
+
+
+    // start the voting
+    level.voteTime = level.time;
+    level.voteYes = 0;
+    level.voteNo = 0;
+
+    for ( i = 0 ; i < level.maxclients ; i++ ) {
+        level.clients[i].ps.eFlags &= ~EF_VOTED;
+        level.clients[i].vote = 0;
+    }
+    //Do a first count to make sure that numvotingclients is correct!
+    CountVotes(); // this also sets CS_VOTE_YES
+
+    trap_SetConfigstring( CS_VOTE_TIME, va("%i", level.voteTime ) );
+    trap_SetConfigstring( CS_VOTE_STRING, level.voteDisplayString );
+    //trap_SetConfigstring( CS_VOTE_YES, va("%i", level.voteYes ) );
+    //trap_SetConfigstring( CS_VOTE_YES, va("%i", level.voteYes ) );
+    trap_SetConfigstring( CS_VOTE_NO, va("%i", level.voteNo ) );
+}
+
+/*
+==================
+Cmd_CallMapVote_f
+==================
+*/
+void Cmd_CallMapVote_f( gentity_t *ent ) {
+    trap_SendServerCommand( -1, va("print \"%s called a vote.\n\"", ent->client->pers.netname ) );
+    G_CallMapVote_f();
+}
+
+/*
+==================
 Cmd_CallVote_f
 ==================
 */
@@ -3391,6 +3486,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
     level.voteTime = level.time;
     level.voteYes = 1;
     level.voteNo = 0;
+    level.mapVote = 0;
 
     for ( i = 0 ; i < level.maxclients ; i++ ) {
         level.clients[i].ps.eFlags &= ~EF_VOTED;
@@ -4137,6 +4233,7 @@ commands_t cmds[ ] =
     // communication commands
     { "tell", CMD_MESSAGE, Cmd_Tell_f, qtrue },
     { "callvote", CMD_MESSAGE, Cmd_CallVote_f, qtrue },
+    { "callmapvote", CMD_MESSAGE, Cmd_CallMapVote_f, qtrue },
     { "callteamvote", CMD_MESSAGE|CMD_TEAM, Cmd_CallTeamVote_f, qtrue },
     { "coinflip", CMD_MESSAGE , Cmd_Coinflip_f, qtrue },
     // can be used even during intermission

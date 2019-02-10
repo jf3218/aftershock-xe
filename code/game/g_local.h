@@ -1002,6 +1002,8 @@ void DominationPointStatusMessage( gentity_t *ent );
 void ChallengeMessage( gentity_t *ent, int challengeNumber );
 void SendCustomVoteCommands(int clientNum);
 void G_JoinArena( gentity_t *ent, int newArena );
+void G_CallMapVote_f( void );
+void Cmd_CallMapVote_f( gentity_t *ent  );
 
 //
 // g_pweapon.c

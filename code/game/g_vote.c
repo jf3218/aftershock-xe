@@ -412,7 +412,7 @@ void CheckVote( void ) {
 			// execute the command, then remove the vote
 			trap_SendServerCommand( -1, "print \"Vote passed.\n\"" );
 			level.voteExecuteTime = level.time + 3000;
-		} else if ( level.voteNo >= (level.numVotingClients)/2 ) {
+		} else if ( level.voteNo >0 && level.voteNo >= (level.numVotingClients)/2 ) {
 			// same behavior as a timeout
 			trap_SendServerCommand( -1, "print \"Vote failed.\n\"" );
 		} else {
@@ -457,7 +457,7 @@ void G_PickMap_f ( void ) {
   }
   i = str[0]-'0';
   if (i!=nummaps || str[1]!=' ') {
-      G_Printf("pickmap expected different nummaps in CS_VOTE_YES\n");
+      G_Printf("pickmap expected different nummaps in CS_VOTE_YES %s\n",str);
       return;
   }
   // use i to scan the CS_VOTE_YES string, num is the current option we are looking at
@@ -470,14 +470,14 @@ void G_PickMap_f ( void ) {
           if (str[i-1]!=' ' && tmp>winamount) {
               winner=num;
               winamount=tmp;
-              tmp=0;
-              num++;
           } 
+          tmp=0;
+          num++;
       } else if (str[i]>='0' && str[i]<='9') {
           tmp*=10;
           tmp += str[i]-'0';
       } else {
-          G_Printf("pickmap expected different data in CS_VOTE_YES\n");
+          G_Printf("pickmap expected different data in CS_VOTE_YES %s\n",str);
           return;
       }
 
@@ -485,7 +485,7 @@ void G_PickMap_f ( void ) {
   }
   // the last trailing space in CS_VOTE_YES will set num one higher than the nummaps
   if (num!=nummaps+1) {
-      G_Printf("pickmap expected different nummaps in CS_VOTE_YES\n");
+      G_Printf("pickmap expected different nummaps, found %i not %i after in CS_VOTE_YES %s\n",num,nummaps,str);
       return;
   }
 
@@ -496,13 +496,13 @@ void G_PickMap_f ( void ) {
 
   // winner found
   // arena
-	trap_Argv( 1 + ((winner-1)*2) + 1, str, sizeof( str ) );
+	trap_Argv( 2 + ((winner-1)*2) + 1, str, sizeof( str ) );
   if ( strlen(str) != 1 || str[0]<'0' || str[0]>'9' ) {
-      G_Printf("pickmap lockarena or 0 expected at arg %i\n", 1 + ((winner-1)*2) + 1);
+      G_Printf("pickmap lockarena or 0 expected at arg %i\n", 2 + ((winner-1)*2) + 1);
       return;
   }
   arena = atoi(str);
-	trap_Argv( 1 + ((winner-1)*2) + 0, str, sizeof( str ) );
+	trap_Argv( 2 + ((winner-1)*2) + 0, str, sizeof( str ) );
 
   if (arena > 0) {
       trap_SendConsoleCommand( EXEC_APPEND, va("map %s; g_lockArena %i",str,arena));
@@ -575,7 +575,7 @@ void CountVotes( void ) {
         strcpy (string + stringlength, entry);
         stringlength += j;
         // next in string voteamount for each map
-        for (i=0;i<level.mapVote+1;i++) {
+        for (i=1;i<level.mapVote+1;i++) {
             if(mapVotes[i]>winamount) {
                 //winner = i;
                 winamount = mapVotes[i];
