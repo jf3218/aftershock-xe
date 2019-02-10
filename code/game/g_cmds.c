@@ -1584,8 +1584,8 @@ void Cmd_Arena_f( gentity_t *ent ) {
     char		s[MAX_TOKEN_CHARS];
     qboolean    force;
     gentity_t *intermission;
-    int clientNum;
-    clientNum = ent-g_entities;
+    //int clientNum;
+    //clientNum = ent-g_entities;
 
     if (!level.multiArenaMap) {
             trap_SendServerCommand( ent-g_entities, "print \"not a multiarena map\n\"" );
@@ -3417,6 +3417,69 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 
 /*
 ==================
+Cmd_MapVote_f
+called indirectly from Cmd_Vote_f
+when a map choose vote is going on.
+==================
+*/
+void Cmd_MapVote_f( gentity_t *ent ) {
+    char		msg[64];
+    int     intention = -1;
+    if ( !level.voteTime || !level.mapVote ) {
+        trap_SendServerCommand( ent-g_entities, "print \"No map vote in progress.\n\"" );
+        return;
+    }
+    if ( ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
+        trap_SendServerCommand( ent-g_entities, "print \"Not allowed to vote as spectator.\n\"" );
+        return;
+    }
+    trap_Argv( 1, msg, sizeof( msg ) );
+
+    if (!strlen(msg)) {
+        trap_SendServerCommand( ent-g_entities, "print \"Vote for which map?.\n\"" );
+        return;
+    }
+
+    if ( msg[0] == 'y' || msg[1] == 'Y' || msg[1] == '1' ) {
+        //ent->client->vote = 1;
+        intention = 1;
+    } else {
+        if ( msg[0] > '0' && msg[0] <= '9') {
+            intention = msg[0] - '0';
+        } else {
+            intention = -1;
+        }
+        //ent->client->vote = -1;
+    }
+
+    if (intention < 1 || intention > level.mapVote) {
+        trap_SendServerCommand( ent-g_entities, va("print \"Vote for which map?. %i is not an option.\n\"" , intention ) );
+        return;
+    }
+
+    if ( ent->client->ps.eFlags & EF_VOTED ) {
+        // remove previous vote if different
+        if (intention == ent->client->vote ) {
+            return;
+        }
+        //trap_SendServerCommand( ent-g_entities, "print \"Vote already cast.\n\"" );
+        //return;
+    }
+    ent->client->ps.eFlags |= EF_VOTED;
+    trap_SendServerCommand( ent-g_entities, "print \"Vote cast.\n\"" );
+
+    ent->client->vote = intention;
+    //Re count the votes
+    CountVotes();
+    // XXX
+
+    // a majority will be determined in CheckVote, which will also account
+    // for players entering or leaving
+}
+
+
+/*
+==================
 Cmd_Vote_f
 ==================
 */
@@ -3425,6 +3488,10 @@ void Cmd_Vote_f( gentity_t *ent ) {
 
     if ( !level.voteTime ) {
         trap_SendServerCommand( ent-g_entities, "print \"No vote in progress.\n\"" );
+        return;
+    }
+    if ( level.mapVote ) {
+        Cmd_MapVote_f( ent );
         return;
     }
     if ( ent->client->ps.eFlags & EF_VOTED ) {
