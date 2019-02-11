@@ -1273,7 +1273,11 @@ static void CG_ConfigStringModified ( void ) {
         cgs.voteTime = atoi ( str );
         cgs.voteModified = qtrue;
     } else if ( num == CS_VOTE_YES ) {
-        cgs.voteYes = atoi ( str );
+        if (strlen(str)==1) {
+            cgs.voteYes = atoi ( str );
+        } else {
+            Q_strncpyz ( cgs.voteYesString, str, sizeof ( cgs.voteYesString ) );
+        }
         cgs.voteModified = qtrue;
     } else if ( num == CS_VOTE_NO ) {
         cgs.voteNo = atoi ( str );
