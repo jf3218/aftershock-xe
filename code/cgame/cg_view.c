@@ -1024,6 +1024,7 @@ static void CG_AddMultiviewWindow( stereoFrame_t stereoView ) {
     cg.snap->ps.stats[STAT_ARMOR] = armor;
     cg.snap->ps.persistant[PERS_TEAM] = team;
     cg_entities[cg.snap->ps.clientNum].currentState.weapon = weapon;
+    cg.renderingThirdPerson = qfalse;
 
     for ( i = WP_MACHINEGUN ; i <= WP_BFG; i++ ) {
         cg.snap->ps.ammo[i] = ammo[i-WP_MACHINEGUN];
