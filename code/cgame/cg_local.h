@@ -1328,6 +1328,7 @@ typedef struct {
 
 	int				voteTime;
 	int				voteYes;
+	char			voteYesString[MAX_STRING_TOKENS];
 	int				voteNo;
 	qboolean		voteModified;			// beep whenever changed
 	char			voteString[MAX_STRING_TOKENS];

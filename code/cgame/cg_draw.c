@@ -3785,6 +3785,8 @@ CG_DrawVoteMap
 */
 static void CG_DrawVoteMap ( void ) {
     char	*s;
+    char  *votes;
+    int   tmp;
     qhandle_t levelshot;
     char mapstring[MAX_TOKEN_CHARS];
 
@@ -3831,8 +3833,10 @@ static void CG_DrawVoteMap ( void ) {
         xsize = 640 / nummaps;
         yoffset = 480 - xsize;
         s+=2;
+        votes = cgs.voteYesString + 2;
         for (j=0;j<nummaps;j++) {
             i=0;
+            tmp=0;
             Com_sprintf ( mapstring, sizeof ( mapstring ), "%s", s );
             while (mapstring[i]!=0 && i<32) {
                 if (mapstring[i]=='?' || mapstring[i]==',' ||
@@ -3850,8 +3854,15 @@ static void CG_DrawVoteMap ( void ) {
             arena=s[0]-'0';
             s+=2;
 
+            while (votes[0]!=' ') {
+                tmp *= 10;
+                tmp += votes[0]-'0';
+                votes++;
+            }
+            votes++;
 
-            CG_Printf("%i %s found\n",nummaps,mapstring);
+
+            //CG_Printf("%i %s found\n",nummaps,mapstring);
             levelshot = trap_R_RegisterShaderNoMip( va( "levelshots/%s.tga", mapstring ) );
             if ( !levelshot ) {
                 levelshot = trap_R_RegisterShaderNoMip( "menu/art/unknownmap" );
@@ -3859,13 +3870,27 @@ static void CG_DrawVoteMap ( void ) {
             trap_R_SetColor( NULL );
             //CG_DrawPic( 0, 0, 100, 100 , levelshot );
             CG_DrawPic( j*xsize, yoffset, xsize, xsize , levelshot );
-            CG_DrawSmallString ( j*xsize + 10, yoffset+10, mapstring, 1.0F );
+            CG_DrawSmallString ( j*xsize + 10, yoffset+7, mapstring, 1.0F );
             Com_sprintf ( mapstring, sizeof ( mapstring ), "\\vote %i", j+1 );
-            CG_DrawSmallString ( j*xsize + 10, yoffset+xsize-15, mapstring, 1.0F );
+            CG_DrawSmallString ( j*xsize + 10, yoffset+xsize-18, mapstring, 1.0F );
             if (arena > 0) {
                 Com_sprintf ( mapstring, sizeof ( mapstring ), "arena %i", arena );
                 CG_DrawSmallString ( j*xsize + 10, yoffset+22, mapstring, 1.0F );
             }
+            if (tmp>0) {
+                // people voted for this map, draw checks
+                char entry[3];
+                int len;
+                Com_sprintf ( mapstring, sizeof ( mapstring ), S_COLOR_GREEN  );
+                Com_sprintf ( entry, sizeof ( entry ), "v"  );
+                len = strlen(mapstring);
+                for (i=0;i<tmp;i++) {
+                    strcpy (mapstring + len, entry);
+                    len++;
+                }
+                CG_DrawSmallString ( j*xsize + xsize - (tmp*7) - 10, yoffset+xsize-37, mapstring, 1.0F );
+            }
+                
         }
     }
 }
