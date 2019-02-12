@@ -686,7 +686,7 @@ typedef struct {
     int   multiArenaMap;     // support for rocketarena, 0 if not
     int   curMultiArenaMap;
     int   multiArenasWithSpawns;
-    int leavedead[MAX_CLIENTS]; // redrover
+    int leavedead[MAX_CLIENTS]; // bench
     
 } level_locals_t;
 
@@ -931,7 +931,7 @@ void G_TimeShiftOneClient( gentity_t *ent );
 team_t TeamCount( int ignoreClientNum, int team );
 team_t TeamLivingCount( int ignoreClientNum, int team ); //Elimination
 team_t TeamHealthCount( int ignoreClientNum, int team ); //Elimination
-//void RespawnRedRoverAllDead(qboolean onlydead); //For round elimination under redrover
+//void RespawnBenchAllDead(qboolean onlydead); //For round elimination under bench
 void RespawnAll(void); //For round elimination
 void RespawnDead(void);
 void EnableWeapons(void);
@@ -1391,7 +1391,7 @@ extern vmCvar_t	    g_statsPath;
 extern vmCvar_t	    g_teamLock;
 extern vmCvar_t     g_redLocked;
 extern vmCvar_t	    g_blueLocked;
-extern vmCvar_t     g_redrover;
+extern vmCvar_t     g_bench;
 
 extern vmCvar_t	    g_reduceRailDamage;
 extern vmCvar_t	    g_reduceLightningDamage;

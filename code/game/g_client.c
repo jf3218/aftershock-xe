@@ -800,14 +800,14 @@ team_t TeamHealthCount(int ignoreClientNum, int team ) {
 
 /*
 ================
-RespawnRedRoverAllDead
+RespawnBenchAllDead
 
 Forces all or dead clients to respawn,
-but takes redrover rules into account.
+but takes bench rules into account.
 ================
 */
 
-void RespawnRedRoverAllDead(qboolean onlydead)
+void RespawnBenchAllDead(qboolean onlydead)
 {
 	int i,j;
   int k,l;
@@ -840,7 +840,7 @@ void RespawnRedRoverAllDead(qboolean onlydead)
           if ( level.clients[i].sess.sessionTeam != team ) {
               continue;
           }
-          // we found a client of the team that needs redrovering
+          // we found a client of the team that needs benching
           // skip players that survived
           if ( level.clients[i].isEliminated == qfalse ){
               continue;
@@ -906,7 +906,7 @@ void RespawnRedRoverAllDead(qboolean onlydead)
                       level.clients[i].lastKilledTime = level.lastRoundStartTime + 10;
                       level.clients[i].respawnTime = level.roundStartTime + 10;
                       //level.clients[i].isEliminated = qtrue; 
-                      G_Printf("killing %s dead for redrover\n" , client->client->pers.netname);
+                      G_Printf("killing %s dead for bench\n" , client->client->pers.netname);
                       break;
                   }
                   l++;
@@ -917,7 +917,7 @@ void RespawnRedRoverAllDead(qboolean onlydead)
 
 	for(i=0;i<level.maxclients;i++)
   {
-      qboolean redroverspec = qfalse;
+      qboolean benchspec = qfalse;
 
       if ( level.clients[i].pers.connected == CON_DISCONNECTED ) {
           continue;
@@ -937,11 +937,11 @@ void RespawnRedRoverAllDead(qboolean onlydead)
       }
       for (j=0;j<numleavedead;j++) {
           if (level.leavedead[j]==i) {
-              redroverspec=qtrue;
+              benchspec=qtrue;
               break;
           }
       }
-      if (redroverspec) {
+      if (benchspec) {
           // not playing this round
           if (!onlydead) {
               // only send this once
@@ -973,8 +973,8 @@ void RespawnAll(void)
 {
 	int i;
 	gentity_t	*client;
-  if (g_redrover.integer) {
-      RespawnRedRoverAllDead(qfalse);
+  if (g_bench.integer) {
+      RespawnBenchAllDead(qfalse);
       return;
   }
 	for(i=0;i<level.maxclients;i++)
@@ -1010,8 +1010,8 @@ void RespawnDead(void)
 {
 	int i;
 	gentity_t	*client;
-  if (g_redrover.integer) {
-      RespawnRedRoverAllDead(qtrue);
+  if (g_bench.integer) {
+      RespawnBenchAllDead(qtrue);
       return;
   }
 	for(i=0;i<level.maxclients;i++)
