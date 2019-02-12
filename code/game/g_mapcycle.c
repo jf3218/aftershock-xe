@@ -296,6 +296,33 @@ static int G_getNextMapNumber ( int i ) {
 
 /*
 =================
+G_mapChooser
+=================
+*/
+void G_mapChooser( int num ) {
+    int i,j;
+    int from;
+    int stringlength;
+    char entry[64];
+    char string[MAX_TOKEN_CHARS];
+    from = rand() % mapcycle.mapcycleCount; 
+    
+    Com_sprintf (string, sizeof(string), "callmapvote %i ", num);
+    stringlength = strlen(string);
+    for (i=0;i<num;i++) {
+        j = (from+i)%mapcycle.mapcycleCount;
+
+        Com_sprintf (entry, sizeof(entry), "%s %i ",
+                mapcycle.maps[j],mapcycle.lockarena[j]);
+        j = strlen(entry);
+        strcpy (string + stringlength, entry);
+        stringlength += j;
+    }
+    trap_SendConsoleCommand(EXEC_APPEND,string);
+}
+
+/*
+=================
 G_GetMapLockArena
 finds the current mapnumber and
 returns the next possible

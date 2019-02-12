@@ -2353,13 +2353,24 @@ void CheckExitRules( void ) {
 	// if at the intermission, wait for all non-bots to
 	// signal ready, then go to next level
 	if ( level.intermissiontime ) {
-		if( ( level.time > level.intermissiontime + 2000 ) && ( !level.endgameSend ) ){
+		if( ( level.time > level.intermissiontime + 500 ) && ( !level.endgameSend ) ){
 			//G_StopServerDemo();
 			G_SendEndGame();
 			if( g_writeStats.integer )
 				G_WriteXMLStats();
 			G_StopServerDemos();
 		}
+		if( (g_useMapcycle.integer >= 2) &&  ( level.time > level.intermissiontime + 3000 )  ){
+       if (level.voteTime ||level.voteExecuteTime) {
+          return;
+       } else {
+          if ( ( level.time - level.intermissiontime < 4000 ) ) {
+              G_mapChooser(5);
+          } else {
+              ExitLevel();
+          }
+       }
+    }
 		CheckIntermissionExit ();
 		return;
 	} else {

@@ -1124,6 +1124,7 @@ int allowedRef(char *commandStr);
 void CheckVote( void );
 void CountVotes( void );
 void G_PickMap_f ( void );
+void G_mapChooser( int num );
 
 //
 // g_mapcycle.c

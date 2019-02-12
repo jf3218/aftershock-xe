@@ -3554,6 +3554,7 @@ when a map choose vote is going on.
 void Cmd_MapVote_f( gentity_t *ent ) {
     char		msg[64];
     int     intention = -1;
+    //G_Printf("voting for map\n");
     if ( !level.voteTime || !level.mapVote ) {
         trap_SendServerCommand( ent-g_entities, "print \"No map vote in progress.\n\"" );
         return;
@@ -4259,7 +4260,7 @@ commands_t cmds[ ] =
     // normal commands
     { "team", 0, Cmd_Team_f, qtrue },
     { "arena", 0, Cmd_Arena_f, qtrue },
-    { "vote", 0, Cmd_Vote_f, qtrue },
+    { "vote", CMD_INTERMISSION, Cmd_Vote_f, qtrue },
     /*{ "ignore", 0, Cmd_Ignore_f },
     { "unignore", 0, Cmd_Ignore_f },*/
 

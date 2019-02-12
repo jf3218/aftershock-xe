@@ -4399,6 +4399,7 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 
     if ( cg.snap->ps.pm_type == PM_INTERMISSION ) {
         CG_DrawIntermission();
+        CG_DrawVoteMap();
         CG_DrawChat ( qtrue );
 	
 	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 ) {
