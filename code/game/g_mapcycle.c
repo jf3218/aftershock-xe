@@ -310,7 +310,9 @@ void G_mapChooser( int num ) {
     Com_sprintf (string, sizeof(string), "callmapvote %i ", num);
     stringlength = strlen(string);
     for (i=0;i<num;i++) {
-        j = (from+i)%mapcycle.mapcycleCount;
+        //j = (from+i)%mapcycle.mapcycleCount;
+        j = G_getNextMapNumber(from);
+        from = j;
 
         Com_sprintf (entry, sizeof(entry), "%s %i ",
                 mapcycle.maps[j],mapcycle.lockarena[j]);
