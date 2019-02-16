@@ -296,6 +296,35 @@ static int G_getNextMapNumber ( int i ) {
 
 /*
 =================
+G_mapChooser
+=================
+*/
+void G_mapChooser( int num ) {
+    int i,j;
+    int from;
+    int stringlength;
+    char entry[64];
+    char string[MAX_TOKEN_CHARS];
+    from = rand() % mapcycle.mapcycleCount; 
+    
+    Com_sprintf (string, sizeof(string), "callmapvote %i ", num);
+    stringlength = strlen(string);
+    for (i=0;i<num;i++) {
+        //j = (from+i)%mapcycle.mapcycleCount;
+        j = G_getNextMapNumber(from);
+        from = j;
+
+        Com_sprintf (entry, sizeof(entry), "%s %i ",
+                mapcycle.maps[j],mapcycle.lockarena[j]);
+        j = strlen(entry);
+        strcpy (string + stringlength, entry);
+        stringlength += j;
+    }
+    trap_SendConsoleCommand(EXEC_APPEND,string);
+}
+
+/*
+=================
 G_GetMapLockArena
 finds the current mapnumber and
 returns the next possible
@@ -319,6 +348,55 @@ int G_GetMapLockArena ( char *map ) {
 
 	return mapcycle.lockarena[ i ];
 }
+
+/*
+=================
+G_GotoNextMapCycle
+finds the next possible
+map in the cycle
+and goto it
+=================
+*/
+void G_GotoNextMapCycle ( void ) {
+    int i;
+
+    if (mapcycle.mapcycleCount < g_mapcycleposition.integer) {
+        trap_Cvar_Set("g_mapcycleposition","0");
+    }
+    i = G_getNextMapNumber (g_mapcycleposition.integer) ;
+    if (mapcycle.mapcycleCount <= i) {
+      trap_SendConsoleCommand( EXEC_APPEND, va("map_restart")) ;
+      return;
+    }
+
+
+    trap_Cvar_Set("g_mapcycleposition",va("%i",i));
+    trap_Cvar_Set("g_lockArena",va("%i", mapcycle.lockarena[ i ]));
+
+    trap_SendConsoleCommand( EXEC_APPEND, va("map %s", mapcycle.maps[i ])) ;
+}
+
+
+/*
+=================
+G_GetNextMapCycle
+finds the current mapnumber and
+returns the next possible
+map in the cycle
+=================
+*/
+char *G_GetNextMapCycle ( char *map ) {
+
+	if ( mapcycle.mapcycleCount == 0 )
+		return map;
+
+  if (mapcycle.mapcycleCount < g_mapcycleposition.integer) {
+      trap_Cvar_Set("g_mapcycleposition","0");
+  }
+
+	return mapcycle.maps[G_getNextMapNumber (g_mapcycleposition.integer) ];
+}
+
 
 /*
 =================
@@ -648,6 +726,9 @@ void G_LoadMapcycle ( void ) {
 			}
 		}
 	}
+  if (mapcycle.mapcycleCount < g_mapcycleposition.integer) {
+      trap_Cvar_Set("g_mapcycleposition","0");
+  }
 
 	mapcycle.allAllowed = allAllowed;
 }

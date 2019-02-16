@@ -1,4 +1,56 @@
 # AfterShock XE Changelog
+## 2019-02-12 [Revision 328]
+- Fixed a bug when the server would crash when a player enters the 
+minefield on ra3mp7 map.
+- `switchserverforce` now supports `*` to move all clients to another 
+server at once.
+- Fixed a bug when the timer would get offset for clients after a 
+timeout
+- Added Bench mode. Set `g_bench` to `1` to activate it.
+If teams are uneven, it will leave players dead next round to have
+equal sized teams. Players get a message when they dont get to play a
+round.  
+There's a priority list for players to play next round:
+  - players that survived last round,
+  - players that did not play last round, the longer not played
+the more preferred,
+  - players that survived longest last round.
+
+So the first person on the team to die will sit on the bench (spectate)
+next round. If the whole team survived the benched player remains on
+the bench.  
+Bench mode was currently only tested on `g_gametype 8` so leave it at
+`0` on other gametypes for now.
+- Added a number of alternative ways to calculate sensitivity depending 
+on the FOV.
+  - cg_zoomSensitivityASmode selects what algorithm is used:
+    - `0` (default) - old Quake 3 and OA algorithm based for
+    calculating zoom sensitivity based on vertical FOV,
+    - `1` - calculates zoom sensitivity based on the formula from this
+    page:
+    https://openarena.fandom.com/wiki/Configuration_examples/Scale_mouse_sensitivity_with_zoom,
+    - `2` - based on the above formula but also calculated when
+    unzoomed for people with a different FOV for each weapon,
+    - `3` - similar to the old Q3/OA algorithm but based on horizontal
+    FOV instead and also calculated when unzoomed.
+  - `g_zoomSensitivityAScorrection` sets the factor applied after the 
+  algorithm to do fine tuning (default is `1.0`).
+  - `cg_fovbase` - assumes the `sensitivity` is set for this horizontal
+  FOV.
+- Fixed a bug when `.html` stats files would not get saved on CTF and 
+TDM.
+- Now after a map was voted and played, the rotation resumes from the 
+same point.
+- It's now possible to add the same map to the rotation several times
+or add several arenas from the same RA3 map.
+- Added TAB completion for [GTV 
+commands](http://www.geeteevee.com/gtvreadme.php#commands).
+- Added an option for map selector at the end of a map.
+Set `g_useMapcycle` to `2` to activate it. It will present players with
+5 maps from the `mapcycle` section of mapcycle config. Players should
+use `vote <1-5>` to cast their vote for a next map.
+- Crosshair is now shown in multiview mode.
+
 ## 2019-01-21 [Revision 327]
 - Fixed a bug when One Flag Capture's white flag was displayed in other 
 modes on some maps.
@@ -26,7 +78,7 @@ Usage: `switchserverforce <client number> <ip:port>`.
   If you just do `callvote <RA3 map name>` without specifying a number 
   of the arena it will keep `g_lockArena` on the same value it used to
   have.
-  - RA3 map's arena can be added to mapcycle config with `<ra3 map 
+  - RA3 map's arena can be added to mapcycle config with `<RA3 map 
   name> <minimum number of players> <maximum number of players> <arena 
   number>`, for example `ra3map20 6 10 4`.
 - Added a posibility to use custom votes without the word `custom`.
@@ -87,8 +139,8 @@ time.
 
 ## 2018-09-12 [Revision 323]
 - Added an option for spectators to see when players use zoom:
-  - `cg_spectatorZoom 1` (default) = on,
-  - `cg_spectatorZoom 0` = off (old behavior).
+  - `cg_spectatorZoom 1` (default) - on,
+  - `cg_spectatorZoom 0` - off (old behavior).
 - Improved demos compatibility with
 [q3mme](https://github.com/entdark/q3mme) by moving changes to the
 bottom of the event and item list so that the other elements are in the
@@ -154,13 +206,13 @@ places on some maps.
 - Added support for shooting projectiles through teleports with two new
 cvars.
   - `g_allowProjectileTeleport` is a bitmask:
-     - bit `0` = rockets,
-     - bit `1` = plasma,
-     - bit `2` = grenades.  
+     - bit `0` - rockets,
+     - bit `1` - plasma,
+     - bit `2` - grenades.  
   Examples:
-     - `7` => allow all three (default),
-     - `1` => allow only rockets,
-     - `3` => allow rockets and grenades.
+     - `7` - allow all three (default),
+     - `1` - allow only rockets,
+     - `3` - allow rockets and grenades.
   - `g_projectileTeleportKeepAngle` controls the angle of the
 projectile.
     - If this is set to `1` (default), the projectile will go out of
@@ -294,6 +346,7 @@ Sets a multiplier for `g_gravity`, default value is `1`.
 gone.
 - Now compiles with GCC-4.8+.
 
+[Revision 328]:https://github.com/Irbyz/aftershock-xe/compare/327...328
 [Revision 327]:https://github.com/Irbyz/aftershock-xe/compare/326...327
 [Revision 326]:https://github.com/Irbyz/aftershock-xe/compare/325...326
 [Revision 325]:https://github.com/Irbyz/aftershock-xe/compare/324...325

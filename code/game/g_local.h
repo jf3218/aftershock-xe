@@ -584,6 +584,8 @@ typedef struct {
 	int			voteYes;
 	int			voteNo;
 	int			numVotingClients;		// set by CountVotes
+  // map voting
+  int     mapVote;
 
 	// team voting state
 	char		teamVoteString[2][MAX_STRING_CHARS];
@@ -684,7 +686,7 @@ typedef struct {
     int   multiArenaMap;     // support for rocketarena, 0 if not
     int   curMultiArenaMap;
     int   multiArenasWithSpawns;
-    int leavedead[MAX_CLIENTS]; // redrover
+    int leavedead[MAX_CLIENTS]; // bench
     
 } level_locals_t;
 
@@ -720,6 +722,8 @@ void RewardMessage(gentity_t *ent, int reward, int rewardCount);
 
 void G_SendAllItems( void );
 void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum, int clientNum );
+
+void Cmd_MapVote_f (gentity_t *ent);
 
 void G_SendEndGame( void );
 void G_SendStartGame( void );
@@ -927,7 +931,7 @@ void G_TimeShiftOneClient( gentity_t *ent );
 team_t TeamCount( int ignoreClientNum, int team );
 team_t TeamLivingCount( int ignoreClientNum, int team ); //Elimination
 team_t TeamHealthCount( int ignoreClientNum, int team ); //Elimination
-//void RespawnRedRoverAllDead(qboolean onlydead); //For round elimination under redrover
+//void RespawnBenchAllDead(qboolean onlydead); //For round elimination under bench
 void RespawnAll(void); //For round elimination
 void RespawnDead(void);
 void EnableWeapons(void);
@@ -998,6 +1002,8 @@ void DominationPointStatusMessage( gentity_t *ent );
 void ChallengeMessage( gentity_t *ent, int challengeNumber );
 void SendCustomVoteCommands(int clientNum);
 void G_JoinArena( gentity_t *ent, int newArena );
+void G_CallMapVote_f( void );
+void Cmd_CallMapVote_f( gentity_t *ent  );
 
 //
 // g_pweapon.c
@@ -1117,10 +1123,14 @@ int allowedVote(char *commandStr);
 int allowedRef(char *commandStr);
 void CheckVote( void );
 void CountVotes( void );
+void G_PickMap_f ( void );
+void G_mapChooser( int num );
 
 //
 // g_mapcycle.c
 //
+void G_GotoNextMapCycle ( void );
+char *G_GetNextMapCycle ( char *map );
 char *G_GetNextMap ( char *map );
 void G_GetMapfile ( char *map );
 qboolean G_mapIsVoteable ( char* map );
@@ -1381,7 +1391,7 @@ extern vmCvar_t	    g_statsPath;
 extern vmCvar_t	    g_teamLock;
 extern vmCvar_t     g_redLocked;
 extern vmCvar_t	    g_blueLocked;
-extern vmCvar_t     g_redrover;
+extern vmCvar_t     g_bench;
 
 extern vmCvar_t	    g_reduceRailDamage;
 extern vmCvar_t	    g_reduceLightningDamage;
@@ -1396,6 +1406,7 @@ extern vmCvar_t     g_muteSpec;
 
 extern vmCvar_t	    g_mapcycle;
 extern vmCvar_t	    g_useMapcycle;
+extern vmCvar_t	    g_mapcycleposition;
 
 extern vmCvar_t	    g_allowMultiview;
 extern vmCvar_t	    g_disableSpecs;
