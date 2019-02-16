@@ -23,10 +23,11 @@
 //#include <linux/mm.h>
 //#include <linux/types.h>
 //#include <crypto/sha.h>
+#include "sha.h"
 //#include <asm/byteorder.h>
 
-#define u32 unsigned int
-#define u8 unsigned char
+
+#include "g_local.h"
 
 static inline u32 Ch(u32 x, u32 y, u32 z)
 {
@@ -37,6 +38,21 @@ static inline u32 Maj(u32 x, u32 y, u32 z)
 {
 	return (x & y) | (z & (x | y));
 }
+
+#define __be32 u32
+#define __be64 u64
+
+static inline __be64 __be64_to_cpu(__be64 x) {
+    return x;
+}
+
+#define cpu_to_be64 __be64_to_cpu
+
+static inline __be32 __be32_to_cpu(__be32 x) {
+    return x;
+}
+
+#define cpu_to_be32 __be32_to_cpu
 
 #define e0(x)       (ror32(x, 2) ^ ror32(x,13) ^ ror32(x,22))
 #define e1(x)       (ror32(x, 6) ^ ror32(x,11) ^ ror32(x,25))
@@ -340,6 +356,7 @@ static int sha256_import(struct shash_desc *desc, const void *in)
 	return 0;
 }
 
+/*
 static struct shash_alg sha256_algs[2] = { {
 	.digestsize	=	SHA256_DIGEST_SIZE,
 	.init		=	sha256_init,
@@ -371,6 +388,8 @@ static struct shash_alg sha256_algs[2] = { {
 	}
 } };
 
+*/
+
 static int __init sha256_generic_mod_init(void)
 {
 	return crypto_register_shashes(sha256_algs, ARRAY_SIZE(sha256_algs));
@@ -381,6 +400,9 @@ static void __exit sha256_generic_mod_fini(void)
 	crypto_unregister_shashes(sha256_algs, ARRAY_SIZE(sha256_algs));
 }
 
+/*
+ * linux kernel module hooks
+ * not needed in q3 mod
 module_init(sha256_generic_mod_init);
 module_exit(sha256_generic_mod_fini);
 
@@ -389,3 +411,5 @@ MODULE_DESCRIPTION("SHA-224 and SHA-256 Secure Hash Algorithm");
 
 MODULE_ALIAS("sha224");
 MODULE_ALIAS("sha256");
+
+*/

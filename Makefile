@@ -1765,6 +1765,7 @@ Q3GOBJ_ = \
   $(B)/baseq3/game/g_utils.o \
   $(B)/baseq3/game/g_vote.o \
   $(B)/baseq3/game/g_weapon.o \
+	$(B)/baseq3/game/sha256_generic.o \
   \
   $(B)/baseq3/qcommon/q_math.o \
   $(B)/baseq3/qcommon/q_shared.o
