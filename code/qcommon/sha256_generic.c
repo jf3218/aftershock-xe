@@ -27,7 +27,8 @@
 //#include <asm/byteorder.h>
 
 
-#include "g_local.h"
+//#include "g_local.h"
+#include "q_shared.h"
 
 static u32 Ch(u32 x, u32 y, u32 z)
 {
@@ -397,7 +398,7 @@ static int sha256_import(struct shash_desc *desc, const void *in)
 */
 
 
-char *G_SHA256String( const char *in )
+char *Com_SHA256String( const char *in )
 {
 	static char final[65] = {""};
 	unsigned char digest[32] = {""}; 
