@@ -724,6 +724,7 @@ void G_SendAllItems( void );
 void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum, int clientNum );
 
 void Cmd_MapVote_f (gentity_t *ent);
+void G_sha256_f( void );
 
 void G_SendEndGame( void );
 void G_SendStartGame( void );
@@ -965,6 +966,9 @@ typedef struct MD5Context {
 } MD5_CTX;
 
 char *G_MD5String( const char *in );
+
+// sha256_generic.c
+char *G_SHA256String( const char *in );
 //
 // g_svcmds.c
 //

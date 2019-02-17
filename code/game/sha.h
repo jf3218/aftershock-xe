@@ -6,7 +6,7 @@
 #define _CRYPTO_SHA_H
 
 //#include <linux/types.h>
-#define u64 unsigned long
+#define u64 unsigned long long int
 #define u32 unsigned int
 #define u8 unsigned char
 //typedef unsigned long u64
@@ -97,8 +97,11 @@ struct sha512_state {
 };
 
 //struct shash_desc;
+struct shash_desc {
+    struct sha256_state s2s;
+};
 
-typedef sha256_state shash_desc;
+//typedef struct sha256_state shash_desc;
 
 extern int crypto_sha1_update(struct shash_desc *desc, const u8 *data,
 			      unsigned int len);

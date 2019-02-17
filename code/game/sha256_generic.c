@@ -29,6 +29,28 @@
 
 #include "g_local.h"
 
+#ifndef Q3_BIG_ENDIAN
+	#define byteReverse(buf, len)	/* Nothing */
+#else
+	static void byteReverse(unsigned char *buf, unsigned longs);
+
+	/*
+	 * Note: this code is harmless on little-endian machines.
+	 */
+	static void byteReverse(unsigned char *buf, unsigned longs)
+	{
+	    unsigned int t;
+	    do {
+		t = (unsigned int)
+			((unsigned) buf[3] << 8 | buf[2]) << 16 |
+			((unsigned) buf[1] << 8 | buf[0]);
+		*(unsigned int *) buf = t;
+		buf += 4;
+	    } while (--longs);
+	}
+#endif // Q3_BIG_ENDIAN
+
+
 static u32 Ch(u32 x, u32 y, u32 z)
 {
 	return z ^ (x & (y ^ z));
@@ -39,21 +61,35 @@ static u32 Maj(u32 x, u32 y, u32 z)
 	return (x & y) | (z & (x | y));
 }
 
+#ifdef WORDS_BIGENDIAN
+# define SWAP(n) (n)
+#else
+# define SWAP(n) \
+    (((n) << 24) | (((n) & 0xff00) << 8) | (((n) >> 8) & 0xff00) | ((n) >> 24))
+#endif
+
 #define __be32 u32
 #define __be64 u64
 
 static __be64 __be64_to_cpu(__be64 x) {
-    return x;
+    __be64 y = x;
+    //byteReverse((u8 *)&y,1);
+    y = SWAP(x);
+    return y;
 }
 
 #define cpu_to_be64 __be64_to_cpu
+#define __sbe64 sizeof(__be64)/4
 
 static __be32 __be32_to_cpu(__be32 x) {
-    return x;
+    __be32 y = x;
+    //byteReverse((u8 *)&y,__sbe64);
+    y = SWAP(x);
+    return y;
 }
 
 static u32 ror32(u32 x,u8 i){
-    return ((x >> i) + (x << (32-i)));
+    return ((x >> i) | (x << (32-i)));
 }
 
 #define cpu_to_be32 __be32_to_cpu
@@ -91,13 +127,17 @@ static void sha256_transform(u32 *state, const u8 *input)
 	a=state[0];  b=state[1];  c=state[2];  d=state[3];
 	e=state[4];  f=state[5];  g=state[6];  h=state[7];
 
+  G_Printf("%i %i %i %i %i %i %i %i \n",a ,b, c , d,e,f,g,h);
 	/* now iterate */
 	t1 = h + e1(e) + Ch(e,f,g) + 0x428a2f98 + W[ 0];
 	t2 = e0(a) + Maj(a,b,c);    d+=t1;    h=t1+t2;
+  G_Printf("%i %i %i %i %i %i %i %i W0: %i\n",a ,b, c , d,e,f,g,h, W[ 0 ]);
 	t1 = g + e1(d) + Ch(d,e,f) + 0x71374491 + W[ 1];
 	t2 = e0(h) + Maj(h,a,b);    c+=t1;    g=t1+t2;
+  G_Printf("%i %i %i %i %i %i %i %i W1: %i\n",a ,b, c , d,e,f,g,h, W[ 1 ]);
 	t1 = f + e1(c) + Ch(c,d,e) + 0xb5c0fbcf + W[ 2];
 	t2 = e0(g) + Maj(g,h,a);    b+=t1;    f=t1+t2;
+  G_Printf("%i %i %i %i %i %i %i %i W2: %i\n",a ,b, c , d,e,f,g,h, W[ 2 ]);
 	t1 = e + e1(b) + Ch(b,c,d) + 0xe9b5dba5 + W[ 3];
 	t2 = e0(f) + Maj(f,g,h);    a+=t1;    e=t1+t2;
 	t1 = d + e1(a) + Ch(a,b,c) + 0x3956c25b + W[ 4];
@@ -123,11 +163,14 @@ static void sha256_transform(u32 *state, const u8 *input)
 	t2 = e0(d) + Maj(d,e,f);    g+=t1;    c=t1+t2;
 	t1 = b + e1(g) + Ch(g,h,a) + 0x9bdc06a7 + W[14];
 	t2 = e0(c) + Maj(c,d,e);    f+=t1;    b=t1+t2;
+  G_Printf("%i %i %i %i %i %i %i %i W14: %i\n",a ,b, c , d,e,f,g,h, W[ 14 ]);
 	t1 = a + e1(f) + Ch(f,g,h) + 0xc19bf174 + W[15];
 	t2 = e0(b) + Maj(b,c,d);    e+=t1;    a=t1+t2;
+  G_Printf("%i %i %i %i %i %i %i %i W15: %i\n",a ,b, c , d,e,f,g,h, W[ 15 ]);
 
 	t1 = h + e1(e) + Ch(e,f,g) + 0xe49b69c1 + W[16];
 	t2 = e0(a) + Maj(a,b,c);    d+=t1;    h=t1+t2;
+  G_Printf("%i %i %i %i %i %i %i %i W16: %i\n",a ,b, c , d,e,f,g,h, W[ 16 ]);
 	t1 = g + e1(d) + Ch(d,e,f) + 0xefbe4786 + W[17];
 	t2 = e0(h) + Maj(h,a,b);    c+=t1;    g=t1+t2;
 	t1 = f + e1(c) + Ch(c,d,e) + 0x0fc19dc6 + W[18];
@@ -231,14 +274,16 @@ static void sha256_transform(u32 *state, const u8 *input)
 	state[0] += a; state[1] += b; state[2] += c; state[3] += d;
 	state[4] += e; state[5] += f; state[6] += g; state[7] += h;
 
+  G_Printf("%i %i %i %i %i %i %i %i \n",a ,b, c , d,e,f,g,h);
+          
 	/* clear any sensitive info... */
 	a = b = c = d = e = f = g = h = t1 = t2 = 0;
 	memset(W, 0, 64 * sizeof(u32));
 }
 
+
 struct sha256_state * shash_desc_ctx(struct shash_desc *desc) {
-    static struct sha256_state desk;
-    return &desk;
+    return &desc->s2s;
 }
 
 static int sha224_init(struct shash_desc *desc)
@@ -285,6 +330,8 @@ int crypto_sha256_update(struct shash_desc *desc, const u8 *data,
 	done = 0;
 	src = data;
 
+  G_Printf("shaupdate %i\n",len);
+
 	if ((partial + len) > 63) {
 		if (partial) {
 			done = -partial;
@@ -300,6 +347,10 @@ int crypto_sha256_update(struct shash_desc *desc, const u8 *data,
 
 		partial = 0;
 	}
+  else {
+      // add some padding and go.
+			//sha256_transform(sctx->state, src);
+  }
 	memcpy(sctx->buf + partial, src, len - done);
 
 	return 0;
@@ -312,7 +363,7 @@ static int sha256_final(struct shash_desc *desc, u8 *out)
 {
 	struct sha256_state *sctx = shash_desc_ctx(desc);
 	__be32 *dst = (__be32 *)out;
-	__be64 bits;
+	__be64 bits,zerobits;
 	unsigned int index, pad_len;
 	int i;
 	static const u8 padding[64] = { 0x80, };
@@ -320,13 +371,19 @@ static int sha256_final(struct shash_desc *desc, u8 *out)
 	/* Save number of bits */
 	bits = cpu_to_be64(sctx->count << 3);
 
+  G_Printf("shafinal %i\n",bits);
 	/* Pad out to 56 mod 64. */
 	index = sctx->count & 0x3f;
 	pad_len = (index < 56) ? (56 - index) : ((64+56) - index);
 	crypto_sha256_update(desc, padding, pad_len);
 
 	/* Append length (before padding) */
+  if (sizeof(bits)==4) {
+     zerobits = 0;
+	   crypto_sha256_update(desc, (const u8 *)&zerobits, sizeof(zerobits));
+  }
 	crypto_sha256_update(desc, (const u8 *)&bits, sizeof(bits));
+
 
 	/* Store state in digest */
 	for (i = 0; i < 8; i++)
@@ -366,30 +423,39 @@ static int sha256_import(struct shash_desc *desc, const void *in)
 	return 0;
 }
 
-void G_sha256(char *in,char *out) {
-
-}
 
 char *G_SHA256String( const char *in )
 {
-	static char final[33] = {""};
-	unsigned char digest[16] = {""}; 
+	static char final[65] = {""};
+	unsigned char digest[32] = {""}; 
 	int i;
+  unsigned int j;
+  
 
-	MD5_CTX md5;
+	//MD5_CTX md5;
+  struct shash_desc sha;
 
 	Q_strncpyz( final, "", sizeof( final ) );
 
-	MD5Init(&md5);
+  j=1;
+  for (i=1;i<32;i++) {
+     // G_Printf("%i:   %i\n",i,ror32(j,i));
+  }
+	//MD5Init(&md5);
+  sha256_init(&sha);
 	
 	for(i=0;*(in+i); i++)
 	{}
 
-	MD5Update(&md5 , (const unsigned char* )in, i);
+  G_Printf("%i: %s\n", i, in);
+	//MD5Update(&md5 , (const unsigned char* )in, i);
+	crypto_sha256_update(&sha , (const unsigned char* )in, i);
 
-	MD5Final(&md5, digest);
+	//MD5Final(&md5, digest);
+	sha256_final(&sha, digest);
+
 	final[0] = '\0';
-	for(i = 0; i < 16; i++) {
+	for(i = 0; i < 32; i++) {
 		Q_strcat(final, sizeof(final), va("%02X", digest[i]));
 	}
 	return final;

@@ -2285,12 +2285,39 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 }
 
 
+void G_sha256_f( void ) {
+    char		*p;
+    char        arg[MAX_TOKEN_CHARS];
+
+    trap_Argv( 0, arg, sizeof( arg ) );
+
+    if ( trap_Argc( ) < 2 )
+        return;
+
+    p = G_SHA256String( ConcatArgs( 1 ));
+
+    G_Printf( "%s\n", p );
+}
 /*
 ==================
-Cmd_Say_f
-KK-OAX Modified this to trap the additional arguments from console.
+Cmd_sha_f
 ==================
 */
+static void Cmd_sha256_f( gentity_t *ent ) {
+    char		*p;
+    char        arg[MAX_TOKEN_CHARS];
+    int         mode = SAY_ALL;
+
+    trap_Argv( 0, arg, sizeof( arg ) );
+
+    if ( trap_Argc( ) < 2 )
+        return;
+
+    p = G_SHA256String( ConcatArgs( 1 ));
+
+    G_Say( ent, NULL, mode, p );
+}
+
 static void Cmd_Say_f( gentity_t *ent ) {
     char		*p;
     char        arg[MAX_TOKEN_CHARS];
@@ -4272,6 +4299,7 @@ commands_t cmds[ ] =
     { "coinflip", CMD_MESSAGE , Cmd_Coinflip_f, qtrue },
     // can be used even during intermission
     { "say", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Say_f, qtrue },
+    { "sha256", CMD_MESSAGE|CMD_INTERMISSION, Cmd_sha256_f, qtrue },
     { "say_team", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Say_f, qtrue },
     { "vsay", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f, qtrue },
     { "vsay_team", CMD_MESSAGE|CMD_INTERMISSION, Cmd_Voice_f, qtrue },
