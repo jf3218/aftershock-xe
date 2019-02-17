@@ -366,6 +366,34 @@ static int sha256_import(struct shash_desc *desc, const void *in)
 	return 0;
 }
 
+void G_sha256(char *in,char *out) {
+
+}
+
+char *G_SHA256String( const char *in )
+{
+	static char final[33] = {""};
+	unsigned char digest[16] = {""}; 
+	int i;
+
+	MD5_CTX md5;
+
+	Q_strncpyz( final, "", sizeof( final ) );
+
+	MD5Init(&md5);
+	
+	for(i=0;*(in+i); i++)
+	{}
+
+	MD5Update(&md5 , (const unsigned char* )in, i);
+
+	MD5Final(&md5, digest);
+	final[0] = '\0';
+	for(i = 0; i < 16; i++) {
+		Q_strcat(final, sizeof(final), va("%02X", digest[i]));
+	}
+	return final;
+}
 /*
  * linux kernel module hooks
  * not needed in q3 mod
