@@ -967,8 +967,8 @@ typedef struct MD5Context {
 
 char *G_MD5String( const char *in );
 
-// sha256_generic.c
-char *G_SHA256String( const char *in );
+// ../qcommon/sha256_generic.c
+char *Com_SHA256String( const char *in );
 //
 // g_svcmds.c
 //

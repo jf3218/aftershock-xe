@@ -2158,6 +2158,8 @@ void CG_ClearHud( void );
 void CG_LoadHudFile( const char* hudFile );
 void CG_WriteHudFile_f( void );
 
+// ../qcommon/sha256_generic.c
+char *Com_SHA256String( const char *in );
 
 //===============================================
 

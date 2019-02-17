@@ -275,6 +275,24 @@ static void CG_Revision_f( void ) {
 
 /*
 ==================
+CG_sha256_f
+
+Prints out the sha256 of the arguments
+==================
+*/
+void CG_sha256_f( void ) {
+    char		*p;
+    char        arg[MAX_TOKEN_CHARS];
+
+    trap_Argv( 0, arg, sizeof( arg ) );
+
+    p = Com_SHA256String( ConcatArgs( 1 ));
+
+    CG_Printf( "%s\n", p );
+}
+
+/*
+==================
 CG_CvarAdd_f
 
 Adds a value to a cvar (float)
@@ -693,6 +711,7 @@ static consoleCommand_t	commands[] = {
 	{ "autorecord", CG_StartOfGame },
 	{ "revision", CG_Revision_f },
 	{ "cvarAdd", CG_CvarAdd_f },
+	{ "sha256", CG_sha256_f },
 	{ "+chat", CG_ChatDown_f },
 	{ "-chat", CG_ChatUp_f }
 	
