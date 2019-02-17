@@ -29,12 +29,12 @@
 
 #include "g_local.h"
 
-static inline u32 Ch(u32 x, u32 y, u32 z)
+static u32 Ch(u32 x, u32 y, u32 z)
 {
 	return z ^ (x & (y ^ z));
 }
 
-static inline u32 Maj(u32 x, u32 y, u32 z)
+static u32 Maj(u32 x, u32 y, u32 z)
 {
 	return (x & y) | (z & (x | y));
 }
@@ -42,14 +42,18 @@ static inline u32 Maj(u32 x, u32 y, u32 z)
 #define __be32 u32
 #define __be64 u64
 
-static inline __be64 __be64_to_cpu(__be64 x) {
+static __be64 __be64_to_cpu(__be64 x) {
     return x;
 }
 
 #define cpu_to_be64 __be64_to_cpu
 
-static inline __be32 __be32_to_cpu(__be32 x) {
+static __be32 __be32_to_cpu(__be32 x) {
     return x;
+}
+
+static u32 ror32(u32 x,u8 i){
+    return ((x >> i) + (x << (32-i)));
 }
 
 #define cpu_to_be32 __be32_to_cpu
@@ -59,12 +63,12 @@ static inline __be32 __be32_to_cpu(__be32 x) {
 #define s0(x)       (ror32(x, 7) ^ ror32(x,18) ^ (x >> 3))
 #define s1(x)       (ror32(x,17) ^ ror32(x,19) ^ (x >> 10))
 
-static inline void LOAD_OP(int I, u32 *W, const u8 *input)
+static void LOAD_OP(int I, u32 *W, const u8 *input)
 {
 	W[I] = __be32_to_cpu( ((__be32*)(input))[I] );
 }
 
-static inline void BLEND_OP(int I, u32 *W)
+static void BLEND_OP(int I, u32 *W)
 {
 	W[I] = s1(W[I-2]) + W[I-7] + s0(W[I-15]) + W[I-16];
 }
@@ -232,6 +236,10 @@ static void sha256_transform(u32 *state, const u8 *input)
 	memset(W, 0, 64 * sizeof(u32));
 }
 
+struct sha256_state * shash_desc_ctx(struct shash_desc *desc) {
+    static struct sha256_state desk;
+    return &desk;
+}
 
 static int sha224_init(struct shash_desc *desc)
 {
@@ -296,7 +304,9 @@ int crypto_sha256_update(struct shash_desc *desc, const u8 *data,
 
 	return 0;
 }
+/*
 EXPORT_SYMBOL(crypto_sha256_update);
+ */
 
 static int sha256_final(struct shash_desc *desc, u8 *out)
 {
@@ -357,6 +367,11 @@ static int sha256_import(struct shash_desc *desc, const void *in)
 }
 
 /*
+ * linux kernel module hooks
+ * not needed in q3 mod
+ */
+
+/*
 static struct shash_alg sha256_algs[2] = { {
 	.digestsize	=	SHA256_DIGEST_SIZE,
 	.init		=	sha256_init,
@@ -388,7 +403,6 @@ static struct shash_alg sha256_algs[2] = { {
 	}
 } };
 
-*/
 
 static int __init sha256_generic_mod_init(void)
 {
@@ -400,9 +414,6 @@ static void __exit sha256_generic_mod_fini(void)
 	crypto_unregister_shashes(sha256_algs, ARRAY_SIZE(sha256_algs));
 }
 
-/*
- * linux kernel module hooks
- * not needed in q3 mod
 module_init(sha256_generic_mod_init);
 module_exit(sha256_generic_mod_fini);
 

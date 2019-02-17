@@ -9,6 +9,15 @@
 #define u64 unsigned long
 #define u32 unsigned int
 #define u8 unsigned char
+//typedef unsigned long u64
+//typedef unsigned int u32
+//typedef unsigned char u8
+//typedef long u64;
+//typedef int u32;
+//typedef char u8;
+//#define u64 long
+//#define u32 int
+//#define u8 char
 
 
 
