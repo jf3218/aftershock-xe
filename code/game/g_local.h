@@ -499,7 +499,7 @@ struct gclient_s {
 	int 			timeouts;
 	
 	char			aftershock_name[33];
-	char			aftershock_hash[33];
+	char			aftershock_hash[65];
 	
 	qboolean		referee;
 	
