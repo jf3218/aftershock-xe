@@ -499,7 +499,7 @@ struct gclient_s {
 	int 			timeouts;
 	
 	char			aftershock_name[33];
-	char			aftershock_hash[33];
+	char			aftershock_hash[65];
 	
 	qboolean		referee;
 	
@@ -724,6 +724,7 @@ void G_SendAllItems( void );
 void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum, int clientNum );
 
 void Cmd_MapVote_f (gentity_t *ent);
+void G_sha256_f( void );
 
 void G_SendEndGame( void );
 void G_SendStartGame( void );
@@ -965,6 +966,9 @@ typedef struct MD5Context {
 } MD5_CTX;
 
 char *G_MD5String( const char *in );
+
+// ../qcommon/sha256_generic.c
+char *Com_SHA256String( const char *in );
 //
 // g_svcmds.c
 //

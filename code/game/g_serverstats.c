@@ -149,7 +149,7 @@ static char *teamToChar ( int in ) {
 static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnected ) {
 	float time;
 	int count;
-	char cleanName[36], cleanAftershockName[36], cleanAftershockHash[36];
+	char cleanName[36], cleanAftershockName[36], cleanAftershockHash[72];
 	int i;
 	char demopath[MAX_QPATH];
 

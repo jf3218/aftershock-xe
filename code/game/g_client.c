@@ -2028,7 +2028,7 @@ void ClientBegin( int clientNum ) {
 	else
 		Q_strncpyz ( ent->client->aftershock_name, "", sizeof( ent->client->aftershock_name ) );
 	if( *Info_ValueForKey( userinfo, "aftershock_password" ) )
-		Q_strncpyz ( ent->client->aftershock_hash, G_MD5String(Info_ValueForKey( userinfo, "aftershock_password" )), sizeof( ent->client->aftershock_hash ) );
+		Q_strncpyz ( ent->client->aftershock_hash, Com_SHA256String(Info_ValueForKey( userinfo, "aftershock_password" )), sizeof( ent->client->aftershock_hash ) );
 	else
 		Q_strncpyz ( ent->client->aftershock_hash, "", sizeof( ent->client->aftershock_hash ) );
 	G_toSmallCaps(ent->client->aftershock_hash);
@@ -2120,7 +2120,7 @@ void ClientSpawn(gentity_t *ent) {
 	int		timeouts;
 	int 		lastKilledTime;
 	char		aftershock_name[33];
-	char		aftershock_hash[33];
+	char		aftershock_hash[65];
 	qboolean	referee;
 	qboolean 	mute[MAX_CLIENTS];
 	//qboolean 	sendSpawnpoints;
@@ -2373,9 +2373,11 @@ void ClientSpawn(gentity_t *ent) {
 	
 	for( i = 0; i < 33; i++ ){
 		aftershock_name[i] = client->aftershock_name[i];
+	}
+	for( i = 0; i < 65; i++ ){
 		aftershock_hash[i] = client->aftershock_hash[i];
 	}
-	
+
 	referee = client->referee;
 		
 	kills = client->kills;

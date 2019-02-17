@@ -2285,12 +2285,20 @@ void G_Say( gentity_t *ent, gentity_t *target, int mode, const char *chatText ) 
 }
 
 
-/*
-==================
-Cmd_Say_f
-KK-OAX Modified this to trap the additional arguments from console.
-==================
-*/
+void G_sha256_f( void ) {
+    char		*p;
+    char        arg[MAX_TOKEN_CHARS];
+
+    trap_Argv( 0, arg, sizeof( arg ) );
+
+    if ( trap_Argc( ) < 2 )
+        return;
+
+    p = Com_SHA256String( ConcatArgs( 1 ));
+
+    G_Printf( "%s\n", p );
+}
+
 static void Cmd_Say_f( gentity_t *ent ) {
     char		*p;
     char        arg[MAX_TOKEN_CHARS];
