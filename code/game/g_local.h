@@ -1081,6 +1081,10 @@ void Svcmd_GameMem_f( void );
 void G_WriteXMLStats( void );
 void G_SetGameString( void );
 
+//
+// g_minigames.c
+//
+void G_beginMinigame(void);
 
 //
 // g_session.c

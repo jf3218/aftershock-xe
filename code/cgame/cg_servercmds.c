@@ -2090,6 +2090,15 @@ static void CG_ServerCommand ( void ) {
         CG_AddToChat ( text );
         return;
     }
+    if ( !strcmp ( cmd, "secho" ) ) {
+        // do a screenPrint and consoleprint in one serverclient command
+        Q_strncpyz ( text, CG_Argv ( 1 ), MAX_SAY_TEXT );
+        CG_RemoveChatEscapeChar ( text );
+        CG_AddToChat ( text );
+        // add the \n in the console
+        CG_Printf ( "%s\n", CG_Argv ( 1 ) );
+        return;
+    }
     if ( !strcmp ( cmd, "chat" ) ) {
         if ( !cg_teamChatsOnly.integer && !cg_noChat.integer ) {
             if ( cg_chatBeep.integer )
