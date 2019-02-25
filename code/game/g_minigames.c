@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "g_local.h"
 
 int numwaypoints;
+int numwaypointsarena[9];
 int touchedWaypoints[MAX_CLIENTS];
 int lastTouchedNewWaypoint[MAX_CLIENTS];
 int numTouchedWaypoints[MAX_CLIENTS];
@@ -46,12 +47,6 @@ static void waypointAnimStart( gentity_t *player ) {
 	player->nextthink = level.time + TIMER_GESTURE;
 	player->think = waypointAnimStop;
 
-	/*
-	player->client->ps.events[player->client->ps.eventSequence & (MAX_PS_EVENTS-1)] = EV_TAUNT;
-	player->client->ps.eventParms[player->client->ps.eventSequence & (MAX_PS_EVENTS-1)] = 0;
-	player->client->ps.eventSequence++;
-	*/
-	//G_AddEvent(player, EV_TAUNT, 0);
 }
 
 /*
@@ -68,7 +63,10 @@ void Touch_MinigameWaypoint (gentity_t *waypoint, gentity_t *ent, trace_t *trace
   int mask;
   clientNum = ent-g_entities;
   wpnum = waypoint->count;
-  mask = 1 << (wpnum-1);
+  mask = 1 << (wpnum);
+  if (level.multiArenaMap) {
+    numwaypoints = numwaypointsarena[ent->client->curArena];
+  }
   if (touchedWaypoints[clientNum] & mask) {
       if (lastTouchedNewWaypoint[clientNum]+2000 < level.time) {
           // sendclient print already touched
@@ -83,6 +81,10 @@ void Touch_MinigameWaypoint (gentity_t *waypoint, gentity_t *ent, trace_t *trace
   lastTouchedNewWaypoint[clientNum] = level.time;
   trap_SendServerCommand(clientNum, va ("secho \"You found waypoint %i, that is %i of %i\"", wpnum, numTouchedWaypoints[clientNum], numwaypoints));
   waypointAnimStart(waypoint);
+	ent->client->ps.events[ent->client->ps.eventSequence & (MAX_PS_EVENTS-1)] = EV_TAUNT;
+	ent->client->ps.eventParms[ent->client->ps.eventSequence & (MAX_PS_EVENTS-1)] = 0;
+	ent->client->ps.eventSequence++;
+	G_AddEvent(ent, EV_TAUNT, 0);
   // detect if round complete;
   if (touchedWaypoints[clientNum] + 1 == (1 << numwaypoints)) {
     trap_SendServerCommand(clientNum, va ("secho \"Found all %i waypoints, reseting\"", numwaypoints));
@@ -188,19 +190,30 @@ void G_beginMinigame(void) {
 
 	spot = NULL;
 	
-	while ((spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != NULL && number < 32) {
-		
-		if( spot->flags & FL_NO_HUMANS )
-		{
-			continue;
-		}
-    if (number > 0) {
-		  //ent = SpawnWaypointOnSpot(spot,number);
-		  SpawnWaypointOnSpot(spot,number);
+  while ((spot = G_Find (spot, FOFS(classname), "info_player_deathmatch")) != NULL && number < 32) {
+
+    if( spot->flags & FL_NO_HUMANS )
+    {
+      continue;
     }
-    number++;
-	}
-  numwaypoints=number-1;
+    if (level.multiArenaMap) {
+      int arena;
+      //if (spot->r.singleClient != level.curMultiArenaMap) { }
+      arena = spot->r.singleClient;
+      number = numwaypointsarena[arena]++;
+      if (number < 32) {
+        SpawnWaypointOnSpot(spot,number);
+      }
+
+    } else {
+      if (number < 32) {
+        //ent = SpawnWaypointOnSpot(spot,number);
+        SpawnWaypointOnSpot(spot,number);
+      }
+      number++;
+    }
+  }
+  numwaypoints=number;
   // clear player data
   for (i=0; i<MAX_CLIENTS;i++) {
       touchedWaypoints[i] = 0;
