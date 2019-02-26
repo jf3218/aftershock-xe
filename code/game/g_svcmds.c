@@ -614,6 +614,7 @@ struct
   { "loadMapfile", qfalse, G_LoadMapfile_f },
   { "nextmapcycle", qfalse, G_GotoNextMapCycle },
   { "sha256", qfalse, G_sha256_f},
+  { "minigame", qfalse, G_beginMinigame},
   { "__pickmap", qfalse, G_PickMap_f},
   { "callmapvote", qfalse, G_CallMapVote_f}
 };
