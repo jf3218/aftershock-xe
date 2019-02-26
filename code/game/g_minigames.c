@@ -26,6 +26,8 @@ int numwaypoints;
 int numwaypointsarena[9];
 int touchedWaypoints[MAX_CLIENTS];
 int lastTouchedNewWaypoint[MAX_CLIENTS];
+int firstTouchedWaypointTime[MAX_CLIENTS];
+int startTouchedWaypointTime[MAX_CLIENTS];
 int numTouchedWaypoints[MAX_CLIENTS];
 
 static void waypointAnimStop( gentity_t *player ) {
@@ -49,6 +51,37 @@ static void waypointAnimStart( gentity_t *player ) {
 
 }
 
+void MinigameTouchmaskToString(int touchmask,char* string) {
+  int tmp;
+  int i = 0;
+  int mask = 1;
+  qboolean lastf = qtrue;
+  tmp = touchmask;
+  string[0] = 0;
+  strcat (string, "^7Found: ");
+  while (i<numwaypoints) {
+    if (i>0 && i % 10 == 0) {
+       strcat(string,va ("^7 %i + ",i ));
+       lastf = qtrue;
+    }
+    if ((tmp & mask) == mask) {
+       if (!lastf) {
+         strcat(string,"^7");
+       }
+       strcat(string,va ("%i",i %10));
+       lastf=qtrue;
+    } else {
+       if (lastf) {
+         strcat(string,"^1");
+       }
+       strcat(string,"X");
+       lastf=qfalse;
+    }
+    i++;
+    tmp >>= 1;
+  }
+}
+
 /*
 ===============
 Touch_MinigameWaypoint
@@ -61,6 +94,8 @@ void Touch_MinigameWaypoint (gentity_t *waypoint, gentity_t *ent, trace_t *trace
   int clientNum;
   int wpnum;
   int mask;
+  int msecs,secs,mins;
+  char string[256];
   clientNum = ent-g_entities;
   wpnum = waypoint->count;
   mask = 1 << (wpnum);
@@ -72,11 +107,17 @@ void Touch_MinigameWaypoint (gentity_t *waypoint, gentity_t *ent, trace_t *trace
           // sendclient print already touched
           trap_SendServerCommand(clientNum, va ("secho \"Already touched waypoint %i\"", wpnum));
           // reset the timer
+          MinigameTouchmaskToString(touchedWaypoints[clientNum],string);
+          trap_SendServerCommand(clientNum, va ("secho \"%s\"", string));
           lastTouchedNewWaypoint[clientNum] = level.time;
       }
       return;
   } 
   numTouchedWaypoints[clientNum]++;
+  if (numTouchedWaypoints[clientNum] == 1) {
+    firstTouchedWaypointTime[clientNum] = level.time;
+    startTouchedWaypointTime[clientNum] = level.time;
+  }
   touchedWaypoints[clientNum] |= mask;
   lastTouchedNewWaypoint[clientNum] = level.time;
   trap_SendServerCommand(clientNum, va ("secho \"You found waypoint %i, that is %i of %i\"", wpnum, numTouchedWaypoints[clientNum], numwaypoints));
@@ -87,10 +128,15 @@ void Touch_MinigameWaypoint (gentity_t *waypoint, gentity_t *ent, trace_t *trace
 	G_AddEvent(ent, EV_TAUNT, 0);
   // detect if round complete;
   if (touchedWaypoints[clientNum] + 1 == (1 << numwaypoints)) {
-    trap_SendServerCommand(clientNum, va ("secho \"Found all %i waypoints, reseting\"", numwaypoints));
+			msecs = level.time - startTouchedWaypointTime[clientNum];
+			secs = msecs/1000;
+			msecs -= secs*1000;
+			mins = secs/60;
+			secs -= mins*60;
+    trap_SendServerCommand(clientNum, va ("secho \"Found all %i waypoints in %i:%02i:%03i, reseting\"", numwaypoints,mins,secs,msecs));
     touchedWaypoints[clientNum] = mask;
     numTouchedWaypoints[clientNum]++;
-
+    startTouchedWaypointTime[clientNum] = level.time;
   }
 
 
