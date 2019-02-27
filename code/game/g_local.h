@@ -1064,6 +1064,7 @@ team_t G_TeamFromString( char *str );
 qboolean Team_GetDeathLocationMsg(gentity_t *ent, char *loc, int loclen);
 int G_FindNearestTeammate( gentity_t *ent );
 void TeamplaySpectatorMessage( void );
+void Team_CaptureFlagSound( gentity_t *ent, int team ) ;
 //KK-OAX Removed these in Code in favor of bg_alloc.c from Tremulous
 // g_mem.c
 //
