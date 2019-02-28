@@ -670,6 +670,8 @@ void G_SpawnEntitiesFromString( void ) {
 	while( G_ParseSpawnVars() ) {
 		G_SpawnGEntityFromSpawnVars();
 	}	
+  
+  G_LevelLoadComplete();
 
 	level.spawning = qfalse;			// any future calls to G_Spawn*() will be errors
 }

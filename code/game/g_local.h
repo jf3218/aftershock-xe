@@ -1034,6 +1034,7 @@ void LogExit( const char *string );
 void CheckTeamVote( int team );
 //void G_DemoCommand( demoCommand_t cmd, const char *string );
 qboolean ScoreIsTied( void );
+void G_LevelLoadComplete(void);
 
 //
 // g_client.c
@@ -1064,6 +1065,7 @@ team_t G_TeamFromString( char *str );
 qboolean Team_GetDeathLocationMsg(gentity_t *ent, char *loc, int loclen);
 int G_FindNearestTeammate( gentity_t *ent );
 void TeamplaySpectatorMessage( void );
+void Team_CaptureFlagSound( gentity_t *ent, int team ) ;
 //KK-OAX Removed these in Code in favor of bg_alloc.c from Tremulous
 // g_mem.c
 //
@@ -1247,6 +1249,7 @@ extern	vmCvar_t	g_weaponRespawn;
 extern	vmCvar_t	g_weaponTeamRespawn;
 extern	vmCvar_t	g_synchronousClients;
 extern	vmCvar_t	g_motd;
+extern  vmCvar_t	g_minigame;
 extern	vmCvar_t	g_warmup;
 extern	vmCvar_t	g_doWarmup;
 extern	vmCvar_t	g_gibs;

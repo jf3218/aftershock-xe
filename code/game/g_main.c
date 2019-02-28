@@ -69,6 +69,7 @@ vmCvar_t	g_weaponRespawn;
 vmCvar_t	g_weaponTeamRespawn;
 vmCvar_t	g_motd;
 vmCvar_t	g_synchronousClients;
+vmCvar_t	g_minigame;
 vmCvar_t	g_warmup;
 vmCvar_t	g_doWarmup;
 vmCvar_t	g_restarted;
@@ -389,6 +390,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_teamAutoJoin, "g_teamAutoJoin", "0", CVAR_ARCHIVE  },
 	{ &g_teamForceBalance, "g_teamForceBalance", "0", CVAR_ARCHIVE  },
 
+	{ &g_minigame, "g_minigame", "1", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_warmup, "g_warmup", "20", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_doWarmup, "g_doWarmup", "1", CVAR_CHEAT | CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_logfile, "g_log", "games.log", CVAR_ARCHIVE, 0, qfalse  },
@@ -2558,6 +2560,13 @@ void StartEliminationRound(void) {
 	}
 	
 }
+
+void G_LevelLoadComplete(void) {
+  if (level.warmupTime == -1 && g_minigame.integer) {
+    G_beginMinigame();
+  }
+}
+
 
 void G_SendEliminationStats( void ) {
 	int i;

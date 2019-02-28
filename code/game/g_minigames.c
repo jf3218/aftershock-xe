@@ -84,6 +84,26 @@ void MinigameTouchmaskToString(int touchmask,char* string) {
 
 /*
 ===============
+MinigameReward
+give quad damage, same number of seconds as score.
+
+
+===============
+*/
+void MinigameReward(gentity_t *ent,int score) {
+  // check if already quad
+  if (ent->client->ps.powerups[PW_QUAD]) {
+    ent->client->ps.powerups[PW_QUAD] += score*1000; 
+  } else {
+    ent->client->ps.powerups[PW_QUAD] = level.time + score*1000 - (level.time % 1000); 
+    ent->client->quadKills = 0;
+  }
+  trap_SendServerCommand( ent-g_entities, va( "quadKill %i", ent->client->quadKills ) );
+}
+
+
+/*
+===============
 Touch_MinigameWaypoint
 
 ===============
@@ -133,7 +153,9 @@ void Touch_MinigameWaypoint (gentity_t *waypoint, gentity_t *ent, trace_t *trace
 			msecs -= secs*1000;
 			mins = secs/60;
 			secs -= mins*60;
-    trap_SendServerCommand(-1, va ("secho \"%s^7 Found all %i waypoints in %i:%02i:%03i, reseting\"", ent->client->pers.netname, numwaypoints,mins,secs,msecs));
+    trap_SendServerCommand(-1, va ("secho \"%s^7 Found all %i waypoints in %i:%02i:%03i\"", ent->client->pers.netname, numwaypoints,mins,secs,msecs));
+    Team_CaptureFlagSound(ent,ent->client->sess.sessionTeam);
+    MinigameReward(ent,numTouchedWaypoints[clientNum]);
     touchedWaypoints[clientNum] = mask;
     numTouchedWaypoints[clientNum]++;
     startTouchedWaypointTime[clientNum] = level.time;
