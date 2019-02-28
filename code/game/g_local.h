@@ -1034,6 +1034,7 @@ void LogExit( const char *string );
 void CheckTeamVote( int team );
 //void G_DemoCommand( demoCommand_t cmd, const char *string );
 qboolean ScoreIsTied( void );
+void G_LevelLoadComplete(void);
 
 //
 // g_client.c
@@ -1248,6 +1249,7 @@ extern	vmCvar_t	g_weaponRespawn;
 extern	vmCvar_t	g_weaponTeamRespawn;
 extern	vmCvar_t	g_synchronousClients;
 extern	vmCvar_t	g_motd;
+extern  vmCvar_t	g_minigame;
 extern	vmCvar_t	g_warmup;
 extern	vmCvar_t	g_doWarmup;
 extern	vmCvar_t	g_gibs;
