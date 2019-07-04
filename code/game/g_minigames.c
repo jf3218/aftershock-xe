@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "g_local.h"
+#include "inv.h"
 
 int numwaypoints;
 int numwaypointsarena[9];
@@ -183,7 +184,8 @@ static gentity_t *SpawnWaypointOnSpot(  gentity_t *ent, int place ) {
 	waypoint->classname = "minigame_waypoint";
 	//waypoint->client = ent->client;
 	//waypoint->s = ent->s;
-	waypoint->s.eType = ET_PLAYER;		// could be ET_INVISIBLE
+	//waypoint->s.eType = ET_PLAYER;		// could be ET_INVISIBLE
+	waypoint->s.eType = ET_ITEM;		// could be ET_INVISIBLE
 	waypoint->s.eFlags = 0;				// clear EF_TALK, etc
 	waypoint->s.powerups = 0;			// clear powerups
 	waypoint->s.loopSound = 0;			// clear lava burning
@@ -197,7 +199,8 @@ static gentity_t *SpawnWaypointOnSpot(  gentity_t *ent, int place ) {
 	waypoint->s.legsAnim = LEGS_IDLE;
 	waypoint->s.torsoAnim = TORSO_STAND;
   //waypoint->s.modelindex = MODELINDEX_QUAD;
-	waypoint->s.modelindex = G_ModelIndex( "models/powerups/teleporter/tele_enter.md3" );
+  waypoint->s.modelindex = MODELINDEX_HEALTHMEGA;
+	//waypoint->s.modelindex = G_ModelIndex( "models/powerups/teleporter/tele_enter.md3" );
 	if( waypoint->s.weapon == WP_NONE ) {
 		waypoint->s.weapon = WP_MACHINEGUN;
 	}
