@@ -4275,6 +4275,7 @@ commands_t cmds[ ] =
     // communication commands
     { "tell", CMD_MESSAGE, Cmd_Tell_f, qtrue },
     { "callvote", CMD_MESSAGE, Cmd_CallVote_f, qtrue },
+    { "cv", CMD_MESSAGE, Cmd_CallVote_f, qtrue },
     { "callmapvote", CMD_MESSAGE, Cmd_CallMapVote_f, qtrue },
     { "callteamvote", CMD_MESSAGE|CMD_TEAM, Cmd_CallTeamVote_f, qtrue },
     { "coinflip", CMD_MESSAGE , Cmd_Coinflip_f, qtrue },
