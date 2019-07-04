@@ -1688,7 +1688,7 @@ static void CG_RegisterGraphics( void ) {
 	Q_strncpyz(items, CG_ConfigString(CS_ITEMS), sizeof(items));
 
 	for ( i = 1 ; i < bg_numItems ; i++ ) {
-		if ( items[ i ] == '1' || cg_buildScript.integer ) {
+		if ( items[ i ] == '1' || cg_buildScript.integer || i==7) {
 			CG_LoadingItem( i );
 			CG_RegisterItemVisuals( i );
 		}
