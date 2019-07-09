@@ -1225,7 +1225,7 @@ void Cmd_Coinflip_f( gentity_t *ent ) {
     //string = "Heads"; // gives compiler error
     //string = "Tails";
 
-    if (rand() % 2) {
+    if ((rand() >> 1) % 2) {
     //if ( g_startWhenReady.integer == 3 ) {
         trap_SendServerCommand(-1,va("screenPrint \"Coinflip called by %s" S_COLOR_WHITE " resulted in %s\"",ent->client->pers.netname , S_COLOR_BLUE "H" S_COLOR_GREEN "eads")  );
         trap_SendServerCommand(-1,va("print \"Coinflip called by %s" S_COLOR_WHITE " resulted in %s\"" ,ent->client->pers.netname, S_COLOR_BLUE "H" S_COLOR_GREEN "eads\n" ));
