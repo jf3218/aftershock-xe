@@ -275,6 +275,24 @@ static void CG_Revision_f( void ) {
 
 /*
 ==================
+CG_sha256_f
+
+Prints out the sha256 of the arguments
+==================
+*/
+void CG_sha256_f( void ) {
+    char		*p;
+    char        arg[MAX_TOKEN_CHARS];
+
+    trap_Argv( 0, arg, sizeof( arg ) );
+
+    p = Com_SHA256String( ConcatArgs( 1 ));
+
+    CG_Printf( "%s\n", p );
+}
+
+/*
+==================
 CG_CvarAdd_f
 
 Adds a value to a cvar (float)
@@ -693,6 +711,7 @@ static consoleCommand_t	commands[] = {
 	{ "autorecord", CG_StartOfGame },
 	{ "revision", CG_Revision_f },
 	{ "cvarAdd", CG_CvarAdd_f },
+	{ "sha256", CG_sha256_f },
 	{ "+chat", CG_ChatDown_f },
 	{ "-chat", CG_ChatUp_f }
 	
@@ -766,6 +785,7 @@ void CG_InitConsoleCommands( void ) {
 	trap_AddCommand ("addbot");
 	trap_AddCommand ("setviewpos");
 	trap_AddCommand ("callvote");
+	trap_AddCommand ("cv");
 	trap_AddCommand ("coinflip");
 	trap_AddCommand ("getmappage");
 	trap_AddCommand ("vote");
@@ -799,8 +819,42 @@ void CG_InitConsoleCommands( void ) {
   trap_AddCommand("mapcycle");
   trap_AddCommand("mute");
   trap_AddCommand("unmute");
-  trap_AddCommand("forfeit");
   trap_AddCommand("zoomed");
+  // multimap select arena
+  trap_AddCommand("arena");
+  trap_AddCommand("callmapvote");
+  // gtv commands for tabcompletion
+  // gtv normal commands
+  trap_AddCommand("gtv_watch");
+  trap_AddCommand("gtv_nextview");
+  trap_AddCommand("gtv_nextgame");
+  trap_AddCommand("gtv_playerlist");
+  trap_AddCommand("gtv_help");
+  trap_AddCommand("gtv_status");
+  trap_AddCommand("gtv_nospeech");
+  trap_AddCommand("gtv_silent");
+  trap_AddCommand("gtv_camera");
+  trap_AddCommand("gtv_admin");
+  trap_AddCommand("gtv_gamelist");
+  trap_AddCommand("gtv_messages");
+  trap_AddCommand("gtv_serverIP");
+  // gtv admin commands
+  trap_AddCommand("gtv_kick");
+  trap_AddCommand("gtv_demo");
+  trap_AddCommand("gtv_stop");
+  trap_AddCommand("gtv_record");
+  trap_AddCommand("gtv_connect");
+  trap_AddCommand("gtv_disconnect");
+  trap_AddCommand("gtv_centerprint");
+  trap_AddCommand("gtv_description");
+  trap_AddCommand("gtv_freemove");
+  trap_AddCommand("gtv_playerinfo");
+  trap_AddCommand("gtv_ban");
+  trap_AddCommand("gtv_addAdminIP");
+  trap_AddCommand("gtv_removeban");
+  trap_AddCommand("gtv_listIPs");
+  trap_AddCommand("gtv_moderate");
+
 }
 
 /*

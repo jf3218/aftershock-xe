@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "g_public.h"
 #include "challenges.h"
 
+
 //==================================================================
 
 // the "gameversion" client command will print this plus compile date
@@ -498,7 +499,7 @@ struct gclient_s {
 	int 			timeouts;
 	
 	char			aftershock_name[33];
-	char			aftershock_hash[33];
+	char			aftershock_hash[65];
 	
 	qboolean		referee;
 	
@@ -522,6 +523,7 @@ struct gclient_s {
 	//qboolean	    sendSpawnpoints;
 	int     	numSpectatorClientPortals;
 	gentity_t	*spectatorClientPortals[MAX_SPECTATOR_PORTALS];
+  int       curArena;
 	
 };
 
@@ -582,6 +584,8 @@ typedef struct {
 	int			voteYes;
 	int			voteNo;
 	int			numVotingClients;		// set by CountVotes
+  // map voting
+  int     mapVote;
 
 	// team voting state
 	char		teamVoteString[2][MAX_STRING_CHARS];
@@ -617,6 +621,7 @@ typedef struct {
 	int			portalSequence;
 	//Added for elimination:
 	int roundStartTime;		//time the current round was started
+	int lastRoundStartTime;		//time the previous round was started
 	int roundNumber;			//The round number we have reached
 	int roundNumberStarted;			//1 less than roundNumber if we are allowed to spawn
 	int roundRedPlayers;			//How many players was there at start of round
@@ -677,6 +682,11 @@ typedef struct {
     qboolean captureRedFlagPerfect;
     
     int 	overtimeCount;
+
+    int   multiArenaMap;     // support for rocketarena, 0 if not
+    int   curMultiArenaMap;
+    int   multiArenasWithSpawns;
+    int leavedead[MAX_CLIENTS]; // bench
     
 } level_locals_t;
 
@@ -712,6 +722,9 @@ void RewardMessage(gentity_t *ent, int reward, int rewardCount);
 
 void G_SendAllItems( void );
 void G_SendRespawnTimer( int entityNum, int type, int quantity, int respawnTime, int nextItemEntityNum, int clientNum );
+
+void Cmd_MapVote_f (gentity_t *ent);
+void G_sha256_f( void );
 
 void G_SendEndGame( void );
 void G_SendStartGame( void );
@@ -919,6 +932,7 @@ void G_TimeShiftOneClient( gentity_t *ent );
 team_t TeamCount( int ignoreClientNum, int team );
 team_t TeamLivingCount( int ignoreClientNum, int team ); //Elimination
 team_t TeamHealthCount( int ignoreClientNum, int team ); //Elimination
+//void RespawnBenchAllDead(qboolean onlydead); //For round elimination under bench
 void RespawnAll(void); //For round elimination
 void RespawnDead(void);
 void EnableWeapons(void);
@@ -943,11 +957,25 @@ void CalculateRanks( void );
 gentity_t *SpotWouldTelefrag( gentity_t *spot );
 
 //
+// g_crypt.c
+//
+typedef struct MD5Context {
+	unsigned int  buf[4];
+	unsigned int  bits[2];
+	unsigned char in[64];
+} MD5_CTX;
+
+char *G_MD5String( const char *in );
+
+// ../qcommon/sha256_generic.c
+char *Com_SHA256String( const char *in );
+//
 // g_svcmds.c
 //
 qboolean	ConsoleCommand( void );
 void G_ProcessIPBans(void);
 qboolean G_FilterPacket (char *from);
+void G_RegisterOAXcommands( void );
 
 //KK-OAX Added this to make accessible from g_svcmds_ext.c
 gclient_t	*ClientForString( const char *s );
@@ -977,6 +1005,9 @@ void DominationPointNamesMessage (gentity_t *client);
 void DominationPointStatusMessage( gentity_t *ent );
 void ChallengeMessage( gentity_t *ent, int challengeNumber );
 void SendCustomVoteCommands(int clientNum);
+void G_JoinArena( gentity_t *ent, int newArena );
+void G_CallMapVote_f( void );
+void Cmd_CallMapVote_f( gentity_t *ent  );
 
 //
 // g_pweapon.c
@@ -1003,6 +1034,7 @@ void LogExit( const char *string );
 void CheckTeamVote( int team );
 //void G_DemoCommand( demoCommand_t cmd, const char *string );
 qboolean ScoreIsTied( void );
+void G_LevelLoadComplete(void);
 
 //
 // g_client.c
@@ -1033,6 +1065,7 @@ team_t G_TeamFromString( char *str );
 qboolean Team_GetDeathLocationMsg(gentity_t *ent, char *loc, int loclen);
 int G_FindNearestTeammate( gentity_t *ent );
 void TeamplaySpectatorMessage( void );
+void Team_CaptureFlagSound( gentity_t *ent, int team ) ;
 //KK-OAX Removed these in Code in favor of bg_alloc.c from Tremulous
 // g_mem.c
 //
@@ -1050,6 +1083,10 @@ void Svcmd_GameMem_f( void );
 void G_WriteXMLStats( void );
 void G_SetGameString( void );
 
+//
+// g_minigames.c
+//
+void G_beginMinigame(void);
 
 //
 // g_session.c
@@ -1096,10 +1133,14 @@ int allowedVote(char *commandStr);
 int allowedRef(char *commandStr);
 void CheckVote( void );
 void CountVotes( void );
+void G_PickMap_f ( void );
+void G_mapChooser( int num );
 
 //
 // g_mapcycle.c
 //
+void G_GotoNextMapCycle ( void );
+char *G_GetNextMapCycle ( char *map );
 char *G_GetNextMap ( char *map );
 void G_GetMapfile ( char *map );
 qboolean G_mapIsVoteable ( char* map );
@@ -1108,6 +1149,7 @@ void G_drawMapcycle ( gentity_t *ent );
 void G_sendMapcycle( void );
 void G_LoadMapcycle ( void );
 qboolean SkippedChar ( char in );
+int G_GetMapLockArena ( char *map );
 
 //
 // g_mapfiles.c
@@ -1136,7 +1178,7 @@ typedef struct {
     char    command[MAX_CUSTOMCOMMAND]; //The command executed
 } t_customvote;
 
-extern char custom_vote_info[1024];
+extern char custom_vote_info[4096];
 
 extern t_mappage getMappage(int page);
 extern int allowedMap(char *mapname);
@@ -1207,6 +1249,7 @@ extern	vmCvar_t	g_weaponRespawn;
 extern	vmCvar_t	g_weaponTeamRespawn;
 extern	vmCvar_t	g_synchronousClients;
 extern	vmCvar_t	g_motd;
+extern  vmCvar_t	g_minigame;
 extern	vmCvar_t	g_warmup;
 extern	vmCvar_t	g_doWarmup;
 extern	vmCvar_t	g_gibs;
@@ -1359,6 +1402,7 @@ extern vmCvar_t	    g_statsPath;
 extern vmCvar_t	    g_teamLock;
 extern vmCvar_t     g_redLocked;
 extern vmCvar_t	    g_blueLocked;
+extern vmCvar_t     g_bench;
 
 extern vmCvar_t	    g_reduceRailDamage;
 extern vmCvar_t	    g_reduceLightningDamage;
@@ -1373,6 +1417,7 @@ extern vmCvar_t     g_muteSpec;
 
 extern vmCvar_t	    g_mapcycle;
 extern vmCvar_t	    g_useMapcycle;
+extern vmCvar_t	    g_mapcycleposition;
 
 extern vmCvar_t	    g_allowMultiview;
 extern vmCvar_t	    g_disableSpecs;
@@ -1411,6 +1456,7 @@ extern vmCvar_t	    g_ruleset;
 
 
 extern vmCvar_t	    g_legacyWeaponAmmo;
+extern vmCvar_t	    g_lockArena;
 // Weapon CVARs
 
 // Gauntlet

@@ -1764,6 +1764,11 @@ gentity_t *SelectRandomTeamSpawnPoint( int teamstate, team_t team ) {
         if(SpotWouldTelefrag(spot)) {
             continue;
         }
+    if ( level.multiArenaMap ) {
+      if (spot->r.singleClient != level.curMultiArenaMap) {
+        continue;
+      }
+    }
 
         spots[count] = spot;
         if(++count == MAX_TEAM_SPAWN_POINTS) {
@@ -1774,21 +1779,32 @@ gentity_t *SelectRandomTeamSpawnPoint( int teamstate, team_t team ) {
     if(count == 0) {
         spot = NULL;
         while((spot = G_Find(spot, FOFS(classname), classname)) != NULL) {
-            spotPlayer = SpotWouldTelefrag(spot);
-            if(!spotPlayer || !spotPlayer->client) {
-                continue;
+          spotPlayer = SpotWouldTelefrag(spot);
+          if(!spotPlayer || !spotPlayer->client) {
+            continue;
+          }
+          if ( level.multiArenaMap ) {
+            if (spot->r.singleClient != level.curMultiArenaMap) {
+              continue;
             }
+          }
 
-            if(spotPlayer->client->sess.sessionTeam == team) {
-                spots[count] = spot;
-                count++;
-            }
+          if(spotPlayer->client->sess.sessionTeam == team) {
+            spots[count] = spot;
+            count++;
+          }
         }
     }
 
     // No spots that won't telefrag...
     if(count == 0) {
-        return G_Find(NULL, FOFS(classname), classname);
+      if ( level.multiArenaMap ) {
+        // do something to ensure only a spot from the current arena is returned.
+        if (spot->r.singleClient != level.curMultiArenaMap) {
+          //continue;
+        }
+      }
+      return G_Find(NULL, FOFS(classname), classname);
     }
 
     selection = rand() % count;
@@ -2594,16 +2610,19 @@ void ShuffleTeams(void) {
 		numPlayers++;
 
         if ( level.clients[sortPlayers[i]].sess.sessionTeam==TEAM_RED || level.clients[sortPlayers[i]].sess.sessionTeam==TEAM_BLUE ) {
-            level.clients[sortPlayers[i]].sess.sessionTeam = nextTeam;
+            if ( level.clients[sortPlayers[i]].sess.sessionTeam != nextTeam) {
+                level.clients[sortPlayers[i]].sess.sessionTeam = nextTeam;
+                ClientUserinfoChanged( sortPlayers[i] );
+                //ClientBegin( sortPlayers[i] );
+                //trap_SendServerCommand( sortPlayers[i], "loadModel" );
+            }
             count++;
-            G_Printf("%i\n", nextTeam);
+            //G_Printf("%i\n", nextTeam);
             if ( nextTeam == TEAM_RED )
                 nextTeam = TEAM_BLUE;
             else if ( nextTeam == TEAM_BLUE)
                 nextTeam = TEAM_RED;
 
-            ClientUserinfoChanged( sortPlayers[i] );
-            ClientBegin( sortPlayers[i] );
         }
     }
 
@@ -2681,7 +2700,7 @@ void ShuffleTeams(void) {
 
 			level.clients[newBlueTeam[i]].sess.sessionTeam = TEAM_RED;
 			ClientUserinfoChanged(newBlueTeam[i]);
-			ClientBegin(newBlueTeam[i]);
+			//ClientBegin(newBlueTeam[i]);
 			break;
 		}
 
@@ -2696,7 +2715,7 @@ void ShuffleTeams(void) {
 
 			level.clients[newRedTeam[i]].sess.sessionTeam = TEAM_BLUE;
 			ClientUserinfoChanged(newRedTeam[i]);
-			ClientBegin(newRedTeam[i]);
+			//ClientBegin(newRedTeam[i]);
 			break;
 		}
 	}

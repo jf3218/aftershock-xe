@@ -1653,6 +1653,7 @@ Q3CGOBJ_ = \
   $(B)/baseq3/cgame/cg_weapons.o \
   $(B)/baseq3/cgame/cg_superHud.o \
   \
+	$(B)/baseq3/qcommon/sha256_generic.o \
   $(B)/baseq3/qcommon/q_math.o \
   $(B)/baseq3/qcommon/q_shared.o
 
@@ -1739,6 +1740,7 @@ Q3GOBJ_ = \
   $(B)/baseq3/game/g_admin.o \
   $(B)/baseq3/game/g_bot.o \
   $(B)/baseq3/game/g_client.o \
+  $(B)/baseq3/game/g_crypt.o \
   $(B)/baseq3/game/g_cmds.o \
   $(B)/baseq3/game/g_cmds_ext.o \
   $(B)/baseq3/game/g_combat.o \
@@ -1764,6 +1766,8 @@ Q3GOBJ_ = \
   $(B)/baseq3/game/g_utils.o \
   $(B)/baseq3/game/g_vote.o \
   $(B)/baseq3/game/g_weapon.o \
+  $(B)/baseq3/game/g_minigames.o \
+	$(B)/baseq3/qcommon/sha256_generic.o \
   \
   $(B)/baseq3/qcommon/q_math.o \
   $(B)/baseq3/qcommon/q_shared.o
@@ -1801,6 +1805,7 @@ MPGOBJ_ = \
   $(B)/missionpack/game/g_arenas.o \
   $(B)/missionpack/game/g_bot.o \
   $(B)/missionpack/game/g_client.o \
+  $(B)/missionpack/game/g_crypt.o \
   $(B)/missionpack/game/g_cmds.o \
   $(B)/missionpack/game/g_cmds_ext.o \
   $(B)/missionpack/game/g_combat.o \
@@ -1826,6 +1831,8 @@ MPGOBJ_ = \
   $(B)/missionpack/game/g_utils.o \
   $(B)/missionpack/game/g_vote.o \
   $(B)/missionpack/game/g_weapon.o \
+  $(B)/missionpack/game/g_minigames.o \
+	$(B)/missionpack/qcommon/sha256_generic.o \
   \
   $(B)/missionpack/qcommon/q_math.o \
   $(B)/missionpack/qcommon/q_shared.o

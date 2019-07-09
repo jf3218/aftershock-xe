@@ -3778,6 +3778,123 @@ static void CG_DrawSpectator ( void ) {
     }
 }
 
+/*
+=================
+CG_DrawVoteMap
+=================
+*/
+static void CG_DrawVoteMap ( void ) {
+    char	*s;
+    char  *votes;
+    int   tmp;
+    qhandle_t levelshot;
+    char mapstring[MAX_TOKEN_CHARS];
+
+    if ( !cgs.voteTime ) {
+        return;
+    }
+    s = strstr(cgs.voteString,"map to: ");
+    if (s) {
+        int i=0;
+        s+=8;
+        Com_sprintf ( mapstring, sizeof ( mapstring ), "%s", s );
+        while (mapstring[i]!=0 && i<32) {
+            if (mapstring[i]=='?' || mapstring[i]==',' ||
+                    mapstring[i]==' ' ||
+                    mapstring[i]==';' ||
+                    mapstring[i]=='\n' ||
+                    mapstring[i]=='\r' 
+               ) {
+                mapstring[i] = 0;
+            } else {
+                i++;
+            }
+        }
+
+        levelshot = trap_R_RegisterShaderNoMip( va( "levelshots/%s.tga", mapstring ) );
+        if ( !levelshot ) {
+                levelshot = trap_R_RegisterShaderNoMip( "menu/art/unknownmap" );
+        }
+        trap_R_SetColor( NULL );
+        CG_DrawPic( 0, 0, 100, 100 , levelshot );
+    }
+    //Com_sprintf( level.voteDisplayString, sizeof( level.voteDisplayString ), "Select Map: %s", string );
+    s = strstr(cgs.voteString,"elect Map: ");
+    if (s) {
+        int nummaps;
+        int arena;
+        int i=0,j;
+        int xsize=100;
+        int yoffset=100;
+        s+=11;
+        nummaps=s[0]-'0';
+        //xsize = cg.refdef.width / nummaps;
+        //yoffset = cg.refdef.height - xsize - 1;
+        xsize = 640 / nummaps;
+        yoffset = 480 - xsize;
+        s+=2;
+        votes = cgs.voteYesString + 2;
+        for (j=0;j<nummaps;j++) {
+            i=0;
+            tmp=0;
+            Com_sprintf ( mapstring, sizeof ( mapstring ), "%s", s );
+            while (mapstring[i]!=0 && i<32) {
+                if (mapstring[i]=='?' || mapstring[i]==',' ||
+                        mapstring[i]==' ' ||
+                        mapstring[i]==';' ||
+                        mapstring[i]=='\n' ||
+                        mapstring[i]=='\r' 
+                   ) {
+                    mapstring[i] = 0;
+                } else {
+                    i++;
+                }
+            }
+            s+=strlen(mapstring)+1;
+            arena=s[0]-'0';
+            s+=2;
+
+            while (votes[0]!=' ') {
+                tmp *= 10;
+                tmp += votes[0]-'0';
+                votes++;
+            }
+            votes++;
+
+
+            //CG_Printf("%i %s found\n",nummaps,mapstring);
+            levelshot = trap_R_RegisterShaderNoMip( va( "levelshots/%s.tga", mapstring ) );
+            if ( !levelshot ) {
+                levelshot = trap_R_RegisterShaderNoMip( "menu/art/unknownmap" );
+            }
+            trap_R_SetColor( NULL );
+            //CG_DrawPic( 0, 0, 100, 100 , levelshot );
+            CG_DrawPic( j*xsize, yoffset, xsize, xsize , levelshot );
+            CG_DrawSmallString ( j*xsize + 10, yoffset+7, mapstring, 1.0F );
+            Com_sprintf ( mapstring, sizeof ( mapstring ), "\\vote %i", j+1 );
+            CG_DrawSmallString ( j*xsize + 10, yoffset+xsize-18, mapstring, 1.0F );
+            if (arena > 0) {
+                Com_sprintf ( mapstring, sizeof ( mapstring ), "arena %i", arena );
+                CG_DrawSmallString ( j*xsize + 10, yoffset+22, mapstring, 1.0F );
+            }
+            if (tmp>0) {
+                // people voted for this map, draw checks
+                char entry[3];
+                int len;
+                Com_sprintf ( mapstring, sizeof ( mapstring ), S_COLOR_GREEN  );
+                Com_sprintf ( entry, sizeof ( entry ), "v"  );
+                len = strlen(mapstring);
+                for (i=0;i<tmp;i++) {
+                    strcpy (mapstring + len, entry);
+                    len++;
+                }
+                CG_DrawSmallString ( j*xsize + xsize - (tmp*7) - 10, yoffset+xsize-37, mapstring, 1.0F );
+            }
+                
+        }
+    }
+}
+
 #define VOTEPOS_X 0
 #define VOTEPOS_Y 58
 
@@ -4254,6 +4371,9 @@ void CG_DrawMVDhud ( stereoFrame_t stereoFrame ) {
     if ( !cg.showScores ) {
         CG_Predecorate();
         CG_DrawStatusBar();
+             // CG_DrawCrosshairNames(); //TODO, this function replaces the string in the HUD
+             // instead of drawing it straight to the screen in the right spot. This makes
+             // the main view's crosshair names not work.
         //CG_DrawPowerups(); //TODO
         CG_Postdecorate();
     }
@@ -4281,6 +4401,7 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 
     if ( cg.snap->ps.pm_type == PM_INTERMISSION ) {
         CG_DrawIntermission();
+        CG_DrawVoteMap();
         CG_DrawChat ( qtrue );
 	
 	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 ) {
@@ -4339,6 +4460,7 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
     }
 
     CG_DrawDeathNotice();
+    CG_DrawVoteMap();
     CG_DrawChat ( qfalse );
     CG_DrawConsole();
 
