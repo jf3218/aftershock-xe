@@ -4371,7 +4371,9 @@ void CG_DrawMVDhud ( stereoFrame_t stereoFrame ) {
     if ( !cg.showScores ) {
         CG_Predecorate();
         CG_DrawStatusBar();
-            CG_DrawCrosshairNames();
+             // CG_DrawCrosshairNames(); //TODO, this function replaces the string in the HUD
+             // instead of drawing it straight to the screen in the right spot. This makes
+             // the main view's crosshair names not work.
         //CG_DrawPowerups(); //TODO
         CG_Postdecorate();
     }
