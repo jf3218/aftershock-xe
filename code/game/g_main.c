@@ -342,6 +342,12 @@ vmCvar_t     g_bfgSplashDamage;
 vmCvar_t     g_bfgSplashRadius;
 vmCvar_t     g_bfgVelocity;
 
+vmCvar_t     g_practice; // mmp
+vmCvar_t     g_practiceDefault; // mmp
+vmCvar_t     g_practiceLock; // mmp
+
+vmCvar_t     g_newTeleportHeight; // mmp
+
 // Weapon properties (used by server and client)
 // If you change something here, you have to change it client-side too!
 int wp_gauntletRate;
@@ -672,6 +678,12 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_bfgSplashDamage, "g_bfgSplashDamage", "100", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_bfgSplashRadius, "g_bfgSplashRadius", "120", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_bfgVelocity, "g_bfgVelocity", "2000", CVAR_ARCHIVE, 0, qtrue },
+
+	{ &g_practice, "g_practice", "0", 0, 0, qtrue }, // mmp - practice mode in warm-up, 1 allows damage and limited ammo
+	{ &g_practiceDefault, "g_practiceDefault", "1", CVAR_ARCHIVE, 0, qtrue }, // mmp - default practice mode
+	{ &g_practiceLock, "g_practiceLock", "0", CVAR_ARCHIVE, 0, qtrue }, // mmp - setting to 1 prevents clients from toggling practice mode
+
+	{ &g_newTeleportHeight, "g_newTeleportHeight", "0", CVAR_ARCHIVE, 0, qtrue } // mmp - setting it above 0 raising the teleportation spawn location, making the ground to top teleporter jump easier in aerowalk (...maybe)
 };
 
 // bk001129 - made static to avoid aliasing
@@ -1115,7 +1127,13 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 	level.endgameSend = qfalse;
 	
 	level.overtimeCount = 0;
-	
+
+	// set default practice mode...  yes, this can be coded better - mmp
+	if ( g_practiceDefault.integer )
+		trap_Cvar_Set("g_practice","1");
+	else
+		trap_Cvar_Set("g_practice","0");
+
 	/*trap_Cvar_VariableStringBuffer( "session", buffer, sizeof( buffer ) );
 	sscanf( buffer, "%i %i", &a, &b );
 	if ( a != trap_Cvar_VariableIntegerValue( "sv_maxclients" ) ||

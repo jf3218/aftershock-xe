@@ -1479,6 +1479,11 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 
 	take = damage;
 
+	// remove damage when not in practice at warm-up
+	if ( level.warmupTime && targ->practice == qfalse && !( mod == MOD_CRUSH || mod == MOD_TELEFRAG || mod == MOD_TRIGGER_HURT || mod == MOD_KAMIKAZE ) ) {
+		take = 0;
+	}
+
 	// save some from armor
 	asave = CheckArmor (targ, take, dflags);
 	take -= asave;

@@ -193,6 +193,14 @@ void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles ) {
 	VectorCopy(origin, torigin);
 	torigin[2] += 9;
 
+	// mmp - teleport height test (you guys figure it out, i'm able to do the aerowalk teleport jump without any changes (other than cpma ruleset)...  wtf)
+	if ( g_newTeleportHeight.integer > 0 ) {
+		if ( g_newTeleportHeight.integer > 64 )
+			torigin[2] += 64;
+		else
+			torigin[2] += g_newTeleportHeight.integer;
+	}
+
 	// For team games we check if the teleporter would transport us inside a team member
 	if((g_gametype.integer == GT_ELIMINATION) || (g_gametype.integer == GT_CTF_ELIMINATION) || (g_gametype.integer == GT_CTF)) {
 		// With g_telefragTeamBehavior = 1 we push the player forward if there is a team member in the way
