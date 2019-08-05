@@ -4260,6 +4260,36 @@ void Cmd_Zoomed_f(gentity_t *ent) {
 	ent->client->ps.stats[STAT_ZOOMED] = arg1[0] == '1';
 }
 
+void Cmd_Practice_f(gentity_t *ent) {
+
+	// are we in warmup?  if not, fuck it
+    if ( level.warmupTime != -1 ){
+	  trap_SendServerCommand( ent-g_entities, va("screenPrint \"Practice mode toggle is only available during warmup, sorry.\"") );
+	  trap_SendServerCommand( ent-g_entities, va("print \"Practice mode toggle is only available during warmup, sorry.\n\"") );
+	  return;
+    }
+
+	// is practice mode locked?
+	if ( g_practiceLock.integer ) {
+
+		trap_SendServerCommand( ent-g_entities, va("screenPrint \"Practice mode toggle is disabled, sorry.\"") );
+		trap_SendServerCommand( ent-g_entities, va("print \"Practice mode toggle is disabled, sorry.\n\"") );
+
+	} else {
+
+		if ( g_practice.integer ) {
+			g_practice.integer = 0;
+			trap_SendServerCommand( -1, va("screenPrint \"Practice mode: OFF\"") );
+			trap_SendServerCommand( -1, va("print \"Practice mode: OFF\n\"") );
+		} else {
+			g_practice.integer = 1;
+			trap_SendServerCommand( -1, va("screenPrint \"Practice mode: ON\"") );
+			trap_SendServerCommand( -1, va("print \"Practice mode: ON\n\"") );
+		}
+
+	}
+}
+
 //KK-OAX This is the table that ClientCommands runs the console entry against.
 commands_t cmds[ ] =
 {
@@ -4339,7 +4369,9 @@ commands_t cmds[ ] =
     { "mute", 0, Cmd_Mute_f, qfalse },
     { "unmute", 0, Cmd_Unmute_f, qfalse },
     { "forfeit", 0, Cmd_Forfeit_f, qfalse },
-    { "zoomed", 0, Cmd_Zoomed_f, qfalse }
+    { "zoomed", 0, Cmd_Zoomed_f, qfalse },
+
+    { "practice", 0, Cmd_Practice_f, qtrue }
 };
 
 static int numCmds = sizeof( cmds ) / sizeof( cmds[ 0 ] );

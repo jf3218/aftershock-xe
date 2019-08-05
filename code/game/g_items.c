@@ -234,9 +234,13 @@ int Pickup_Holdable( gentity_t *ent, gentity_t *other ) {
 
 void Add_Ammo (gentity_t *ent, int weapon, int count)
 {
-	ent->client->ps.ammo[weapon] += count;
-	if ( ent->client->ps.ammo[weapon] > 200 ) {
-		ent->client->ps.ammo[weapon] = 200;
+	if ( level.warmupTime == -1 && ent->practice == qfalse ) {
+		ent->client->ps.ammo[weapon] = 999;
+	} else {
+		ent->client->ps.ammo[weapon] += count;
+		if ( ent->client->ps.ammo[weapon] > 200 ) {
+			ent->client->ps.ammo[weapon] = 200;
+		}
 	}
 }
 
@@ -645,7 +649,7 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace) {
 		ent->think = RespawnItem;
 	}
 	trap_LinkEntity( ent );
-	
+
 	if( g_allowRespawnTimer.integer && !(ent->flags & FL_DROPPED_ITEM) )
 		G_SendRespawnTimer( ent->s.number, ent->item->giType, ent->item->quantity, level.time + respawn * 1000, G_FindNearestItemSpawn( ent ), other->s.clientNum);
 }
