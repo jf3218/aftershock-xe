@@ -687,6 +687,8 @@ typedef struct {
     int   curMultiArenaMap;
     int   multiArenasWithSpawns;
     int leavedead[MAX_CLIENTS]; // bench
+
+    int curmyrandseed; // for coinflip
     
 } level_locals_t;
 

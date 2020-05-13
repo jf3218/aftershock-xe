@@ -1211,6 +1211,16 @@ void G_Timein( void ) {
     trap_SendServerCommand( -1, va("timein") );
 }
 
+int myrand( int d) {
+  int t;
+  if ( level.curmyrandseed==0) {
+    level.curmyrandseed = rand() + level.time;
+  }
+  t = ((level.curmyrandseed * 59+223) % 967);
+  level.curmyrandseed = t;
+  return t/(967/d);
+}
+
 /*
 =================
 Cmd_Coinflip_f
@@ -1225,7 +1235,7 @@ void Cmd_Coinflip_f( gentity_t *ent ) {
     //string = "Heads"; // gives compiler error
     //string = "Tails";
 
-    if ((rand() >> 1) % 2) {
+    if (((level.time ^ myrand(4))) % 2) {
     //if ( g_startWhenReady.integer == 3 ) {
         trap_SendServerCommand(-1,va("screenPrint \"Coinflip called by %s" S_COLOR_WHITE " resulted in %s\"",ent->client->pers.netname , S_COLOR_BLUE "H" S_COLOR_GREEN "eads")  );
         trap_SendServerCommand(-1,va("print \"Coinflip called by %s" S_COLOR_WHITE " resulted in %s\"" ,ent->client->pers.netname, S_COLOR_BLUE "H" S_COLOR_GREEN "eads\n" ));
