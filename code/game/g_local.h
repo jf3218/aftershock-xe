@@ -193,6 +193,8 @@ struct gentity_s {
 	int		dropTime;
 	int		ammoCount;
 	int     powerupTimeLeft;
+
+	qboolean	practice; // mmp - for use with g_practice
 };
 
 typedef struct gitemInfos_s gitemInfos_t;
@@ -687,8 +689,8 @@ typedef struct {
     int   curMultiArenaMap;
     int   multiArenasWithSpawns;
     int leavedead[MAX_CLIENTS]; // bench
-
     int curmyrandseed; // for coinflip
+
     
 } level_locals_t;
 
@@ -1517,6 +1519,12 @@ extern vmCvar_t     g_bfgDamage;
 extern vmCvar_t     g_bfgSplashDamage;
 extern vmCvar_t     g_bfgSplashRadius;
 extern vmCvar_t     g_bfgVelocity;
+
+extern vmCvar_t     g_practice; // mmp
+extern vmCvar_t     g_practiceDefault; // mmp
+extern vmCvar_t     g_practiceLock; // mmp
+
+extern vmCvar_t     g_newTeleportHeight; // mmp
 
 
 
