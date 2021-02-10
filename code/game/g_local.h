@@ -1479,6 +1479,7 @@ extern vmCvar_t     g_shotgunRate;
 extern vmCvar_t     g_shotgunDamage;
 extern vmCvar_t     g_shotgunCount;
 extern vmCvar_t     g_shotgunSpread;
+extern vmCvar_t     g_sgPattern;
 
 // Plasma
 extern vmCvar_t     g_plasmaRate;

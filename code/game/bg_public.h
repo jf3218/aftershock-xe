@@ -39,16 +39,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define	RANK_TIED_FLAG		0x4000
 
-//#define DEFAULT_SHOTGUN_SPREAD	700
-#define DEFAULT_SHOTGUN_SPREAD	1400
+#define DEFAULT_SHOTGUN_SPREAD	700
 
 #define DEFAULT_SHOTGUN_COUNT	11
 
 #define OUTERRADIUS 9000
 #define INNERRADIUS 3000
 
-//new#define OUTERRADIUS 12000
-//new#define INNERRADIUS 4000
 
 #define	ITEM_RADIUS			15		// item sizes are needed for client side pickup detection
 
@@ -195,6 +192,7 @@ typedef enum {
 	RULESET_CPM,
 	RULESET_QW
 } ruleset_t;
+
 
 #define	MAXTOUCH	32
 typedef struct {
@@ -789,6 +787,7 @@ qboolean	BG_CanItemBeGrabbed( int gametype, const entityState_t *ent, const play
 #define VF_custom       256
 #define VF_shuffle      512
 #define VF_ruleset      1024
+#define VF_g_sgPattern  1024
 
 // content masks
 #define	MASK_ALL				(-1)

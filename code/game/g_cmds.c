@@ -3187,6 +3187,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
     } else if ( !Q_stricmp( arg1, "custom" ) ) {
     } else if ( !Q_stricmp( arg1, "shuffle" ) ) {
     } else if ( !Q_stricmp( arg1, "ruleset" ) ) {
+    } else if ( !Q_stricmp( arg1, "g_sgPattern" ) ) {
     } else {
       t_customvote customvote;
       customvote = getCustomVote(arg1);
@@ -3219,6 +3220,8 @@ void Cmd_CallVote_f( gentity_t *ent ) {
             strcat(buffer, "shuffle, ");
         if (allowedVote("ruleset"))
             strcat(buffer, "ruleset <vq3|as|asxe|cpm|qw>, ");
+        if (allowedVote("g_sgPattern"))
+            strcat(buffer, "g_sgPattern <oa|as|gauss|circle>, ");
         if (allowedVote("custom"))
             strcat(buffer, "custom <special>, ");
         buffer[strlen(buffer)-2] = 0;
@@ -3238,7 +3241,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
     }
 
     if (!allowedVote(arg1)) {
-        trap_SendServerCommand( ent-g_entities, "print \"Not allowed here.\n\"" );
+        trap_SendServerCommand( ent-g_entities, "print \"Not allowed here 1234.\n\"" );
         buffer[0] = 0;
         strcat(buffer,"print \"Vote commands are: ");
         if (allowedVote("map_restart"))
@@ -3265,6 +3268,8 @@ void Cmd_CallVote_f( gentity_t *ent ) {
             strcat(buffer, "fraglimit <frags>, ");
         if (allowedVote("ruleset"))
             strcat(buffer, "ruleset <vq3|as|asxe|cpm|qw>, ");
+        if (allowedVote("g_sgPattern"))
+            strcat(buffer, "g_sgPattern <oa|as|gauss|circle>, ");
         if (allowedVote("custom"))
             strcat(buffer, "custom <special>, ");
         buffer[strlen(buffer)-2] = 0;
@@ -3492,7 +3497,18 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 
 		Com_sprintf(level.voteString, sizeof( level.voteString ), "ruleset %s", arg2);
 		Com_sprintf(level.voteDisplayString, sizeof( level.voteDisplayString ), "Change ruleset to %s?", arg2);
-    } else if ( !Q_stricmp( arg1, "custom" ) ) {
+        
+    }  else if ( !Q_stricmp( arg1, "g_sgPattern" ) ) {
+		if((Q_stricmp(arg2, "oa") != 0) && (Q_stricmp(arg2, "as") != 0) && (Q_stricmp(arg2, "gauss") != 0) && (Q_stricmp(arg2, "circle") != 0)) {
+			trap_SendServerCommand(ent-g_entities, va("print \"g_sgPattern '%s' is not valid, use <oa|as|gauss|circle>\n\"",  arg2));
+			return;
+		}
+
+		Com_sprintf(level.voteString, sizeof( level.voteString ), "g_sgPattern %s", arg2);
+		Com_sprintf(level.voteDisplayString, sizeof( level.voteDisplayString ), "Change g_sgPattern to %s?", arg2);
+    }
+    
+     else if ( !Q_stricmp( arg1, "custom" ) ) {
         t_customvote customvote;
         //Sago: There must always be a test to ensure that length(arg2) is non-zero or the client might be able to execute random commands.
         if (strlen(arg2)<1) {

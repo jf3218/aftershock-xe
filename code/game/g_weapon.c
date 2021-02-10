@@ -453,8 +453,8 @@ qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent ) {
 
 // this should match CG_ShotgunPattern
 void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
-	int			i;
-	float		r, u;
+	int			i,j;
+	float		r, u, rr, uu, gscale, rad_ran, ang_ran;
 	vec3_t		end;
 	vec3_t		forward, right, up;
 	qboolean	hitClient = qfalse;
@@ -483,69 +483,90 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 	outery = sin(60 * (2*M_PI/360 ) ) * OUTERRADIUS;
 	outerx = cos(60 * (2*M_PI/360 ) ) * OUTERRADIUS;
 
-	// generate the "random" spread pattern
-	for ( i = 0 ; i < g_shotgunCount.integer ; i++ ) {
-		
-		/*r = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
-		u = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;*/
-		
-		//NEW sg-pattern
-		switch(i){
-			case 0: 
-				r = OUTERRADIUS;
-				u = 0;
-				break;
-			case 1: 
-				r = outerx;
-				u = outery;
-				break;
-			case 2: 
-				r = -outerx;
-				u = outery;
-				break;
-			case 3: 
-				r = -OUTERRADIUS;
-				u = 0;
-				break;
-			case 4: 
-				r = -outerx;
-				u = -outery;
-				break;
-			case 5: 
-				r = outerx;
-				u = -outery;
-				break;
-			case 6: 
-				r = INNERRADIUS;
-				u = INNERRADIUS;
-				break;
-			case 7: 
-				r = -INNERRADIUS;
-				u = INNERRADIUS;
-				break;
-			case 8: 
-				r = -INNERRADIUS;
-				u = -INNERRADIUS;
-				break;
-			case 9: 
-				r = INNERRADIUS;
-				u = -INNERRADIUS;
-				break;
-			case 10: 
-				r = 0;
-				u = 0;
-				break;
-			default:
-				r = 0;
-				u = 0;
-		}
-		
-		r += Q_crandom( &seed ) * ( g_shotgunSpread.integer * 16 - OUTERRADIUS );
-		u += Q_crandom( &seed ) * ( g_shotgunSpread.integer * 16 - OUTERRADIUS );
-		//NEW sg-pattern
-		
-		//G_Printf("r: %f, u: %f\n", r, u);
-		VectorMA( origin, 8192 * 16, forward, end);
+    gscale = sqrt(4./12) * DEFAULT_SHOTGUN_SPREAD * 16;
+
+    // generate the "random" spread pattern
+ 	for ( i = 0 ; i < g_shotgunCount.integer ; i++ ) {
+
+        if (Q_stricmp(g_sgPattern.string, "oa") == 0) {     // vanilla (square uniform)
+            r = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
+            u = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;                
+                
+        } else if (Q_stricmp(g_sgPattern.string, "gauss") == 0) {   // Gaussian
+            rr = 0;
+            uu = 0;
+            for (j=0; j<3; j++) {
+                rr += Q_crandom(&seed);
+                uu += Q_crandom(&seed);
+            }
+            // variance of uniform dist. in (a, b): (b - a)**2 / 12
+            r = rr / sqrt(4./12*3) * gscale;
+            u = uu / sqrt(4./12*3) * gscale;
+            
+        } else if (Q_stricmp(g_sgPattern.string, "circle") == 0) {     // circular uniform
+            ang_ran = (Q_crandom( &seed ) + 1.0) * M_PI;
+            rad_ran = sqrt((Q_crandom( &seed ) + 1) * 0.7);
+            r = rad_ran * cos(ang_ran) * DEFAULT_SHOTGUN_SPREAD * 16;
+            u = rad_ran * sin(ang_ran) * DEFAULT_SHOTGUN_SPREAD * 16;
+            
+        } else if (Q_stricmp(g_sgPattern.string, "as") == 0) {
+            //NEW sg-pattern
+            switch(i){
+            case 0: 
+                r = OUTERRADIUS;
+                u = 0;
+                break;
+            case 1: 
+                r = outerx;
+                u = outery;
+                break;
+            case 2: 
+                r = -outerx;
+                u = outery;
+                break;
+            case 3: 
+                r = -OUTERRADIUS;
+                u = 0;
+                break;
+            case 4: 
+                r = -outerx;
+                u = -outery;
+                break;
+            case 5: 
+                r = outerx;
+                u = -outery;
+                break;
+            case 6: 
+                r = INNERRADIUS;
+                u = INNERRADIUS;
+                break;
+            case 7: 
+                r = -INNERRADIUS;
+                u = INNERRADIUS;
+                break;
+            case 8: 
+                r = -INNERRADIUS;
+                u = -INNERRADIUS;
+                break;
+            case 9: 
+                r = INNERRADIUS;
+                u = -INNERRADIUS;
+                break;
+            case 10: 
+                r = 0;
+                u = 0;
+                break;
+            default:
+                r = 0;
+                u = 0;
+            }
+            r += Q_crandom( &seed ) * ( g_shotgunSpread.integer * 16 - OUTERRADIUS );
+            u += Q_crandom( &seed ) * ( g_shotgunSpread.integer * 16 - OUTERRADIUS );
+            //NEW sg-pattern
+        }
+        G_Printf("%s, %f, %f\n", g_sgPattern.string, r, u);
+
+        VectorMA( origin, 8192 * 16, forward, end);
 		VectorMA (end, r, right, end);
 		VectorMA (end, u, up, end);
 		
