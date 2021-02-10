@@ -564,7 +564,7 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
             u += Q_crandom( &seed ) * ( g_shotgunSpread.integer * 16 - OUTERRADIUS );
             //NEW sg-pattern
         }
-        G_Printf("%s, %f, %f\n", g_sgPattern.string, r, u);
+//         G_Printf("%s, %f, %f\n", g_sgPattern.string, r, u);
 
         VectorMA( origin, 8192 * 16, forward, end);
 		VectorMA (end, r, right, end);
