@@ -626,7 +626,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_selfdamage, "g_selfdamage", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse  },
 	{ &g_overtime, "g_overtime", "120", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse  },
 	{ &g_overtime_ctf_respawnDelay, "g_overtime_ctf_respawnDelay", "5", CVAR_ARCHIVE, 0, qfalse  },
-	{ &g_thrufloors, "g_thrufloors", "0", CVAR_ARCHIVE, 0, qfalse  },
+	{ &g_thrufloors, "g_thrufloors", "0", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_forceIntermissionExit, "g_forceIntermissionExit", "0", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_aftershockRespawn, "g_aftershockRespawn", "1", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_nameCheck, "g_nameCheck", "1", CVAR_ARCHIVE, 0, qfalse },

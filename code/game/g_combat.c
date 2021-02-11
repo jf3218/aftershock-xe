@@ -1732,7 +1732,7 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 	vec3_t		v;
 	vec3_t		dir;
 	int			i, e;
-	qboolean	hitClient = qfalse;
+	qboolean	hitClient = qfalse, canDmg;
 
 	if ( radius < 1 ) {
 		radius = 1;
@@ -1769,9 +1769,19 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 			continue;
 		}
 
-		points = damage * ( 1.0 - dist / radius );
-
-		if( CanDamage (ent, origin) || g_thrufloors.integer & 1 ) {
+        canDmg = CanDamage (ent, origin);
+        
+		if( canDmg || g_thrufloors.value > 0 ) {
+            if (canDmg) {
+                points = damage * ( 1.0 - dist / radius );
+//                 G_Printf("CanDamage dmg %f\n", points);
+            }
+            else if (g_thrufloors.value > 0) {
+                points = damage * ( 1.0 - dist / radius ) * g_thrufloors.value;
+//                 points = (damage * ( 1.0 - dist / radius ) - damage * 0.25) * 0.8;
+//                 G_Printf("ThruFloor dmg %f\n", points);
+            }
+            
 			if( LogAccuracyHit( ent, attacker ) ) {
 				hitClient = qtrue;
 			}
