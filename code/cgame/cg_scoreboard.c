@@ -75,6 +75,15 @@ typedef struct{
 	qboolean percent;
 } picBar_t;
 
+
+static char* CG_FormatAcc( int hits, int shots) {
+	if (shots <= 0) {
+		return va( "%3s", " - ");
+	} else {
+		return va( "%3i", hits * 100 / shots);
+	}
+}
+
 static char* CG_FormatKD( int value ) {
 	if(value > 9999) {
 		value = 9999;
@@ -122,9 +131,10 @@ static char* CG_FormatTime( int value ) {
 static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, float *color ){
 	
 	clientInfo_t *ci;
-	char string[ 128 ];
+	char string[ 128 ], nametruncated[32];
 	int picSize;
-  int len;
+  int len, n;
+  float anum, acc;
 	
 	if( score->client < 0 || score->client >= cgs.maxclients ){
 		Com_Printf( "Bad score->client: %i\n", score->client );
@@ -141,8 +151,11 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 	CG_FillRect( x, y, w, h, color );
 	
 	y += h/2;
-	
-	CG_DrawStringExt( x, y - SB_MEDCHAR_HEIGHT/2, ci->name, colorWhite, qfalse, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 31 );
+
+	// truncate long names. TODO: don't count color escape characters
+	strcpy(nametruncated, ci->name);
+	nametruncated[26] = '\0';
+	CG_DrawStringExt( x+1, y - SB_MEDCHAR_HEIGHT/2, nametruncated, colorWhite, qfalse, qfalse, SB_MEDCHAR_WIDTH-2, SB_MEDCHAR_HEIGHT, 31 );
 
 	if( cgs.gametype == GT_CTF) {
 		CG_DrawStringExt( x + w*0.5, y - SB_MEDCHAR_HEIGHT/2, va( "%i / %i / %i", score->captures, score->assistCount, score->defendCount ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
@@ -154,26 +167,41 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
     CG_DrawStringExt( x + w*0.69+(4-len)*SB_CHAR_WIDTH, y - SB_CHAR_HEIGHT/2, string, colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 4 );
   } else {
     if( h >= SB_CHAR_HEIGHT*2 ){
-      CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT, CG_FormatDmg(score->dmgdone), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-      CG_DrawStringExt( x + w*0.66, y, CG_FormatDmg(score->dmgtaken), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+
+	    anum = score->dmgdone / 100 + score->frags;
+    	n = (int)(anum < 0 ? (anum - 0.5) : (anum + 0.5));   // round anum
+    	CG_DrawStringExt( x + w*0.39, y -SB_CHAR_WIDTH*1.6, va( "%i%", n ), colorYellow, qtrue, qfalse, SB_CHAR_WIDTH*1.5, SB_MEDCHAR_HEIGHT*1.5, 4 );   
+    	CG_DrawStringExt( x + w*0.47, y - SB_CHAR_HEIGHT/2, va( "%i%%", ( ( int )( score->accuracy ) ) ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 4 );
+        //   0   1   2   3   4   5   6
+		//  mg, sg, gl, rl, lg, rg, pg, bfg
+		CG_DrawStringExt( x + w*0.55 - 4, y - SB_CHAR_HEIGHT, CG_FormatAcc(score->accuracys[4][1], score->accuracys[4][0]), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.55 - 4, y, CG_FormatAcc(score->accuracys[5][1], score->accuracys[5][0]), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.55 + 8, y - SB_CHAR_HEIGHT, CG_FormatAcc(score->accuracys[3][1], score->accuracys[3][0]), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.55 + 8, y, CG_FormatAcc(score->accuracys[6][1], score->accuracys[6][0]), colorMagenta, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.55 +20, y - SB_CHAR_HEIGHT, CG_FormatAcc(score->accuracys[1][1], score->accuracys[1][0]), colorYellow, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.55 +20, y, CG_FormatAcc(score->accuracys[0][1], score->accuracys[0][0]), colorLtGrey, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+
+      CG_DrawStringExt( x + w*0.69, y - SB_CHAR_HEIGHT, CG_FormatDmg(score->dmgdone), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+      CG_DrawStringExt( x + w*0.69, y, CG_FormatDmg(score->dmgtaken), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+
+
     }else{
-      strcpy( string, va( "^2%s^7/^1%s", CG_FormatDmg(score->dmgdone), CG_FormatDmg(score->dmgtaken) ) );
-      CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+      CG_DrawStringExt( x + w*0.67, y - SB_CHAR_HEIGHT/2, va( "^2%s^7/^1%s", CG_FormatDmg(score->dmgdone), CG_FormatDmg(score->dmgtaken) ), colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
     }
   }
 
 	if( h >= SB_CHAR_HEIGHT*2 ){
-		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT, CG_FormatKD( score->frags ), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-		CG_DrawStringExt( x + w*0.74, y, CG_FormatKD( score->deathCount ), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.75, y - SB_CHAR_HEIGHT, CG_FormatKD( score->frags ), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.75, y, CG_FormatKD( score->deathCount ), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	}else{
 		strcpy( string, va( "^2%s^7/^1%s", CG_FormatKD( score->frags ), CG_FormatKD( score->deathCount ) ) );
 		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	}
 
-	CG_DrawStringExt( x + w*0.84, y - SB_MEDCHAR_HEIGHT/2, va( "%i", score->ping ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 3 );
+	CG_DrawStringExt( x + w*0.87, y - SB_MEDCHAR_HEIGHT/2, va( "%i", score->ping ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 3 );
 	CG_DrawStringExt( x + w*0.92, y - SB_MEDCHAR_HEIGHT/2, CG_FormatTime( score->time ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 5 );
-
-	
+    
+    	
 	picSize = h*0.8;
 
 	if( cg.snap->ps.stats[ STAT_CLIENTS_READY ] & ( 1 << score->client ) ){
@@ -223,17 +251,31 @@ static int CG_TeamScoreboard( int x, int y, int w, int h, team_t team, float *co
 	CG_DrawStringExt( x, y, "Name", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	if( cgs.gametype == GT_CTF) {
 		CG_DrawStringExt( x + w*0.5, y, "C / A / D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	}
+	} else if (cgs.instagib != 1) {
+        CG_DrawStringExt( x + w*0.37, y, "Score", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+        CG_DrawStringExt( x + w*0.47, y, "Acc", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+
+        //   0   1   2   3   4   5   6
+		//  mg, sg, gl, rl, lg, rg, pg, bfg
+        CG_DrawPic( x + w*0.55, y-4, SB_INFOICON_SIZE*0.8, SB_INFOICON_SIZE*0.8, cg_weapons[6].weaponIcon);
+        CG_DrawPic( x + w*0.55, y+4, SB_INFOICON_SIZE, SB_INFOICON_SIZE*0.8, cg_weapons[7].weaponIcon);
+        CG_DrawPic( x + w*0.55 + 12, y-4, SB_INFOICON_SIZE*0.8, SB_INFOICON_SIZE*0.8, cg_weapons[5].weaponIcon);
+        CG_DrawPic( x + w*0.55 + 12, y+4, SB_INFOICON_SIZE*0.8, SB_INFOICON_SIZE*0.8, cg_weapons[8].weaponIcon);
+        CG_DrawPic( x + w*0.55 + 24, y-4, SB_INFOICON_SIZE*0.8, SB_INFOICON_SIZE*0.8, cg_weapons[3].weaponIcon);
+        CG_DrawPic( x + w*0.55 + 24, y+4, SB_INFOICON_SIZE*0.8, SB_INFOICON_SIZE*0.8, cg_weapons[2].weaponIcon);        
+
+    }
+    
   if (cgs.instagib == 1) {
 	  CG_DrawStringExt( x + w*0.69, y, "Acc", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
   } else {
-	  CG_DrawStringExt( x + w*0.69, y, "Dmg", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	  CG_DrawStringExt( x + w*0.71, y, "Dmg", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
   }
-	CG_DrawStringExt( x + w*0.76, y, "K/D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	CG_DrawPic( x + w*0.84, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbPing );
-	CG_DrawPic( x + w*0.92, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbClock );
+	CG_DrawStringExt( x + w*0.78, y, "K/D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	CG_DrawPic( x + w*0.86, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbPing );
+	CG_DrawPic( x + w*0.94, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbClock );
 
-	
+    
 	y += 20;
 	
 	count = 0;

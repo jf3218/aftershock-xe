@@ -206,7 +206,7 @@ static void CG_ParseScores ( void ) {
 		memset(scores, 0, sizeof(scores));
 	}
 
-#define NUM_DATA 26
+#define NUM_DATA 42
 #define NUM_DATA_DUEL 47
 #define FIRST_DATA 4
 
@@ -262,8 +262,6 @@ static void CG_ParseScores ( void ) {
             scores[i].accuracys[7][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 46 ) );
             scores[i].spawnkillCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA_DUEL + FIRST_DATA + 47 ) );
 
-
-
         }
         else {
             scores[i].client = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 1 ) );
@@ -291,10 +289,24 @@ static void CG_ParseScores ( void ) {
             scores[i].fullshotgunCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 23 ) );
             scores[i].rocketRailCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 24 ) );
             scores[i].itemDeniedCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 25 ) );
-            scores[i].spawnkillCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 26 ) );
-
-
-
+            scores[i].spawnkillCount = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 26 ) );    
+            scores[i].accuracys[0][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 27 ) );
+            scores[i].accuracys[0][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 28 ) );
+            scores[i].accuracys[1][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 29 ) );
+            scores[i].accuracys[1][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 30 ) );
+            scores[i].accuracys[2][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 31 ) );
+            scores[i].accuracys[2][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 32 ) );
+            scores[i].accuracys[3][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 33 ) );
+            scores[i].accuracys[3][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 34 ) );
+            scores[i].accuracys[4][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 35 ) );
+            scores[i].accuracys[4][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 36 ) );
+            scores[i].accuracys[5][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 37 ) );
+            scores[i].accuracys[5][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 38 ) );
+            scores[i].accuracys[6][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 39 ) );
+            scores[i].accuracys[6][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 40 ) );
+            scores[i].accuracys[7][0] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 41 ) );
+            scores[i].accuracys[7][1] = atoi ( CG_Argv ( num_in_packet * NUM_DATA + FIRST_DATA + 42 ) );
+            
         }
     }
 

@@ -70,7 +70,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 		perfect = ( cl->ps.persistant[PERS_RANK] == 0 && cl->ps.persistant[PERS_KILLED] == 0 ) ? 1 : 0;
 
 		if ( g_gametype.integer == GT_TOURNAMENT ) {
-			if ( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
+			if ( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {  
 				Com_sprintf (entry, sizeof(entry),
 					" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
 					cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/1000,
@@ -137,7 +137,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 		} else {
 			if ( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
 				Com_sprintf (entry, sizeof(entry),
-					" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
+					" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
 					cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/1000,
 					scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
 					cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
@@ -158,11 +158,20 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 					cl->rewards[REWARD_FULLSG],
 					cl->rewards[REWARD_RLRG],
 					cl->rewards[REWARD_ITEMDENIED],
-					cl->rewards[REWARD_SPAWNKILL]
+					cl->rewards[REWARD_SPAWNKILL],
+ 					cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1],
+					cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1],
+					cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1],
+					cl->accuracy[WP_ROCKET_LAUNCHER][0], cl->accuracy[WP_ROCKET_LAUNCHER][1],
+					cl->accuracy[WP_LIGHTNING][0], cl->accuracy[WP_LIGHTNING][1],
+					cl->accuracy[WP_RAILGUN][0], cl->accuracy[WP_RAILGUN][1],
+					cl->accuracy[WP_PLASMAGUN][0], cl->accuracy[WP_PLASMAGUN][1],
+					cl->accuracy[WP_BFG][0], cl->accuracy[WP_BFG][1]
+ 
 					);
 			} else {
 			Com_sprintf (entry, sizeof(entry),
-				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 -1 ", level.sortedClients[i],
+                " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ", level.sortedClients[i],
 				cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/1000,
 				scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
 				cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
