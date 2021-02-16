@@ -534,7 +534,8 @@ qboolean CG_DrawOldScoreboard( void ){
 		
 		// team red
 		strcpy( string, "Team red" );
-		CG_DrawStringExt( SB_TEAM_RED_X + SB_TEAM_WIDTH/2 - BIGCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y + 15, string, colorRed, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
+		//CG_DrawStringExt( SB_TEAM_RED_X + SB_TEAM_WIDTH/2 - BIGCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y + 15, string, colorRed, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
+		CG_DrawStringExt( 320-170, SB_TEAM_Y + 20, string, colorRed, qtrue, qtrue, 12, BIGCHAR_HEIGHT, 0 );
 		color[ 0 ] = 1;
 		color[ 1 ] = 0;
 		color[ 2 ] = 0;
@@ -545,7 +546,8 @@ qboolean CG_DrawOldScoreboard( void ){
 		
 		// team blue
 		strcpy( string, "Team blue" );
-		CG_DrawStringExt( SB_TEAM_BLUE_X + SB_TEAM_WIDTH/2 - BIGCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y + 15, string, colorBlue, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
+		//CG_DrawStringExt( SB_TEAM_BLUE_X + SB_TEAM_WIDTH/2 - BIGCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y + 15, string, colorBlue, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
+		CG_DrawStringExt( 320 + 80, SB_TEAM_Y + 20, string, colorBlue, qtrue, qtrue, 12, BIGCHAR_HEIGHT, 0 );
 		color[ 0 ] = 0;
 		color[ 1 ] = 0;
 		color[ 2 ] = 1;
