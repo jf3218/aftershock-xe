@@ -25,6 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "cg_local.h"
 
 
+static void CG_Ping( centity_t *cent );
+
+
 /*
 ======================
 CG_PositionEntityOnTag
@@ -1134,6 +1137,9 @@ static void CG_AddCEntity( centity_t *cent, int otherClient ) {
 	case ET_GRAPPLE:
 		CG_Grapple( cent );
 		break;
+	case ET_PING:
+		CG_Ping( cent ) ;
+		break;
 	case ET_TEAM:
 		CG_TeamBase( cent );
 		break;
@@ -1246,3 +1252,60 @@ void CG_AddPacketEntities( int otherClient ) {
 	}
 }
 
+
+
+/*
+==================
+CG_Ping
+==================
+*/
+
+static void CG_Ping( centity_t *cent )  {
+	refEntity_t			ent;
+	int		team;
+
+	team = cent->currentState.eventParm;
+
+	// if ( (cg.time - cent->miscTime) > 3000 ) {
+	// 	CG_Printf("\n");
+	// 	CG_Printf("A cg.snap->ps.persistant[PERS_TEAM]                 %d\n", cg.snap->ps.persistant[PERS_TEAM]);
+	// 	CG_Printf("B cgs.clientinfo[cent->currentState.clientNum].team %d\n", team);
+	// 	CG_Printf("C cg.snap->ps.clientNum                             %d\n", cg.snap->ps.clientNum);
+	// 	CG_Printf("D cent->currentState.clientNum                      %d\n", cent->currentState.clientNum);
+	// 	CG_Printf("E s.eventParm team                                  %d\n", cent->currentState.eventParm);
+	// }
+
+	if (cg.snap->ps.persistant[PERS_TEAM] != team){
+		return;
+	}
+
+	// create the render entity
+	memset (&ent, 0, sizeof(ent));
+	VectorCopy( cent->lerpOrigin, ent.origin);
+	//VectorCopy( cent->lerpOrigin, ent.oldorigin);
+
+	ent.origin[2] += 20;
+	ent.reType = RT_SPRITE;
+	ent.customShader = cgs.media.pingLocShader;
+		
+	ent.radius = 30;
+	ent.shaderRGBA[0] = 255;
+	ent.shaderRGBA[1] = 255;
+	ent.shaderRGBA[2] = 255;
+	ent.shaderRGBA[3] = 255;
+
+	trap_R_AddRefEntityToScene( &ent );
+	trap_R_AddLightToScene(ent.origin, 120, 1, 0, 0);
+	
+	// ensure we only play the sound once
+	if ( (cg.time - cent->miscTime) < 3000 ) {
+		return;
+	}
+	cent->miscTime = cg.time;
+
+	trap_S_StartLocalSound(cgs.media.ping, 0);
+
+
+
+
+}

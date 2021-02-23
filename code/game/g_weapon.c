@@ -1428,3 +1428,95 @@ void G_StartKamikaze( gentity_t *ent ) {
 	te->r.svFlags |= SVF_BROADCAST;
 	te->s.eventParm = GTS_KAMIKAZE;
 }
+
+
+/*
+==============
+Location Ping 
+==============
+*/
+
+void Ping_Gen( gentity_t *ent )	{
+	gentity_t	*ping;
+	int oldtype;
+
+	//Get rid of you?
+	// if ( ent->client->lasersight) {
+	// 	  oldtype = ent->client->lasersight->s.eventParm;
+	// 	  G_FreeEntity( ent->client->lasersight );
+	// 	  ent->client->lasersight = NULL;
+	// 	  if (oldtype == type)		// make it dissppear if click again
+	// 		  return;
+	// }
+
+	// JR: I'm not sure that the thing to do is spawning a temp entity. 
+	// Those look more like transient events that don't fit what we're doing 
+	// here. Maybe it'd be fitting to produce the sound without dealing with 
+	// it manually, but somehow that approach fails to play the sample on a 
+	// significant number of occasions (in my hands)...
+	//
+	// So we spawn it and handle the timing of the sound ourselves in CG_Ping()
+	//
+	// G_TempEntity(ent->s.origin, EV_PING);
+
+	ping = G_Spawn();
+
+	ping->timestamp = level.time;
+	ping->nextthink = level.time + 10;
+	ping->think = Ping_Think;
+	ping->r.ownerNum = ent->s.number;
+	ping->parent = ent;
+	ping->s.eType = ET_PING;
+	ping->classname = "location_ping";
+	ping->s.eventParm = ent->client->sess.sessionTeam;
+	ping->s.clientNum = ent->client->sess.sessionTeam;
+	ent->client->locPing = ping;
+
+}
+
+void Ping_Think( gentity_t *self )	{
+	vec3_t		end, start, forward, up;
+	trace_t		tr;
+
+	// persistence time of each "ping"
+	if ((level.time - self->timestamp) > 3000) {
+		trap_UnlinkEntity(self);
+		return;
+	}
+
+	//If Player Dies, You Die -> now thanks to Camouflage!
+	if (self->parent->client->ps.pm_type == PM_DEAD)  {
+		G_FreeEntity(self);
+		return;
+	}
+
+	//Set Aiming Directions
+	AngleVectors(self->parent->client->ps.viewangles, forward, right, up);
+	CalcMuzzlePoint(self->parent, forward, right, up, start);
+	VectorMA (start, 8192, forward, end);
+
+	//Trace Position
+	trap_Trace (&tr, start, NULL, NULL, end, self->parent->s.number, MASK_SHOT );
+
+	//Did you not hit anything?
+	if (tr.surfaceFlags & SURF_NOIMPACT || tr.surfaceFlags & SURF_SKY)	{
+		self->nextthink = level.time + 10;
+		trap_UnlinkEntity(self);
+		return;
+	}
+
+	//Move you forward to keep you visible
+	if (tr.fraction != 1)	VectorMA(tr.endpos,-10,forward,tr.endpos);
+
+	//Set Your position
+	VectorCopy( tr.endpos, self->r.currentOrigin );
+	VectorCopy( tr.endpos, self->s.pos.trBase );
+
+	vectoangles(tr.plane.normal, self->s.angles);
+
+	trap_LinkEntity(self);
+
+	//Prep next move. We set it equal to persistence, so it doesn't move
+	self->nextthink = level.time + 3000;
+	
+}

@@ -1230,6 +1230,18 @@ int myrand( int d) {
   return t/(967/d);
 }
 
+
+/*
+=================
+Cmd_Ping
+=================
+*/
+void Cmd_Ping( gentity_t *ent ){
+    // Draws a location icon where the player is pointing to, for team comms
+    Ping_Gen( ent );
+}
+
+
 /*
 =================
 Cmd_Coinflip_f
@@ -4405,7 +4417,7 @@ commands_t cmds[ ] =
     { "unmute", 0, Cmd_Unmute_f, qfalse },
     { "forfeit", 0, Cmd_Forfeit_f, qfalse },
     { "zoomed", 0, Cmd_Zoomed_f, qfalse },
-
+    { "locping", CMD_TEAM, Cmd_Ping, qfalse},
     { "practice", 0, Cmd_Practice_f, qtrue }
 };
 

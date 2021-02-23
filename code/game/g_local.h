@@ -424,6 +424,8 @@ struct gclient_s {
 	qboolean	fireHeld;			// used for hook
 	gentity_t	*hook;				// grapple hook if out
 
+	gentity_t	*locPing;		    // location ping
+
 	int			switchTeamTime;		// time the player switched teams
 
 	// timeResidual is used to handle events that happen every second
@@ -917,6 +919,9 @@ void SnapVectorTowards( vec3_t v, vec3_t to );
 qboolean CheckGauntletAttack( gentity_t *ent );
 void Weapon_HookFree (gentity_t *ent);
 void Weapon_HookThink (gentity_t *ent);
+
+void Ping_Gen (gentity_t *ent);
+void Ping_Think( gentity_t *self );
 
 //unlagged - g_unlagged.c
 void G_ResetHistory( gentity_t *ent );

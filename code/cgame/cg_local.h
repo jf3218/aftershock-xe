@@ -981,6 +981,7 @@ typedef struct {
 	qhandle_t	friendShaderVisible;
 	qhandle_t   friendShader2;
 	qhandle_t   friendShaderVisible2;
+	qhandle_t	pingLocShader;
 
 	qhandle_t	balloonShader;
 	qhandle_t	balloonShaderVisible;
@@ -1098,6 +1099,7 @@ typedef struct {
 	qhandle_t	medalLgaccuracy;
 
 	// sounds
+	sfxHandle_t ping;
 	sfxHandle_t	quadSound;
 	sfxHandle_t	tracerSound;
 	sfxHandle_t	selectSound;

@@ -1322,6 +1322,7 @@ static void CG_RegisterSounds( void ) {
 	}
 
 	// FIXME: only needed with item
+	cgs.media.ping = CG_RegisterSoundOption("sound/misc/ping_ljud4amix.wav", qfalse);
 	cgs.media.flightSound = CG_RegisterSoundOption( "sound/items/flight.wav", qfalse );
 	cgs.media.medkitSound = CG_RegisterSoundOption ("sound/items/use_medkit.wav", qfalse);
 	cgs.media.quadSound = CG_RegisterSoundOption("sound/items/damage3.wav", qfalse);
@@ -1442,6 +1443,9 @@ static void CG_RegisterGraphics( void ) {
 	cgs.media.viewBloodShader = trap_R_RegisterShader( "viewBloodBlend" );
 
 	cgs.media.deferShader = trap_R_RegisterShaderNoMip( "gfx/2d/defer.tga" );
+
+	
+	cgs.media.pingLocShader = trap_R_RegisterShaderNoMip( "icons/pingLoc.tga" );
 
 	cgs.media.scoreboardName = trap_R_RegisterShaderNoMip( "menu/tab/name.tga" );
 	cgs.media.scoreboardPing = trap_R_RegisterShaderNoMip( "menu/tab/ping.tga" );
