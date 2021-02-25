@@ -1468,8 +1468,10 @@ void Ping_Gen( gentity_t *ent )	{
 	ping->parent = ent;
 	ping->s.eType = ET_PING;
 	ping->classname = "location_ping";
+	// Store team of ping owner, used later to decide who sees the icon
+	// Probably can do this more elegantly, but I don't find where this 
+	// information is stored reliably
 	ping->s.eventParm = ent->client->sess.sessionTeam;
-	ping->s.clientNum = ent->client->sess.sessionTeam;
 	ent->client->locPing = ping;
 
 }

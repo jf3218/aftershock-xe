@@ -1262,12 +1262,23 @@ CG_Ping
 
 static void CG_Ping( centity_t *cent )  {
 	refEntity_t			ent;
-	int		team;
+	vec3_t				pos_ent, pos_client;
+	vec_t				dist;
+	int					team;
 
 	team = cent->currentState.eventParm;
+	_VectorCopy( cent->lerpOrigin, pos_ent );
+	_VectorCopy( cg.predictedPlayerState.origin, pos_client );
+
+	dist = Distance(pos_ent, pos_client);
 
 	// if ( (cg.time - cent->miscTime) > 3000 ) {
 	// 	CG_Printf("\n");
+
+	// 	CG_Printf("pos: %f %f %f\n", pos_ent[0], pos_ent[1], pos_ent[2]);
+	// 	CG_Printf("pos: %f %f %f\n", pos_client[0], pos_client[1], pos_client[2]);
+	// 	CG_Printf("dist: %f\n", dist);
+
 	// 	CG_Printf("A cg.snap->ps.persistant[PERS_TEAM]                 %d\n", cg.snap->ps.persistant[PERS_TEAM]);
 	// 	CG_Printf("B cgs.clientinfo[cent->currentState.clientNum].team %d\n", team);
 	// 	CG_Printf("C cg.snap->ps.clientNum                             %d\n", cg.snap->ps.clientNum);
@@ -1284,18 +1295,18 @@ static void CG_Ping( centity_t *cent )  {
 	VectorCopy( cent->lerpOrigin, ent.origin);
 	//VectorCopy( cent->lerpOrigin, ent.oldorigin);
 
-	ent.origin[2] += 20;
+	ent.origin[2] += 14;
 	ent.reType = RT_SPRITE;
 	ent.customShader = cgs.media.pingLocShader;
 		
-	ent.radius = 30;
+	ent.radius = 25 + dist / 40;
 	ent.shaderRGBA[0] = 255;
 	ent.shaderRGBA[1] = 255;
 	ent.shaderRGBA[2] = 255;
 	ent.shaderRGBA[3] = 255;
 
 	trap_R_AddRefEntityToScene( &ent );
-	trap_R_AddLightToScene(ent.origin, 120, 1, 0, 0);
+	trap_R_AddLightToScene(ent.origin, 150, 1, 0, 0);
 	
 	// ensure we only play the sound once
 	if ( (cg.time - cent->miscTime) < 3000 ) {
