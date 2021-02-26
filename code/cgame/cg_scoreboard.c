@@ -157,7 +157,7 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 	nametruncated[26] = '\0';
 	CG_DrawStringExt( x+1, y - SB_MEDCHAR_HEIGHT/2, nametruncated, colorWhite, qfalse, qfalse, SB_MEDCHAR_WIDTH-2, SB_MEDCHAR_HEIGHT, 31 );
 
-	if( cgs.gametype == GT_CTF) {
+	if( (cgs.gametype == GT_CTF) || (cgs.gametype == GT_CTF_ELIMINATION) || (cgs.gametype == GT_1FCTF) ){
 		CG_DrawStringExt( x + w*0.5, y - SB_MEDCHAR_HEIGHT/2, va( "%i / %i / %i", score->captures, score->assistCount, score->defendCount ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	}
 
@@ -165,7 +165,7 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
     strcpy( string, va( "%i%%", ( ( int )( score->accuracy ) ) ) );
     len = strlen( string );
     CG_DrawStringExt( x + w*0.69+(4-len)*SB_CHAR_WIDTH, y - SB_CHAR_HEIGHT/2, string, colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 4 );
-  } else {
+  } else if ((cgs.gametype != GT_CTF) & (cgs.gametype != GT_CTF_ELIMINATION) & (cgs.gametype != GT_1FCTF)){
     if( h >= SB_CHAR_HEIGHT*2 ){
 
 	    anum = score->dmgdone / 100 + score->frags;
@@ -180,20 +180,20 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 		CG_DrawStringExt( x + w*0.55 + 8, y, CG_FormatAcc(score->accuracys[6][1], score->accuracys[6][0]), colorMagenta, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 		CG_DrawStringExt( x + w*0.55 +20, y - SB_CHAR_HEIGHT, CG_FormatAcc(score->accuracys[1][1], score->accuracys[1][0]), colorYellow, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 		CG_DrawStringExt( x + w*0.55 +20, y, CG_FormatAcc(score->accuracys[0][1], score->accuracys[0][0]), colorLtGrey, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-
-      CG_DrawStringExt( x + w*0.69, y - SB_CHAR_HEIGHT, CG_FormatDmg(score->dmgdone), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-      CG_DrawStringExt( x + w*0.69, y, CG_FormatDmg(score->dmgtaken), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-
-
-    }else{
-      CG_DrawStringExt( x + w*0.67, y - SB_CHAR_HEIGHT/2, va( "^2%s^7/^1%s", CG_FormatDmg(score->dmgdone), CG_FormatDmg(score->dmgtaken) ), colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
     }
   }
 
 	if( h >= SB_CHAR_HEIGHT*2 ){
+		if (cgs.instagib != 1){
+			CG_DrawStringExt( x + w*0.69, y - SB_CHAR_HEIGHT, CG_FormatDmg(score->dmgdone), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+    	  	CG_DrawStringExt( x + w*0.69, y, CG_FormatDmg(score->dmgtaken), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		}
 		CG_DrawStringExt( x + w*0.75, y - SB_CHAR_HEIGHT, CG_FormatKD( score->frags ), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 		CG_DrawStringExt( x + w*0.75, y, CG_FormatKD( score->deathCount ), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	}else{
+		} else {
+			if (cgs.instagib != 1) {
+		    CG_DrawStringExt( x + w*0.67, y - SB_CHAR_HEIGHT/2, va( "^2%s^7/^1%s", CG_FormatDmg(score->dmgdone), CG_FormatDmg(score->dmgtaken) ), colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		}
 		strcpy( string, va( "^2%s^7/^1%s", CG_FormatKD( score->frags ), CG_FormatKD( score->deathCount ) ) );
 		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	}
@@ -249,7 +249,7 @@ static int CG_TeamScoreboard( int x, int y, int w, int h, team_t team, float *co
 	transparent[ 3 ] = 0;
 	
 	CG_DrawStringExt( x, y, "Name", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	if( cgs.gametype == GT_CTF) {
+	if( (cgs.gametype == GT_CTF) || (cgs.gametype == GT_1FCTF) || (cgs.gametype == GT_CTF_ELIMINATION) ) {
 		CG_DrawStringExt( x + w*0.5, y, "C / A / D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	} else if (cgs.instagib != 1) {
         CG_DrawStringExt( x + w*0.37, y, "Score", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
