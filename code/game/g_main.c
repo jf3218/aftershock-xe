@@ -652,7 +652,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_shotgunDamage, "g_shotgunDamage", "10", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_shotgunCount, "g_shotgunCount", "11", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_shotgunSpread, "g_shotgunSpread", "1400", CVAR_SERVERINFO, 0, qtrue },
-    { &g_sgPattern, "g_sgPattern", "as", CVAR_SERVERINFO, 0, qtrue },
+    { &g_sgPattern, "g_sgPattern", "circle", CVAR_SERVERINFO, 0, qtrue },
 	{ &g_plasmaRate, "g_plasmaRate", "100", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_plasmaDamage, "g_plasmaDamage", "20", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_plasmaSplashDamage, "g_plasmaSplashDamage", "15", CVAR_ARCHIVE, 0, qtrue },
