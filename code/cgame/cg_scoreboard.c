@@ -168,9 +168,9 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
   } else if ((cgs.gametype != GT_CTF) & (cgs.gametype != GT_CTF_ELIMINATION) & (cgs.gametype != GT_1FCTF)){
     if( h >= SB_CHAR_HEIGHT*2 ){
 
-	    anum = score->dmgdone / 100 + score->frags;
+	    anum = score->dmgdone / 100 + score->score;			 // suicides and /kill subtract 1, but only during active game
     	n = (int)(anum < 0 ? (anum - 0.5) : (anum + 0.5));   // round anum
-    	CG_DrawStringExt( x + w*0.39, y -SB_CHAR_WIDTH*1.6, va( "%i%", n ), colorYellow, qtrue, qfalse, SB_CHAR_WIDTH*1.5, SB_MEDCHAR_HEIGHT*1.5, 4 );   
+    	CG_DrawStringExt( x + w*0.39, y -SB_CHAR_WIDTH*1.6, va( "%i", n ), colorYellow, qtrue, qfalse, SB_CHAR_WIDTH*1.5, SB_MEDCHAR_HEIGHT*1.5, 4 );
     	CG_DrawStringExt( x + w*0.47, y - SB_CHAR_HEIGHT/2, va( "%i%%", ( ( int )( score->accuracy ) ) ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 4 );
         //   0   1   2   3   4   5   6
 		//  mg, sg, gl, rl, lg, rg, pg, bfg
