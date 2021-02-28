@@ -1724,7 +1724,7 @@ G_RadiusDamage
 */
 qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, float radius,
 					 gentity_t *ignore, int mod) {
-	float		points, dist;
+	float		points, dist, k;
 	gentity_t	*ent;
 	int			entityList[MAX_GENTITIES];
 	int			numListedEntities;
@@ -1771,16 +1771,36 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 
         canDmg = CanDamage (ent, origin);
         
-		if( canDmg || g_thrufloors.value > 0 ) {
+		G_Printf("g_thrufloors %s\n", g_thrufloors.string);
+		// if (Q_stricmp(g_thrufloors.string, "0") != 0){
+		// 	g_thrufloors.value = 1;
+		// }
+
+		if( canDmg || (Q_stricmp(g_thrufloors.string, "0") != 0) ) {
             if (canDmg) {
                 points = damage * ( 1.0 - dist / radius );
-//                 G_Printf("CanDamage dmg %f\n", points);
             }
-            else if (g_thrufloors.value > 0) {
-                points = damage * ( 1.0 - dist / radius ) * g_thrufloors.value;
-//                 points = (damage * ( 1.0 - dist / radius ) - damage * 0.25) * 0.8;
-//                 G_Printf("ThruFloor dmg %f\n", points);
-            }
+			else if (Q_stricmp(g_thrufloors.string, "full") == 0){
+				points = damage * ( 1.0 - dist / radius );
+			}
+			else if (Q_stricmp(g_thrufloors.string, "high") == 0){
+				points = damage * ( 1.0 - dist / (radius-20) ) * 0.8;
+			}
+			else if ( (Q_stricmp(g_thrufloors.string, "mid") == 0) || 
+					  (Q_stricmp(g_thrufloors.string, "med") == 0) ) {
+				points = damage * ( 1.0 - dist / (radius-20) ) * 0.6;
+			}
+			else if (Q_stricmp(g_thrufloors.string, "low") == 0){
+				k = 87 / (87 + radius - 20);
+				points = damage * 0.6 * ((87/(87+dist) - k) / (1-k));
+			}
+			else {	// default to mid if PBCAK
+				points = damage * (1.0 - dist / (radius-20)) * 0.6;
+			}
+
+			if (points < 1){
+				continue;
+			}
             
 			if( LogAccuracyHit( ent, attacker ) ) {
 				hitClient = qtrue;
