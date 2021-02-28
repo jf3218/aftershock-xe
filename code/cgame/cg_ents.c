@@ -1299,7 +1299,7 @@ static void CG_Ping( centity_t *cent )  {
 	ent.reType = RT_SPRITE;
 	ent.customShader = cgs.media.pingLocShader;
 		
-	ent.radius = 25 + dist / 40;
+	ent.radius = 25 + dist / 45;
 	ent.shaderRGBA[0] = 255;
 	ent.shaderRGBA[1] = 255;
 	ent.shaderRGBA[2] = 255;
