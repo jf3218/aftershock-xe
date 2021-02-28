@@ -226,10 +226,10 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 
 static int CG_TeamScoreboard( int x, int y, int w, int h, team_t team, float *color, int maxClients ){
 	
-	int i;
+	int i, j, m, t, tscore1, tscore2, n=0, count=0;
+	int index[50];		// I guess there can be quite a few clients counting specs
 	score_t	*score;
 	clientInfo_t *ci;
-	int count;
 	float transparent[ 4 ];
 	qboolean notEnough;
 	score_t *localClient;
@@ -275,17 +275,47 @@ static int CG_TeamScoreboard( int x, int y, int w, int h, team_t team, float *co
 	CG_DrawPic( x + w*0.86, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbPing );
 	CG_DrawPic( x + w*0.94, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbClock );
 
-    
+
+	if ((cgs.gametype != GT_CTF) || (cgs.gametype != GT_1FCTF) || (cgs.gametype != GT_CTF_ELIMINATION) ) {
+		// Sort players according to score. N.B. not score as relayed by the 
+		// server, but the score we report in scoreboard, i.e. kills - suicides + dmg/100
+		for (i=0; i<cg.numScores; i++){		// count players in team and create index
+			score = &cg.scores[i];
+			ci = &cgs.clientinfo[ score->client];
+			if (ci->team == team){
+				index[n] = i;
+				++n;
+			}
+		}
+		// selection sort on the index on the basis of our score metric
+		for (i=0; i<n; i++){
+			for (j=i, m=i; j<n; j++){
+				score = &cg.scores[index[j]];
+				tscore1 = score->score + (int)(score->dmgdone / 100);
+				score = &cg.scores[index[m]];
+				tscore2 = score->score + (int)(score->dmgdone / 100);
+				if (tscore1 > tscore2){
+					m = j;
+				}
+			}
+			t = index[i];
+			index[i] = index[m];
+			index[m] = t;
+		}
+	} else {	// do what used to be done by to avoid messing up order in CTF-type games
+		for (i=0; i<50; i++){
+			index[i] = i;
+		}
+		n = cg.numScores;
+	}
+
 	y += 20;
-	
-	count = 0;
 	notEnough = qfalse;
 	localClient = NULL;
-	for( i=0; i<cg.numScores; i++ ){
-		
-		score = &cg.scores[ i ];
+	for ( i=0; i<n; i++){
+		score = &cg.scores[index[i]];
 		ci = &cgs.clientinfo[ score->client ];
-		
+
 		if( ci->team != team ){
 			continue;
 		}
