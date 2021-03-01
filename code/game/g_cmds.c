@@ -1237,7 +1237,13 @@ Cmd_Ping
 =================
 */
 void Cmd_Ping( gentity_t *ent ){
-    // Draws a location icon where the player is pointing to, for team comms
+    // Draws a location icon where the player is pointing to, for team comms.
+    // Don't allow use if eliminated. Using PM_DEAD logic fails here because 
+    // we can spec other players and client numbers don't match...
+    if (ent->client->isEliminated){
+            return;
+        }
+
     Ping_Gen( ent );
 }
 
