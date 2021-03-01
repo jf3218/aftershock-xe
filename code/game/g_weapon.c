@@ -1438,16 +1438,6 @@ Location Ping
 
 void Ping_Gen( gentity_t *ent )	{
 	gentity_t	*ping;
-	int oldtype;
-
-	//Get rid of you?
-	// if ( ent->client->lasersight) {
-	// 	  oldtype = ent->client->lasersight->s.eventParm;
-	// 	  G_FreeEntity( ent->client->lasersight );
-	// 	  ent->client->lasersight = NULL;
-	// 	  if (oldtype == type)		// make it dissppear if click again
-	// 		  return;
-	// }
 
 	// JR: I'm not sure that the thing to do is spawning a temp entity. 
 	// Those look more like transient events that don't fit what we're doing 
@@ -1486,7 +1476,7 @@ void Ping_Think( gentity_t *self )	{
 		return;
 	}
 
-	//If Player Dies, You Die -> now thanks to Camouflage!
+	// remove if player dies
 	if (self->parent->client->ps.pm_type == PM_DEAD)  {
 		G_FreeEntity(self);
 		return;
