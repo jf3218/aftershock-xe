@@ -1240,9 +1240,18 @@ void Cmd_Ping( gentity_t *ent ){
     // Draws a location icon where the player is pointing to, for team comms.
     // Don't allow use if eliminated. Using PM_DEAD logic fails here because 
     // we can spec other players and client numbers don't match...
+    int t;
+
     if (ent->client->isEliminated){
             return;
         }
+
+    // limit frequency of use
+    t = ent->client->pers.locPingTimeLast;
+    if ( level.time - t < 450 ) {
+        return;
+    }
+    ent->client->pers.locPingTimeLast = level.time;
 
     Ping_Gen( ent );
 }

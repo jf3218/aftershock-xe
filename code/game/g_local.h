@@ -327,6 +327,9 @@ typedef struct {
 //Used To Track Name Changes
     int         nameChangeTime;
     int         nameChanges;
+
+// limit frequency of locPing
+	int			locPingTimeLast;
     
     int multiview;
     int autoaction;
