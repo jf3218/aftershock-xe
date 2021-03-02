@@ -453,8 +453,8 @@ qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent ) {
 
 // this should match CG_ShotgunPattern
 void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
-	int			i;
-	float		r, u;
+	int			i,j;
+	float		r, u, rr, uu, gscale, rad_ran, ang_ran;
 	vec3_t		end;
 	vec3_t		forward, right, up;
 	qboolean	hitClient = qfalse;
@@ -483,69 +483,90 @@ void ShotgunPattern( vec3_t origin, vec3_t origin2, int seed, gentity_t *ent ) {
 	outery = sin(60 * (2*M_PI/360 ) ) * OUTERRADIUS;
 	outerx = cos(60 * (2*M_PI/360 ) ) * OUTERRADIUS;
 
-	// generate the "random" spread pattern
-	for ( i = 0 ; i < g_shotgunCount.integer ; i++ ) {
-		
-		/*r = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
-		u = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;*/
-		
-		//NEW sg-pattern
-		switch(i){
-			case 0: 
-				r = OUTERRADIUS;
-				u = 0;
-				break;
-			case 1: 
-				r = outerx;
-				u = outery;
-				break;
-			case 2: 
-				r = -outerx;
-				u = outery;
-				break;
-			case 3: 
-				r = -OUTERRADIUS;
-				u = 0;
-				break;
-			case 4: 
-				r = -outerx;
-				u = -outery;
-				break;
-			case 5: 
-				r = outerx;
-				u = -outery;
-				break;
-			case 6: 
-				r = INNERRADIUS;
-				u = INNERRADIUS;
-				break;
-			case 7: 
-				r = -INNERRADIUS;
-				u = INNERRADIUS;
-				break;
-			case 8: 
-				r = -INNERRADIUS;
-				u = -INNERRADIUS;
-				break;
-			case 9: 
-				r = INNERRADIUS;
-				u = -INNERRADIUS;
-				break;
-			case 10: 
-				r = 0;
-				u = 0;
-				break;
-			default:
-				r = 0;
-				u = 0;
-		}
-		
-		r += Q_crandom( &seed ) * ( g_shotgunSpread.integer * 16 - OUTERRADIUS );
-		u += Q_crandom( &seed ) * ( g_shotgunSpread.integer * 16 - OUTERRADIUS );
-		//NEW sg-pattern
-		
-		//G_Printf("r: %f, u: %f\n", r, u);
-		VectorMA( origin, 8192 * 16, forward, end);
+    gscale = sqrt(4./12) * DEFAULT_SHOTGUN_SPREAD * 16;
+
+    // generate the "random" spread pattern
+ 	for ( i = 0 ; i < g_shotgunCount.integer ; i++ ) {
+
+        if (Q_stricmp(g_sgPattern.string, "oa") == 0) {     // vanilla (square uniform)
+            r = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;
+            u = Q_crandom( &seed ) * DEFAULT_SHOTGUN_SPREAD * 16;                
+                
+        } else if (Q_stricmp(g_sgPattern.string, "gauss") == 0) {   // Gaussian
+            rr = 0;
+            uu = 0;
+            for (j=0; j<3; j++) {
+                rr += Q_crandom(&seed);
+                uu += Q_crandom(&seed);
+            }
+            // variance of uniform dist. in (a, b): (b - a)**2 / 12
+            r = rr / sqrt(4./12*3) * gscale;
+            u = uu / sqrt(4./12*3) * gscale;
+            
+        } else if (Q_stricmp(g_sgPattern.string, "circle") == 0) {     // circular uniform
+            ang_ran = (Q_crandom( &seed ) + 1.0) * M_PI;
+            rad_ran = sqrt((Q_crandom( &seed ) + 1) * 0.7);
+            r = rad_ran * cos(ang_ran) * DEFAULT_SHOTGUN_SPREAD * 16;
+            u = rad_ran * sin(ang_ran) * DEFAULT_SHOTGUN_SPREAD * 16;
+            
+        } else if (Q_stricmp(g_sgPattern.string, "as") == 0) {
+            //NEW sg-pattern
+            switch(i){
+            case 0: 
+                r = OUTERRADIUS;
+                u = 0;
+                break;
+            case 1: 
+                r = outerx;
+                u = outery;
+                break;
+            case 2: 
+                r = -outerx;
+                u = outery;
+                break;
+            case 3: 
+                r = -OUTERRADIUS;
+                u = 0;
+                break;
+            case 4: 
+                r = -outerx;
+                u = -outery;
+                break;
+            case 5: 
+                r = outerx;
+                u = -outery;
+                break;
+            case 6: 
+                r = INNERRADIUS;
+                u = INNERRADIUS;
+                break;
+            case 7: 
+                r = -INNERRADIUS;
+                u = INNERRADIUS;
+                break;
+            case 8: 
+                r = -INNERRADIUS;
+                u = -INNERRADIUS;
+                break;
+            case 9: 
+                r = INNERRADIUS;
+                u = -INNERRADIUS;
+                break;
+            case 10: 
+                r = 0;
+                u = 0;
+                break;
+            default:
+                r = 0;
+                u = 0;
+            }
+            r += Q_crandom( &seed ) * ( g_shotgunSpread.integer * 16 - OUTERRADIUS );
+            u += Q_crandom( &seed ) * ( g_shotgunSpread.integer * 16 - OUTERRADIUS );
+            //NEW sg-pattern
+        }
+//         G_Printf("%s, %f, %f\n", g_sgPattern.string, r, u);
+
+        VectorMA( origin, 8192 * 16, forward, end);
 		VectorMA (end, r, right, end);
 		VectorMA (end, u, up, end);
 		
@@ -1406,4 +1427,88 @@ void G_StartKamikaze( gentity_t *ent ) {
 	te = G_TempEntity(snapped, EV_GLOBAL_TEAM_SOUND );
 	te->r.svFlags |= SVF_BROADCAST;
 	te->s.eventParm = GTS_KAMIKAZE;
+}
+
+
+/*
+==============
+Location Ping 
+==============
+*/
+
+void Ping_Gen( gentity_t *ent )	{
+	gentity_t	*ping;
+
+	// JR: I'm not sure that the thing to do is spawning a temp entity. 
+	// Those look more like transient events that don't fit what we're doing 
+	// here. Maybe it'd be fitting to produce the sound without dealing with 
+	// it manually, but somehow that approach fails to play the sample on a 
+	// significant number of occasions (in my hands)...
+	//
+	// So we spawn it and handle the timing of the sound ourselves in CG_Ping()
+	//
+	// G_TempEntity(ent->s.origin, EV_PING);
+
+	ping = G_Spawn();
+
+	ping->timestamp = level.time;
+	ping->nextthink = level.time + 10;
+	ping->think = Ping_Think;
+	ping->r.ownerNum = ent->s.number;
+	ping->parent = ent;
+	ping->s.eType = ET_PING;
+	ping->classname = "location_ping";
+	// Store team of ping owner, used later to decide who sees the icon
+	// Probably can do this more elegantly, but I don't find where this 
+	// information is stored reliably
+	ping->s.eventParm = ent->client->sess.sessionTeam;
+	ent->client->locPing = ping;
+
+}
+
+void Ping_Think( gentity_t *self )	{
+	vec3_t		end, start, forward, up;
+	trace_t		tr;
+
+	// persistence time of each "ping"
+	if ((level.time - self->timestamp) > 3000) {
+		trap_UnlinkEntity(self);
+		return;
+	}
+
+	// remove if player dies
+	if (self->parent->client->ps.pm_type == PM_DEAD)  {
+		G_FreeEntity(self);
+		return;
+	}
+
+	//Set Aiming Directions
+	AngleVectors(self->parent->client->ps.viewangles, forward, right, up);
+	CalcMuzzlePoint(self->parent, forward, right, up, start);
+	VectorMA (start, 8192, forward, end);
+
+	//Trace Position
+	trap_Trace (&tr, start, NULL, NULL, end, self->parent->s.number, MASK_SHOT );
+
+	//Did you not hit anything?
+	if (tr.surfaceFlags & SURF_NOIMPACT || tr.surfaceFlags & SURF_SKY)	{
+		self->nextthink = level.time + 10;
+		trap_UnlinkEntity(self);
+		return;
+	}
+
+	//Move you forward to keep you visible
+	if (tr.fraction != 1)	VectorMA(tr.endpos,-10,forward,tr.endpos);
+
+	//Set Your position
+	VectorCopy( tr.endpos, self->r.currentOrigin );
+	VectorCopy( tr.endpos, self->s.pos.trBase );
+
+	vectoangles(tr.plane.normal, self->s.angles);
+
+	trap_LinkEntity(self);
+
+	//Prep next move. We set it equal to persistence, so it doesn't move
+	self->nextthink = level.time + 3000;
+	
 }

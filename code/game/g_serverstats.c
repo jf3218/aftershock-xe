@@ -162,7 +162,7 @@ static void writePlayerData ( gclient_t *cl, fileHandle_t *f, qboolean disconnec
 	cleanString( cleanAftershockName, sizeof(cleanAftershockName), cl->aftershock_name);
 	cleanString( cleanAftershockHash, sizeof(cleanAftershockHash), cl->aftershock_hash);
 	
-	writeToFile ( va ( "\n\t\t<player name=\"%s\" time=\"%i\" aftershock_login=\"%s\" aftershock_hash=\"%s\" team=\"%s\" timeouts=\"%i\" handicap=\"%i\">\n", cleanName , (int)time, cleanAftershockName , cleanAftershockHash, teamToChar(cl->sess.sessionTeam), cl->timeouts, cl->pers.maxHealth ), f );
+	writeToFile ( va ( "\n\t\t<player name=\"%s\" time=\"%i\" guid=\"%s\" aftershock_login=\"%s\" aftershock_hash=\"%s\" team=\"%s\" timeouts=\"%i\" handicap=\"%i\">\n", cleanName , (int)time, cl->pers.guid, cleanAftershockName , cleanAftershockHash, teamToChar(cl->sess.sessionTeam), cl->timeouts, cl->pers.maxHealth ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Score\" value=\"%i\"/>\n", cl->ps.persistant[PERS_SCORE] ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Kills\" value=\"%i\"/>\n", cl->kills ), f );
 	writeToFile ( va ( "\t\t\t<stat name=\"Death\" value=\"%i\"/>\n", cl->ps.persistant[PERS_KILLED] ), f );

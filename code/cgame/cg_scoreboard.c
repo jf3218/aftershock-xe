@@ -75,6 +75,15 @@ typedef struct{
 	qboolean percent;
 } picBar_t;
 
+
+static char* CG_FormatAcc( int hits, int shots) {
+	if (shots <= 0) {
+		return va( "%3s", " - ");
+	} else {
+		return va( "%3i", hits * 100 / shots);
+	}
+}
+
 static char* CG_FormatKD( int value ) {
 	if(value > 9999) {
 		value = 9999;
@@ -122,9 +131,10 @@ static char* CG_FormatTime( int value ) {
 static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, float *color ){
 	
 	clientInfo_t *ci;
-	char string[ 128 ];
+	char string[ 128 ], nametruncated[32];
 	int picSize;
-  int len;
+  int len, n;
+  float anum, acc;
 	
 	if( score->client < 0 || score->client >= cgs.maxclients ){
 		Com_Printf( "Bad score->client: %i\n", score->client );
@@ -141,10 +151,13 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 	CG_FillRect( x, y, w, h, color );
 	
 	y += h/2;
-	
-	CG_DrawStringExt( x, y - SB_MEDCHAR_HEIGHT/2, ci->name, colorWhite, qfalse, qfalse, SB_MEDCHAR_WIDTH, SB_MEDCHAR_HEIGHT, 31 );
 
-	if( cgs.gametype == GT_CTF) {
+	// truncate long names. TODO: don't count color escape characters
+	strcpy(nametruncated, ci->name);
+	nametruncated[26] = '\0';
+	CG_DrawStringExt( x+1, y - SB_MEDCHAR_HEIGHT/2, nametruncated, colorWhite, qfalse, qfalse, SB_MEDCHAR_WIDTH-2, SB_MEDCHAR_HEIGHT, 31 );
+
+	if( (cgs.gametype == GT_CTF) || (cgs.gametype == GT_CTF_ELIMINATION) || (cgs.gametype == GT_1FCTF) ){
 		CG_DrawStringExt( x + w*0.5, y - SB_MEDCHAR_HEIGHT/2, va( "%i / %i / %i", score->captures, score->assistCount, score->defendCount ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	}
 
@@ -152,28 +165,43 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
     strcpy( string, va( "%i%%", ( ( int )( score->accuracy ) ) ) );
     len = strlen( string );
     CG_DrawStringExt( x + w*0.69+(4-len)*SB_CHAR_WIDTH, y - SB_CHAR_HEIGHT/2, string, colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 4 );
-  } else {
+  } else if ((cgs.gametype != GT_CTF) & (cgs.gametype != GT_CTF_ELIMINATION) & (cgs.gametype != GT_1FCTF)){
     if( h >= SB_CHAR_HEIGHT*2 ){
-      CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT, CG_FormatDmg(score->dmgdone), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-      CG_DrawStringExt( x + w*0.66, y, CG_FormatDmg(score->dmgtaken), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-    }else{
-      strcpy( string, va( "^2%s^7/^1%s", CG_FormatDmg(score->dmgdone), CG_FormatDmg(score->dmgtaken) ) );
-      CG_DrawStringExt( x + w*0.66, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+
+	    anum = score->dmgdone / 100 + score->score;			 // suicides and /kill subtract 1, but only during active game
+    	n = (int)(anum < 0 ? (anum - 0.5) : (anum + 0.5));   // round anum
+    	CG_DrawStringExt( x + w*0.39, y -SB_CHAR_WIDTH*1.6, va( "%i", n ), colorYellow, qtrue, qfalse, SB_CHAR_WIDTH*1.5, SB_MEDCHAR_HEIGHT*1.5, 4 );
+    	CG_DrawStringExt( x + w*0.47, y - SB_CHAR_HEIGHT/2, va( "%i%%", ( ( int )( score->accuracy ) ) ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 4 );
+        //   0   1   2   3   4   5   6
+		//  mg, sg, gl, rl, lg, rg, pg, bfg
+		CG_DrawStringExt( x + w*0.55 - 4, y - SB_CHAR_HEIGHT, CG_FormatAcc(score->accuracys[4][1], score->accuracys[4][0]), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.55 - 4, y, CG_FormatAcc(score->accuracys[5][1], score->accuracys[5][0]), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.55 + 8, y - SB_CHAR_HEIGHT, CG_FormatAcc(score->accuracys[3][1], score->accuracys[3][0]), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.55 + 8, y, CG_FormatAcc(score->accuracys[6][1], score->accuracys[6][0]), colorMagenta, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.55 +20, y - SB_CHAR_HEIGHT, CG_FormatAcc(score->accuracys[1][1], score->accuracys[1][0]), colorYellow, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.55 +20, y, CG_FormatAcc(score->accuracys[0][1], score->accuracys[0][0]), colorLtGrey, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
     }
   }
 
 	if( h >= SB_CHAR_HEIGHT*2 ){
-		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT, CG_FormatKD( score->frags ), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-		CG_DrawStringExt( x + w*0.74, y, CG_FormatKD( score->deathCount ), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	}else{
+		if (cgs.instagib != 1){
+			CG_DrawStringExt( x + w*0.69, y - SB_CHAR_HEIGHT, CG_FormatDmg(score->dmgdone), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+    	  	CG_DrawStringExt( x + w*0.69, y, CG_FormatDmg(score->dmgtaken), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		}
+		CG_DrawStringExt( x + w*0.75, y - SB_CHAR_HEIGHT, CG_FormatKD( score->frags ), colorGreen, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		CG_DrawStringExt( x + w*0.75, y, CG_FormatKD( score->deathCount ), colorRed, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		} else {
+			if (cgs.instagib != 1) {
+		    CG_DrawStringExt( x + w*0.67, y - SB_CHAR_HEIGHT/2, va( "^2%s^7/^1%s", CG_FormatDmg(score->dmgdone), CG_FormatDmg(score->dmgtaken) ), colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+		}
 		strcpy( string, va( "^2%s^7/^1%s", CG_FormatKD( score->frags ), CG_FormatKD( score->deathCount ) ) );
 		CG_DrawStringExt( x + w*0.74, y - SB_CHAR_HEIGHT/2, string, colorWhite, qfalse, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
 	}
 
-	CG_DrawStringExt( x + w*0.84, y - SB_MEDCHAR_HEIGHT/2, va( "%i", score->ping ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 3 );
+	CG_DrawStringExt( x + w*0.87, y - SB_MEDCHAR_HEIGHT/2, va( "%i", score->ping ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 3 );
 	CG_DrawStringExt( x + w*0.92, y - SB_MEDCHAR_HEIGHT/2, CG_FormatTime( score->time ), colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_MEDCHAR_HEIGHT, 5 );
-
-	
+    
+    	
 	picSize = h*0.8;
 
 	if( cg.snap->ps.stats[ STAT_CLIENTS_READY ] & ( 1 << score->client ) ){
@@ -198,10 +226,10 @@ static void CG_DrawClientScore( int x, int y, int w, int h, score_t *score, floa
 
 static int CG_TeamScoreboard( int x, int y, int w, int h, team_t team, float *color, int maxClients ){
 	
-	int i;
+	int i, j, m, t, tscore1, tscore2, n=0, count=0;
+	int index[50];		// I guess there can be quite a few clients counting specs
 	score_t	*score;
 	clientInfo_t *ci;
-	int count;
 	float transparent[ 4 ];
 	qboolean notEnough;
 	score_t *localClient;
@@ -221,29 +249,73 @@ static int CG_TeamScoreboard( int x, int y, int w, int h, team_t team, float *co
 	transparent[ 3 ] = 0;
 	
 	CG_DrawStringExt( x, y, "Name", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	if( cgs.gametype == GT_CTF) {
+	if( (cgs.gametype == GT_CTF) || (cgs.gametype == GT_1FCTF) || (cgs.gametype == GT_CTF_ELIMINATION) ) {
 		CG_DrawStringExt( x + w*0.5, y, "C / A / D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	}
+	} else if (cgs.instagib != 1) {
+        CG_DrawStringExt( x + w*0.37, y, "Score", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+        CG_DrawStringExt( x + w*0.47, y, "Acc", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+
+        //   0   1   2   3   4   5   6
+		//  mg, sg, gl, rl, lg, rg, pg, bfg
+        CG_DrawPic( x + w*0.55, y-4, SB_INFOICON_SIZE*0.8, SB_INFOICON_SIZE*0.8, cg_weapons[6].weaponIcon);
+        CG_DrawPic( x + w*0.55, y+4, SB_INFOICON_SIZE, SB_INFOICON_SIZE*0.8, cg_weapons[7].weaponIcon);
+        CG_DrawPic( x + w*0.55 + 12, y-4, SB_INFOICON_SIZE*0.8, SB_INFOICON_SIZE*0.8, cg_weapons[5].weaponIcon);
+        CG_DrawPic( x + w*0.55 + 12, y+4, SB_INFOICON_SIZE*0.8, SB_INFOICON_SIZE*0.8, cg_weapons[8].weaponIcon);
+        CG_DrawPic( x + w*0.55 + 24, y-4, SB_INFOICON_SIZE*0.8, SB_INFOICON_SIZE*0.8, cg_weapons[3].weaponIcon);
+        CG_DrawPic( x + w*0.55 + 24, y+4, SB_INFOICON_SIZE*0.8, SB_INFOICON_SIZE*0.8, cg_weapons[2].weaponIcon);        
+
+    }
+    
   if (cgs.instagib == 1) {
 	  CG_DrawStringExt( x + w*0.69, y, "Acc", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
   } else {
-	  CG_DrawStringExt( x + w*0.69, y, "Dmg", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	  CG_DrawStringExt( x + w*0.71, y, "Dmg", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
   }
-	CG_DrawStringExt( x + w*0.76, y, "K/D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
-	CG_DrawPic( x + w*0.84, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbPing );
-	CG_DrawPic( x + w*0.92, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbClock );
+	CG_DrawStringExt( x + w*0.78, y, "K/D", colorWhite, qtrue, qfalse, SB_CHAR_WIDTH, SB_CHAR_HEIGHT, 0 );
+	CG_DrawPic( x + w*0.86, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbPing );
+	CG_DrawPic( x + w*0.94, y, SB_INFOICON_SIZE, SB_INFOICON_SIZE, cgs.media.sbClock );
 
-	
+
+	if ((cgs.gametype != GT_CTF) || (cgs.gametype != GT_1FCTF) || (cgs.gametype != GT_CTF_ELIMINATION) ) {
+		// Sort players according to score. N.B. not score as relayed by the 
+		// server, but the score we report in scoreboard, i.e. kills - suicides + dmg/100
+		for (i=0; i<cg.numScores; i++){		// count players in team and create index
+			score = &cg.scores[i];
+			ci = &cgs.clientinfo[ score->client];
+			if (ci->team == team){
+				index[n] = i;
+				++n;
+			}
+		}
+		// selection sort on the index on the basis of our score metric
+		for (i=0; i<n; i++){
+			for (j=i, m=i; j<n; j++){
+				score = &cg.scores[index[j]];
+				tscore1 = score->score + (int)(score->dmgdone / 100);
+				score = &cg.scores[index[m]];
+				tscore2 = score->score + (int)(score->dmgdone / 100);
+				if (tscore1 > tscore2){
+					m = j;
+				}
+			}
+			t = index[i];
+			index[i] = index[m];
+			index[m] = t;
+		}
+	} else {	// do what used to be done by to avoid messing up order in CTF-type games
+		for (i=0; i<50; i++){
+			index[i] = i;
+		}
+		n = cg.numScores;
+	}
+
 	y += 20;
-	
-	count = 0;
 	notEnough = qfalse;
 	localClient = NULL;
-	for( i=0; i<cg.numScores; i++ ){
-		
-		score = &cg.scores[ i ];
+	for ( i=0; i<n; i++){
+		score = &cg.scores[index[i]];
 		ci = &cgs.clientinfo[ score->client ];
-		
+
 		if( ci->team != team ){
 			continue;
 		}
@@ -492,7 +564,8 @@ qboolean CG_DrawOldScoreboard( void ){
 		
 		// team red
 		strcpy( string, "Team red" );
-		CG_DrawStringExt( SB_TEAM_RED_X + SB_TEAM_WIDTH/2 - BIGCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y + 15, string, colorRed, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
+		//CG_DrawStringExt( SB_TEAM_RED_X + SB_TEAM_WIDTH/2 - BIGCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y + 15, string, colorRed, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
+		CG_DrawStringExt( 320-170, SB_TEAM_Y + 20, string, colorRed, qtrue, qtrue, 12, BIGCHAR_HEIGHT, 0 );
 		color[ 0 ] = 1;
 		color[ 1 ] = 0;
 		color[ 2 ] = 0;
@@ -503,7 +576,8 @@ qboolean CG_DrawOldScoreboard( void ){
 		
 		// team blue
 		strcpy( string, "Team blue" );
-		CG_DrawStringExt( SB_TEAM_BLUE_X + SB_TEAM_WIDTH/2 - BIGCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y + 15, string, colorBlue, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
+		//CG_DrawStringExt( SB_TEAM_BLUE_X + SB_TEAM_WIDTH/2 - BIGCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y + 15, string, colorBlue, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
+		CG_DrawStringExt( 320 + 80, SB_TEAM_Y + 20, string, colorBlue, qtrue, qtrue, 12, BIGCHAR_HEIGHT, 0 );
 		color[ 0 ] = 0;
 		color[ 1 ] = 0;
 		color[ 2 ] = 1;

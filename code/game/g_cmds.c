@@ -70,7 +70,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 		perfect = ( cl->ps.persistant[PERS_RANK] == 0 && cl->ps.persistant[PERS_KILLED] == 0 ) ? 1 : 0;
 
 		if ( g_gametype.integer == GT_TOURNAMENT ) {
-			if ( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
+			if ( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {  
 				Com_sprintf (entry, sizeof(entry),
 					" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
 					cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/1000,
@@ -137,7 +137,7 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 		} else {
 			if ( ( ent->client->ps.clientNum == cl->ps.clientNum ) || level.intermissiontime || ent->client->sess.sessionTeam == TEAM_SPECTATOR ) {
 				Com_sprintf (entry, sizeof(entry),
-					" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
+					" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i ", level.sortedClients[i],
 					cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/1000,
 					scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
 					cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
@@ -158,11 +158,20 @@ void DeathmatchScoreboardMessage( gentity_t *ent ) {
 					cl->rewards[REWARD_FULLSG],
 					cl->rewards[REWARD_RLRG],
 					cl->rewards[REWARD_ITEMDENIED],
-					cl->rewards[REWARD_SPAWNKILL]
+					cl->rewards[REWARD_SPAWNKILL],
+ 					cl->accuracy[WP_MACHINEGUN][0], cl->accuracy[WP_MACHINEGUN][1],
+					cl->accuracy[WP_SHOTGUN][0], cl->accuracy[WP_SHOTGUN][1],
+					cl->accuracy[WP_GRENADE_LAUNCHER][0], cl->accuracy[WP_GRENADE_LAUNCHER][1],
+					cl->accuracy[WP_ROCKET_LAUNCHER][0], cl->accuracy[WP_ROCKET_LAUNCHER][1],
+					cl->accuracy[WP_LIGHTNING][0], cl->accuracy[WP_LIGHTNING][1],
+					cl->accuracy[WP_RAILGUN][0], cl->accuracy[WP_RAILGUN][1],
+					cl->accuracy[WP_PLASMAGUN][0], cl->accuracy[WP_PLASMAGUN][1],
+					cl->accuracy[WP_BFG][0], cl->accuracy[WP_BFG][1]
+ 
 					);
 			} else {
 			Com_sprintf (entry, sizeof(entry),
-				" %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 -1 ", level.sortedClients[i],
+                " %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i %i -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ", level.sortedClients[i],
 				cl->ps.persistant[PERS_SCORE], ping, (level.time - cl->pers.enterTime)/1000,
 				scoreFlags, g_entities[level.sortedClients[i]].s.powerups, accuracy,
 				cl->ps.persistant[PERS_IMPRESSIVE_COUNT],
@@ -1220,6 +1229,33 @@ int myrand( int d) {
   level.curmyrandseed = t;
   return t/(967/d);
 }
+
+
+/*
+=================
+Cmd_Ping
+=================
+*/
+void Cmd_Ping( gentity_t *ent ){
+    // Draws a location icon where the player is pointing to, for team comms.
+    // Don't allow use if eliminated. Using PM_DEAD logic fails here because 
+    // we can spec other players and client numbers don't match...
+    int t;
+
+    if (ent->client->isEliminated){
+            return;
+        }
+
+    // limit frequency of use
+    t = ent->client->pers.locPingTimeLast;
+    if ( level.time - t < 450 ) {
+        return;
+    }
+    ent->client->pers.locPingTimeLast = level.time;
+
+    Ping_Gen( ent );
+}
+
 
 /*
 =================
@@ -3187,6 +3223,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
     } else if ( !Q_stricmp( arg1, "custom" ) ) {
     } else if ( !Q_stricmp( arg1, "shuffle" ) ) {
     } else if ( !Q_stricmp( arg1, "ruleset" ) ) {
+    } else if ( !Q_stricmp( arg1, "g_sgPattern" ) ) {
     } else {
       t_customvote customvote;
       customvote = getCustomVote(arg1);
@@ -3219,6 +3256,8 @@ void Cmd_CallVote_f( gentity_t *ent ) {
             strcat(buffer, "shuffle, ");
         if (allowedVote("ruleset"))
             strcat(buffer, "ruleset <vq3|as|asxe|cpm|qw>, ");
+        if (allowedVote("g_sgPattern"))
+            strcat(buffer, "g_sgPattern <oa|as|gauss|circle>, ");
         if (allowedVote("custom"))
             strcat(buffer, "custom <special>, ");
         buffer[strlen(buffer)-2] = 0;
@@ -3238,7 +3277,7 @@ void Cmd_CallVote_f( gentity_t *ent ) {
     }
 
     if (!allowedVote(arg1)) {
-        trap_SendServerCommand( ent-g_entities, "print \"Not allowed here.\n\"" );
+        trap_SendServerCommand( ent-g_entities, "print \"Not allowed here 1234.\n\"" );
         buffer[0] = 0;
         strcat(buffer,"print \"Vote commands are: ");
         if (allowedVote("map_restart"))
@@ -3265,6 +3304,8 @@ void Cmd_CallVote_f( gentity_t *ent ) {
             strcat(buffer, "fraglimit <frags>, ");
         if (allowedVote("ruleset"))
             strcat(buffer, "ruleset <vq3|as|asxe|cpm|qw>, ");
+        if (allowedVote("g_sgPattern"))
+            strcat(buffer, "g_sgPattern <oa|as|gauss|circle>, ");
         if (allowedVote("custom"))
             strcat(buffer, "custom <special>, ");
         buffer[strlen(buffer)-2] = 0;
@@ -3492,7 +3533,18 @@ void Cmd_CallVote_f( gentity_t *ent ) {
 
 		Com_sprintf(level.voteString, sizeof( level.voteString ), "ruleset %s", arg2);
 		Com_sprintf(level.voteDisplayString, sizeof( level.voteDisplayString ), "Change ruleset to %s?", arg2);
-    } else if ( !Q_stricmp( arg1, "custom" ) ) {
+        
+    }  else if ( !Q_stricmp( arg1, "g_sgPattern" ) ) {
+		if((Q_stricmp(arg2, "oa") != 0) && (Q_stricmp(arg2, "as") != 0) && (Q_stricmp(arg2, "gauss") != 0) && (Q_stricmp(arg2, "circle") != 0)) {
+			trap_SendServerCommand(ent-g_entities, va("print \"g_sgPattern '%s' is not valid, use <oa|as|gauss|circle>\n\"",  arg2));
+			return;
+		}
+
+		Com_sprintf(level.voteString, sizeof( level.voteString ), "g_sgPattern %s", arg2);
+		Com_sprintf(level.voteDisplayString, sizeof( level.voteDisplayString ), "Change g_sgPattern to %s?", arg2);
+    }
+    
+     else if ( !Q_stricmp( arg1, "custom" ) ) {
         t_customvote customvote;
         //Sago: There must always be a test to ensure that length(arg2) is non-zero or the client might be able to execute random commands.
         if (strlen(arg2)<1) {
@@ -4380,7 +4432,7 @@ commands_t cmds[ ] =
     { "unmute", 0, Cmd_Unmute_f, qfalse },
     { "forfeit", 0, Cmd_Forfeit_f, qfalse },
     { "zoomed", 0, Cmd_Zoomed_f, qfalse },
-
+    { "locping", CMD_TEAM, Cmd_Ping, qfalse},
     { "practice", 0, Cmd_Practice_f, qtrue }
 };
 

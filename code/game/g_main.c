@@ -42,7 +42,7 @@ gitemInfos_t		g_itemInfos[MAX_GENTITIES];
 
 vmCvar_t	g_gametype;
 vmCvar_t	g_dmflags;
-vmCvar_t        g_fairflags;
+vmCvar_t    g_fairflags;
 vmCvar_t	g_elimflags;
 vmCvar_t	g_voteflags;
 vmCvar_t	g_fraglimit;
@@ -86,7 +86,7 @@ vmCvar_t	g_filterBan;
 vmCvar_t	g_smoothClients;
 vmCvar_t	pmove_fixed;
 vmCvar_t	pmove_msec;
-vmCvar_t        pmove_float;
+vmCvar_t    pmove_float;
 vmCvar_t	g_rankings;
 vmCvar_t	g_listEntity;
 vmCvar_t	g_obeliskHealth;
@@ -112,7 +112,7 @@ vmCvar_t	g_elimination_grapple;
 vmCvar_t	g_elimination_roundtime;
 vmCvar_t	g_elimination_warmup;
 vmCvar_t	g_elimination_activewarmup;
-vmCvar_t        g_elimination_allgametypes;
+vmCvar_t    g_elimination_allgametypes;
 vmCvar_t	g_elimination_machinegun;
 vmCvar_t	g_elimination_shotgun;
 vmCvar_t	g_elimination_grenade;
@@ -161,7 +161,7 @@ vmCvar_t         g_blueTeamClientNumbers;
 vmCvar_t	g_delagHitscan;
 vmCvar_t	g_truePing;
 vmCvar_t	sv_fps;
-vmCvar_t        g_lagLightning; //Adds a little lag to the lightninggun to make it less powerfull
+vmCvar_t    g_lagLightning; //Adds a little lag to the lightninggun to make it less powerfull
 //unlagged - server options
 //KK-OAX
 vmCvar_t        g_sprees;
@@ -283,6 +283,7 @@ vmCvar_t     g_telefragTeamBehavior;
 vmCvar_t     g_furthestTeamSpawns;
 vmCvar_t     g_ruleset;
 
+
 // Weapon CVARs
 
 // Gauntlet
@@ -301,6 +302,7 @@ vmCvar_t     g_shotgunRate;
 vmCvar_t     g_shotgunDamage;
 vmCvar_t     g_shotgunCount;
 vmCvar_t     g_shotgunSpread;
+vmCvar_t     g_sgPattern;
 
 // Plasma
 vmCvar_t     g_plasmaRate;
@@ -432,7 +434,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_allowVote, "g_allowVote", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qfalse },
         
         //new in beta 19
-        { &g_voteNames, "g_voteNames", "/map_restart/nextmap/map/g_gametype/g_lockArena/kick/clientkick/timelimit/fraglimit/shuffle/ruleset/custom/", CVAR_ARCHIVE, 0, qfalse }, //clientkick g_doWarmup timelimit fraglimit
+        { &g_voteNames, "g_voteNames", "/map_restart/nextmap/map/g_gametype/g_lockArena/kick/clientkick/timelimit/fraglimit/shuffle/ruleset/g_sgPattern/custom/", CVAR_ARCHIVE, 0, qfalse }, //clientkick g_doWarmup timelimit fraglimit
         { &g_voteGametypes, "g_voteGametypes", "/0/1/3/4/5/6/7/8/9/10/11/12/", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qfalse },
         { &g_voteMaxTimelimit, "g_voteMaxTimelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qfalse },
         { &g_voteMinTimelimit, "g_voteMinTimelimit", "0", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qfalse },
@@ -462,7 +464,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &pmove_fixed, "pmove_fixed", "0", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse},
 	{ &pmove_msec, "pmove_msec", "8", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qfalse},
 
-        { &pmove_float, "pmove_float", "0", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qtrue},
+    { &pmove_float, "pmove_float", "0", CVAR_SYSTEMINFO | CVAR_ARCHIVE, 0, qtrue},
 
 //unlagged - server options
 	{ &g_delagHitscan, "g_delagHitscan", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qtrue },
@@ -624,7 +626,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_selfdamage, "g_selfdamage", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse  },
 	{ &g_overtime, "g_overtime", "120", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse  },
 	{ &g_overtime_ctf_respawnDelay, "g_overtime_ctf_respawnDelay", "5", CVAR_ARCHIVE, 0, qfalse  },
-	{ &g_thrufloors, "g_thrufloors", "0", CVAR_ARCHIVE, 0, qfalse  },
+	{ &g_thrufloors, "g_thrufloors", "0", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_forceIntermissionExit, "g_forceIntermissionExit", "0", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_aftershockRespawn, "g_aftershockRespawn", "1", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_nameCheck, "g_nameCheck", "1", CVAR_ARCHIVE, 0, qfalse },
@@ -649,7 +651,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_shotgunRate, "g_shotgunRate", "1000", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_shotgunDamage, "g_shotgunDamage", "10", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_shotgunCount, "g_shotgunCount", "11", CVAR_ARCHIVE, 0, qtrue },
-	{ &g_shotgunSpread, "g_shotgunSpread", "1400", CVAR_ARCHIVE, 0, qtrue },
+	{ &g_shotgunSpread, "g_shotgunSpread", "1400", CVAR_SERVERINFO, 0, qtrue },
+    { &g_sgPattern, "g_sgPattern", "circle", CVAR_SERVERINFO, 0, qtrue },
 	{ &g_plasmaRate, "g_plasmaRate", "100", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_plasmaDamage, "g_plasmaDamage", "20", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_plasmaSplashDamage, "g_plasmaSplashDamage", "15", CVAR_ARCHIVE, 0, qtrue },
@@ -900,6 +903,8 @@ void G_RegisterCvars( void ) {
 	} else {
 		g_ruleset.integer = RULESET_AS; // default is AS
 	}
+
+	
 }
 
 /*
@@ -971,6 +976,9 @@ void G_UpdateCvars( void ) {
                                     if( allowedVote("ruleset") )
                                         voteflags|=VF_ruleset;
 
+                                    if( allowedVote("g_sgPattern") )
+                                        voteflags|=VF_g_sgPattern;
+                                    
                                     if( allowedVote("custom") )
                                         voteflags|=VF_custom;
 
@@ -1308,6 +1316,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart ) {
 
             if( allowedVote("ruleset") )
                 voteflags|=VF_ruleset;
+
+            if( allowedVote("g_sgPattern") )
+                voteflags|=VF_g_sgPattern;
 
             if( allowedVote("custom") )
                 voteflags|=VF_custom;

@@ -327,6 +327,9 @@ typedef struct {
 //Used To Track Name Changes
     int         nameChangeTime;
     int         nameChanges;
+
+// limit frequency of locPing
+	int			locPingTimeLast;
     
     int multiview;
     int autoaction;
@@ -423,6 +426,8 @@ struct gclient_s {
 
 	qboolean	fireHeld;			// used for hook
 	gentity_t	*hook;				// grapple hook if out
+
+	gentity_t	*locPing;		    // location ping
 
 	int			switchTeamTime;		// time the player switched teams
 
@@ -917,6 +922,9 @@ void SnapVectorTowards( vec3_t v, vec3_t to );
 qboolean CheckGauntletAttack( gentity_t *ent );
 void Weapon_HookFree (gentity_t *ent);
 void Weapon_HookThink (gentity_t *ent);
+
+void Ping_Gen (gentity_t *ent);
+void Ping_Think( gentity_t *self );
 
 //unlagged - g_unlagged.c
 void G_ResetHistory( gentity_t *ent );
@@ -1479,6 +1487,7 @@ extern vmCvar_t     g_shotgunRate;
 extern vmCvar_t     g_shotgunDamage;
 extern vmCvar_t     g_shotgunCount;
 extern vmCvar_t     g_shotgunSpread;
+extern vmCvar_t     g_sgPattern;
 
 // Plasma
 extern vmCvar_t     g_plasmaRate;
