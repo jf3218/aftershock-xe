@@ -1771,11 +1771,6 @@ qboolean G_RadiusDamage ( vec3_t origin, gentity_t *attacker, float damage, floa
 
         canDmg = CanDamage (ent, origin);
         
-		G_Printf("g_thrufloors %s\n", g_thrufloors.string);
-		// if (Q_stricmp(g_thrufloors.string, "0") != 0){
-		// 	g_thrufloors.value = 1;
-		// }
-
 		if( canDmg || (Q_stricmp(g_thrufloors.string, "0") != 0) ) {
             if (canDmg) {
                 points = damage * ( 1.0 - dist / radius );
