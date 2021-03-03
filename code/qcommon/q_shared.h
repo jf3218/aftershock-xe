@@ -358,6 +358,7 @@ extern	vec4_t		colorWhite;
 extern	vec4_t		colorLtGrey;
 extern	vec4_t		colorMdGrey;
 extern	vec4_t		colorDkGrey;
+extern	vec4_t		colorOrange;
 
 #define Q_COLOR_ESCAPE	'^'
 #define Q_IsColorString(p)      ((p) && *(p) == Q_COLOR_ESCAPE && *((p)+1) && ( ( *((p)+1) >= '0' && *((p)+1) <= '9' ) || ( *((p)+1) >= 'a' && *((p)+1) <= 'z' ) || ( *((p)+1) >= 'A' && *((p)+1) <= 'Z') ) ) // ^[0-8]
