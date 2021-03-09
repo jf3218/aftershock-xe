@@ -3824,17 +3824,23 @@ static void CG_DrawVoteMap ( void ) {
         int nummaps;
         int arena;
         int i=0,j;
-        int xsize=100;
+        int xsize=100, jxsize, gap;
         int yoffset=100;
         s+=11;
         nummaps=s[0]-'0';
         //xsize = cg.refdef.width / nummaps;
         //yoffset = cg.refdef.height - xsize - 1;
-        xsize = 640 / nummaps;
-        yoffset = 480 - xsize;
+        xsize = 640 / nummaps - 10;
+        gap = (640 - nummaps * xsize)/(nummaps + 1);
+        yoffset = 480 - xsize - 12;
         s+=2;
         votes = cgs.voteYesString + 2;
+        CG_DrawPic( 0, 480-129, 640, 129, cgs.media.sbBackground );
+        CG_DrawPic( 0, 480-129, 640, 129, cgs.media.sbBackground );
+        CG_DrawPic( 0, 480-129, 640, 129, cgs.media.sbBackground );
+
         for (j=0;j<nummaps;j++) {
+            jxsize = xsize * j + gap*(j+1);
             i=0;
             tmp=0;
             Com_sprintf ( mapstring, sizeof ( mapstring ), "%s", s );
@@ -3861,21 +3867,19 @@ static void CG_DrawVoteMap ( void ) {
             }
             votes++;
 
-
-            //CG_Printf("%i %s found\n",nummaps,mapstring);
+            // CG_Printf("%i %s found\n",nummaps,mapstring);
             levelshot = trap_R_RegisterShaderNoMip( va( "levelshots/%s.tga", mapstring ) );
             if ( !levelshot ) {
                 levelshot = trap_R_RegisterShaderNoMip( "menu/art/unknownmap" );
             }
             trap_R_SetColor( NULL );
-            //CG_DrawPic( 0, 0, 100, 100 , levelshot );
-            CG_DrawPic( j*xsize, yoffset, xsize, xsize , levelshot );
-            CG_DrawSmallString ( j*xsize + 10, yoffset+7, mapstring, 1.0F );
-            Com_sprintf ( mapstring, sizeof ( mapstring ), "\\vote %i", j+1 );
-            CG_DrawSmallString ( j*xsize + 10, yoffset+xsize-18, mapstring, 1.0F );
+            CG_DrawPic( jxsize, yoffset, xsize, xsize , levelshot );
+            CG_DrawStringExt(jxsize + 6, 480 - 24, mapstring, colorWhite, qfalse, qfalse, 6, 8, 0 );
+            Com_sprintf ( mapstring, sizeof ( mapstring ), "vote %i", j+1 );
+            CG_DrawStringExt(jxsize + 26, yoffset-12, mapstring, colorRed, qfalse, qfalse, 6, 8, 0 );
             if (arena > 0) {
                 Com_sprintf ( mapstring, sizeof ( mapstring ), "arena %i", arena );
-                CG_DrawSmallString ( j*xsize + 10, yoffset+22, mapstring, 1.0F );
+                CG_DrawStringExt( jxsize + 6, 480 - 34, mapstring, colorOrange , qfalse, qfalse, 6, 8, 0 );
             }
             if (tmp>0) {
                 // people voted for this map, draw checks
@@ -3888,8 +3892,9 @@ static void CG_DrawVoteMap ( void ) {
                     strcpy (mapstring + len, entry);
                     len++;
                 }
-                CG_DrawSmallString ( j*xsize + xsize - (tmp*7) - 10, yoffset+xsize-37, mapstring, 1.0F );
+                CG_DrawSmallString ( jxsize + xsize - (tmp*7) - 10, yoffset+xsize-37, mapstring, 1.0F );
             }
+            
                 
         }
     }

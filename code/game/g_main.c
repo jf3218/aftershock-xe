@@ -2396,7 +2396,7 @@ void CheckExitRules( void ) {
           return;
        } else {
           if ( ( level.time - level.intermissiontime < 4000 ) ) {
-              G_mapChooser(5);
+              G_mapChooser(6);
           } else {
               ExitLevel();
           }
