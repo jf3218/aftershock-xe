@@ -400,7 +400,7 @@ static cvarTable_t		gameCvarTable[] = {
 
 	{ &g_minigame, "g_minigame", "1", CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_warmup, "g_warmup", "20", CVAR_ARCHIVE, 0, qtrue  },
-	{ &g_doWarmup, "g_doWarmup", "1", CVAR_CHEAT | CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue  },
+	{ &g_doWarmup, "g_doWarmup", "1", CVAR_CHEAT | CVAR_ARCHIVE, 0, qtrue  },
 	{ &g_logfile, "g_log", "games.log", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_logfileSync, "g_logsync", "0", CVAR_ARCHIVE, 0, qfalse  },
 
@@ -447,7 +447,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_obeliskHealth, "g_obeliskHealth", "2500", 0, 0, qfalse },
 	{ &g_obeliskRegenPeriod, "g_obeliskRegenPeriod", "1", 0, 0, qfalse },
 	{ &g_obeliskRegenAmount, "g_obeliskRegenAmount", "15", 0, 0, qfalse },
-	{ &g_obeliskRespawnDelay, "g_obeliskRespawnDelay", "10", CVAR_SERVERINFO, 0, qfalse },
+	{ &g_obeliskRespawnDelay, "g_obeliskRespawnDelay", "10", 0, 0, qfalse },
 
 	{ &g_cubeTimeout, "g_cubeTimeout", "30", 0, 0, qfalse },
         #ifdef MISSIONPACK
@@ -456,8 +456,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_singlePlayer, "ui_singlePlayerActive", "", 0, 0, qfalse, qfalse  },
         #endif
 
-	{ &g_enableDust, "g_enableDust", "0", CVAR_SERVERINFO, 0, qtrue, qfalse },
-	{ &g_enableBreath, "g_enableBreath", "0", CVAR_SERVERINFO, 0, qtrue, qfalse },
+	{ &g_enableDust, "g_enableDust", "0", 0, 0, qtrue, qfalse },
+	{ &g_enableBreath, "g_enableBreath", "0", 0, 0, qtrue, qfalse },
 	{ &g_proxMineTimeout, "g_proxMineTimeout", "20000", 0, 0, qfalse },
 
 	{ &g_smoothClients, "g_smoothClients", "1", 0, 0, qfalse},
@@ -581,10 +581,10 @@ static cvarTable_t		gameCvarTable[] = {
 	
 	{ &g_allowRespawnTimer, "g_allowRespawnTimer", "0", CVAR_ARCHIVE, 0, qfalse},
 	{ &g_startWhenReady, "g_startWhenReady", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
-		{ &g_autoReady, "g_autoReady", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
+		{ &g_autoReady, "g_autoReady", "0", CVAR_ARCHIVE, 0, qfalse},
 	
-	{ &g_timeoutAllowed, "g_timeoutAllowed", "0", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
-	{ &g_timeoutTime, "g_timeoutTime", "30000", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse},
+	{ &g_timeoutAllowed, "g_timeoutAllowed", "0", CVAR_ARCHIVE, 0, qfalse},
+	{ &g_timeoutTime, "g_timeoutTime", "30000", CVAR_ARCHIVE, 0, qfalse},
 	
 	{ &g_delagprojectiles, "g_delagprojectiles", "100", CVAR_SYSTEMINFO, 0, qfalse },
 	
@@ -593,7 +593,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_writeStats, "g_writeStats", "1", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	{ &g_statsPath, "g_statsPath", "serverstats", CVAR_ARCHIVE | CVAR_NORESTART, 0, qfalse },
 	
-	{ &g_teamLock, "g_teamLock", "0", CVAR_SERVERINFO |CVAR_NORESTART, 0, qfalse },
+	{ &g_teamLock, "g_teamLock", "0", CVAR_NORESTART, 0, qfalse },
 	{ &g_redLocked, "g_redLocked", "0", CVAR_SERVERINFO | CVAR_NORESTART, 0, qfalse },
 	{ &g_blueLocked, "g_blueLocked", "0", CVAR_SERVERINFO | CVAR_NORESTART, 0, qfalse },
 	{ &g_bench, "g_bench", "0", CVAR_ARCHIVE  , 0, qfalse },
@@ -615,15 +615,15 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_disableSpecs, "g_disableSpecs", "0", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_friendsThroughWalls, "g_friendsThroughWalls", "0", CVAR_SERVERINFO, 0, qfalse },
 	
-	{ &g_legacyWeaponAmmo, "g_legacyWeaponAmmo", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse },
+	{ &g_legacyWeaponAmmo, "g_legacyWeaponAmmo", "1", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_lockArena, "g_lockArena", "0", CVAR_ARCHIVE , 0, qfalse },
-	{ &g_allowKill, "g_allowKill", "1", CVAR_SERVERINFO, 0, qfalse },
+	{ &g_allowKill, "g_allowKill", "1", 0, 0, qfalse },
 	{ &g_fadeToBlack, "g_fadeToBlack", "0", CVAR_SERVERINFO, 0, qfalse },
 	{ &g_spawnProtection, "g_spawnProtection", "0", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_disableVotingTime, "g_disableVotingTime", "0", CVAR_ARCHIVE, 0 ,qfalse },
 	{ &g_maxWarp, "g_maxWarp", "0", CVAR_CHEAT, 0, qfalse  },
 	{ &g_skipCorrection, "g_skipCorrection", "0", CVAR_CHEAT, 0, qfalse  },
-	{ &g_selfdamage, "g_selfdamage", "1", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse  },
+	{ &g_selfdamage, "g_selfdamage", "1", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_overtime, "g_overtime", "120", CVAR_ARCHIVE | CVAR_SERVERINFO, 0, qfalse  },
 	{ &g_overtime_ctf_respawnDelay, "g_overtime_ctf_respawnDelay", "5", CVAR_ARCHIVE, 0, qfalse  },
 	{ &g_thrufloors, "g_thrufloors", "0", CVAR_ARCHIVE, 0, qtrue  },
@@ -651,8 +651,8 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_shotgunRate, "g_shotgunRate", "1000", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_shotgunDamage, "g_shotgunDamage", "10", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_shotgunCount, "g_shotgunCount", "11", CVAR_ARCHIVE, 0, qtrue },
-	{ &g_shotgunSpread, "g_shotgunSpread", "1400", CVAR_SERVERINFO, 0, qtrue },
-    { &g_sgPattern, "g_sgPattern", "circle", CVAR_SERVERINFO, 0, qtrue },
+	{ &g_shotgunSpread, "g_shotgunSpread", "1400", 0, 0, qtrue },
+    { &g_sgPattern, "g_sgPattern", "circle", 0, 0, qtrue },
 	{ &g_plasmaRate, "g_plasmaRate", "100", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_plasmaDamage, "g_plasmaDamage", "20", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_plasmaSplashDamage, "g_plasmaSplashDamage", "15", CVAR_ARCHIVE, 0, qtrue },
