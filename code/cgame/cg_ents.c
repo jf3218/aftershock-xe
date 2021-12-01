@@ -1262,9 +1262,10 @@ CG_Ping
 
 static void CG_Ping( centity_t *cent )  {
 	refEntity_t			ent;
-	vec3_t				pos_ent, pos_client;
+	vec3_t				pos_ent, pos_client, v_aux1, v_aux2;
 	vec_t				dist;
-	int					team;
+	int					team, picmip;
+	char 				buffer[128];
 
 	team = cent->currentState.eventParm;
 	_VectorCopy( cent->lerpOrigin, pos_ent );
@@ -1273,12 +1274,9 @@ static void CG_Ping( centity_t *cent )  {
 	dist = Distance(pos_ent, pos_client);
 
 	// if ( (cg.time - cent->miscTime) > 3000 ) {
-	// 	CG_Printf("\n");
-
-	// 	CG_Printf("pos: %f %f %f\n", pos_ent[0], pos_ent[1], pos_ent[2]);
+	// 	CG_Printf("\n pos: %f %f %f\n", pos_ent[0], pos_ent[1], pos_ent[2]);
 	// 	CG_Printf("pos: %f %f %f\n", pos_client[0], pos_client[1], pos_client[2]);
 	// 	CG_Printf("dist: %f\n", dist);
-
 	// 	CG_Printf("A cg.snap->ps.persistant[PERS_TEAM]                 %d\n", cg.snap->ps.persistant[PERS_TEAM]);
 	// 	CG_Printf("B cgs.clientinfo[cent->currentState.clientNum].team %d\n", team);
 	// 	CG_Printf("C cg.snap->ps.clientNum                             %d\n", cg.snap->ps.clientNum);
@@ -1293,17 +1291,25 @@ static void CG_Ping( centity_t *cent )  {
 	// create the render entity
 	memset (&ent, 0, sizeof(ent));
 	VectorCopy( cent->lerpOrigin, ent.origin);
-	//VectorCopy( cent->lerpOrigin, ent.oldorigin);
 
 	ent.origin[2] += 14;
 	ent.reType = RT_SPRITE;
-	ent.customShader = cgs.media.pingLocShader;
+
+	picmip = 0;
+    trap_Cvar_VariableStringBuffer("r_picmip", buffer, sizeof(buffer) );
+    picmip = atoi(buffer);
+
+	if (picmip > 0) {
+		ent.customShader = cgs.media.pingLocShader_nomip;
+	}else {
+	    ent.customShader = cgs.media.pingLocShader;
+	}
 		
 	ent.radius = 25 + dist / 45;
 	ent.shaderRGBA[0] = 255;
 	ent.shaderRGBA[1] = 255;
 	ent.shaderRGBA[2] = 255;
-	ent.shaderRGBA[3] = 255;
+	ent.shaderRGBA[3] = 200;
 
 	trap_R_AddRefEntityToScene( &ent );
 	trap_R_AddLightToScene(ent.origin, 150, 1, 0, 0);
@@ -1313,10 +1319,14 @@ static void CG_Ping( centity_t *cent )  {
 		return;
 	}
 	cent->miscTime = cg.time;
+    
+    // Call spatialised sound routine, but provide a tweaked locping 
+	// location to reduce its distance so that it sounds louder
+	VectorSubtract(pos_ent, pos_client, v_aux1);
+	VectorNormalizeFast(v_aux1);
+	VectorMA(pos_client, 80 + dist/5, v_aux1, v_aux2);
+	
+	trap_S_StartSound( v_aux2, 1, 2, cgs.media.ping );
 
-	trap_S_StartLocalSound(cgs.media.ping, 0);
-
-
-
-
+	
 }
