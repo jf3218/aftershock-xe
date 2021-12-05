@@ -979,8 +979,6 @@ typedef struct {
 
 	qhandle_t	friendShader;
 	qhandle_t	friendShaderVisible;
-	qhandle_t   friendShader2;
-	qhandle_t   friendShaderVisible2;
 	qhandle_t	pingLocShader;
 	qhandle_t	pingLocShader_nomip;
 

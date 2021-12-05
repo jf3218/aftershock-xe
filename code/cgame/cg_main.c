@@ -1586,9 +1586,7 @@ static void CG_RegisterGraphics( void ) {
 		cg_buildScript.integer ) {
 
 		cgs.media.friendShader = trap_R_RegisterShader( "sprites/foe" );
-		cgs.media.friendShaderVisible = trap_R_RegisterShader( "sprites/foe2.tga" );
-		cgs.media.friendShader2 = trap_R_RegisterShader( "sprites/foe3b" );
-		cgs.media.friendShaderVisible2 = trap_R_RegisterShader( "icons/foe3b.tga" );
+		cgs.media.friendShaderVisible = trap_R_RegisterShader( "icons/foe3b.tga" );
 		cgs.media.redQuadShader = trap_R_RegisterShader("powerups/blueflag" );
 		cgs.media.teamStatusBar = trap_R_RegisterShader( "gfx/2d/colorbar.tga" );
 		cgs.media.pingLocShader = trap_R_RegisterShader("icons/pingLoc.tga");

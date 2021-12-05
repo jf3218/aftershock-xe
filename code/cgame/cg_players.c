@@ -2467,12 +2467,9 @@ static void CG_PlayerSprites( centity_t *cent ) {
 		cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
 		if (cg_drawFriend.integer) {
 			if( cgs.friendsThroughWalls )
-				CG_PlayerFloatSprite(cent, cgs.media.friendShaderVisible2);
+				CG_PlayerFloatSprite(cent, cgs.media.friendShaderVisible);
 			else
 				CG_PlayerFloatSprite( cent, cgs.media.friendShader );
-				// For some reason the following doesn't work for me, so use the old one
-				// CG_PlayerFloatSprite( cent, cgs.media.friendShader2 );
-
 		}
 		return;
 	}
