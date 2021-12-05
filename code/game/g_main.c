@@ -613,7 +613,7 @@ static cvarTable_t		gameCvarTable[] = {
 	// demo state
 	//{ &g_demoState, "sv_demoState", "", 0, 0, qfalse },
 	{ &g_disableSpecs, "g_disableSpecs", "0", CVAR_ARCHIVE, 0, qfalse },
-	{ &g_friendsThroughWalls, "g_friendsThroughWalls", "0", CVAR_SERVERINFO, 0, qfalse },
+	{ &g_friendsThroughWalls, "g_friendsThroughWalls", "1", CVAR_SERVERINFO, 0, qfalse },
 	
 	{ &g_legacyWeaponAmmo, "g_legacyWeaponAmmo", "1", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_lockArena, "g_lockArena", "0", CVAR_ARCHIVE , 0, qfalse },
