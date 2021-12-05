@@ -46,14 +46,13 @@ INGAME MENU
 #define ID_QUIT					17
 #define ID_RESUME				18
 #define ID_TEAMORDERS			19
-#define ID_VOTE                         20
+#define ID_VOTE                 20
 #define ID_LOCKGAME				21
 #define ID_UNLOCKGAME			22
 
 
 typedef struct {
 	menuframework_s	menu;
-
 	menubitmap_s	frame;
 	menutext_s		team;
 	menutext_s		lockGame;
@@ -66,7 +65,7 @@ typedef struct {
 	menutext_s		teamorders;
 	menutext_s		quit;
 	menutext_s		resume;
-        menutext_s              vote;
+    menutext_s      vote;
 } ingamemenu_t;
 
 static ingamemenu_t	s_ingame;
@@ -98,7 +97,7 @@ static void InGame_QuitAction( qboolean result ) {
 	}
 	UI_PopMenu();
 	//UI_CreditMenu();
-        trap_Cmd_ExecuteText( EXEC_APPEND, "quit\n" );
+    trap_Cmd_ExecuteText( EXEC_APPEND, "quit\n" );
 }
 
 
@@ -153,13 +152,15 @@ void InGame_Event( void *ptr, int notification ) {
 		UI_PopMenu();
 		break;
                 
-        case ID_VOTE:
-                UI_VoteMenuMenu();
-                break;
+    case ID_VOTE:
+        UI_VoteMenuMenu();
+        break;
+
 	case ID_LOCKGAME:
 		trap_Cmd_ExecuteText( EXEC_APPEND, "lock\n" );
 		UI_PopMenu();
 		break;
+		
 	case ID_UNLOCKGAME:
 		trap_Cmd_ExecuteText( EXEC_APPEND, "unlock\n" );
 		UI_PopMenu();
@@ -288,7 +289,7 @@ void InGame_MenuInit( void ) {
 		}
 	}
 
-        y += INGAME_MENU_VERTICAL_SPACING;
+    y += INGAME_MENU_VERTICAL_SPACING;
 	s_ingame.vote.generic.type		= MTYPE_PTEXT;
 	s_ingame.vote.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
 	s_ingame.vote.generic.x			= 320;
@@ -378,7 +379,7 @@ void InGame_MenuInit( void ) {
 	Menu_AddItem( &s_ingame.menu, &s_ingame.addbots );
 	Menu_AddItem( &s_ingame.menu, &s_ingame.removebots );
 	Menu_AddItem( &s_ingame.menu, &s_ingame.teamorders );
-        Menu_AddItem( &s_ingame.menu, &s_ingame.vote );
+    Menu_AddItem( &s_ingame.menu, &s_ingame.vote );
 	Menu_AddItem( &s_ingame.menu, &s_ingame.setup );
 	Menu_AddItem( &s_ingame.menu, &s_ingame.server );
 	Menu_AddItem( &s_ingame.menu, &s_ingame.restart );
