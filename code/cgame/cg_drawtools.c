@@ -245,50 +245,41 @@ and CG_SetTeamBGColor( vec4_t *color )
 void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec ){
 	hudElements_t hudelement = cgs.hud[hudnumber];
 	vec4_t color;
-	int x,y, w;
+	int x, y, w;
 	qboolean shadow;
 	
 	if( !hudelement.inuse )
 		return;
 	
 	shadow = hudelement.textstyle & 1;
+
 	if( !spec ){
-		if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 1 ){
-			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-				color[0] = 1;
+		if( cgs.gametype >= GT_TEAM){
+			if ( hudnumber == HUD_SCOREOWN ) {
+				color[0] = 0.79;
 				color[1] = 0;
-				color[2] = 0;
-			} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+				color[2] = 0.1;
+			} else if ( hudnumber == HUD_SCORENME ) {
 				color[0] = 0;
-				color[1] = 0;
-				color[2] = 1;
+				color[1] = 0.3;
+				color[2] = 0.9;
 			}
+			color[3] = 0.5;
 		}
-		else if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 2 ){
-			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
-				color[0] = 1;
-				color[1] = 0;
-				color[2] = 0;
-			} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-				color[0] = 0;
-				color[1] = 0;
-				color[2] = 1;
-			}
-		}	
 		else{
 			color[0] = hudelement.bgcolor[0];
 			color[1] = hudelement.bgcolor[1];
 			color[2] = hudelement.bgcolor[2];
+			color[3] = hudelement.bgcolor[3];
 		}
-	color[3] = hudelement.bgcolor[3];
 	}
 	else{
 		color[0] = color[1] = color[2] = color[3] = 0.5f;
 	}
+
 	CG_FillRect( hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, color );
 	
 	y = hudelement.ypos + hudelement.height/2 - hudelement.fontHeight/2;
-	
 	w = CG_DrawStrlen(text) * hudelement.fontWidth;
 		
 	if( hudelement.textAlign == 0 )
@@ -298,13 +289,10 @@ void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec ){
 	else
 		x = hudelement.xpos + hudelement.width/2 - w/2;
 
-	
 	color[0] = hudelement.color[0];
 	color[1] = hudelement.color[1];
 	color[2] = hudelement.color[2];
 	color[3] = hudelement.color[3];
-	
-	
 		
 	CG_DrawStringExt( x, y, text, color, qfalse, shadow, hudelement.fontWidth, hudelement.fontHeight, 0 );
 }

@@ -1642,58 +1642,42 @@ static void CG_DrawScores ( void ) {
     //statusA = cgs.redflag;
     //statusB = cgs.blueflag;
 
-    s1 = cgs.scores1;
-    s2 = cgs.scores2;
+    s1 = cgs.scores1;   // red
+    s2 = cgs.scores2;   // blue
 
     // draw from the right side to left
     if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 ) {
         s = va ( "%i", s2 );
-
-        if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE )
-            CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse );
-        else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED )
-            CG_DrawScoresHud ( HUD_SCORENME, s, qfalse );
-        else
-            CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse );
-
+        
+        CG_DrawScoresHud ( HUD_SCORENME, s, qfalse );   // blue on the right
+        // N.B. for this we depend on the correct position settings for 
+        // HUD_SCORENME and HUD_SCOREOWN, set in the hud.cfg of choice
+        
+        // NOTE: check what's what with flag status icon. Remove when done
 
         if ( cgs.gametype == GT_CTF || cgs.gametype == GT_CTF_ELIMINATION ) {
             // Display flag status
             item = BG_FindItemForPowerup ( PW_BLUEFLAG );
             if ( item ) {
                 if ( cgs.blueflag >= 0 && cgs.blueflag <= 2 ) {
-                    if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
-                        trap_R_SetColor ( cgs.hud[HUD_FS_OWN].color );
-                        CG_DrawHudIcon ( HUD_FS_OWN, qfalse, cgs.media.neutralFlagShader[cgs.blueflag] );
-                    } else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-                        trap_R_SetColor ( cgs.hud[HUD_FS_NME].color );
-                        CG_DrawHudIcon ( HUD_FS_NME, qfalse, cgs.media.neutralFlagShader[cgs.blueflag] );
-                    }
+                    // Blue flag icon to the right
+                    // N.B. Depends on position and colour settings in the HUD cfg...
+                    CG_DrawHudIcon ( HUD_FS_NME, qfalse, cgs.media.neutralFlagShader[cgs.blueflag] );
                     trap_R_SetColor ( NULL );
                 }
             }
         }
         s = va ( "%i", s1 );
-
-        if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED )
-            CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse );
-        else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE )
-            CG_DrawScoresHud ( HUD_SCORENME, s, qfalse );
-        else
-            CG_DrawScoresHud ( HUD_SCORENME, s, qtrue );
+        
+        CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse );   // red on the left
 
         if ( cgs.gametype == GT_CTF || cgs.gametype == GT_CTF_ELIMINATION ) {
             // Display flag status
             item = BG_FindItemForPowerup ( PW_REDFLAG );
             if ( item ) {
                 if ( cgs.redflag >= 0 && cgs.redflag <= 2 ) {
-                    if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-                        trap_R_SetColor ( cgs.hud[HUD_FS_OWN].color );
-                        CG_DrawHudIcon ( HUD_FS_OWN, qtrue, cgs.media.neutralFlagShader[cgs.redflag] );
-                    } else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
-                        trap_R_SetColor ( cgs.hud[HUD_FS_NME].color );
-                        CG_DrawHudIcon ( HUD_FS_NME, qtrue, cgs.media.neutralFlagShader[cgs.redflag] );
-                    }
+                    // Draw red flag icon to the left
+                    CG_DrawHudIcon ( HUD_FS_OWN, qtrue, cgs.media.neutralFlagShader[cgs.redflag] );
                     trap_R_SetColor ( NULL );
                 }
             }
