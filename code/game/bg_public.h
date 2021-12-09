@@ -817,6 +817,7 @@ typedef enum {
 	ET_GRAPPLE,				// grapple hooked on wall
 	ET_TEAM,
 	ET_PING,				// location ping entity type
+	ET_PING_DANGER,			// location ping entity type, kind='danger'
 	ET_EVENTS				// any of the EV_* events can be added freestanding
 							// by setting eType to ET_EVENTS + eventNum
 							// this avoids having to set eFlags and eventNum

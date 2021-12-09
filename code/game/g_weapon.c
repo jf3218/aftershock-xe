@@ -1430,7 +1430,7 @@ Location Ping
 ==============
 */
 
-void Ping_Gen( gentity_t *ent )	{
+void Ping_Gen( gentity_t *ent, char kind )	{
 	gentity_t	*ping;
 
 	// JR: I'm not sure that the thing to do is spawning a temp entity. 
@@ -1450,8 +1450,14 @@ void Ping_Gen( gentity_t *ent )	{
 	ping->think = Ping_Think;
 	ping->r.ownerNum = ent->s.number;
 	ping->parent = ent;
-	ping->s.eType = ET_PING;
-	ping->classname = "location_ping";
+	if (kind == 1) {
+		ping->s.eType = ET_PING;
+		ping->classname = "location_ping";
+	} else if (kind == 2) {
+		ping->s.eType = ET_PING_DANGER;
+		ping->classname = "location_ping_danger";
+	}
+	
 	// Store team of ping owner, used later to decide who sees the icon
 	// Probably can do this more elegantly, but I don't find where this 
 	// information is stored reliably

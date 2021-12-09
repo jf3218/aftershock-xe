@@ -923,7 +923,8 @@ qboolean CheckGauntletAttack( gentity_t *ent );
 void Weapon_HookFree (gentity_t *ent);
 void Weapon_HookThink (gentity_t *ent);
 
-void Ping_Gen (gentity_t *ent);
+
+void Ping_Gen (gentity_t *ent, char kind);
 void Ping_Think( gentity_t *self );
 
 //unlagged - g_unlagged.c

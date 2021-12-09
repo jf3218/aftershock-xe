@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "cg_local.h"
 
 
-static void CG_Ping( centity_t *cent );
+static void CG_Ping( centity_t *cent, char kind );
 
 
 /*
@@ -1138,8 +1138,10 @@ static void CG_AddCEntity( centity_t *cent, int otherClient ) {
 		CG_Grapple( cent );
 		break;
 	case ET_PING:
-		CG_Ping( cent ) ;
+		CG_Ping( cent, 1 );
 		break;
+	case ET_PING_DANGER:
+		CG_Ping( cent, 2 );
 	case ET_TEAM:
 		CG_TeamBase( cent );
 		break;
@@ -1260,7 +1262,9 @@ CG_Ping
 ==================
 */
 
-static void CG_Ping( centity_t *cent )  {
+
+
+static void CG_Ping( centity_t *cent, char kind )  {
 	refEntity_t			ent;
 	vec3_t				pos_ent, pos_client, v_aux1, v_aux2;
 	vec_t				dist;
@@ -1300,15 +1304,32 @@ static void CG_Ping( centity_t *cent )  {
     picmip = atoi(buffer);
 
 	if (picmip > 0) {
-		ent.customShader = cgs.media.pingLocShader_nomip;
+		if (kind == 1){
+			ent.customShader = cgs.media.pingLocShader_nomip;
+		} else if (kind == 2) {
+			ent.customShader = cgs.media.pingLocShader_nomip;
+			// ent.customShader = cgs.media.pingLocShader_danger_nomip;
+		}
 	}else {
-	    ent.customShader = cgs.media.pingLocShader;
+		if (kind == 1){
+			ent.customShader = cgs.media.pingLocShader;
+		} else if (kind == 2) {
+			ent.customShader = cgs.media.pingLocShader;
+			// ent.customShader = cgs.media.pingLocShader_danger;
+		}
 	}
 		
 	ent.radius = 25 + dist / 45;
-	ent.shaderRGBA[0] = 255;
-	ent.shaderRGBA[1] = 255;
-	ent.shaderRGBA[2] = 255;
+
+	if (kind == 1) {
+		ent.shaderRGBA[0] = 255;
+		ent.shaderRGBA[1] = 255;
+		ent.shaderRGBA[2] = 255;
+	} else {
+		ent.shaderRGBA[0] = 255;
+		ent.shaderRGBA[1] = 50;
+		ent.shaderRGBA[2] = 50;
+	}
 	ent.shaderRGBA[3] = 200;
 
 	trap_R_AddRefEntityToScene( &ent );
@@ -1328,5 +1349,4 @@ static void CG_Ping( centity_t *cent )  {
 	
 	trap_S_StartSound( v_aux2, 1, 2, cgs.media.ping );
 
-	
 }
