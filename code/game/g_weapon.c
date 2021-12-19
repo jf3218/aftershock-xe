@@ -1467,7 +1467,7 @@ void Ping_Gen( gentity_t *ent, char kind )	{
 }
 
 void Ping_Think( gentity_t *self )	{
-	vec3_t		end, start, forward, up;
+	vec3_t		end, start, forward, right, up;
 	trace_t		tr;
 
 	// persistence time of each "ping"
