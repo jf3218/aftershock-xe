@@ -4374,7 +4374,7 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
     }
 #endif
     // if we are taking a levelshot for the menu, don't draw anything
-    if ( cg.levelShot ) {
+    if ( cg.levelShot )  {
         return;
     }
 
@@ -4386,27 +4386,14 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
         CG_DrawIntermission();
         CG_DrawVoteMap();
         CG_DrawChat ( qtrue );
-	
-	if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 ) {
-            CG_DrawTeamInfo();
-        }
-        
+	    if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 )  CG_DrawTeamInfo();
         return;
     }
 
-    /*
-    	if (cg.cameraMode) {
-    		return;
-    	}
-    */
     if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR /*|| cg.snap->ps.pm_type == PM_SPECTATOR*/ ) {
         CG_DrawSpectator();
-
-        if ( stereoFrame == STEREO_CENTER )
-            CG_DrawCrosshair();
-
+        if ( stereoFrame == STEREO_CENTER )  CG_DrawCrosshair();
         CG_DrawCrosshairNames();
-
         if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 ) {
 #ifndef MISSIONPACK
             CG_DrawTeamInfo();
@@ -4416,37 +4403,25 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
     } else {
         // don't draw any status if dead or the scoreboard is being explicitly shown
         if ( !cg.showScores && cg.snap->ps.stats[STAT_HEALTH] > 0 ) {
-
-
             CG_Predecorate();
             CG_DrawStatusBar();
-
             CG_DrawAmmoWarning();
-
-            if ( stereoFrame == STEREO_CENTER )
-                CG_DrawCrosshair();
+            if ( stereoFrame == STEREO_CENTER )  CG_DrawCrosshair();
             CG_DrawCrosshairNames();
             CG_DrawWeaponSelect();
-
-
             CG_DrawHoldableItem();
             CG_DrawPersistantPowerup();
-
             CG_DrawReward();
             CG_DrawPickupItem();
-
         }
 
-        if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 ) {
-            CG_DrawTeamInfo();
-        }
+        if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 )  CG_DrawTeamInfo();
     }
 
     CG_DrawDeathNotice();
     CG_DrawVoteMap();
     CG_DrawChat ( qfalse );
     CG_DrawConsole();
-
     CG_DrawVote();
     CG_DrawTeamVote();
 
@@ -4468,10 +4443,7 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
     // don't draw center string if scoreboard is up
     cg.scoreBoardShowing = CG_DrawScoreboard();
     if ( !cg.scoreBoardShowing ) {
-        
-
         CG_DrawLagometer();
-        
         CG_DrawCenterDDString();
         CG_DrawCenter1FctfString();
         CG_DrawCenterString();
@@ -4479,20 +4451,10 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
         CG_DrawRankMessage();
         CG_DrawScores();
         CG_DrawPowerups();
-
         CG_DrawAttacker();
-
-        if ( cg_drawSpeed.integer ) {
-            CG_DrawSpeedMeter();
-        }
-        if ( cg_drawAccel.integer ) {
-            CG_DrawAccelMeter();
-        }
-
-        //if ( !CG_DrawFollow() ) {
+        if ( cg_drawSpeed.integer )  CG_DrawSpeedMeter();
+        if ( cg_drawAccel.integer )  CG_DrawAccelMeter();
 	    CG_DrawFollow();
-            
-        //}
 
         if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cg_drawTeamOverlay.integer ) {
             CG_DrawTeamOverlay ( );
