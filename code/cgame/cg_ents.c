@@ -1318,28 +1318,22 @@ static void CG_Ping( centity_t *cent, char kind )  {
 		if (kind == 1){
 			ent.customShader = cgs.media.pingLocShader_nomip;
 		} else if (kind == 2) {
-			ent.customShader = cgs.media.pingLocShader_nomip;
-			// ent.customShader = cgs.media.pingLocShader_danger_nomip;
+			ent.customShader = cgs.media.pingLocShader_danger_nomip;
 		}
 	}else {
 		if (kind == 1){
 			ent.customShader = cgs.media.pingLocShader;
 		} else if (kind == 2) {
-			ent.customShader = cgs.media.pingLocShader;
-			// ent.customShader = cgs.media.pingLocShader_danger;
+			ent.customShader = cgs.media.pingLocShader_danger;
 		}
 	}
 		
 	ent.radius = 20 + dist / 45;
 
 	if (kind == 1) {
-		ent.shaderRGBA[0] = 255;
-		ent.shaderRGBA[1] = 255;
-		ent.shaderRGBA[2] = 255;
+		ent.shaderRGBA[0] = ent.shaderRGBA[1] = ent.shaderRGBA[2] = 255;
 	} else {
-		ent.shaderRGBA[0] = 255;
-		ent.shaderRGBA[1] = 50;
-		ent.shaderRGBA[2] = 50;
+		ent.shaderRGBA[0] = ent.shaderRGBA[1] = ent.shaderRGBA[2] = 255;
 		trap_R_AddLightToScene(ent.origin, 150, 1, 0, 0);
 	}
 
@@ -1361,6 +1355,10 @@ static void CG_Ping( centity_t *cent, char kind )  {
 	VectorNormalizeFast(v_aux1);
 	VectorMA(pos_client, 80 + dist/5, v_aux1, v_aux2);
 	
-	trap_S_StartSound( v_aux2, 1, 2, cgs.media.ping );
+	if (kind == 1) {
+		trap_S_StartSound( v_aux2, 1, 2, cgs.media.ping );
+	} else {
+		trap_S_StartSound( v_aux2, 1, 2, cgs.media.ping_danger );
+	}
 
 }

@@ -1452,10 +1452,10 @@ void Ping_Gen( gentity_t *ent, char kind )	{
 	ping->parent = ent;
 	if (kind == 1) {
 		ping->s.eType = ET_PING;
-		ping->classname = "location_ping";
+		ping->classname = "loc_ping";
 	} else if (kind == 2) {
 		ping->s.eType = ET_PING_DANGER;
-		ping->classname = "location_ping_danger";
+		ping->classname = "loc_ping2";
 	}
 	
 	// Store team of ping owner, used later to decide who sees the icon

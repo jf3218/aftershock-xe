@@ -1109,6 +1109,7 @@ typedef struct {
 
 	// sounds
 	sfxHandle_t ping;
+	sfxHandle_t ping_danger;
 	sfxHandle_t	quadSound;
 	sfxHandle_t	tracerSound;
 	sfxHandle_t	selectSound;

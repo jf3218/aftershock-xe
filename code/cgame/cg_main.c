@@ -1323,6 +1323,7 @@ static void CG_RegisterSounds( void ) {
 
 	// FIXME: only needed with item
 	cgs.media.ping = CG_RegisterSoundOption("sound/misc/ping_ljud4amix.wav", qfalse);
+	cgs.media.ping_danger = CG_RegisterSoundOption("sound/misc/ping_danger.wav", qfalse);
 	cgs.media.flightSound = CG_RegisterSoundOption( "sound/items/flight.wav", qfalse );
 	cgs.media.medkitSound = CG_RegisterSoundOption ("sound/items/use_medkit.wav", qfalse);
 	cgs.media.quadSound = CG_RegisterSoundOption("sound/items/damage3.wav", qfalse);
@@ -1591,7 +1592,8 @@ static void CG_RegisterGraphics( void ) {
 		cgs.media.teamStatusBar = trap_R_RegisterShader( "gfx/2d/colorbar.tga" );
 		cgs.media.pingLocShader = trap_R_RegisterShader("icons/pingLoc.tga");
 		cgs.media.pingLocShader_nomip = trap_R_RegisterShaderNoMip( "icons/pingLoc.tga" );
-		
+		cgs.media.pingLocShader_danger = trap_R_RegisterShader("icons/pingLocDanger.tga");
+		cgs.media.pingLocShader_danger_nomip = trap_R_RegisterShaderNoMip( "icons/pingLocDanger.tga" );
 		
 #ifdef MISSIONPACK
 		cgs.media.blueKamikazeShader = trap_R_RegisterShader( "models/weaphits/kamikblu" );
