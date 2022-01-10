@@ -4390,7 +4390,7 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
         return;
     }
 
-    if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR /*|| cg.snap->ps.pm_type == PM_SPECTATOR*/ ) {
+    if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR ) {
         CG_DrawSpectator();
         if ( stereoFrame == STEREO_CENTER )  CG_DrawCrosshair();
         CG_DrawCrosshairNames();
@@ -4439,7 +4439,7 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
         }
     CG_DrawWarmup();
     CG_DrawTimeout();
-    
+
     // don't draw center string if scoreboard is up
     cg.scoreBoardShowing = CG_DrawScoreboard();
     if ( !cg.scoreBoardShowing ) {
