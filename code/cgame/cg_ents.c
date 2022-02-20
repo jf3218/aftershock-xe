@@ -1272,11 +1272,15 @@ static void CG_Ping( centity_t *cent, char kind )  {
 	vec3_t viewangles, v1, v, forward, right, up;
 	float angle;
 
+	if( cgs.gametype < GT_TEAM || cgs.ffa_gt == 1 ){
+		return;
+	}
+
 	team = cent->currentState.eventParm;
 	if (cg.snap->ps.persistant[PERS_TEAM] != team){
 		return;
 	}
-
+	
 	_VectorCopy( cent->lerpOrigin, pos_ent );
 	_VectorCopy( cg.predictedPlayerState.origin, pos_client );
 	dist = Distance(pos_ent, pos_client);
