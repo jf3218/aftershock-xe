@@ -1545,68 +1545,19 @@ Draw the small two score display
 =================
 */
 static void CG_DrawLivingCount ( void ) {
-    /*const char	*s, *t;
-    int			s1, s2;*/
 
     if ( cgs.gametype != GT_ELIMINATION && cgs.gametype != GT_CTF_ELIMINATION )
         return;
 
-    /*s1 = cgs.redLivingCount;
-    s2 = cgs.blueLivingCount;
-    s = va ( "%i", s1 );
-    t = va ( "%i", s2 );*/
-
     CG_DrawHudIcon ( HUD_TI_OWN, qtrue, 0 );
     CG_DrawHudIcon ( HUD_TI_NME, qtrue, 0 );
 
-    if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-        CG_DrawStringHud ( HUD_TC_NME, qtrue, va ( "%i", cgs.blueLivingCount ) );
-        CG_DrawStringHud ( HUD_TC_OWN, qtrue, va ( "%i", cgs.redLivingCount ) );
-    } else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
-        CG_DrawStringHud ( HUD_TC_NME, qtrue, va ( "%i", cgs.redLivingCount ) );
-        CG_DrawStringHud ( HUD_TC_OWN, qtrue, va ( "%i", cgs.blueLivingCount ) );
-    }
+    CG_DrawStringHud( HUD_TC_OWN, qtrue, va ( "%i", cgs.redLivingCount ) );
+    CG_DrawStringHud ( HUD_TC_NME, qtrue, va ( "%i", cgs.blueLivingCount ) );
 
     return;
 }
 
-
-/*
-=====================
-CG_DrawUpperRight
-TODO: This functions are not used anymore, or should be
-=====================
-*/
-/*static void CG_DrawUpperRight( void ) {
-    float	y;
-
-    y = 0;
-    */
-    /*if ( cgs.gametype == GT_DOUBLE_D ) {
-    	y = CG_DrawDoubleDominationThings(y);
-    }
-    else*/
-    /*if ( cgs.gametype == GT_LMS && cg.showScores ) {
-        y = CG_DrawLMSmode ( y );
-    } else
-        if ( cgs.gametype == GT_CTF_ELIMINATION ) {
-            y = CG_DrawCTFoneway ( y );
-        } else
-            if ( cgs.gametype == GT_DOMINATION ) {
-                y = CG_DrawDomStatus ( y );
-            }
-
-    if ( cg_drawSnapshot.integer ) {
-        y = CG_DrawSnapshot ( y );
-    }
-
-
-    //y = CG_DrawFollowMessage( y );
-
-
-
-
-}*/
 
 /*
 ===========================================================================================
@@ -1630,11 +1581,6 @@ static void CG_DrawScores ( void ) {
     int			x, w;
     int			v;
     gitem_t		*item;
-    //int statusA,statusB;
-    //vec4_t color;
-
-    //statusA = cgs.redflag;
-    //statusB = cgs.blueflag;
 
     s1 = cgs.scores1;   // red
     s2 = cgs.scores2;   // blue
