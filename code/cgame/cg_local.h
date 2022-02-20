@@ -1924,7 +1924,7 @@ void CG_DrawSides(float x, float y, float w, float h, float size);
 void CG_DrawTopBottom(float x, float y, float w, float h, float size);
 
 void CG_DrawHudIcon( int hudnumber, qboolean override, qhandle_t hShader );
-void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec );
+void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec, qboolean highlight );
 
 //
 // cg_draw.c, cg_newDraw.c

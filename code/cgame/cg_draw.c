@@ -1586,7 +1586,11 @@ static void CG_DrawScores ( void ) {
     if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 ) {
         s = va ( "%i", s2 );
         
-        CG_DrawScoresHud ( HUD_SCORENME, s, qfalse );   // blue on the right
+        if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE){
+            CG_DrawScoresHud ( HUD_SCORENME, s, qfalse, qtrue );   // blue on the right
+        } else {
+            CG_DrawScoresHud ( HUD_SCORENME, s, qfalse, qfalse );
+        }
         // N.B. for this we depend on the correct position settings for 
         // HUD_SCORENME and HUD_SCOREOWN, set in the hud.cfg of choice
         
@@ -1606,7 +1610,11 @@ static void CG_DrawScores ( void ) {
         }
         s = va ( "%i", s1 );
         
-        CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse );   // red on the left
+        if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED){
+            CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse, qtrue );
+        } else {
+            CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse, qfalse );
+        }
 
         if ( cgs.gametype == GT_CTF || cgs.gametype == GT_CTF_ELIMINATION ) {
             // Display flag status
@@ -1627,7 +1635,7 @@ static void CG_DrawScores ( void ) {
         }
         if ( v ) {
             s = va ( "%i", v );
-            CG_DrawScoresHud ( HUD_SCORELIMIT, s, qfalse );
+            CG_DrawScoresHud ( HUD_SCORELIMIT, s, qfalse, qfalse );
         }
 
     } else {
@@ -1646,11 +1654,11 @@ static void CG_DrawScores ( void ) {
             w = CG_DrawStrlen ( s ) * BIGCHAR_WIDTH + 8;
             x -= w;
             if ( spectator ) {
-                CG_DrawScoresHud ( HUD_SCORENME, s, qtrue );
+                CG_DrawScoresHud ( HUD_SCORENME, s, qtrue, qfalse );
             } else if ( score == s2 && score != s1 ) {
-                CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse );
+                CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse, qfalse );
             } else {
-                CG_DrawScoresHud ( HUD_SCORENME, s, qfalse );
+                CG_DrawScoresHud ( HUD_SCORENME, s, qfalse, qfalse );
             }
         }
 
@@ -1660,17 +1668,17 @@ static void CG_DrawScores ( void ) {
             w = CG_DrawStrlen ( s ) * BIGCHAR_WIDTH + 8;
             x -= w;
             if ( spectator ) {
-                CG_DrawScoresHud ( HUD_SCOREOWN, s, qtrue );
+                CG_DrawScoresHud ( HUD_SCOREOWN, s, qtrue, qfalse );
             } else if ( score == s1 ) {
-                CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse );
+                CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse, qfalse );
             } else {
-                CG_DrawScoresHud ( HUD_SCORENME, s, qfalse );
+                CG_DrawScoresHud ( HUD_SCORENME, s, qfalse, qfalse );
             }
         }
 
         if ( cgs.fraglimit ) {
             s = va ( "%i", cgs.fraglimit );
-            CG_DrawScoresHud ( HUD_SCORELIMIT, s, qfalse );
+            CG_DrawScoresHud ( HUD_SCORELIMIT, s, qfalse, qfalse );
         }
 
     }
@@ -4360,6 +4368,8 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 
         if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 ) {
             CG_DrawTeamInfo();
+            // Don't draw living count for team deathmatch. We've got 
+            // a problem whereby it's not retrieved properly...
             if ( cgs.gametype != GT_TEAM)
                 CG_DrawLivingCount();
         }

@@ -242,7 +242,7 @@ TODO: add function CG_SetTeamColor( vec4_t *color )
 and CG_SetTeamBGColor( vec4_t *color )
 =================
 */
-void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec ){
+void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec, qboolean highlight ){
 	hudElements_t hudelement = cgs.hud[hudnumber];
 	vec4_t color;
 	int x, y, w;
@@ -278,7 +278,11 @@ void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec ){
 	}
 
 	CG_FillRect( hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, color );
-	
+	if ( highlight == qtrue ) {
+		CG_DrawRect( hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, 1, colorWhite );
+	}
+
+
 	y = hudelement.ypos + hudelement.height/2 - hudelement.fontHeight/2;
 	w = CG_DrawStrlen(text) * hudelement.fontWidth;
 		
