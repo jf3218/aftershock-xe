@@ -242,11 +242,11 @@ static void PM_Friction( void ) {
 			// if getting knocked back, no friction
 			if ( ! (pm->ps->pm_flags & PMF_TIME_KNOCKBACK) ) {
 				control = speed < pm_stopspeed ? pm_stopspeed : speed;
-				if((pm->ruleset == RULESET_AS || pm->ruleset == RULESET_ASXE) && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed)) {
+				if((pm->ps->stats[STAT_RULESET] == RULESET_AS || pm->ps->stats[STAT_RULESET] == RULESET_ASXE) && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed)) {
 					drop += speed*pm_slidefriction*pml.frametime;
-				} else if(pm->ruleset == RULESET_QW){
+				} else if(pm->ps->stats[STAT_RULESET] == RULESET_QW){
 					drop += control*pm_qw_friction*pml.frametime;
-				} else if(pm->ruleset == RULESET_CPM) {
+				} else if(pm->ps->stats[STAT_RULESET] == RULESET_CPM) {
 					drop += control*pm_cpm_friction*pml.frametime;
 				} else { // RULESET_VQ3
 					drop += control*pm_friction*pml.frametime;
@@ -441,7 +441,7 @@ static qboolean PM_CheckJump( void ) {
 
 	pm->ps->groundEntityNum = ENTITYNUM_NONE;
 	
-	if((pm->ruleset == RULESET_AS || pm->ruleset == RULESET_ASXE) && (pm->ps->velocity[2] >= 0)) {
+	if((pm->ps->stats[STAT_RULESET] == RULESET_AS || pm->ps->stats[STAT_RULESET] == RULESET_ASXE) && (pm->ps->velocity[2] >= 0)) {
 		if (pm->ps->stats[STAT_JUMPTIME] > 0) {
 			float speed = sqrt(pml.forward[0]*pml.forward[0] + pml.forward[1]*pml.forward[1]);
 			pm->ps->velocity[2] += JUMP_VELOCITY + 100;
@@ -454,13 +454,13 @@ static qboolean PM_CheckJump( void ) {
 			pm->ps->velocity[2] += JUMP_VELOCITY;
 		}
 		pm->ps->stats[STAT_JUMPTIME] = 400;
-	} else if((pm->ruleset == RULESET_CPM) && (pm->ps->velocity[2] >= 0)) {
+	} else if((pm->ps->stats[STAT_RULESET] == RULESET_CPM) && (pm->ps->velocity[2] >= 0)) {
 		pm->ps->velocity[2] += JUMP_VELOCITY;
 	    if (pm->ps->stats[STAT_JUMPTIME] > 0) {
 			pm->ps->velocity[2] += pm_cpm_jump_z;
 		}
 		pm->ps->stats[STAT_JUMPTIME] = 400 / GAME_SPEED_MULTIPLIER;
-	} else if((pm->ruleset == RULESET_QW)  && (pm->ps->velocity[2] >= 0)) {
+	} else if((pm->ps->stats[STAT_RULESET] == RULESET_QW)  && (pm->ps->velocity[2] >= 0)) {
 		pm->ps->velocity[2] += JUMP_VELOCITY;
 
 		// speed increase on ramp jump
@@ -614,7 +614,7 @@ static void PM_WaterMove( void ) {
 	wishspeed = VectorNormalize(wishdir);
 
 
-	if((pm->ruleset == RULESET_QW) || (pm->ruleset == RULESET_CPM)) {
+	if((pm->ps->stats[STAT_RULESET] == RULESET_QW) || (pm->ps->stats[STAT_RULESET] == RULESET_CPM)) {
 		if(wishspeed > pm->ps->speed * pm_qw_swimScale) {
 			wishspeed = pm->ps->speed * pm_qw_swimScale;
 		}
@@ -767,7 +767,7 @@ static void PM_AirMove( void ) {
 	wishspeed = VectorNormalize(wishdir);
 	wishspeed *= scale;
 
-	switch(pm->ruleset) {
+	switch(pm->ps->stats[STAT_RULESET]) {
 		case RULESET_QW: {
 			// alt air control
 			if(DotProduct(pm->ps->velocity, wishdir) < 0) {
@@ -960,7 +960,7 @@ static void PM_WalkMove( void ) {
 		}
 
 		speed = VectorLength(vec);
-		if( pm->ruleset > RULESET_VQ3 && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed) ){
+		if( pm->ps->stats[STAT_RULESET] > RULESET_VQ3 && (pm->ps->pm_flags & PMF_DUCKED) && (speed >= pm_slideminspeed) ){
 			if ( wishspeed > pm->ps->speed * pm_duckScale * 2 ) {
 				wishspeed = pm->ps->speed * pm_duckScale * 2;
 			}
@@ -976,7 +976,7 @@ static void PM_WalkMove( void ) {
 		float	waterScale;
 
 		waterScale = pm->waterlevel / 3.0;
-		if((pm->ruleset == RULESET_QW) || (pm->ruleset == RULESET_CPM)) {
+		if((pm->ps->stats[STAT_RULESET] == RULESET_QW) || (pm->ps->stats[STAT_RULESET] == RULESET_CPM)) {
 			waterScale = 1.0 - ( 1.0 - pm_qw_swimScale ) * waterScale;
 		} else { // AS + VQ3 + ASXE
 			waterScale = 1.0 - ( 1.0 - pm_swimScale ) * waterScale;
@@ -990,15 +990,15 @@ static void PM_WalkMove( void ) {
 	// when a player gets hit, they temporarily lose
 	// full control, which allows them to be moved a bit
 	if ( ( pml.groundTrace.surfaceFlags & SURF_SLICK ) || pm->ps->pm_flags & PMF_TIME_KNOCKBACK ) {
-		if((pm->ruleset == RULESET_QW) || (pm->ruleset == RULESET_CPM)) {
+		if((pm->ps->stats[STAT_RULESET] == RULESET_QW) || (pm->ps->stats[STAT_RULESET] == RULESET_CPM)) {
 			accelerate = pm_qw_aircontrol;
 		} else { // AS + VQ3 + ASXE
 			accelerate = pm_airaccelerate;
 		}
 	} else {
-		if(pm->ruleset == RULESET_QW) {
+		if(pm->ps->stats[STAT_RULESET] == RULESET_QW) {
 			accelerate = pm_qw_accelerate;
-		} else if(pm->ruleset == RULESET_CPM) {
+		} else if(pm->ps->stats[STAT_RULESET] == RULESET_CPM) {
 			accelerate = pm_cpm_accelerate;
 		} else { // AS + VQ3 + ASXE
 			accelerate = pm_accelerate;
@@ -1711,15 +1711,15 @@ static void PM_BeginWeaponChange( int weapon ) {
 
 	PM_AddEvent( EV_CHANGE_WEAPON );
 	pm->ps->weaponstate = WEAPON_DROPPING;
-	if(pm->ruleset == RULESET_VQ3){
+	if(pm->ps->stats[STAT_RULESET] == RULESET_VQ3){
 		pm->ps->weaponTime += pm_weapondrop;
-	} else if(pm->ruleset == RULESET_CPM) {
+	} else if(pm->ps->stats[STAT_RULESET] == RULESET_CPM) {
 		pm->ps->weaponTime += pm_cpm_weapondrop;
 	} else {
 		pm->ps->weaponTime += pm_as_weapondrop;
 	}
 	PM_StartTorsoAnim( TORSO_DROP );
-	if( pm->ruleset == RULESET_VQ3 ) {
+	if( pm->ps->stats[STAT_RULESET] == RULESET_VQ3 ) {
 		if( pm->ps->weaponTime > 500 )
 		    pm->ps->weaponTime = 500;
 	}
@@ -1768,9 +1768,9 @@ static void PM_FinishWeaponChange( void ) {
 
 	pm->ps->weapon = weapon;
 	pm->ps->weaponstate = WEAPON_RAISING;
-	if(pm->ruleset == RULESET_VQ3){
+	if(pm->ps->stats[STAT_RULESET] == RULESET_VQ3){
 		pm->ps->weaponTime += pm_weaponraise;
-	} else if(pm->ruleset == RULESET_CPM) {
+	} else if(pm->ps->stats[STAT_RULESET] == RULESET_CPM) {
 		pm->ps->weaponTime += pm_cpm_weaponraise;
 	} else {
 		pm->ps->weaponTime += pm_as_weaponraise;
@@ -1847,7 +1847,7 @@ static void PM_Weapon( void ) {
 		pm->ps->pm_flags &= ~PMF_USE_ITEM_HELD;
 	}
 
-	if(pm->ruleset == RULESET_CPM) {
+	if(pm->ps->stats[STAT_RULESET] == RULESET_CPM) {
 		if(pm->ps->stats[STAT_RAILTIME] > 0) {
 			pm->ps->stats[STAT_RAILTIME] -= pml.msec;
 		}
@@ -1877,14 +1877,14 @@ static void PM_Weapon( void ) {
 		return;
 	}
 
-	if(pm->ruleset == RULESET_CPM) {
+	if(pm->ps->stats[STAT_RULESET] == RULESET_CPM) {
 		if(pm->ps->weapon == WP_RAILGUN && pm->ps->stats[STAT_RAILTIME] > 0) {
 			return;
 		}
 	}
 
 	if ( pm->ps->weaponstate == WEAPON_RAISING ) {
-		if(pm->ruleset == RULESET_CPM) {
+		if(pm->ps->stats[STAT_RULESET] == RULESET_CPM) {
 			if ((pm->ps->weapon == WP_RAILGUN) && (pm->ps->stats[STAT_RAILTIME] > 0)) {
 				// the player has switched back to railgun before it has reloaded
 				// setup so that the player now is in "firing state"
@@ -1932,7 +1932,7 @@ static void PM_Weapon( void ) {
 	// check for out of ammo
 	if ( ! pm->ps->ammo[ pm->ps->weapon ] ) {
 		PM_AddEvent( EV_NOAMMO );
-		if(pm->ruleset == RULESET_CPM) {
+		if(pm->ps->stats[STAT_RULESET] == RULESET_CPM) {
 			pm->ps->weaponTime += pm_cpm_outofammodelay;
 		} else {
 			pm->ps->weaponTime += pm_outofammodelay;
@@ -1972,7 +1972,7 @@ static void PM_Weapon( void ) {
 		addTime = wp_plasmaRate;
 		break;
 	case WP_RAILGUN:
-		if(pm->ruleset == RULESET_CPM) {
+		if(pm->ps->stats[STAT_RULESET] == RULESET_CPM) {
 			addTime = wp_railRate;
 			pm->ps->stats[STAT_RAILTIME] = wp_railRate;
 		} else {

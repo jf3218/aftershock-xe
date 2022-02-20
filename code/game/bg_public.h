@@ -254,7 +254,8 @@ typedef enum {
 	STAT_MAX_HEALTH,					// health / armor limit, changable by handicap
 	STAT_JUMPTIME,					//rampjump
 	STAT_RAILTIME,					// CPM: Added for allowchange
-	STAT_ZOOMED						// Current zoom status of the player, so spectators can see if player zooms or not
+	STAT_ZOOMED,						// Current zoom status of the player, so spectators can see if player zooms or not
+	STAT_RULESET					// ruleset. Integer for vq3, as, asxe, qw and cpm
 } statIndex_t;
 
 
