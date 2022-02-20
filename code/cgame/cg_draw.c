@@ -1546,9 +1546,6 @@ Draw the small two score display
 */
 static void CG_DrawLivingCount ( void ) {
 
-    if ( cgs.gametype != GT_ELIMINATION && cgs.gametype != GT_CTF_ELIMINATION )
-        return;
-
     CG_DrawHudIcon ( HUD_TI_OWN, qtrue, 0 );
     CG_DrawHudIcon ( HUD_TI_NME, qtrue, 0 );
 
@@ -4361,7 +4358,11 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
             CG_DrawPickupItem();
         }
 
-        if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 )  CG_DrawTeamInfo();
+        if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 ) {
+            CG_DrawTeamInfo();
+            if ( cgs.gametype != GT_TEAM)
+                CG_DrawLivingCount();
+        }
     }
 
     CG_DrawDeathNotice();
@@ -4377,7 +4378,6 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
         CG_DrawFPS();
     }
 
-    CG_DrawLivingCount();
     CG_DrawTimer();
     
     if ( cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS ) {

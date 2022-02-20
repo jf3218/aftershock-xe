@@ -963,13 +963,8 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 
 	trap_LinkEntity (self);
 	
-	if(g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION ){
+	if(g_gametype.integer == GT_TEAM || g_gametype.integer == GT_ELIMINATION || g_gametype.integer == GT_CTF_ELIMINATION){
 		G_SendLivingCount();
-		/*if( level.roundNumberStarted != 0 ){
-			self->client->died = qtrue;
-			for( i = 0; i < MAX_PERSISTANT; i++ )
-				self->client->preservedScore[i] = self->client->ps.persistant[i];
-		}*/
 	}
 	
 	//TODO: Follow attacker - cg_autoaction & 64
