@@ -1334,11 +1334,11 @@ static void CG_Ping( centity_t *cent, char kind )  {
 		ent.shaderRGBA[0] = ent.shaderRGBA[1] = ent.shaderRGBA[2] = 255;
 	} else {
 		ent.shaderRGBA[0] = ent.shaderRGBA[1] = ent.shaderRGBA[2] = 255;
-		trap_R_AddLightToScene(ent.origin, 150, 1, 0, 0);
+		// trap_R_AddLightToScene(ent.origin, 80, 1, 0, 0);
 	}
 
 	// make locping more transparent as we look in its direction
-	ent.shaderRGBA[3] = 100 + (byte) (255 * ( fabs(angle)/M_PI - 1) );
+	ent.shaderRGBA[3] = 100 + 155* ( fabs(angle)/M_PI) ;
 	// Com_Printf("\n alpha %i %f", ent.shaderRGBA[3], angle * 180/M_PI );
 
 	trap_R_AddRefEntityToScene( &ent );
