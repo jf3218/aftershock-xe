@@ -379,7 +379,9 @@ void CG_DrawStringExt( int x, int y, const char *string, const float *setColor,
 	vec4_t		color;
 	const char	*s;
 	int			xx;
-	int			cnt;
+	int			cnt, k;
+
+	k = 1;
 
 	if (maxChars <= 0)
 		maxChars = 32767; // do them all!
@@ -397,7 +399,7 @@ void CG_DrawStringExt( int x, int y, const char *string, const float *setColor,
 				s += 2;
 				continue;
 			}
-			CG_DrawChar( xx + 2, y + 2, charWidth, charHeight, *s );
+			CG_DrawChar( xx + k, y + k, charWidth + k, charHeight, *s );
 			cnt++;
 			xx += charWidth;
 			s++;
@@ -495,12 +497,13 @@ void CG_DrawStringHud( int hudnumber, qboolean colorize, const char* text ){
 		color[0] = 1.0;
 		color[1] = 1.0;
 		color[2] = 1.0;
-		color[3] = 1.0;
+		color[3] = 0.75F;
 	}
 		
 	CG_DrawStringExt( x, hudelement.ypos, text, color, qfalse, shadow, hudelement.fontWidth, hudelement.fontHeight, 0 );
 }
-		
+
+
 void CG_DrawBigString( int x, int y, const char *s, float alpha ) {
 	float	color[4];
 

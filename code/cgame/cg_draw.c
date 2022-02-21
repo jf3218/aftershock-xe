@@ -3699,11 +3699,11 @@ CG_DrawSpectator
 =================
 */
 static void CG_DrawSpectator ( void ) {
-    CG_DrawBigString ( 320 - 9 * 8, 440, "SPECTATOR", 1.0F );
+    CG_DrawBigString ( 320 - 9 * 6, 440, "SPECTATOR", 0.65F );
     if ( cgs.gametype == GT_TOURNAMENT ) {
-        CG_DrawBigString ( 320 - 15 * 8, 460, "waiting to play", 1.0F );
+        CG_DrawBigString ( 320 - 15 * 6, 460, "waiting to play", 0.65F );
     } else if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 ) {
-        CG_DrawBigString ( 320 - 39 * 8, 460, "press ESC and use the JOIN menu to play", 1.0F );
+        CG_DrawBigString ( 320 - 39 * 6, 460, "press ESC and use the JOIN menu to play", 0.65F );
     }
 }
 
