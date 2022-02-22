@@ -36,13 +36,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   movers and respawn apropriately.
 */
 
-
-#define	RESPAWN_ARMOR		25
-#define	RESPAWN_HEALTH		35
-#define	RESPAWN_AMMO		40
-#define	RESPAWN_HOLDABLE	60
-#define	RESPAWN_MEGAHEALTH	35//120
-#define	RESPAWN_POWERUP		120
+// Don't use these. Take values from g_respawn_* cvars
+// #define  	RESPAWN_ARMOR           25
+// #define      RESPAWN_HEALTH          35
+// #define      RESPAWN_AMMO            40
+// #define      RESPAWN_HOLDABLE        60
+// #define      RESPAWN_MEGAHEALTH      35//120
+// #define      RESPAWN_POWERUP         120
 
 
 //======================================================================
@@ -140,7 +140,7 @@ int Pickup_Powerup( gentity_t *ent, gentity_t *other ) {
 		}
 	}
 	
-	return RESPAWN_POWERUP;
+	return g_respawn_powerup.integer;
 }
 
 //======================================================================
@@ -226,7 +226,7 @@ int Pickup_Holdable( gentity_t *ent, gentity_t *other ) {
 		other->client->ps.eFlags |= EF_KAMIKAZE;
 	}
 
-	return RESPAWN_HOLDABLE;
+	return g_respawn_holdable.integer;
 }
 
 
@@ -256,7 +256,7 @@ int Pickup_Ammo (gentity_t *ent, gentity_t *other)
 
 	Add_Ammo (other, ent->item->giTag, quantity);
 
-	return RESPAWN_AMMO;
+	return g_respawn_ammo.integer;
 }
 
 //======================================================================
@@ -346,10 +346,11 @@ int Pickup_Health (gentity_t *ent, gentity_t *other) {
 	other->client->ps.stats[STAT_HEALTH] = other->health;
 
 	if ( ent->item->quantity == 100 ) {		// mega health respawns slow
-		return RESPAWN_MEGAHEALTH;
+		return g_respawn_megahealth.integer;
 	}
-
-	return RESPAWN_HEALTH;
+	
+	// return g_respawn_health.integer;
+	return g_respawn_health.integer;
 }
 
 //======================================================================
@@ -377,7 +378,7 @@ int Pickup_Armor( gentity_t *ent, gentity_t *other ) {
 		other->client->ps.stats[STAT_ARMOR] = upperBound;
 	}
 
-	return RESPAWN_ARMOR;
+	return g_respawn_armor.integer;
 }
 
 //======================================================================

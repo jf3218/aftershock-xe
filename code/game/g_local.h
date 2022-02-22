@@ -1467,6 +1467,13 @@ extern vmCvar_t     g_telefragTeamBehavior;
 extern vmCvar_t     g_furthestTeamSpawns;
 extern vmCvar_t	    g_ruleset;
 
+extern vmCvar_t		g_respawn_armor;
+extern vmCvar_t		g_respawn_health;
+extern vmCvar_t		g_respawn_ammo;
+extern vmCvar_t		g_respawn_holdable;
+extern vmCvar_t		g_respawn_megahealth;
+extern vmCvar_t		g_respawn_powerup;
+
 
 extern vmCvar_t	    g_legacyWeaponAmmo;
 extern vmCvar_t	    g_lockArena;

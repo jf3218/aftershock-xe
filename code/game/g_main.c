@@ -283,6 +283,13 @@ vmCvar_t     g_telefragTeamBehavior;
 vmCvar_t     g_furthestTeamSpawns;
 vmCvar_t     g_ruleset;
 
+vmCvar_t	g_respawn_armor;
+vmCvar_t	g_respawn_health;
+vmCvar_t	g_respawn_ammo;
+vmCvar_t	g_respawn_holdable;
+vmCvar_t	g_respawn_megahealth;
+vmCvar_t	g_respawn_powerup;
+
 
 // Weapon CVARs
 
@@ -641,6 +648,15 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_telefragTeamBehavior, "g_telefragTeamBehavior", "1", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_furthestTeamSpawns, "g_furthestTeamSpawns", "0", CVAR_ARCHIVE, 0, qfalse },
 	{ &g_ruleset, "g_ruleset", "as", CVAR_SERVERINFO, 0, qfalse },
+
+	// negative values here means the items will never respawn
+	{ &g_respawn_armor, "g_respawn_armor", "25", 0, 0, qtrue },
+	{ &g_respawn_health, "g_respawn_health", "35", 0, 0, qtrue },
+	{ &g_respawn_ammo, "g_respawn_ammo", "40", 0, 0, qtrue },
+	{ &g_respawn_holdable, "g_respawn_holdable", "60", 0, 0, qtrue },
+	{ &g_respawn_megahealth, "g_respawn_megahealth", "35", 0, 0, qtrue },
+	{ &g_respawn_powerup, "g_respawn_powerup", "120", 0, 0, qtrue },
+
 	{ &g_gauntletRate, "g_gauntletRate", "400", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_gauntletDamage, "g_gauntletDamage", "50", CVAR_ARCHIVE, 0, qtrue },
 	{ &g_machinegunRate, "g_machinegunRate", "100", CVAR_ARCHIVE, 0, qtrue },
