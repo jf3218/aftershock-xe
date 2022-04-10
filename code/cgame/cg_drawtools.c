@@ -31,19 +31,13 @@ Adjusted for resolution and screen aspect ratio
 ================
 */
 void CG_AdjustFrom640( float *x, float *y, float *w, float *h ) {
-	float xscale = ((float)cg.refdef.width)/640.0f;
-	float yscale = ((float)cg.refdef.height)/480.0f;
-  
+
 	// scale for screen sizes
-	/**x *= cgs.screenXScale;
+	*x *= cgs.screenXScale;
 	*y *= cgs.screenYScale;
 	*w *= cgs.screenXScale;
-	*h *= cgs.screenYScale;*/
+	*h *= cgs.screenYScale;
 	
-	*x = cg.refdef.x + *x*xscale;
-	*y = cg.refdef.y + *y*yscale;
-	*w *= xscale;
-	*h *= yscale;
 }
 
 /*
