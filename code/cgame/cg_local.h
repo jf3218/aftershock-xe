@@ -1108,8 +1108,8 @@ typedef struct {
 	qhandle_t	medalLgaccuracy;
 
 	// sounds
-	sfxHandle_t ping;
-	sfxHandle_t ping_danger;
+	sfxHandle_t pingLocSound;
+	sfxHandle_t pingLocDangerSound;
 	sfxHandle_t	quadSound;
 	sfxHandle_t	tracerSound;
 	sfxHandle_t	selectSound;

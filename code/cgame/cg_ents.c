@@ -1342,7 +1342,7 @@ static void CG_Ping( centity_t *cent, char kind )  {
 	}
 
 	// make locping more transparent as we look in its direction
-	ent.shaderRGBA[3] = 100 + 155* ( fabs(angle)/M_PI) ;
+	ent.shaderRGBA[3] = 135 + 120* ( fabs(angle)/M_PI) ;
 	// Com_Printf("\n alpha %i %f", ent.shaderRGBA[3], angle * 180/M_PI );
 
 	trap_R_AddRefEntityToScene( &ent );
@@ -1360,9 +1360,9 @@ static void CG_Ping( centity_t *cent, char kind )  {
 	VectorMA(pos_client, 80 + dist/5, v_aux1, v_aux2);
 	
 	if (kind == 1) {
-		trap_S_StartSound( v_aux2, 1, 2, cgs.media.ping );
+		trap_S_StartSound( v_aux2, 1, 2, cgs.media.pingLocSound );
 	} else {
-		trap_S_StartSound( v_aux2, 1, 2, cgs.media.ping_danger );
+		trap_S_StartSound( v_aux2, 1, 2, cgs.media.pingLocDangerSound );
 	}
 
 }

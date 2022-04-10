@@ -1322,8 +1322,8 @@ static void CG_RegisterSounds( void ) {
 	}
 
 	// FIXME: only needed with item
-	cgs.media.ping = CG_RegisterSoundOption("sound/misc/ping_ljud4amix.wav", qfalse);
-	cgs.media.ping_danger = CG_RegisterSoundOption("sound/misc/ping_danger.wav", qfalse);
+	cgs.media.pingLocSound = CG_RegisterSoundOption("sound/misc/ping_ljud4amix.wav", qfalse);
+	cgs.media.pingLocDangerSound = CG_RegisterSoundOption("sound/misc/pingdanger2.wav", qfalse);
 	cgs.media.flightSound = CG_RegisterSoundOption( "sound/items/flight.wav", qfalse );
 	cgs.media.medkitSound = CG_RegisterSoundOption ("sound/items/use_medkit.wav", qfalse);
 	cgs.media.quadSound = CG_RegisterSoundOption("sound/items/damage3.wav", qfalse);
