@@ -195,8 +195,8 @@ static const char *HudNames[] =
     "PowerUp4_Icon",
     "RankMessage",
     "Score_Limit",
-    "Score_NME",
-    "Score_OWN",
+    "Score_RED",
+	"Score_BLUE",
     "SpecMessage",
     "StatusBar_ArmorBar",
     "StatusBar_ArmorCount",
@@ -324,8 +324,10 @@ static int CG_HudElement( token_t in ){
 	
 	for( i = 0; i < HUD_MAX; i++ ){
 		name = strcmp( in.value, HudNames[i] );
-		if( name == 0 )
+		if( name == 0 ){
+			// CG_Printf("%s \n", in.value, HudNames[i]);
 			return i;
+		}
 	}
 	return -1;
 }

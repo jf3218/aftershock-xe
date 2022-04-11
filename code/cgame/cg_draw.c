@@ -1587,12 +1587,10 @@ static void CG_DrawScores ( void ) {
         s = va ( "%i", s2 );
         
         if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE){
-            CG_DrawScoresHud ( HUD_SCORENME, s, qfalse, qtrue );   // blue on the right
+            CG_DrawScoresHud ( HUD_SCOREBLUE, s, qfalse, qtrue );   // blue on the right
         } else {
-            CG_DrawScoresHud ( HUD_SCORENME, s, qfalse, qfalse );
+            CG_DrawScoresHud ( HUD_SCOREBLUE, s, qfalse, qfalse );
         }
-        // N.B. for this we depend on the correct position settings for 
-        // HUD_SCORENME and HUD_SCOREOWN, set in the hud.cfg of choice
         
         // NOTE: check what's what with flag status icon. Remove when done
 
@@ -1611,9 +1609,9 @@ static void CG_DrawScores ( void ) {
         s = va ( "%i", s1 );
         
         if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED){
-            CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse, qtrue );
+            CG_DrawScoresHud ( HUD_SCORERED, s, qfalse, qtrue );
         } else {
-            CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse, qfalse );
+            CG_DrawScoresHud ( HUD_SCORERED, s, qfalse, qfalse );
         }
 
         if ( cgs.gametype == GT_CTF || cgs.gametype == GT_CTF_ELIMINATION ) {
@@ -1654,11 +1652,11 @@ static void CG_DrawScores ( void ) {
             w = CG_DrawStrlen ( s ) * BIGCHAR_WIDTH + 8;
             x -= w;
             if ( spectator ) {
-                CG_DrawScoresHud ( HUD_SCORENME, s, qtrue, qfalse );
+                CG_DrawScoresHud ( HUD_SCOREBLUE, s, qtrue, qfalse );
             } else if ( score == s2 && score != s1 ) {
-                CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse, qfalse );
+                CG_DrawScoresHud ( HUD_SCORERED, s, qfalse, qfalse );
             } else {
-                CG_DrawScoresHud ( HUD_SCORENME, s, qfalse, qfalse );
+                CG_DrawScoresHud ( HUD_SCOREBLUE, s, qfalse, qfalse );
             }
         }
 
@@ -1668,11 +1666,11 @@ static void CG_DrawScores ( void ) {
             w = CG_DrawStrlen ( s ) * BIGCHAR_WIDTH + 8;
             x -= w;
             if ( spectator ) {
-                CG_DrawScoresHud ( HUD_SCOREOWN, s, qtrue, qfalse );
+                CG_DrawScoresHud ( HUD_SCORERED, s, qtrue, qfalse );
             } else if ( score == s1 ) {
-                CG_DrawScoresHud ( HUD_SCOREOWN, s, qfalse, qfalse );
+                CG_DrawScoresHud ( HUD_SCORERED, s, qfalse, qfalse );
             } else {
-                CG_DrawScoresHud ( HUD_SCORENME, s, qfalse, qfalse );
+                CG_DrawScoresHud ( HUD_SCOREBLUE, s, qfalse, qfalse );
             }
         }
 
@@ -2833,16 +2831,16 @@ static void CG_DrawReady ( void ) {
     key = trap_Key_GetKey("ready");
     if ( key > 0 && key < 256 ) {
         if ( cg.readyMask & ( 1 << cg.snap->ps.clientNum ) ) {
-            CG_DrawStringHud ( HUD_READYSTATUS, qfalse, va( "^2You are READY, press \"%s\" to get not ready", Key_KeynumToString(key) ) );
+            CG_DrawStringHud ( HUD_READYSTATUS, qfalse, va( "^2You are READY", Key_KeynumToString(key) ) );
         } else {
-            CG_DrawStringHud ( HUD_READYSTATUS, qfalse, va( "^1You are not READY, press \"%s\" to get ready", Key_KeynumToString(key) ) );
+            CG_DrawStringHud ( HUD_READYSTATUS, qfalse, va( "^1Press \"%s\" to get READY", Key_KeynumToString(key) ) );
         }
     }
     else {
         if ( cg.readyMask & ( 1 << cg.snap->ps.clientNum ) ) {
             CG_DrawStringHud ( HUD_READYSTATUS, qfalse, va( "^2You are READY" ) );
         } else {
-            CG_DrawStringHud ( HUD_READYSTATUS, qfalse, va( "^1You are not READY, type \"\\ready\" to get ready" ) );
+            CG_DrawStringHud ( HUD_READYSTATUS, qfalse, va( "^1Type \"\\ready\" to get READY" ) );
         }
     }
 }
@@ -4370,8 +4368,8 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
             CG_DrawTeamInfo();
             // Don't draw living count for team deathmatch. We've got 
             // a problem whereby it's not retrieved properly...
-            if ( cgs.gametype != GT_TEAM)
-                CG_DrawLivingCount();
+            // if ( cgs.gametype != GT_TEAM)
+            //     CG_DrawLivingCount();       // How's this thing useful?
         }
     }
 
@@ -4390,9 +4388,6 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 
     CG_DrawTimer();
     
-    if ( cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS ) {
-            CG_DrawEliminationTimer();
-        }
     CG_DrawWarmup();
     CG_DrawTimeout();
 
@@ -4411,6 +4406,10 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
         if ( cg_drawSpeed.integer )  CG_DrawSpeedMeter();
         if ( cg_drawAccel.integer )  CG_DrawAccelMeter();
 	    CG_DrawFollow();
+
+        if ( cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS ) {
+            CG_DrawEliminationTimer();
+        }
 
         if ( cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1 && cg_drawTeamOverlay.integer ) {
             CG_DrawTeamOverlay ( );

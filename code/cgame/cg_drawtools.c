@@ -249,11 +249,11 @@ void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec, qboolean 
 
 	if( !spec ){
 		if( cgs.gametype >= GT_TEAM){
-			if ( hudnumber == HUD_SCOREOWN ) {
+			if ( hudnumber == HUD_SCORERED ) {
 				color[0] = 0.79;
 				color[1] = 0;
 				color[2] = 0.1;
-			} else if ( hudnumber == HUD_SCORENME ) {
+			} else if ( hudnumber == HUD_SCOREBLUE ) {
 				color[0] = 0;
 				color[1] = 0.3;
 				color[2] = 0.9;
