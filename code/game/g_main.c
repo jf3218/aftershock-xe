@@ -593,7 +593,7 @@ static cvarTable_t		gameCvarTable[] = {
 	{ &g_timeoutAllowed, "g_timeoutAllowed", "0", CVAR_ARCHIVE, 0, qfalse},
 	{ &g_timeoutTime, "g_timeoutTime", "30000", CVAR_ARCHIVE, 0, qfalse},
 	
-	{ &g_delagprojectiles, "g_delagprojectiles", "100", CVAR_SYSTEMINFO, 0, qfalse },
+	{ &g_delagprojectiles, "g_delagprojectiles", "150", CVAR_SYSTEMINFO, 0, qfalse },
 	
 	{ &g_itemDrop, "g_itemDrop", "1", CVAR_SYSTEMINFO, 0, qfalse },
 	
