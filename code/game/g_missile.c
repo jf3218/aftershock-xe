@@ -772,8 +772,7 @@ gentity_t *fire_rocket (gentity_t *self, vec3_t start, vec3_t dir) {
 
 	bolt->s.pos.trType = TR_LINEAR;
 	bolt->s.pos.trTime = level.time - lagNudge(self);		// move a bit on the very first frame
-	
-	G_Printf(" %i %i %i   %i\n", level.time, bolt->s.pos.trTime, lagNudge(self), bolt->s.pos.trTime);
+	// G_Printf(" %i %i %i   %i\n", level.time, bolt->s.pos.trTime, lagNudge(self), bolt->s.pos.trTime);
 
 	VectorCopy( start, bolt->s.pos.trBase );
     VectorScale( dir, g_rocketVelocity.integer, bolt->s.pos.trDelta );
