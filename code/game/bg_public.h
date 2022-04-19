@@ -126,11 +126,11 @@ typedef enum {
 	
 	//-- custom game types, there will be a variable in 
 	
-	GT_ELIMINATION,			// team elimination (custom)
-	GT_CTF_ELIMINATION,		// ctf elimination
+	GT_ELIMINATION,		// team elimination (custom)
+	GT_CTF_ELIMINATION,	// ctf elimination
 	GT_LMS,				// Last man standing
-	GT_DOUBLE_D,			// Double Domination
-	GT_DOMINATION,			// Standard domination 12
+	GT_DOUBLE_D,		// Double Domination
+	GT_DOMINATION,		// Standard domination 12
 	GT_MAX_GAME_TYPE
 	
 } gametype_t;
@@ -251,10 +251,10 @@ typedef enum {
 	STAT_ARMOR,				
 	STAT_DEAD_YAW,					// look this direction when dead (FIXME: get rid of?)
 	STAT_CLIENTS_READY,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
-	STAT_MAX_HEALTH,					// health / armor limit, changable by handicap
+	STAT_MAX_HEALTH,				// health / armor limit, changable by handicap
 	STAT_JUMPTIME,					//rampjump
 	STAT_RAILTIME,					// CPM: Added for allowchange
-	STAT_ZOOMED,						// Current zoom status of the player, so spectators can see if player zooms or not
+	STAT_ZOOMED,					// Current zoom status of the player, so spectators can see if player zooms or not
 	STAT_RULESET					// ruleset. Integer for vq3, as, asxe, qw and cpm
 } statIndex_t;
 
@@ -280,7 +280,7 @@ typedef enum {
 	PERS_ASSIST_COUNT,				// assist awards
 	PERS_GAUNTLET_FRAG_COUNT,		// kills with the guantlet
 	PERS_CAPTURES,					// captures
-	PERS_DAMAGE_DONE,			// damage done on enemy players
+	PERS_DAMAGE_DONE,				// damage done on enemy players
 } persEnum_t;
 
 #define MAX_REWARDS 16
