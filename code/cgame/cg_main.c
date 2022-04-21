@@ -1590,10 +1590,11 @@ static void CG_RegisterGraphics( void ) {
 		cgs.media.friendShaderVisible = trap_R_RegisterShader( "icons/foe3b.tga" );
 		cgs.media.redQuadShader = trap_R_RegisterShader("powerups/blueflag" );
 		cgs.media.teamStatusBar = trap_R_RegisterShader( "gfx/2d/colorbar.tga" );
-		cgs.media.pingLocShader = trap_R_RegisterShader("icons/pingLoc.tga");
 		cgs.media.pingLocShader_nomip = trap_R_RegisterShaderNoMip( "icons/pingLoc.tga" );
-		cgs.media.pingLocShader_danger = trap_R_RegisterShader("icons/pingLocDanger.tga");
+		// cgs.media.pingLocShader = trap_R_RegisterShader("icons/pingLoc.tga");
 		cgs.media.pingLocShader_danger_nomip = trap_R_RegisterShaderNoMip( "icons/pingLocDanger.tga" );
+		// cgs.media.pingLocShader_danger = trap_R_RegisterShader("icons/pingLocDanger.tga");
+		
 		
 #ifdef MISSIONPACK
 		cgs.media.blueKamikazeShader = trap_R_RegisterShader( "models/weaphits/kamikblu" );

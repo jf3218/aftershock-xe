@@ -1323,13 +1323,19 @@ static void CG_Ping( centity_t *cent, char kind )  {
     trap_Cvar_VariableStringBuffer("r_picmip", buffer, sizeof(buffer) );
     picmip = atoi(buffer);
 
-	if (picmip > 0) {
+	if (picmip >= 0) {
 		if (kind == 1){
 			ent.customShader = cgs.media.pingLocShader_nomip;
 		} else if (kind == 2) {
 			ent.customShader = cgs.media.pingLocShader_danger_nomip;
 		}
-	}else {
+	}else {		// We're not using these. Turns out that loading the same file 
+				// with/out picmip gives you the same object with 2 different handles
+				// so we'd have to duplicate and rename the assets. Additionally, 
+				// the transparency of the NoMip versions is lower, so you'd have 
+				// to deal with that. Too much hassle atm, everyone got used to 
+				// the suboptimal scaling of NoMip. In the end, the righteous ones 
+				// pay for the sins of the degenerate.
 		if (kind == 1){
 			ent.customShader = cgs.media.pingLocShader;
 		} else if (kind == 2) {
@@ -1337,7 +1343,7 @@ static void CG_Ping( centity_t *cent, char kind )  {
 		}
 	}
 		
-	ent.radius = 20 + dist / 45;
+	ent.radius = 25 + dist / 45;
 
 	if (kind == 1) {
 		ent.shaderRGBA[0] = ent.shaderRGBA[1] = ent.shaderRGBA[2] = 255;
@@ -1347,7 +1353,7 @@ static void CG_Ping( centity_t *cent, char kind )  {
 	}
 
 	// make locping more transparent as we look in its direction
-	ent.shaderRGBA[3] = 135 + 120* ( fabs(angle)/M_PI) ;
+	ent.shaderRGBA[3] = 105 + 150* (  ( (fabs(angle))/M_PI) );
 	// Com_Printf("\n alpha %i %f", ent.shaderRGBA[3], angle * 180/M_PI );
 
 	trap_R_AddRefEntityToScene( &ent );
