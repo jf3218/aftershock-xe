@@ -952,6 +952,8 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 //unlagged - true ping
 
+	// Store realPing here for use within cgame for projectile nudge
+	client->ps.stats[STAT_PING] = client->pers.realPing;
 
 //unlagged - lag simulation #2
 	// keep a queue of past commands

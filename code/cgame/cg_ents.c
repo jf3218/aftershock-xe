@@ -837,7 +837,7 @@ static void CG_CalcEntityLerpPositions( centity_t *cent ) {
 
 //unlagged - projectile nudge
 	// this will be set to how far forward projectiles will be extrapolated
-	int timeshift = 0;
+	int ping, timeshift = 0;
 //unlagged - projectile nudge
 
 //unlagged - smooth clients #2
@@ -892,13 +892,19 @@ static void CG_CalcEntityLerpPositions( centity_t *cent ) {
 		}
 		// if it's not, and it's not a grenade launcher
 		else if ( cent->currentState.weapon != WP_GRENADE_LAUNCHER ) {
-			// extrapolate based on cg_projectileNudge
+			// Extrapolate based on cg_projectileNudge up to 350 ms
+			// If negative we interpret it as the maximum time nudge we'll apply
+			// In every case we add the snaps lag
+			ping = cg.snap->ps.stats[STAT_PING];
 			if (cg_projectileNudge.integer > 0){
-				timeshift = cg.snap->ping + 1000 / sv_fps.integer;
-			} else{
-				timeshift = 1000 / sv_fps.integer;
+				timeshift = ping <= 350 ? ping : 350;
+			} else if ( cg_projectileNudge.integer == 0){
+				timeshift = 0; 
+			} else if ( cg_projectileNudge.integer < 0){
+				timeshift = ping <= -cg_projectileNudge.integer ? ping : -cg_projectileNudge.integer;
 			}
-			// CG_Printf("timeshift  %i   cg.snap->ping  %i\n", timeshift, cg.snap->ping);
+			timeshift += 1000 / sv_fps.integer;
+			// CG_Printf("nudge %i  rping %i  tshift %i\n", cg_projectileNudge.integer, ping, timeshift);
 		}
 	}
 

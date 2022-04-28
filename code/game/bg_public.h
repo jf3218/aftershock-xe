@@ -255,7 +255,8 @@ typedef enum {
 	STAT_JUMPTIME,					//rampjump
 	STAT_RAILTIME,					// CPM: Added for allowchange
 	STAT_ZOOMED,					// Current zoom status of the player, so spectators can see if player zooms or not
-	STAT_RULESET					// ruleset. Integer for vq3, as, asxe, qw and cpm
+	STAT_RULESET,					// ruleset. Integer for vq3, as, asxe, qw and cpm
+	STAT_PING						// realPing
 } statIndex_t;
 
 
