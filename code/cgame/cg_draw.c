@@ -1314,7 +1314,8 @@ static void CG_DrawEnemyTeamOverlay ( ) {
     plyrs = 0;
     for ( i = 0; i < cg.numScores; i++ ) {
         ci = cgs.clientinfo + i;
-        if ( ci->infoValid && ci->team != cg.snap->ps.persistant[PERS_TEAM] ) {
+        if ( ci->infoValid && ci->team != cg.snap->ps.persistant[PERS_TEAM] && 
+             ci->team != TEAM_SPECTATOR ) {
             plyrs++;
         }
     }
@@ -1334,8 +1335,8 @@ static void CG_DrawEnemyTeamOverlay ( ) {
     n_enemy = 0;
     for ( i = 0; i < cg.numScores; i++ ) {
         ci = cgs.clientinfo + i;
-        // skip team mates and spectators
-        if ( ci->team == cg.snap->ps.persistant[PERS_TEAM] || ci->team == TEAM_SPECTATOR ) {
+        // skip team mates and spectators and invalid players
+        if ( !ci->infoValid || ci->team == cg.snap->ps.persistant[PERS_TEAM] || ci->team == TEAM_SPECTATOR ) {
             continue;
         }
 
@@ -1348,24 +1349,22 @@ static void CG_DrawEnemyTeamOverlay ( ) {
 
         n_enemy += 1;
 
-        if ( ci->infoValid && ci->team != cg.snap->ps.persistant[PERS_TEAM] ) {
-            if ( ci->isDead == 0 ) {
-                CG_FillRect ( hudelement.xpos, hudelement.ypos, 
-                            hudelement.width, hudelement.height, colorTeam );
-            }
+        if ( ci->isDead == 0 ) {
+            CG_FillRect ( hudelement.xpos, hudelement.ypos, 
+                        hudelement.width, hudelement.height, colorTeam );
+        }
 
-            x = hudelement.xpos;
-            y = hudelement.ypos + hudelement.height/2 - hudelement.fontHeight/2;
-            CG_DrawStringExt ( x, y, ci->name, colorWhite, qfalse, qfalse, hudelement.fontWidth, 
-                               hudelement.fontHeight, TEAM_OVERLAY_MAXNAME_WIDTH );
-            
-            if ( ci->isDead == 1 ) {    // grey out dead players
-                CG_FillRect ( hudelement.xpos, hudelement.ypos, 
-                              hudelement.width, hudelement.height, colorBlackAlpha );
-                CG_DrawPic( hudelement.xpos + hudelement.width - hudelement.height,
-                            hudelement.ypos, hudelement.height, hudelement.height,
-                            cgs.media.sbSkull );
-            }
+        x = hudelement.xpos;
+        y = hudelement.ypos + hudelement.height/2 - hudelement.fontHeight/2;
+        CG_DrawStringExt ( x, y, ci->name, colorWhite, qfalse, qfalse, hudelement.fontWidth, 
+                            hudelement.fontHeight, TEAM_OVERLAY_MAXNAME_WIDTH );
+        
+        if ( ci->isDead == 1 ) {    // grey out dead players
+            CG_FillRect ( hudelement.xpos, hudelement.ypos, 
+                            hudelement.width, hudelement.height, colorBlackAlpha );
+            CG_DrawPic( hudelement.xpos + hudelement.width - hudelement.height,
+                        hudelement.ypos, hudelement.height, hudelement.height,
+                        cgs.media.sbSkull );
         }
     }
     return;
@@ -1378,7 +1377,7 @@ CG_DrawTeamOverlay
 ==================
 */
 static void CG_DrawTeamOverlay ( ) {
-    int plyrs, count, lwidth, i, j, len, TEAM=3, x, y, hudoffset=0, health_max;
+    int plyrs, count, n_team, lwidth, i, j, len, TEAM=3, x, y, hudoffset=0, health_max;
     const char *p;
     char st[16], buffer[128];
     float h_ratio;
@@ -1433,14 +1432,21 @@ static void CG_DrawTeamOverlay ( ) {
         health_max = cg.snap->ps.stats[STAT_MAX_HEALTH];
     }
 
+    n_team = 0;
     for ( i = 0; i < count; i++ ) {
+
+        ci = cgs.clientinfo + sortedTeamPlayers[i];
+        if ( !ci->infoValid || ci->team == TEAM_SPECTATOR || ci->team != cg.snap->ps.persistant[PERS_TEAM]) {
+            continue;
+        }
+
         if ( TEAM == TEAM_RED ){
-            hudelement = cgs.hud[HUD_TEAMREDOVERLAY1+i-hudoffset];
+            hudelement = cgs.hud[HUD_TEAMREDOVERLAY1+n_team-hudoffset];
         } else {
-            hudelement = cgs.hud[HUD_TEAMBLUEOVERLAY1+i-hudoffset];
+            hudelement = cgs.hud[HUD_TEAMBLUEOVERLAY1+n_team-hudoffset];
         }
         if ( !hudelement.inuse )  continue;
-
+        n_team += 1;
         if ( !cg_selfOnTeamOverlay.integer && sortedTeamPlayers[i] == 0 ) {
             hudoffset = 1;
             continue;
@@ -1452,67 +1458,63 @@ static void CG_DrawTeamOverlay ( ) {
             colorTeam[3] = 0.6;
         }
 
-        ci = cgs.clientinfo + sortedTeamPlayers[i];
-
-        if ( ci->infoValid && ci->team == cg.snap->ps.persistant[PERS_TEAM] ) {
-            if ( ci->health >= 0 ) {
-                h_ratio = (float)ci->health / health_max;
-                if ( TEAM == TEAM_BLUE ) {
-                CG_FillRect ( hudelement.xpos + (int)(hudelement.width * (1 - h_ratio)), 
-                    hudelement.ypos, (int)(hudelement.width * h_ratio), hudelement.height, colorTeam );
-                } else if ( TEAM == TEAM_RED ) {
-                    CG_FillRect( hudelement.xpos, hudelement.ypos, (int)(hudelement.width * h_ratio), 
-                                 hudelement.height, colorTeam);
-                }
+        if ( ci->health >= 0 ) {
+            h_ratio = (float)ci->health / health_max;
+            if ( TEAM == TEAM_BLUE ) {
+            CG_FillRect ( hudelement.xpos + (int)(hudelement.width * (1 - h_ratio)), 
+                hudelement.ypos, (int)(hudelement.width * h_ratio), hudelement.height, colorTeam );
+            } else if ( TEAM == TEAM_RED ) {
+                CG_FillRect( hudelement.xpos, hudelement.ypos, (int)(hudelement.width * h_ratio), 
+                                hudelement.height, colorTeam);
             }
+        }
 
-            x = hudelement.xpos;
-            y = hudelement.ypos + hudelement.height/2 - hudelement.fontHeight/2;
+        x = hudelement.xpos;
+        y = hudelement.ypos + hudelement.height/2 - hudelement.fontHeight/2;
 
-            for ( j = 0; j <= PW_NUM_POWERUPS; j++ ) {
-                if ( ci->powerups & ( 1 << j ) ) {
-                    item = BG_FindItemForPowerup ( j );
-                    if ( item ) {
-                        CG_DrawPic ( x, y, hudelement.fontWidth, hudelement.fontWidth,
-                                     trap_R_RegisterShader ( item->icon ) );
-                        x += hudelement.fontWidth;
-                    }
-                }
-            }
-
-            CG_DrawStringExt ( x, y, ci->name, colorWhite, qfalse, qfalse, hudelement.fontWidth, 
-                                hudelement.fontHeight, TEAM_OVERLAY_MAXNAME_WIDTH );
-
-            x = hudelement.xpos + hudelement.width/2 - hudelement.fontWidth * lwidth/2 + 2*hudelement.fontWidth;
-
-            if ( lwidth ) {     // do we need this test?
-                p = CG_ConfigString ( CS_LOCATIONS + ci->location );
-                if ( !p || !*p )  p = "unknown";
-                CG_DrawStringExt ( x, y, p, colorWhite, qfalse, qfalse, hudelement.fontWidth, 
-                                   hudelement.fontHeight, TEAM_OVERLAY_MAXLOCATION_WIDTH );
-            }
-
-            x = hudelement.xpos + hudelement.width - 7 * hudelement.fontWidth;
-
-            if ( ci->isDead == 0 ) {
-                CG_GetColorForHealth ( ci->health, ci->armor, color );
-                Com_sprintf ( st, sizeof ( st ), "%3i %3i", ci->health, ci->armor );
-                CG_DrawStringExt ( x, y, st, color, qfalse, qfalse,
-                                    hudelement.fontWidth, hudelement.fontHeight, 0 );
-                // draw weapon icon
-                x += hudelement.fontWidth * 3;
-                if ( cg_weapons[ci->curWeapon].weaponIcon ) {
+        for ( j = 0; j <= PW_NUM_POWERUPS; j++ ) {
+            if ( ci->powerups & ( 1 << j ) ) {
+                item = BG_FindItemForPowerup ( j );
+                if ( item ) {
                     CG_DrawPic ( x, y, hudelement.fontWidth, hudelement.fontWidth,
-                                 cg_weapons[ci->curWeapon].weaponIcon );
+                                    trap_R_RegisterShader ( item->icon ) );
+                    x += hudelement.fontWidth;
                 }
             }
-            if ( ci->isDead ) {        // grey out dead players
-                CG_FillRect ( hudelement.xpos, hudelement.ypos, 
-                            hudelement.width, hudelement.height, colorBlackAlpha );
-                CG_DrawPic( hudelement.xpos + hudelement.width - hudelement.height,
-                            hudelement.ypos, hudelement.height, hudelement.height,
-                            cgs.media.sbSkull );
+        }
+
+        CG_DrawStringExt ( x, y, ci->name, colorWhite, qfalse, qfalse, hudelement.fontWidth, 
+                            hudelement.fontHeight, TEAM_OVERLAY_MAXNAME_WIDTH );
+
+        x = hudelement.xpos + hudelement.width/2 - hudelement.fontWidth * lwidth/2 + 2*hudelement.fontWidth;
+
+        if ( lwidth ) {     // do we need this test?
+            p = CG_ConfigString ( CS_LOCATIONS + ci->location );
+            if ( !p || !*p )  p = "unknown";
+            CG_DrawStringExt ( x, y, p, colorWhite, qfalse, qfalse, hudelement.fontWidth, 
+                                hudelement.fontHeight, TEAM_OVERLAY_MAXLOCATION_WIDTH );
+        }
+
+        x = hudelement.xpos + hudelement.width - 7 * hudelement.fontWidth;
+
+        if ( ci->isDead == 0 ) {
+            CG_GetColorForHealth ( ci->health, ci->armor, color );
+            Com_sprintf ( st, sizeof ( st ), "%3i %3i", ci->health, ci->armor );
+            CG_DrawStringExt ( x, y, st, color, qfalse, qfalse,
+                                hudelement.fontWidth, hudelement.fontHeight, 0 );
+            // draw weapon icon
+            x += hudelement.fontWidth * 3;
+            if ( cg_weapons[ci->curWeapon].weaponIcon ) {
+                CG_DrawPic ( x, y, hudelement.fontWidth, hudelement.fontWidth,
+                                cg_weapons[ci->curWeapon].weaponIcon );
             }
+        }
+        if ( ci->isDead ) {        // grey out dead players
+            CG_FillRect ( hudelement.xpos, hudelement.ypos, 
+                        hudelement.width, hudelement.height, colorBlackAlpha );
+            CG_DrawPic( hudelement.xpos + hudelement.width - hudelement.height,
+                        hudelement.ypos, hudelement.height, hudelement.height,
+                        cgs.media.sbSkull );
         }
     }
 
