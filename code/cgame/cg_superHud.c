@@ -544,10 +544,10 @@ void CG_LoadHudFile( const char* hudFile ){
 	len = trap_FS_FOpenFile ( hudFile, &f, FS_READ );
 	
 	if ( !f ) {
-		CG_Printf( "%s",va( S_COLOR_YELLOW "hud file not found: %s, using hud_default.cfg\n", hudFile ) );
-		len = trap_FS_FOpenFile( "hud_default.cfg", &f, FS_READ );
+		CG_Printf( "%s",va( S_COLOR_YELLOW "Warning: hud file not found: %s, using hud_default.cfg\n", hudFile ) );
+		len = trap_FS_FOpenFile( "hud/hud_default.cfg", &f, FS_READ );
 		if (!f) {
-			trap_Error( va( S_COLOR_RED "default menu file not found: hud_default.cfg, unable to continue!\n") );
+			trap_Error( va( S_COLOR_RED "Error: default hud file not found: hud/hud_default.cfg\n") );
 		}
 	}
 
