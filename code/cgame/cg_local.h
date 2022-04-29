@@ -1615,7 +1615,7 @@ extern	vmCvar_t		cg_enableBreath;
 //unlagged - client options
 extern	vmCvar_t		cg_delag;
 //extern	vmCvar_t		cg_debugDelag;
-//extern	vmCvar_t		cg_drawBBox;
+extern	vmCvar_t		cg_drawBBox;
 extern	vmCvar_t		cg_cmdTimeNudge;
 extern	vmCvar_t		sv_fps;
 extern	vmCvar_t		cg_projectileNudge;
@@ -1833,7 +1833,7 @@ extern int wp_bfgRate;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
-//void CG_AddBoundingBox( centity_t *cent );
+void CG_AddBoundingBox( centity_t *cent );
 qboolean CG_Cvar_ClampInt( const char *name, vmCvar_t *vmCvar, int min, int max );
 qboolean CG_Cvar_ClampFloat( const char *name, vmCvar_t *vmCvar, float min, float max );
 //unlagged - cg_unlagged.c

@@ -2994,6 +2994,8 @@ void CG_Player( centity_t *cent, int otherClient ) {
 		return;
 	}
 
+	// Draw player bounding box if cheat-protected cvar cg_drawBBox=1. From unlagged
+	CG_AddBoundingBox(cent);
 
 	torso.customSkin = ci->torsoSkin;
 

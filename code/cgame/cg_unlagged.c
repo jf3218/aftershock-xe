@@ -288,7 +288,7 @@ CG_AddBoundingBox
 Draws a bounding box around a player.  Called from CG_Player.
 =================
 */
-/*void CG_AddBoundingBox( centity_t *cent ) {
+void CG_AddBoundingBox( centity_t *cent ) {
 	polyVert_t verts[4];
 	clientInfo_t *ci;
 	int i;
@@ -314,8 +314,10 @@ Draws a bounding box around a player.  Called from CG_Player.
 	}
 
 	// get the shader handles
-	bboxShader = trap_R_RegisterShader( "bbox" );
-	bboxShader_nocull = trap_R_RegisterShader( "bbox_nocull" );
+	bboxShader = trap_R_RegisterShader( "powerups/quad" );
+	bboxShader_nocull = trap_R_RegisterShader( "powerups/battlesuit" );
+	// bboxShader = trap_R_RegisterShader( "bbox" );
+	// bboxShader_nocull = trap_R_RegisterShader( "bbox_nocull" );
 
 	// if they don't exist, forget it
 	if ( !bboxShader || !bboxShader_nocull ) {
@@ -443,7 +445,7 @@ Draws a bounding box around a player.  Called from CG_Player.
 	VectorCopy( corners[4], verts[2].xyz );
 	VectorCopy( corners[5], verts[3].xyz );
 	trap_R_AddPolyToScene( bboxShader_nocull, 4, verts );
-}*/
+}
 
 /*
 ================

@@ -224,7 +224,7 @@ vmCvar_t	cg_enableBreath;
 //unlagged - client options
 vmCvar_t	cg_delag;
 //vmCvar_t	cg_debugDelag;
-//vmCvar_t	cg_drawBBox;
+vmCvar_t	cg_drawBBox;
 vmCvar_t	cg_cmdTimeNudge;
 vmCvar_t	sv_fps;
 vmCvar_t	cg_projectileNudge;
@@ -570,7 +570,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 //unlagged - client options
 	{ &cg_delag, "cg_delag", "0", CVAR_ARCHIVE | CVAR_USERINFO },
 //	{ &cg_debugDelag, "cg_debugDelag", "0", CVAR_USERINFO | CVAR_CHEAT },
-//	{ &cg_drawBBox, "cg_drawBBox", "0", CVAR_CHEAT },
+	{ &cg_drawBBox, "cg_drawBBox", "0", CVAR_CHEAT },
 	{ &cg_cmdTimeNudge, "cg_cmdTimeNudge", "0", CVAR_ARCHIVE | CVAR_USERINFO },
 	// this will be automagically copied from the server
 	{ &sv_fps, "sv_fps", "40", CVAR_SYSTEMINFO },
