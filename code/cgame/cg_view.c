@@ -1016,7 +1016,7 @@ static void CG_AddMultiviewWindow( stereoFrame_t stereoView ) {
         CG_DrawActive( stereoView, qfalse );
         CG_DrawMVDhud(stereoView);
 
-	CG_DrawStringHud ( HUD_FOLLOW, qtrue, va ( "following %s", cgs.clientinfo[ cg.snap->entities[i].clientNum ].name ) );
+	    CG_DrawStringHud ( HUD_FOLLOW, qtrue, va ( "following %s", cgs.clientinfo[ cg.snap->entities[i].clientNum ].name ) );
     }
 
     //Set everything back to the main-spec values
