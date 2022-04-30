@@ -33,11 +33,28 @@ Adjusted for resolution and screen aspect ratio
 void CG_AdjustFrom640( float *x, float *y, float *w, float *h ) {
 
 	// scale for screen sizes
-	*x *= cgs.screenXScale;
-	*y *= cgs.screenYScale;
-	*w *= cgs.screenXScale;
-	*h *= cgs.screenYScale;
-	
+	// The scaling used to make multiview work messes up the positioning 
+	// for elements in the main window (e.g. crosshair off when cg_viewsize < 100).
+	// Check whether we're being called from the multiview code using cg.refdef.x 
+	// dimensions as a guide, and do the normal scaling otherwise.
+
+	if ( cg.refdef.x == cg_multiview2_xpos.integer * cgs.screenXScale || 
+	 	 cg.refdef.x == cg_multiview2_xpos.integer * cgs.screenXScale || 
+		 cg.refdef.x == cg_multiview2_xpos.integer * cgs.screenXScale ){
+		float xscale = ((float)cg.refdef.width)/640.0f;
+		float yscale = ((float)cg.refdef.height)/480.0f;
+		*x = cg.refdef.x + *x*xscale;
+		*y = cg.refdef.y + *y*yscale;
+		*w *= xscale;
+		*h *= yscale;
+	}else {
+		*x *= cgs.screenXScale;
+		*y *= cgs.screenYScale;
+		*w *= cgs.screenXScale;
+		*h *= cgs.screenYScale;
+		return;
+	}
+
 }
 
 /*
