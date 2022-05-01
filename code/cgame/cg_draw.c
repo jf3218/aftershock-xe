@@ -766,10 +766,12 @@ static void CG_DrawStatusBar ( void ) {
     }
 
     hcolor[3] = cgs.hud[HUD_HEALTHCOUNT].color[3];
+    
     trap_R_SetColor ( hcolor );
     CG_DrawFieldHud ( value, HUD_HEALTHCOUNT );  //FIXME: NULL color at the end of DrawFieldHud
 
     hcolor[3] = cgs.hud[HUD_HEALTHBAR].color[3];
+    
     trap_R_SetColor ( hcolor );
 
     CG_DrawBarHud ( HUD_HEALTHBAR, value, 100 );
@@ -1221,7 +1223,7 @@ static void CG_DrawEliminationTimer ( void ) {
                     break;
                 }
             }
-
+            CG_DrawFieldFontsize ( 275, 130, 2, (int) sec + 1, 30, 60 );
             CG_DrawStringHud ( HUD_COUNTDOWN, qtrue, st );
         }
         /*
