@@ -1167,6 +1167,38 @@ CG_DrawDomStatus
 }
 */
 
+
+/*
+=================
+CG_DrawFadeTransition
+=================
+*/
+static void CG_DrawFadeTransition ( void ) {
+    // Make a fade-out and fade-in effect timed to match elimination countdown
+    int			msec, rst;
+    vec4_t			color;
+    float t, alpha;
+
+    rst = cgs.roundStartTime;
+
+    if ( cg.time < rst ) {      // round not yet started
+        msec = rst - cg.time + 1000;
+
+        if ( (cg.warmup == 0) && (!cgs.timeout) ) {
+            t = (float) 6000.0f - msec;
+            if ( abs(t) <= 1570 ){
+                color[0] = color[1] = color[2] = 0.0f;
+                alpha = cos(t / 1000.0f);
+                color[3] = alpha * alpha;
+                CG_FillRect(0, 0, 640, 480, color);
+            }
+        }
+    }
+
+    return;
+}
+
+
 /*
 =================
 CG_DrawEliminationTimer
@@ -1202,9 +1234,7 @@ static void CG_DrawEliminationTimer ( void ) {
         memcpy ( color,g_color_table[ColorIndex ( COLOR_GREEN ) ],sizeof ( color ) );
         sec = msec/1000;
         msec += 1000; //5-1 instead of 4-0
-        /***
-        Lots of stuff
-        ****/
+     
         if ( (cg.warmup == 0) && (!cgs.timeout) ) {
             st = va ( "Round in: %i", sec + 1 );
             if ( sec != cg.warmupCount ) {
@@ -1223,12 +1253,10 @@ static void CG_DrawEliminationTimer ( void ) {
                     break;
                 }
             }
-            CG_DrawFieldFontsize ( 275, 130, 2, (int) sec + 1, 30, 60 );
-            CG_DrawStringHud ( HUD_COUNTDOWN, qtrue, st );
+            if ( sec <= 4 ) {
+                CG_DrawFieldFontsize ( 275, 130, 2, (int) sec + 1, 30, 72 );
+            }
         }
-        /*
-        Lots of stuff
-        */
     }
 
     seconds = msec / 1000;
@@ -4412,6 +4440,7 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 	    CG_DrawFollow();
 
         if ( cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS ) {
+            CG_DrawFadeTransition();
             CG_DrawEliminationTimer();
         }
 
