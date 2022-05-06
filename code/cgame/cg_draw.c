@@ -1174,27 +1174,30 @@ CG_DrawFadeTransition
 =================
 */
 static void CG_DrawFadeTransition ( void ) {
-    // Make a fade-out and fade-in effect timed to match elimination countdown
-    int			msec, rst;
+    // Make a fade-out and fade-in effect timed to match elimination respawn
+    int         msec, rst;
     vec4_t			color;
-    float t, alpha;
+    float        t, alpha;
+    static int      msec0=0;
+    
 
     rst = cgs.roundStartTime;
 
     if ( cg.time < rst ) {      // round not yet started
-        msec = rst - cg.time + 1000;
-
+        msec = rst - cg.time;
+        if ( msec >= msec0 ) {
+            msec0 = msec;
+        }
         if ( (cg.warmup == 0) && (!cgs.timeout) ) {
-            t = (float) 6000.0f - msec;
+            t = (float) msec0 - msec - 1200.0f;
             if ( abs(t) <= 1570 ){
                 color[0] = color[1] = color[2] = 0.0f;
                 alpha = cos(t / 1000.0f);
-                color[3] = alpha * alpha;
+                color[3] = alpha*alpha;
                 CG_FillRect(0, 0, 640, 480, color);
             }
         }
     }
-
     return;
 }
 
