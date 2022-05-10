@@ -2467,12 +2467,9 @@ static void CG_PlayerSprites( centity_t *cent ) {
 		cgs.gametype >= GT_TEAM && cgs.ffa_gt!=1) {
 		if (cg_drawFriend.integer) {
 			if( cgs.friendsThroughWalls )
-				CG_PlayerFloatSprite(cent, cgs.media.friendShaderVisible2);
+				CG_PlayerFloatSprite(cent, cgs.media.friendShaderVisible);
 			else
 				CG_PlayerFloatSprite( cent, cgs.media.friendShader );
-				// For some reason the following doesn't work for me, so use the old one
-				// CG_PlayerFloatSprite( cent, cgs.media.friendShader2 );
-
 		}
 		return;
 	}
@@ -2997,6 +2994,8 @@ void CG_Player( centity_t *cent, int otherClient ) {
 		return;
 	}
 
+	// Draw player bounding box if cheat-protected cvar cg_drawBBox=1. From unlagged
+	CG_AddBoundingBox(cent);
 
 	torso.customSkin = ci->torsoSkin;
 

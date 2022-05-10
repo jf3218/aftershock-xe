@@ -1956,8 +1956,6 @@ void CG_ParseLivingCount ( void ) {
 
     newRed = atoi ( CG_Argv ( 1 ) );
     newBlue = atoi ( CG_Argv ( 2 ) );
-    countRed = atoi ( CG_Argv ( 3 ) );
-    countBlue = atoi ( CG_Argv ( 4 ) );
 
     if ( newRed == 1 && newRed != cgs.redLivingCount && cgs.clientinfo[cg.clientNum].team == TEAM_RED && !cgs.clientinfo[cg.clientNum].isDead ) {
         if ( countRed != 1 )

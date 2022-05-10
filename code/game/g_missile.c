@@ -22,17 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 #include "g_local.h"
 
-// new missile prestep
-// 0  =  old behavior
-// 1  =  new simple prestep
-// 2+ =  compensate for client ping up to this number
-/*#define NEWPRESTEP(behavior,ping,svfps) (\ // jessicaRA: this is how messy the old prestep looked, lets try a function instead?  it may even be faster as a function without the tests being duplicated all over
-    trap_Cvar_VariableValue( "sv_running" ) == 0 ? 0 : \
-    behavior == 0 ? 50 : \
-    behavior > 1 && ping > behavior ? (1000/svfps) + behavior : \
-    behavior > 1 && ping <= behavior ? (1000/svfps) + ping : \
-    (1000/svfps) \
-)*/
 
 int lagNudge(gentity_t *myself);
 
@@ -783,6 +772,8 @@ gentity_t *fire_rocket (gentity_t *self, vec3_t start, vec3_t dir) {
 
 	bolt->s.pos.trType = TR_LINEAR;
 	bolt->s.pos.trTime = level.time - lagNudge(self);		// move a bit on the very first frame
+	// G_Printf(" %i %i %i   %i\n", level.time, bolt->s.pos.trTime, lagNudge(self), bolt->s.pos.trTime);
+
 	VectorCopy( start, bolt->s.pos.trBase );
     VectorScale( dir, g_rocketVelocity.integer, bolt->s.pos.trDelta );
 	SnapVector( bolt->s.pos.trDelta );			// save net bandwidth
@@ -977,10 +968,17 @@ int lagNudge(gentity_t *myself) {
 		// if pings would raise to 200 from the complex tests on every rocket.
 		// maybe client side prediction will also somewhat help do this already?
 		// the error in this method is small unless firing rockets at point blank range.
-		int tmp;
-		tmp = myself->client->ps.ping;
-		if (tmp > g_delagprojectiles.integer) tmp = g_delagprojectiles.integer;
-		tmp += 1000/sv_fps.integer;
-		return tmp;
+		int ping, offset;
+		
+		ping = myself->client->pers.realPing;		// use "realPing", should be smoother
+		ping = (ping <= g_delagprojectiles.integer) ? ping : g_delagprojectiles.integer;
+
+		// use the best approximation we have to the number of ms into a frame, instead of the 
+		// maximum possible offset given by the interval between server snaps
+		offset = level.time - (level.previousTime + myself->client->frameOffset);
+		offset = (offset >= 0) ? offset : 0;
+		offset = (offset <= 1000/sv_fps.integer) ? offset : 1000/sv_fps.integer;
+
+		return ping + offset;
 	}
 }

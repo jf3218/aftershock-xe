@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "cg_local.h"
 
 
-static void CG_Ping( centity_t *cent );
+static void CG_Ping( centity_t *cent, char kind );
 
 
 /*
@@ -837,7 +837,7 @@ static void CG_CalcEntityLerpPositions( centity_t *cent ) {
 
 //unlagged - projectile nudge
 	// this will be set to how far forward projectiles will be extrapolated
-	int timeshift = 0;
+	int ping, timeshift = 0;
 //unlagged - projectile nudge
 
 //unlagged - smooth clients #2
@@ -892,8 +892,19 @@ static void CG_CalcEntityLerpPositions( centity_t *cent ) {
 		}
 		// if it's not, and it's not a grenade launcher
 		else if ( cent->currentState.weapon != WP_GRENADE_LAUNCHER ) {
-			// extrapolate based on cg_projectileNudge
-			timeshift = cg_projectileNudge.integer + 1000 / sv_fps.integer;
+			// Extrapolate based on cg_projectileNudge up to 350 ms
+			// If negative we interpret it as the maximum time nudge we'll apply
+			// In every case we add the snaps lag
+			ping = cg.snap->ps.stats[STAT_PING];
+			if (cg_projectileNudge.integer > 0){
+				timeshift = ping <= 350 ? ping : 350;
+			} else if ( cg_projectileNudge.integer == 0){
+				timeshift = 0; 
+			} else if ( cg_projectileNudge.integer < 0){
+				timeshift = ping <= -cg_projectileNudge.integer ? ping : -cg_projectileNudge.integer;
+			}
+			timeshift += 1000 / sv_fps.integer;
+			// CG_Printf("nudge %i  rping %i  tshift %i\n", cg_projectileNudge.integer, ping, timeshift);
 		}
 	}
 
@@ -1138,8 +1149,10 @@ static void CG_AddCEntity( centity_t *cent, int otherClient ) {
 		CG_Grapple( cent );
 		break;
 	case ET_PING:
-		CG_Ping( cent ) ;
+		CG_Ping( cent, 1 );
 		break;
+	case ET_PING_DANGER:
+		CG_Ping( cent, 2 );
 	case ET_TEAM:
 		CG_TeamBase( cent );
 		break;
@@ -1260,63 +1273,113 @@ CG_Ping
 ==================
 */
 
-static void CG_Ping( centity_t *cent )  {
+static void CG_Ping( centity_t *cent, char kind )  {
 	refEntity_t			ent;
-	vec3_t				pos_ent, pos_client;
+	vec3_t				pos_ent, pos_client, v_aux1, v_aux2;
 	vec_t				dist;
-	int					team;
+	int					team, picmip;
+	char 				buffer[128];
+
+	vec3_t viewangles, v1, v, forward, right, up;
+	float angle;
+
+	if( cgs.gametype < GT_TEAM || cgs.ffa_gt == 1 ){
+		return;
+	}
 
 	team = cent->currentState.eventParm;
+	if (cg.snap->ps.persistant[PERS_TEAM] != team){
+		return;
+	}
+	
 	_VectorCopy( cent->lerpOrigin, pos_ent );
 	_VectorCopy( cg.predictedPlayerState.origin, pos_client );
-
 	dist = Distance(pos_ent, pos_client);
 
 	// if ( (cg.time - cent->miscTime) > 3000 ) {
-	// 	CG_Printf("\n");
-
-	// 	CG_Printf("pos: %f %f %f\n", pos_ent[0], pos_ent[1], pos_ent[2]);
-	// 	CG_Printf("pos: %f %f %f\n", pos_client[0], pos_client[1], pos_client[2]);
+		// CG_Printf("\n ent: %f %f %f", pos_ent[0], pos_ent[1], pos_ent[2]);
+		// CG_Printf("\ncli: %f %f %f", pos_client[0], pos_client[1], pos_client[2]);
 	// 	CG_Printf("dist: %f\n", dist);
-
-	// 	CG_Printf("A cg.snap->ps.persistant[PERS_TEAM]                 %d\n", cg.snap->ps.persistant[PERS_TEAM]);
 	// 	CG_Printf("B cgs.clientinfo[cent->currentState.clientNum].team %d\n", team);
 	// 	CG_Printf("C cg.snap->ps.clientNum                             %d\n", cg.snap->ps.clientNum);
 	// 	CG_Printf("D cent->currentState.clientNum                      %d\n", cent->currentState.clientNum);
 	// 	CG_Printf("E s.eventParm team                                  %d\n", cent->currentState.eventParm);
 	// }
+	
+	VectorCopy( cg.refdefViewAngles, v1);	// better than cg.snap->ps.viewangles
+	AngleVectors(v1, forward, right, up );
 
-	if (cg.snap->ps.persistant[PERS_TEAM] != team){
-		return;
+	VectorSubtract(pos_ent, pos_client, v);
+	VectorNormalizeFast(v);
+	angle = atan2(forward[1], forward[0]) - atan2(v[1], v[0]);
+	if (angle > M_PI) { 
+		angle -= 2 * M_PI;
+		}
+	else if (angle <= -M_PI) {
+		angle += 2 * M_PI;
 	}
 
 	// create the render entity
 	memset (&ent, 0, sizeof(ent));
 	VectorCopy( cent->lerpOrigin, ent.origin);
-	//VectorCopy( cent->lerpOrigin, ent.oldorigin);
-
 	ent.origin[2] += 14;
 	ent.reType = RT_SPRITE;
-	ent.customShader = cgs.media.pingLocShader;
+
+	picmip = 0;
+    trap_Cvar_VariableStringBuffer("r_picmip", buffer, sizeof(buffer) );
+    picmip = atoi(buffer);
+
+	if (picmip >= 0) {
+		if (kind == 1){
+			ent.customShader = cgs.media.pingLocShader_nomip;
+		} else if (kind == 2) {
+			ent.customShader = cgs.media.pingLocShader_danger_nomip;
+		}
+	}else {		// We're not using these. Turns out that loading the same file 
+				// with/out picmip gives you the same object with 2 different handles
+				// so we'd have to duplicate and rename the assets. Additionally, 
+				// the transparency of the NoMip versions is lower, so you'd have 
+				// to deal with that. Too much hassle atm, everyone got used to 
+				// the suboptimal scaling of NoMip. In the end, the righteous ones 
+				// pay for the sins of the degenerate.
+		if (kind == 1){
+			ent.customShader = cgs.media.pingLocShader;
+		} else if (kind == 2) {
+			ent.customShader = cgs.media.pingLocShader_danger;
+		}
+	}
 		
 	ent.radius = 25 + dist / 45;
-	ent.shaderRGBA[0] = 255;
-	ent.shaderRGBA[1] = 255;
-	ent.shaderRGBA[2] = 255;
-	ent.shaderRGBA[3] = 255;
+
+	if (kind == 1) {
+		ent.shaderRGBA[0] = ent.shaderRGBA[1] = ent.shaderRGBA[2] = 255;
+	} else {
+		ent.shaderRGBA[0] = ent.shaderRGBA[1] = ent.shaderRGBA[2] = 255;
+		// trap_R_AddLightToScene(ent.origin, 80, 1, 0, 0);
+	}
+
+	// make locping more transparent as we look in its direction
+	ent.shaderRGBA[3] = 105 + 150* (  ( (fabs(angle))/M_PI) );
+	// Com_Printf("\n alpha %i %f", ent.shaderRGBA[3], angle * 180/M_PI );
 
 	trap_R_AddRefEntityToScene( &ent );
-	trap_R_AddLightToScene(ent.origin, 150, 1, 0, 0);
 	
 	// ensure we only play the sound once
 	if ( (cg.time - cent->miscTime) < 3000 ) {
 		return;
 	}
 	cent->miscTime = cg.time;
-
-	trap_S_StartLocalSound(cgs.media.ping, 0);
-
-
-
+    
+    // Call spatialised sound routine, but provide a tweaked, fake 
+	// locping location at shorter distance so that it sounds louder
+	VectorSubtract(pos_ent, pos_client, v_aux1);
+	VectorNormalizeFast(v_aux1);
+	VectorMA(pos_client, 80 + dist/5, v_aux1, v_aux2);
+	
+	if (kind == 1) {
+		trap_S_StartSound( v_aux2, 1, 2, cgs.media.pingLocSound );
+	} else {
+		trap_S_StartSound( v_aux2, 1, 2, cgs.media.pingLocDangerSound );
+	}
 
 }

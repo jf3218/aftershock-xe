@@ -224,7 +224,7 @@ vmCvar_t	cg_enableBreath;
 //unlagged - client options
 vmCvar_t	cg_delag;
 //vmCvar_t	cg_debugDelag;
-//vmCvar_t	cg_drawBBox;
+vmCvar_t	cg_drawBBox;
 vmCvar_t	cg_cmdTimeNudge;
 vmCvar_t	sv_fps;
 vmCvar_t	cg_projectileNudge;
@@ -417,6 +417,7 @@ vmCvar_t 	cg_mapoverview;
 vmCvar_t 	cg_damagePlums;
 
 vmCvar_t 	cg_soundOption;
+vmCvar_t	cg_soundOptionForce;
 vmCvar_t 	cg_soundOptionGauntlet;
 vmCvar_t 	cg_soundOptionLightning;
 vmCvar_t 	cg_soundOptionMachinegun;
@@ -570,7 +571,7 @@ static cvarTable_t cvarTable[] = { // bk001129
 //unlagged - client options
 	{ &cg_delag, "cg_delag", "0", CVAR_ARCHIVE | CVAR_USERINFO },
 //	{ &cg_debugDelag, "cg_debugDelag", "0", CVAR_USERINFO | CVAR_CHEAT },
-//	{ &cg_drawBBox, "cg_drawBBox", "0", CVAR_CHEAT },
+	{ &cg_drawBBox, "cg_drawBBox", "0", CVAR_CHEAT },
 	{ &cg_cmdTimeNudge, "cg_cmdTimeNudge", "0", CVAR_ARCHIVE | CVAR_USERINFO },
 	// this will be automagically copied from the server
 	{ &sv_fps, "sv_fps", "40", CVAR_SYSTEMINFO },
@@ -712,7 +713,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_drawSpawnpoints, "cg_drawSpawnpoints", "1", CVAR_ARCHIVE },
 	{&cg_mapoverview, "cg_mapoverview", "0", CVAR_ARCHIVE | CVAR_CHEAT },
 	{&cg_damagePlums, "cg_damagePlums", "1", CVAR_USERINFO | CVAR_ARCHIVE },
-	{&cg_soundOption, "cg_soundOption", "1", CVAR_ARCHIVE},
+	{&cg_soundOption, "cg_soundOption", "2", CVAR_ARCHIVE},
+	{&cg_soundOptionForce, "cg_soundOptionForce", "0", CVAR_ARCHIVE},
 	{&cg_soundOptionGauntlet, "cg_soundOptionGauntlet", "-1", CVAR_ARCHIVE},
 	{&cg_soundOptionLightning, "cg_soundOptionLightning", "-1", CVAR_ARCHIVE},
 	{&cg_soundOptionMachinegun, "cg_soundOptionMachinegun", "-1", CVAR_ARCHIVE},
@@ -992,13 +994,18 @@ static sfxHandle_t CG_TryRegisterSoundOptionSpecial(const char *sample, qboolean
 	}
 
 	if(Q_stricmp(sample, compareSample) == 0) {
+		// cg_soundOptionForce overdrives everything if set
+		if ( cg_soundOptionForce.integer != 0 ){
+			if((ret = CG_TryRegisterSoundOption(sample, compressed, optionValue)) != 0) {
+				return ret;
+			}
+		}
 		// If the special sound option value is set to 0,
 		// we will use the default sample for this sound
 		if(optionValue == 0) {
 			*defaultSound = 1;
 			return ret;
 		}
-
 		// Otherwise we will try to load the option if it is set to 1-9
 		if((optionValue > 0) && (optionValue < 10)) {
 			if((ret = CG_TryRegisterSoundOption(sample, compressed, optionValue)) != 0) {
@@ -1322,7 +1329,8 @@ static void CG_RegisterSounds( void ) {
 	}
 
 	// FIXME: only needed with item
-	cgs.media.ping = CG_RegisterSoundOption("sound/misc/ping_ljud4amix.wav", qfalse);
+	cgs.media.pingLocSound = CG_RegisterSoundOption("sound/misc/locping.wav", qfalse);
+	cgs.media.pingLocDangerSound = CG_RegisterSoundOption("sound/misc/pingdanger2.wav", qfalse);
 	cgs.media.flightSound = CG_RegisterSoundOption( "sound/items/flight.wav", qfalse );
 	cgs.media.medkitSound = CG_RegisterSoundOption ("sound/items/use_medkit.wav", qfalse);
 	cgs.media.quadSound = CG_RegisterSoundOption("sound/items/damage3.wav", qfalse);
@@ -1406,17 +1414,28 @@ static void CG_RegisterGraphics( void ) {
 	int			i;
 	char		items[MAX_ITEMS+1];
 	static char		*sb_nums[11] = {
-		"gfx/2d/numbers/zero_32b",
-		"gfx/2d/numbers/one_32b",
-		"gfx/2d/numbers/two_32b",
-		"gfx/2d/numbers/three_32b",
-		"gfx/2d/numbers/four_32b",
-		"gfx/2d/numbers/five_32b",
-		"gfx/2d/numbers/six_32b",
-		"gfx/2d/numbers/seven_32b",
-		"gfx/2d/numbers/eight_32b",
-		"gfx/2d/numbers/nine_32b",
-		"gfx/2d/numbers/minus_32b",
+		// "gfx/2d/numbers/zero_32b",
+		// "gfx/2d/numbers/one_32b",
+		// "gfx/2d/numbers/two_32b",
+		// "gfx/2d/numbers/three_32b",
+		// "gfx/2d/numbers/four_32b",
+		// "gfx/2d/numbers/five_32b",
+		// "gfx/2d/numbers/six_32b",
+		// "gfx/2d/numbers/seven_32b",
+		// "gfx/2d/numbers/eight_32b",
+		// "gfx/2d/numbers/nine_32b",
+		// "gfx/2d/numbers/minus_32b",
+		"gfx/2d/numbers/zero",
+		"gfx/2d/numbers/one",
+		"gfx/2d/numbers/two",
+		"gfx/2d/numbers/three",
+		"gfx/2d/numbers/four",
+		"gfx/2d/numbers/five",
+		"gfx/2d/numbers/six",
+		"gfx/2d/numbers/seven",
+		"gfx/2d/numbers/eight",
+		"gfx/2d/numbers/nine",
+		"gfx/2d/numbers/minus",
 	};
 
 	// clear any references to old media
@@ -1586,12 +1605,14 @@ static void CG_RegisterGraphics( void ) {
 		cg_buildScript.integer ) {
 
 		cgs.media.friendShader = trap_R_RegisterShader( "sprites/foe" );
-		cgs.media.friendShaderVisible = trap_R_RegisterShader( "sprites/foe2.tga" );
-		cgs.media.friendShader2 = trap_R_RegisterShader( "sprites/foe3b" );
-		cgs.media.friendShaderVisible2 = trap_R_RegisterShader( "icons/foe3b.tga" );
+		cgs.media.friendShaderVisible = trap_R_RegisterShader( "icons/foe3b.tga" );
 		cgs.media.redQuadShader = trap_R_RegisterShader("powerups/blueflag" );
 		cgs.media.teamStatusBar = trap_R_RegisterShader( "gfx/2d/colorbar.tga" );
-		cgs.media.pingLocShader = trap_R_RegisterShaderNoMip( "icons/pingLoc.tga" );
+		cgs.media.pingLocShader_nomip = trap_R_RegisterShaderNoMip( "icons/pingLoc.tga" );
+		// cgs.media.pingLocShader = trap_R_RegisterShader("icons/pingLoc.tga");
+		cgs.media.pingLocShader_danger_nomip = trap_R_RegisterShaderNoMip( "icons/pingLocDanger.tga" );
+		// cgs.media.pingLocShader_danger = trap_R_RegisterShader("icons/pingLocDanger.tga");
+		
 		
 #ifdef MISSIONPACK
 		cgs.media.blueKamikazeShader = trap_R_RegisterShader( "models/weaphits/kamikblu" );
@@ -2633,8 +2654,6 @@ void CG_Init( int serverMessageNum, int serverCommandSequence, int clientNum ) {
 
 	// load a few needed things before we do any screen updates
 	cgs.media.charsetShader		= trap_R_RegisterShader( "gfx/2d/bigchars" );
-
-	
 	cgs.media.charsetShader32		= trap_R_RegisterShader( "gfx/2d/bigchars32" );
 	cgs.media.charsetShader64		= trap_R_RegisterShader( "gfx/2d/bigchars64" );
 	cgs.media.charsetShader128		= trap_R_RegisterShader( "gfx/2d/bigchars128" );

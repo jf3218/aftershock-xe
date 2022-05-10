@@ -195,8 +195,8 @@ static const char *HudNames[] =
     "PowerUp4_Icon",
     "RankMessage",
     "Score_Limit",
-    "Score_NME",
-    "Score_OWN",
+    "Score_RED",
+	"Score_BLUE",
     "SpecMessage",
     "StatusBar_ArmorBar",
     "StatusBar_ArmorCount",
@@ -232,15 +232,23 @@ static const char *HudNames[] =
     "DeathNotice5",
     "Countdown",
     "RespawnTimer",
-    "StatusBar_Flag",
-    "TeamOverlay1",
-    "TeamOverlay2",
-    "TeamOverlay3",
-    "TeamOverlay4",
-    "TeamOverlay5",
-    "TeamOverlay6",
-    "TeamOverlay7",
-    "TeamOverlay8",
+	"StatusBar_Flag",
+	"TeamRedOverlay1",
+	"TeamRedOverlay2",
+	"TeamRedOverlay3",
+	"TeamRedOverlay4",
+	"TeamRedOverlay5",
+	"TeamRedOverlay6",
+	"TeamRedOverlay7",
+	"TeamRedOverlay8",
+    "TeamBlueOverlay1",
+    "TeamBlueOverlay2",
+    "TeamBlueOverlay3",
+    "TeamBlueOverlay4",
+    "TeamBlueOverlay5",
+    "TeamBlueOverlay6",
+    "TeamBlueOverlay7",
+    "TeamBlueOverlay8",
     "Reward",
     "RewardCount",
     "Console",
@@ -316,8 +324,10 @@ static int CG_HudElement( token_t in ){
 	
 	for( i = 0; i < HUD_MAX; i++ ){
 		name = strcmp( in.value, HudNames[i] );
-		if( name == 0 )
+		if( name == 0 ){
+			// CG_Printf("%s \n", in.value, HudNames[i]);
 			return i;
+		}
 	}
 	return -1;
 }
@@ -534,10 +544,10 @@ void CG_LoadHudFile( const char* hudFile ){
 	len = trap_FS_FOpenFile ( hudFile, &f, FS_READ );
 	
 	if ( !f ) {
-		CG_Printf( "%s",va( S_COLOR_YELLOW "hud file not found: %s, using default\n", hudFile ) );
-		len = trap_FS_FOpenFile( "hud/default.cfg", &f, FS_READ );
+		CG_Printf( "%s",va( S_COLOR_YELLOW "Warning: hud file not found: %s, using hud_default.cfg\n", hudFile ) );
+		len = trap_FS_FOpenFile( "hud/hud_default.cfg", &f, FS_READ );
 		if (!f) {
-			trap_Error( va( S_COLOR_RED "default menu file not found: hud/default.cfg, unable to continue!\n") );
+			trap_Error( va( S_COLOR_RED "Error: default hud file not found: hud/hud_default.cfg\n") );
 		}
 	}
 

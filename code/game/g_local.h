@@ -923,7 +923,8 @@ qboolean CheckGauntletAttack( gentity_t *ent );
 void Weapon_HookFree (gentity_t *ent);
 void Weapon_HookThink (gentity_t *ent);
 
-void Ping_Gen (gentity_t *ent);
+
+void Ping_Gen (gentity_t *ent, char kind);
 void Ping_Think( gentity_t *self );
 
 //unlagged - g_unlagged.c
@@ -1465,6 +1466,13 @@ extern vmCvar_t     g_spawnPush;
 extern vmCvar_t     g_telefragTeamBehavior;
 extern vmCvar_t     g_furthestTeamSpawns;
 extern vmCvar_t	    g_ruleset;
+
+extern vmCvar_t		g_respawn_armor;
+extern vmCvar_t		g_respawn_health;
+extern vmCvar_t		g_respawn_ammo;
+extern vmCvar_t		g_respawn_holdable;
+extern vmCvar_t		g_respawn_megahealth;
+extern vmCvar_t		g_respawn_powerup;
 
 
 extern vmCvar_t	    g_legacyWeaponAmmo;

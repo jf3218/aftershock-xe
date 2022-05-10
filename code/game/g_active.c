@@ -952,6 +952,8 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 //unlagged - true ping
 
+	// Store realPing here for use within cgame for projectile nudge
+	client->ps.stats[STAT_PING] = client->pers.realPing;
 
 //unlagged - lag simulation #2
 	// keep a queue of past commands
@@ -1157,16 +1159,22 @@ void ClientThink_real( gentity_t *ent ) {
 
 	if(Q_stricmp(g_ruleset.string, "vq3") == 0) {
 		pm.ruleset = RULESET_VQ3;
+		pm.ps->stats[STAT_RULESET] = RULESET_VQ3;
 	} else if(Q_stricmp(g_ruleset.string, "as") == 0) {
 		pm.ruleset = RULESET_AS;
+		pm.ps->stats[STAT_RULESET] = RULESET_AS;
 	} else if(Q_stricmp(g_ruleset.string, "asxe") == 0) {
 		pm.ruleset = RULESET_ASXE;
+		pm.ps->stats[STAT_RULESET] = RULESET_ASXE;
 	} else if(Q_stricmp(g_ruleset.string, "cpm") == 0) {
 		pm.ruleset = RULESET_CPM;
+		pm.ps->stats[STAT_RULESET] = RULESET_CPM;
 	} else if(Q_stricmp(g_ruleset.string, "qw") == 0) {
 		pm.ruleset = RULESET_QW;
+		pm.ps->stats[STAT_RULESET] = RULESET_QW;
 	} else {
 		pm.ruleset = RULESET_AS; // default is AS
+		pm.ps->stats[STAT_RULESET] = RULESET_AS;
 	}
 
 	VectorCopy( client->ps.origin, client->oldOrigin );

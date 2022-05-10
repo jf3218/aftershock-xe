@@ -31,19 +31,30 @@ Adjusted for resolution and screen aspect ratio
 ================
 */
 void CG_AdjustFrom640( float *x, float *y, float *w, float *h ) {
-	float xscale = ((float)cg.refdef.width)/640.0f;
-	float yscale = ((float)cg.refdef.height)/480.0f;
-  
+
 	// scale for screen sizes
-	/**x *= cgs.screenXScale;
-	*y *= cgs.screenYScale;
-	*w *= cgs.screenXScale;
-	*h *= cgs.screenYScale;*/
-	
-	*x = cg.refdef.x + *x*xscale;
-	*y = cg.refdef.y + *y*yscale;
-	*w *= xscale;
-	*h *= yscale;
+	// The scaling used to make multiview work messes up the positioning 
+	// for elements in the main window (e.g. crosshair off when cg_viewsize < 100).
+	// Check whether we're being called from the multiview code using cg.refdef.x 
+	// dimensions as a guide, and do the normal scaling otherwise.
+
+	if ( cg.refdef.x == cg_multiview2_xpos.integer * cgs.screenXScale || 
+	 	 cg.refdef.x == cg_multiview2_xpos.integer * cgs.screenXScale || 
+		 cg.refdef.x == cg_multiview2_xpos.integer * cgs.screenXScale ){
+		float xscale = ((float)cg.refdef.width)/640.0f;
+		float yscale = ((float)cg.refdef.height)/480.0f;
+		*x = cg.refdef.x + *x*xscale;
+		*y = cg.refdef.y + *y*yscale;
+		*w *= xscale;
+		*h *= yscale;
+	}else {
+		*x *= cgs.screenXScale;
+		*y *= cgs.screenYScale;
+		*w *= cgs.screenXScale;
+		*h *= cgs.screenYScale;
+		return;
+	}
+
 }
 
 /*
@@ -155,24 +166,24 @@ void CG_DrawHudIcon( int hudnumber, qboolean override, qhandle_t hShader ) {
 	
 	if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 1 ){
 		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-			color[0] = 1;
+			color[0] = 0.79;
 			color[1] = 0;
-			color[2] = 0;
+			color[2] = 0.1;
 		} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
 			color[0] = 0;
-			color[1] = 0;
-			color[2] = 1;
+			color[1] = 0.3;
+			color[2] = 0.9;
 		}
 	}
 	else if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 2 ){
 		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
-			color[0] = 1;
+			color[0] = 0.79;
 			color[1] = 0;
-			color[2] = 0;
+			color[2] = 0.1;
 		} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
 			color[0] = 0;
-			color[1] = 0;
-			color[2] = 1;
+			color[1] = 0.3;
+			color[2] = 0.9;
 		}
 	}
 	else{
@@ -191,24 +202,24 @@ void CG_DrawHudIcon( int hudnumber, qboolean override, qhandle_t hShader ) {
 	
 	if( cgs.gametype >= GT_TEAM && hudelement.teamColor == 1 ){
 		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-			color[0] = 1;
-			color[1] = 0;
-			color[2] = 0;
+			color[0] = 0.79f;
+			color[1] = 0.0f;
+			color[2] = 0.1f;
 		} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
-			color[0] = 0;
-			color[1] = 0;
-			color[2] = 1;
+			color[0] = 0.0f;
+			color[1] = 0.3f;
+			color[2] = 0.9f;
 		}
 	}
 	else if( cgs.gametype >= GT_TEAM && hudelement.teamColor == 2 ){
 		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
-			color[0] = 1;
-			color[1] = 0;
-			color[2] = 0;
+			color[0] = 0.79f;
+			color[1] = 0.0f;
+			color[2] = 0.1f;
 		} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-			color[0] = 0;
-			color[1] = 0;
-			color[2] = 1;
+			color[0] = 0.0f;
+			color[1] = 0.3f;
+			color[2] = 0.9f;
 		}
 	}
 	else{
@@ -242,53 +253,48 @@ TODO: add function CG_SetTeamColor( vec4_t *color )
 and CG_SetTeamBGColor( vec4_t *color )
 =================
 */
-void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec ){
+void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec, qboolean highlight ){
 	hudElements_t hudelement = cgs.hud[hudnumber];
 	vec4_t color;
-	int x,y, w;
+	int x, y, w;
 	qboolean shadow;
 	
 	if( !hudelement.inuse )
 		return;
 	
 	shadow = hudelement.textstyle & 1;
+
 	if( !spec ){
-		if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 1 ){
-			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-				color[0] = 1;
+		if( cgs.gametype >= GT_TEAM){
+			if ( hudnumber == HUD_SCORERED ) {
+				color[0] = 0.79;
 				color[1] = 0;
-				color[2] = 0;
-			} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
+				color[2] = 0.1;
+			} else if ( hudnumber == HUD_SCOREBLUE ) {
 				color[0] = 0;
-				color[1] = 0;
-				color[2] = 1;
+				color[1] = 0.3;
+				color[2] = 0.9;
 			}
+			color[3] = 0.5;
 		}
-		else if( cgs.gametype >= GT_TEAM && hudelement.teamBgColor == 2 ){
-			if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_BLUE ) {
-				color[0] = 1;
-				color[1] = 0;
-				color[2] = 0;
-			} else if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_RED ) {
-				color[0] = 0;
-				color[1] = 0;
-				color[2] = 1;
-			}
-		}	
 		else{
 			color[0] = hudelement.bgcolor[0];
 			color[1] = hudelement.bgcolor[1];
 			color[2] = hudelement.bgcolor[2];
+			color[3] = hudelement.bgcolor[3];
 		}
-	color[3] = hudelement.bgcolor[3];
 	}
 	else{
 		color[0] = color[1] = color[2] = color[3] = 0.5f;
 	}
+
 	CG_FillRect( hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, color );
-	
+	if ( highlight == qtrue ) {
+		CG_DrawRect( hudelement.xpos, hudelement.ypos, hudelement.width, hudelement.height, 1, colorWhite );
+	}
+
+
 	y = hudelement.ypos + hudelement.height/2 - hudelement.fontHeight/2;
-	
 	w = CG_DrawStrlen(text) * hudelement.fontWidth;
 		
 	if( hudelement.textAlign == 0 )
@@ -298,13 +304,10 @@ void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec ){
 	else
 		x = hudelement.xpos + hudelement.width/2 - w/2;
 
-	
 	color[0] = hudelement.color[0];
 	color[1] = hudelement.color[1];
 	color[2] = hudelement.color[2];
 	color[3] = hudelement.color[3];
-	
-	
 		
 	CG_DrawStringExt( x, y, text, color, qfalse, shadow, hudelement.fontWidth, hudelement.fontHeight, 0 );
 }
@@ -387,7 +390,9 @@ void CG_DrawStringExt( int x, int y, const char *string, const float *setColor,
 	vec4_t		color;
 	const char	*s;
 	int			xx;
-	int			cnt;
+	int			cnt, k;
+
+	k = 1;
 
 	if (maxChars <= 0)
 		maxChars = 32767; // do them all!
@@ -405,7 +410,7 @@ void CG_DrawStringExt( int x, int y, const char *string, const float *setColor,
 				s += 2;
 				continue;
 			}
-			CG_DrawChar( xx + 2, y + 2, charWidth, charHeight, *s );
+			CG_DrawChar( xx + k, y + k, charWidth + k, charHeight, *s );
 			cnt++;
 			xx += charWidth;
 			s++;
@@ -503,12 +508,13 @@ void CG_DrawStringHud( int hudnumber, qboolean colorize, const char* text ){
 		color[0] = 1.0;
 		color[1] = 1.0;
 		color[2] = 1.0;
-		color[3] = 1.0;
+		color[3] = 0.75F;
 	}
 		
 	CG_DrawStringExt( x, hudelement.ypos, text, color, qfalse, shadow, hudelement.fontWidth, hudelement.fontHeight, 0 );
 }
-		
+
+
 void CG_DrawBigString( int x, int y, const char *s, float alpha ) {
 	float	color[4];
 

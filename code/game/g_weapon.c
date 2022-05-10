@@ -404,6 +404,7 @@ qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent ) {
 	gentity_t	*traceEnt;
 	vec3_t		impactpoint, bouncedir;
 	vec3_t		tr_start, tr_end;
+	qboolean    hitClient = qfalse;
 
 	passent = ent->s.number;
 	oldAttacker = ent;
@@ -438,13 +439,11 @@ qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent ) {
 				}
 				continue;
 			}
-			else {
-				G_Damage( traceEnt, ent, ent, forward, tr.endpos,
-					damage, 0, MOD_SHOTGUN);
-				if( LogAccuracyHit( traceEnt, ent ) ) {
-					return qtrue;
-				}
+			if ( LogAccuracyHit( traceEnt, ent) ) {
+				hitClient = qtrue;
 			}
+			G_Damage( traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_SHOTGUN);
+			return hitClient;
 		}
 		return qfalse;
 	}
@@ -943,10 +942,13 @@ void Weapon_LightningFire( gentity_t *ent ) {
 				}
 				continue;
 			}
-			else {
-				G_Damage( traceEnt, ent, ent, forward, tr.endpos,
-					damage, 0, MOD_LIGHTNING);
+			if( LogAccuracyHit( traceEnt, ent ) ) {
+				if( level.time - traceEnt->client->lastActive < 500 )
+					G_AddHitHistory( ent->client, qtrue );		  
+				ent->client->accuracy_hits++;
+				ent->client->accuracy[WP_LIGHTNING][1]++;
 			}
+			G_Damage( traceEnt, ent, ent, forward, tr.endpos, damage, 0, MOD_LIGHTNING);
 		}
 
 		if ( traceEnt->takedamage && traceEnt->client ) {
@@ -954,14 +956,6 @@ void Weapon_LightningFire( gentity_t *ent ) {
 			tent->s.otherEntityNum = traceEnt->s.number;
 			tent->s.eventParm = DirToByte( tr.plane.normal );
 			tent->s.weapon = ent->s.weapon;
-			
-			if( LogAccuracyHit( traceEnt, ent ) ) {
-				if( level.time - traceEnt->client->lastActive < 500 )
-					G_AddHitHistory( ent->client, qtrue );
-			  
-				ent->client->accuracy_hits++;
-				ent->client->accuracy[WP_LIGHTNING][1]++;
-			}
 		} else if ( !( tr.surfaceFlags & SURF_NOIMPACT ) ) {
 			tent = G_TempEntity( tr.endpos, EV_MISSILE_MISS );
 			tent->s.eventParm = DirToByte( tr.plane.normal );
@@ -1436,7 +1430,7 @@ Location Ping
 ==============
 */
 
-void Ping_Gen( gentity_t *ent )	{
+void Ping_Gen( gentity_t *ent, char kind )	{
 	gentity_t	*ping;
 
 	// JR: I'm not sure that the thing to do is spawning a temp entity. 
@@ -1456,8 +1450,14 @@ void Ping_Gen( gentity_t *ent )	{
 	ping->think = Ping_Think;
 	ping->r.ownerNum = ent->s.number;
 	ping->parent = ent;
-	ping->s.eType = ET_PING;
-	ping->classname = "location_ping";
+	if (kind == 1) {
+		ping->s.eType = ET_PING;
+		ping->classname = "loc_ping";
+	} else if (kind == 2) {
+		ping->s.eType = ET_PING_DANGER;
+		ping->classname = "loc_ping2";
+	}
+	
 	// Store team of ping owner, used later to decide who sees the icon
 	// Probably can do this more elegantly, but I don't find where this 
 	// information is stored reliably
@@ -1467,7 +1467,7 @@ void Ping_Gen( gentity_t *ent )	{
 }
 
 void Ping_Think( gentity_t *self )	{
-	vec3_t		end, start, forward, up;
+	vec3_t		end, start, forward, right, up;
 	trace_t		tr;
 
 	// persistence time of each "ping"

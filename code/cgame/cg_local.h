@@ -546,8 +546,8 @@ enum{
 	HUD_PU4ICON,
 	HUD_RANKMSG,
 	HUD_SCORELIMIT,
-	HUD_SCORENME,
-	HUD_SCOREOWN,
+	HUD_SCORERED,
+	HUD_SCOREBLUE,
 	HUD_SPECMESSAGE,
 	HUD_ARMORBAR,
 	HUD_ARMORCOUNT,
@@ -584,14 +584,22 @@ enum{
 	HUD_COUNTDOWN,
 	HUD_RESPAWNTIMER,
 	HUD_STATUSBARFLAG,
-	HUD_TEAMOVERLAY1,
-	HUD_TEAMOVERLAY2,
-	HUD_TEAMOVERLAY3,
-	HUD_TEAMOVERLAY4,
-	HUD_TEAMOVERLAY5,
-	HUD_TEAMOVERLAY6,
-	HUD_TEAMOVERLAY7,
-	HUD_TEAMOVERLAY8,
+	HUD_TEAMREDOVERLAY1,
+	HUD_TEAMREDOVERLAY2,
+	HUD_TEAMREDOVERLAY3,
+	HUD_TEAMREDOVERLAY4,
+	HUD_TEAMREDOVERLAY5,
+	HUD_TEAMREDOVERLAY6,
+	HUD_TEAMREDOVERLAY7,
+	HUD_TEAMREDOVERLAY8,
+	HUD_TEAMBLUEOVERLAY1,
+	HUD_TEAMBLUEOVERLAY2,
+	HUD_TEAMBLUEOVERLAY3,
+	HUD_TEAMBLUEOVERLAY4,
+	HUD_TEAMBLUEOVERLAY5,
+	HUD_TEAMBLUEOVERLAY6,
+	HUD_TEAMBLUEOVERLAY7,
+	HUD_TEAMBLUEOVERLAY8,
 	HUD_REWARD,
 	HUD_REWARDCOUNT,
 	HUD_CONSOLE,
@@ -979,9 +987,10 @@ typedef struct {
 
 	qhandle_t	friendShader;
 	qhandle_t	friendShaderVisible;
-	qhandle_t   friendShader2;
-	qhandle_t   friendShaderVisible2;
 	qhandle_t	pingLocShader;
+	qhandle_t	pingLocShader_nomip;
+	qhandle_t	pingLocShader_danger;
+	qhandle_t	pingLocShader_danger_nomip;
 
 	qhandle_t	balloonShader;
 	qhandle_t	balloonShaderVisible;
@@ -1099,7 +1108,8 @@ typedef struct {
 	qhandle_t	medalLgaccuracy;
 
 	// sounds
-	sfxHandle_t ping;
+	sfxHandle_t pingLocSound;
+	sfxHandle_t pingLocDangerSound;
 	sfxHandle_t	quadSound;
 	sfxHandle_t	tracerSound;
 	sfxHandle_t	selectSound;
@@ -1285,7 +1295,7 @@ typedef struct {
 	qhandle_t	sbReady;
 	qhandle_t	sbNotReady;
 	qhandle_t	sbSkull;
-	qhandle_t       sbLocked;
+	qhandle_t   sbLocked;
 	
 	qhandle_t 	spawnPoint;
 	qhandle_t 	spawnPointShader;
@@ -1605,7 +1615,7 @@ extern	vmCvar_t		cg_enableBreath;
 //unlagged - client options
 extern	vmCvar_t		cg_delag;
 //extern	vmCvar_t		cg_debugDelag;
-//extern	vmCvar_t		cg_drawBBox;
+extern	vmCvar_t		cg_drawBBox;
 extern	vmCvar_t		cg_cmdTimeNudge;
 extern	vmCvar_t		sv_fps;
 extern	vmCvar_t		cg_projectileNudge;
@@ -1794,6 +1804,7 @@ extern vmCvar_t 		cg_drawSpawnpoints;
 extern vmCvar_t 		cg_mapoverview;
 extern vmCvar_t			cg_damagePlums;
 extern vmCvar_t 		cg_soundOption;
+extern vmCvar_t			cg_soundOptionForce;
 extern vmCvar_t 		cg_soundOptionGauntlet;
 extern vmCvar_t 		cg_soundOptionLightning;
 extern vmCvar_t 		cg_soundOptionMachinegun;
@@ -1823,7 +1834,7 @@ extern int wp_bfgRate;
 
 //unlagged - cg_unlagged.c
 void CG_PredictWeaponEffects( centity_t *cent );
-//void CG_AddBoundingBox( centity_t *cent );
+void CG_AddBoundingBox( centity_t *cent );
 qboolean CG_Cvar_ClampInt( const char *name, vmCvar_t *vmCvar, int min, int max );
 qboolean CG_Cvar_ClampFloat( const char *name, vmCvar_t *vmCvar, float min, float max );
 //unlagged - cg_unlagged.c
@@ -1914,7 +1925,7 @@ void CG_DrawSides(float x, float y, float w, float h, float size);
 void CG_DrawTopBottom(float x, float y, float w, float h, float size);
 
 void CG_DrawHudIcon( int hudnumber, qboolean override, qhandle_t hShader );
-void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec );
+void CG_DrawScoresHud( int hudnumber, const char* text, qboolean spec, qboolean highlight );
 
 //
 // cg_draw.c, cg_newDraw.c

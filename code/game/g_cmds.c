@@ -1236,7 +1236,7 @@ int myrand( int d) {
 Cmd_Ping
 =================
 */
-void Cmd_Ping( gentity_t *ent ){
+void Cmd_Ping( gentity_t *ent, char kind ){
     // Draws a location icon where the player is pointing to, for team comms.
     // Don't allow use if eliminated. Using PM_DEAD logic fails here because 
     // we can spec other players and client numbers don't match...
@@ -1253,8 +1253,18 @@ void Cmd_Ping( gentity_t *ent ){
     }
     ent->client->pers.locPingTimeLast = level.time;
 
-    Ping_Gen( ent );
+    Ping_Gen( ent, kind );
 }
+
+
+void Cmd_PingRegular( gentity_t *ent) {
+    Cmd_Ping( ent, 1 );
+}
+
+void Cmd_PingDanger( gentity_t *ent) {
+    Cmd_Ping( ent, 2 );
+}
+
 
 
 /*
@@ -4432,7 +4442,9 @@ commands_t cmds[ ] =
     { "unmute", 0, Cmd_Unmute_f, qfalse },
     { "forfeit", 0, Cmd_Forfeit_f, qfalse },
     { "zoomed", 0, Cmd_Zoomed_f, qfalse },
-    { "locping", CMD_TEAM, Cmd_Ping, qfalse},
+    // { "locping", CMD_TEAM, Cmd_Ping, qfalse},
+    { "locping", CMD_TEAM, Cmd_PingRegular, qfalse},
+    { "locping_danger", CMD_TEAM, Cmd_PingDanger, qfalse},
     { "practice", 0, Cmd_Practice_f, qtrue }
 };
 
