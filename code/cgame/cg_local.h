@@ -1804,6 +1804,7 @@ extern vmCvar_t 		cg_drawSpawnpoints;
 extern vmCvar_t 		cg_mapoverview;
 extern vmCvar_t			cg_damagePlums;
 extern vmCvar_t 		cg_soundOption;
+extern vmCvar_t			cg_soundOptionForce;
 extern vmCvar_t 		cg_soundOptionGauntlet;
 extern vmCvar_t 		cg_soundOptionLightning;
 extern vmCvar_t 		cg_soundOptionMachinegun;

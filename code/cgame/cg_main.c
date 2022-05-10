@@ -417,6 +417,7 @@ vmCvar_t 	cg_mapoverview;
 vmCvar_t 	cg_damagePlums;
 
 vmCvar_t 	cg_soundOption;
+vmCvar_t	cg_soundOptionForce;
 vmCvar_t 	cg_soundOptionGauntlet;
 vmCvar_t 	cg_soundOptionLightning;
 vmCvar_t 	cg_soundOptionMachinegun;
@@ -712,7 +713,8 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_drawSpawnpoints, "cg_drawSpawnpoints", "1", CVAR_ARCHIVE },
 	{&cg_mapoverview, "cg_mapoverview", "0", CVAR_ARCHIVE | CVAR_CHEAT },
 	{&cg_damagePlums, "cg_damagePlums", "1", CVAR_USERINFO | CVAR_ARCHIVE },
-	{&cg_soundOption, "cg_soundOption", "1", CVAR_ARCHIVE},
+	{&cg_soundOption, "cg_soundOption", "2", CVAR_ARCHIVE},
+	{&cg_soundOptionForce, "cg_soundOptionForce", "0", CVAR_ARCHIVE},
 	{&cg_soundOptionGauntlet, "cg_soundOptionGauntlet", "-1", CVAR_ARCHIVE},
 	{&cg_soundOptionLightning, "cg_soundOptionLightning", "-1", CVAR_ARCHIVE},
 	{&cg_soundOptionMachinegun, "cg_soundOptionMachinegun", "-1", CVAR_ARCHIVE},
@@ -992,13 +994,18 @@ static sfxHandle_t CG_TryRegisterSoundOptionSpecial(const char *sample, qboolean
 	}
 
 	if(Q_stricmp(sample, compareSample) == 0) {
+		// cg_soundOptionForce overdrives everything if set
+		if ( cg_soundOptionForce.integer != 0 ){
+			if((ret = CG_TryRegisterSoundOption(sample, compressed, optionValue)) != 0) {
+				return ret;
+			}
+		}
 		// If the special sound option value is set to 0,
 		// we will use the default sample for this sound
 		if(optionValue == 0) {
 			*defaultSound = 1;
 			return ret;
 		}
-
 		// Otherwise we will try to load the option if it is set to 1-9
 		if((optionValue > 0) && (optionValue < 10)) {
 			if((ret = CG_TryRegisterSoundOption(sample, compressed, optionValue)) != 0) {
