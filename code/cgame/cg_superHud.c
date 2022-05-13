@@ -72,9 +72,64 @@ static void CG_SetHudColor( int hudnumber, char* arg1, char* arg2, char* arg3, c
 	cgs.hud[hudnumber].color[3] = atof(arg4);
 }
 
-static void CG_SetHudFontsize( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
-	cgs.hud[hudnumber].fontWidth = atoi(arg1);
-	cgs.hud[hudnumber].fontHeight = atoi(arg2);
+static void CG_SetHudFontsize( int hudnumber, char* width, char* height, char* arg3, char* arg4 ){
+	int		h_in, h;
+
+	h_in = atoi(height);
+
+	switch ( atoi(width) ) {
+		case 4:
+			h = h_in > 7 ? h_in : 7;
+			break;
+		case 5:
+			h = h_in > 8 ? h_in : 8;
+			break;
+		case 6:
+			h = h_in > 8 ? h_in : 8;
+			break;
+		case 7:
+			h = h_in > 11 ? h_in : 11;
+			break;
+		case 8:
+			h = h_in > 12 ? h_in : 12;
+			break;
+		case 9:
+			h = h_in > 13 ? h_in : 13;
+			break;
+		case 10:
+			h = h_in > 14 ? h_in : 14;
+			break;
+		case 11:
+			h = h_in > 15 ? h_in : 15;
+			break;
+		case 12:
+			h = h_in > 17 ? h_in : 17;
+			break;
+		case 13:
+			h = h_in > 18 ? h_in : 18;
+			break;
+		case 14:
+			h = h_in > 19 ? h_in : 19;
+			break;
+		case 15:
+			h = h_in > 20 ? h_in : 20;
+			break;
+		case 16:
+			h = h_in > 21 ? h_in : 21;
+			break;
+		case 17:
+			h = h_in > 22 ? h_in : 22;
+			break;
+		case 18:
+			h = h_in > 23 ? h_in : 23;
+			break;
+		default:
+			h = (int) atoi(height) * 1.3;
+	}
+
+	cgs.hud[hudnumber].fontWidth = atoi(width);
+	cgs.hud[hudnumber].fontHeight = h;
+
 }
 
 static void CG_SetHudImage( int hudnumber, char* arg1, char* arg2, char* arg3, char* arg4 ){
@@ -544,10 +599,10 @@ void CG_LoadHudFile( const char* hudFile ){
 	len = trap_FS_FOpenFile ( hudFile, &f, FS_READ );
 	
 	if ( !f ) {
-		CG_Printf( "%s",va( S_COLOR_YELLOW "Warning: hud file not found: %s, using hud_default.cfg\n", hudFile ) );
-		len = trap_FS_FOpenFile( "hud/hud_default.cfg", &f, FS_READ );
+		CG_Printf( "%s",va( S_COLOR_YELLOW "Warning: hud file not found: %s, using default.cfg\n", hudFile ) );
+		len = trap_FS_FOpenFile( "hud/default.cfg", &f, FS_READ );
 		if (!f) {
-			trap_Error( va( S_COLOR_RED "Error: default hud file not found: hud/hud_default.cfg\n") );
+			trap_Error( va( S_COLOR_RED "Error: default hud file not found: hud/default.cfg\n") );
 		}
 	}
 
