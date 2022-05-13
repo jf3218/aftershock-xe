@@ -2640,13 +2640,17 @@ void G_SendEliminationStats( void ) {
 	
 	if (maxdmgdoneClientnum == -1)
 		maxdmgdoneClientnum = 0;
-	trap_SendServerCommand( -1, va( "print \"Max damage done: %s ^2%i\n\"", g_clients[maxdmgdoneClientnum].pers.netname, g_clients[maxdmgdoneClientnum].elimRoundDamage ) );
-	trap_SendServerCommand( -1, va( "print \"Min damage taken: %s ^1%i\n\"", g_clients[mindmgtakenClientnum].pers.netname, g_clients[mindmgtakenClientnum].elimRoundDamageTaken ) );
-	trap_SendServerCommand( -1, va( "print \"Max kills: %s ^3%i\n\"", g_clients[maxkillsClientnum].pers.netname, g_clients[maxkillsClientnum].elimRoundKills ) );
-	
-	trap_SendServerCommand( -1, va( "screenPrint \"Max damage done: %s ^2%i\"", g_clients[maxdmgdoneClientnum].pers.netname, g_clients[maxdmgdoneClientnum].elimRoundDamage ) );
-	trap_SendServerCommand( -1, va( "screenPrint \"Min damage taken: %s ^1%i\"", g_clients[mindmgtakenClientnum].pers.netname, g_clients[mindmgtakenClientnum].elimRoundDamageTaken ) );
-	trap_SendServerCommand( -1, va( "screenPrint \"Max kills: %s ^3%i\"", g_clients[maxkillsClientnum].pers.netname, g_clients[maxkillsClientnum].elimRoundKills ) );
+	trap_SendServerCommand( -1, va( "print \"Max dmg done  : %s ^2%i\n\"", g_clients[maxdmgdoneClientnum].pers.netname, g_clients[maxdmgdoneClientnum].elimRoundDamage ) );
+	trap_SendServerCommand( -1, va( "print \"Min dmg taken : %s ^1%i\n\"", g_clients[mindmgtakenClientnum].pers.netname, g_clients[mindmgtakenClientnum].elimRoundDamageTaken ) );
+	trap_SendServerCommand( -1, va( "print \"Max no. frags : %s ^3%i\n\"", g_clients[maxkillsClientnum].pers.netname, g_clients[maxkillsClientnum].elimRoundKills ) );
+
+	// trap_SendServerCommand( -1, va( "screenPrint \"Max dmg done  : %s ^2%i\"", g_clients[maxdmgdoneClientnum].pers.netname, g_clients[maxdmgdoneClientnum].elimRoundDamage ) );
+	// trap_SendServerCommand( -1, va( "screenPrint \"Min dmg taken : %s ^1%i\"", g_clients[mindmgtakenClientnum].pers.netname, g_clients[mindmgtakenClientnum].elimRoundDamageTaken ) );
+	// trap_SendServerCommand( -1, va( "screenPrint \"Max no. frags : %s ^3%i\"", g_clients[maxkillsClientnum].pers.netname, g_clients[maxkillsClientnum].elimRoundKills ) );
+
+	trap_SendServerCommand( -1, va( "screenPrint \"Max dmg done  : ^2%3i ^7%s\"", g_clients[maxdmgdoneClientnum].elimRoundDamage, g_clients[maxdmgdoneClientnum].pers.netname ) );
+	trap_SendServerCommand( -1, va( "screenPrint \"Min dmg taken : ^1%3i ^7%s\"", g_clients[mindmgtakenClientnum].elimRoundDamageTaken, g_clients[mindmgtakenClientnum].pers.netname ) );
+	trap_SendServerCommand( -1, va( "screenPrint \"Max no. frags : ^3%3i ^7%s\"", g_clients[maxkillsClientnum].elimRoundKills, g_clients[maxkillsClientnum].pers.netname ) );
 }
 
 //things to do at end of round:
