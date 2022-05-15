@@ -1,5 +1,5 @@
 *.o
 *.d
 build/
-code/.vscode
-
+.vscode
+.vscode/settings.json
