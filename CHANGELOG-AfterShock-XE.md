@@ -1,4 +1,78 @@
 # AfterShock XE Changelog
+## 2022-05-10 [Revision 330]
+- Increased vote screen choices to six
+- Removed several cvars from SERVER_INFO to avoid exceeding info string length
+- Locping:
+  - Spatialised sound
+  - Limit use to once every 450 ms
+  - Additional locping (locping_danger) with different icon and sound
+  - Variable transparency dependent on view angle
+- Backport from OA/ioq3: "fix hit acc. stats for LG and SG kills"
+- HUD scores always in RED/BLUE - left/right order
+- New team overlay, with coloured bars representing player health
+- BUGFIX: implemented movement prediction for non-vq3 rulesets
+- New cvars to control item respawn times: 
+  - g_respawn_[armor/health/ammo/holdable/megahealth/powerup]
+- BUGFIX: incorrect crosshair position when changing viewsize
+- Tweaks to default hud configuration file
+- Auto projectile nudge, according to average player ping:
+  - cg_projectileNudge > 0 : auto proj. nudge up to 350 ms
+  - cg_projectileNudge = 0 : no proj. nudge, except for the snap delay
+  - cg_projectileNudge < 0 : sets max. proj. nudge value allowed
+- Option to draw player's bounding boxes: cg_drawBBox=1 (cheat protected)
+- Countdown timer replaced with new field HUD font (Bebas Neue, oss)
+- Fade-out/fade-in transition during elimination countdown
+- Override sound option for all weapons: cg_soundOptionForce
+- Tweaked font settings in HUD config files included in AS
+
+## 2021-03-04 [Revision 329]
+- Added sha256 implementation from Linux kernel.
+- Implemented minigames, simple action-based games to be optionally 
+played during warmup. First minigame: collect spawn points
+and gain quad when completed (timed), `g_minigame <0|1>` to disable or 
+enable.
+- Added `cv` alias for `callvote` command.
+- Fixed a bug when player names were wrongly displayed in multiview 
+when focused by crosshair.
+- Fixed a bug when `coinflip` didn't return properly randomised 
+results.
+- Added practice mode (backport from AfterShock XE EX). This is a new 
+mode that will switch between infinite ammo and no damage to limited
+ammo and damage enabled. Note that the effect of practice mode will
+only apply to freshly spawned clients.
+  - `practice` toggles practice mode.
+  - `g_practice <0|1>` sets practice mode on the server:
+    - `0` - off = infinite ammo and no damage,
+    - `1` - on = limited ammo and damage enabled.
+  - `g_practiceDefault <0|1>` - sets default mode for practice mode on 
+every map restart.
+  - `g_practiceLock <0|1>` - when set, will disable the client's ability
+to toggle practice mode.
+- Added `g_newTeleportHeight <0-64>` (backport from AfterShock XE EX). 
+Setting it above `0` will raise the teleport height position after
+going through a teleport.
+- Added Two new shotgun pellet patterns: `gaussian` and `circle`. 
+Available through cvar `g_sgPattern` (votable if included in 
+`g_voteNames`). 
+Default is `circle`, a compromise in terms of damage between the
+vanilla OA shotgun pattern and the previously available AS one, while
+providing a better distribution than vanilla OA.
+- Added a way to tame `g_thrufloors` splash damage. Previously this 
+took values of `0` and `1` (disabled and enabled). Four new fixed
+values are now accepted:
+    - `full` - walls ignored for splash damage, previous `1` value),
+    - `high` - overall reduction to 66% damage relative to `full`,
+    - `medium` - overall reduction to 50% damage wrt `full`,
+    - `low` - overall reduction to 37.5% damage wrt `full`.
+- Weapon accuracies are now displayed on the scoreboard for all
+gametypes except Duel and CTF. Only own stats are shown, except at the 
+end of the match or while spectating.
+- Added location ping feature. Players can bind a key to `locPing` and
+use the command to place an icon as a means of communication in team 
+matches.
+- Added GUID info to the server stats (GUID is buggy, but a fix exists
+and could be accepted in ioq3/OA in the near future).
+
 ## 2019-02-12 [Revision 328]
 - Fixed a bug when the server would crash when a player enters the 
 minefield on ra3mp7 map.
@@ -23,7 +97,7 @@ Bench mode was currently only tested on `g_gametype 8` so leave it at
 `0` on other gametypes for now.
 - Added a number of alternative ways to calculate sensitivity depending 
 on the FOV.
-  - cg_zoomSensitivityASmode selects what algorithm is used:
+  - `cg_zoomSensitivityASmode` selects what algorithm is used:
     - `0` (default) - old Quake 3 and OA algorithm based for
     calculating zoom sensitivity based on vertical FOV,
     - `1` - calculates zoom sensitivity based on the formula from this
@@ -274,8 +348,8 @@ characters.
 - added `cg_soundOption <0-9>` to alter between sound packs,
 default value is `1`.  
 A value of `0` sets all sounds to default. A value of `X`(with `X` =
-`1-9`) loads option `X` for all sounds. A sound S.wav with option X has
-to have the name `S_optX.wav` in the `.pk3`.  
+`1-9`) loads option `X` for all sounds. A sound `S.wav` with option `X`
+has to have the name `S_optX.wav` in the `.pk3`.  
 If `S_optX.wav` does not exist it falls back to `S.wav`.
 - Added `cg_soundOption* <-1-9>` to alter between individual sounds
 for weapons:
@@ -289,7 +363,7 @@ for weapons:
   - `cg_soundOptionRail`,
   - `cg_soundOptionBFG`.
 
-`cg_soundOption*` can overwrite the sounds set by `cg_soundOption`.  
+`cg_soundOption*` can override the sounds set by `cg_soundOption`.  
 If the option does not exist it falls back to `cg_soundOption` (which
 falls back to the default sound).
 
@@ -346,6 +420,7 @@ Sets a multiplier for `g_gravity`, default value is `1`.
 gone.
 - Now compiles with GCC-4.8+.
 
+[Revision 329]:https://github.com/Irbyz/aftershock-xe/compare/328...329
 [Revision 328]:https://github.com/Irbyz/aftershock-xe/compare/327...328
 [Revision 327]:https://github.com/Irbyz/aftershock-xe/compare/326...327
 [Revision 326]:https://github.com/Irbyz/aftershock-xe/compare/325...326
