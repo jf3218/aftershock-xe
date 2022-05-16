@@ -521,36 +521,22 @@ static int CG_CalcFov( void ) {
         if ( cgs.dmflags & DF_FIXED_FOV ) {
             // dmflag to prevent wide fov for all clients
             fov_x = 90;
-        } else {
-            fov_x = cgs.fovs[cg.predictedPlayerState.weapon];//cg_fov.value;
-            if ( fov_x < 1 ) {
-                fov_x = 1;
-            } else if ( fov_x > 160 ) {
-                fov_x = 160;
-            }
-            if( cg.currentFov != fov_x && cg_smoothFovChange.integer  && cg_zoomScaling.value > 0.0 ){
-		cg.lastFov = cg.currentFov;
-		cg.currentFov = fov_x;
-		cg.fovTime = cg.time;
-	    }
-        }
-
-        if ( cgs.dmflags & DF_FIXED_FOV ) {
-            // dmflag to prevent wide fov for all clients
             zoomFov = 22.5;
         } else {
-            // account for zooms
-            zoomFov = cgs.zoomfovs[cg.predictedPlayerState.weapon];//cg_zoomFov.value;
-            if ( zoomFov < 1 ) {
-                zoomFov = 1;
-            } else if ( zoomFov > 160 ) {
-                zoomFov = 160;
-            }
-
-            /*if ( (cgs.fairflags & FF_LOCK_CVARS_BASIC) && zoomFov>140 )
-                zoomFov = 140;*/
+            fov_x = cgs.fovs[cg.predictedPlayerState.weapon];       //cg_fov.value;
+            zoomFov = cgs.zoomfovs[cg.predictedPlayerState.weapon]; //cg_zoomFov.value;
+            fov_x = fov_x >= 1 ? fov_x : 1;
+            fov_x = fov_x <= 160 ? fov_x : 160; 
+            zoomFov = zoomFov >= 1 ? zoomFov : 1;
+            zoomFov = zoomFov <= 160 ? zoomFov : 160; 
+            
+            if( cg.currentFov != fov_x && cg_smoothFovChange.integer && cg_zoomScaling.value > 0.0 ){
+		        cg.lastFov = cg.currentFov;
+                cg.currentFov = fov_x;
+                cg.fovTime = cg.time;
+	        }
         }
-		
+	
 		zoomed = cg.zoomed;
 		if((cg.snap->ps.pm_flags & PMF_FOLLOW) && (cg_spectatorZoom.integer)) {
 			zoomed_tmp = cg.snap->ps.stats[STAT_ZOOMED] ? qtrue : qfalse;
@@ -559,42 +545,41 @@ static int CG_CalcFov( void ) {
 				cg.zoomTime = cg.time;
 			}
 			zoomed |= zoomed_tmp;
-		}
+		} 
 
         if ( zoomed ) {
-	    if( cg_zoomScaling.value > 0 )
-		f = ( cg.time - cg.zoomTime ) / (float)(cg_zoomScaling.value * ZOOM_TIME);
-	    else
-		f = 2.0;
+            if( cg_zoomScaling.value > 0 ) {
+                f = ( cg.time - cg.zoomTime ) / (float)(cg_zoomScaling.value * ZOOM_TIME);
+            } else {
+                f = 2.0;
+            }
             if ( f > 1.0 ) {
                 fov_x = zoomFov;
             } else {
                 fov_x = fov_x + f * ( zoomFov - fov_x );
             }
         } else {
-	    if( cg_zoomScaling.value > 0 )
-		f = ( cg.time - cg.zoomTime ) / (float)(cg_zoomScaling.value * ZOOM_TIME);
-	    else
-		f = 2.0;
-          
-            if ( f > 1.0 ) {
-                //fov_x = fov_x;
-		
-		if( cg_smoothFovChange.integer )
-		    f = ( cg.time - cg.fovTime ) / (float)(cg_zoomScaling.value * ZOOM_TIME);
-		else
-		    f = 2.0;
-		
-		if( f <= 1.0 )
-		    fov_x = cg.lastFov + f * ( fov_x - cg.lastFov );
-		
+            if( cg_zoomScaling.value > 0 ) {
+                f = ( cg.time - cg.zoomTime ) / (float)(cg_zoomScaling.value * ZOOM_TIME);
             } else {
-                fov_x = zoomFov + f * ( fov_x - zoomFov );
+                f = 2.0;
+            }
+            
+            if ( f > 1.0 ) {
+                if( cg_smoothFovChange.integer ) {
+                    f = ( cg.time - cg.fovTime ) / (float)(cg_zoomScaling.value * ZOOM_TIME);
+                } else {
+                    f = 2.0;
+                }
+                if( f <= 1.0 ) fov_x = cg.lastFov + f * ( fov_x - cg.lastFov );
+                
+            } else {
+                    fov_x = zoomFov + f * ( fov_x - zoomFov );
             }
         }
     }
 
-    x = cg.refdef.width / tan( fov_x / 360 * M_PI );
+    x = cg.refdef.width / tan( fov_x / 360 * M_PI );    // n.b. tan(fov_x / 2 * pi/180)
     fov_y = atan2( cg.refdef.height, x );
     fov_y = fov_y * 360 / M_PI;
 
@@ -616,14 +601,14 @@ static int CG_CalcFov( void ) {
     cg.refdef.fov_x = fov_x;
     cg.refdef.fov_y = fov_y;
 
-    // set the zoom mouse sensitivity factor that will be passed on to the engine.
-    // cg_zoomSensitivityASmode default 0 which algorithm to use
-                // 0 old q3 / openarena algorithm based on vertical fov
-                // 1 based on ods formula from http://openarena.wikia.com/wiki/Configuration_examples/Scale_mouse_sensitivity_with_zoom
-                // 2 based on ods formula but also calculated when unzoomed for people with a fov for each weapon
-                // 3 similar to the old q3 but based on horizontal fov_x and also calculated unzoomed
-    // cg_zoomSensitivityAScorrection default 1.0 factor applied after the algorithm to do fine tuning
-    // cg_fovbase default 115 asume the sensitivity is set for this horizontal fov
+    // Set the zoom mouse sensitivity factor that will be passed on to the engine
+    // cg_zoomSensitivityASmode. Which algorithm to use (default 0)
+    // 0 old q3/oa algorithm based on fixed vertical fov
+    // 1 based on ods formula from http://openarena.wikia.com/wiki/Configuration_examples/Scale_mouse_sensitivity_with_zoom
+    // 2 based on ods formula but also calculated when unzoomed for people with a fov for each weapon
+    // 3 similar to the old q3 but based on horizontal fov_x and also calculated unzoomed
+    // cg_zoomSensitivityAScorrection. Factor applied after the algorithm to do fine tuning (default 1)
+    // cg_fovbase. Sensitivity computed for this horizontal fov ( default 115)
     if ( !zoomed ) {
         // no longer zoomed, revert to sensitivity for normal fov
         switch (cg_zoomSensitivityASmode.integer) {
@@ -633,10 +618,10 @@ static int CG_CalcFov( void ) {
                 cg.zoomSensitivity = 1;
                 break;
             case 2:
-                cg.zoomSensitivity = tan(cg.refdef.fov_x * M_PI/360.0) /tan(cg_fovbase.value * M_PI/360.0)  ;
+                cg.zoomSensitivity = tan(fov_x * M_PI/360.0) / tan(cg_fovbase.value * M_PI/360.0);
                 break;
             case 3:
-                cg.zoomSensitivity = cg.refdef.fov_x  /cg_fovbase.value ;
+                cg.zoomSensitivity = fov_x  / cg_fovbase.value ;
                 break;
         }
     } else {
@@ -644,16 +629,15 @@ static int CG_CalcFov( void ) {
         switch (cg_zoomSensitivityASmode.integer) {
             default:
             case 0:
-                // old q3 / openarena algorithm based on vertical fov
-                // cg.zoomSensitivity = cg_zoomSensitivityAScorrection.value * cg.refdef.fov_y / cg_fovbasevertical.value;
-                cg.zoomSensitivity = cg_zoomSensitivityAScorrection.value * cg.refdef.fov_y / 75.0;
+                // old q3 / openarena algorithm based on assumed vertical fov
+                cg.zoomSensitivity = cg_zoomSensitivityAScorrection.value * fov_y / 75.0;
                 break;
             case 1:
             case 2:
-                cg.zoomSensitivity = cg_zoomSensitivityAScorrection.value * tan(cg.refdef.fov_x * M_PI/360.0) /tan(cg_fovbase.value * M_PI/360.0)  ;
+                cg.zoomSensitivity = cg_zoomSensitivityAScorrection.value * tan(fov_x * M_PI/360.0) / tan(cg_fovbase.value * M_PI/360.0);
                 break;
             case 3:
-                cg.zoomSensitivity = cg_zoomSensitivityAScorrection.value * cg.refdef.fov_x  /cg_fovbase.value ;
+                cg.zoomSensitivity = cg_zoomSensitivityAScorrection.value * fov_x  / cg_fovbase.value;
                 break;
         }
     }
