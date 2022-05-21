@@ -1,5 +1,5 @@
 # AfterShock XE Changelog
-## 2022-05-10 [Revision 330]
+## 2022-05-21 [Revision 330]
 - Increased vote screen choices to six
 - Removed several cvars from SERVER_INFO to avoid exceeding info string length
 - Locping:
