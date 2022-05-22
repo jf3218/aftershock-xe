@@ -11,6 +11,8 @@ damage plums (`g_damagePlums` and `cg_damagePlums`), improvements and
 bug fixes
 - [**miOw**](https://github.com/Irbyz) - mostly copy/paste and removal
 of other people's stuff
+- [**spot**] (petterworland@yahoo.se) - misc. sounds
+- [**Kzmt**] (Kzmt#0463@Discord) - misc. icons work
 
 #### Also the code was taken from the following projects:
 - [**OATMEAL OpenArena mod**](https://github.com/danhetrick/oatmeal) by
