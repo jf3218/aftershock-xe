@@ -1051,12 +1051,10 @@ void CG_DrawTimer ( void ) {
     }
     mins = seconds / 60;
     seconds -= mins * 60;
-    tens = seconds / 10;
-    seconds -= tens * 10;
 
     //CG_DrawBigString( 320 - w/2, 10, s, 1.0F);
 
-    s = va ( "%i:%i%i", mins, tens, seconds );  //FIXME: why not use %02i, is it slower?
+    s = va ( "%i:%02i", mins, seconds );
     CG_DrawStringHud ( HUD_GAMETIME, qtrue, s );
 
     return;

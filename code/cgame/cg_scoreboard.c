@@ -564,19 +564,25 @@ qboolean CG_DrawOldScoreboard( void ){
 	if( cgs.gametype >= GT_TEAM && cgs.ffa_gt != 1 ){
 		
 		// scores
-		strcpy( string, va( "^1%i ^4%i", cg.teamScores[ 0 ], cg.teamScores[ 1 ] ) );
-		CG_DrawStringExt( SCREEN_WIDTH/2 - GIANTCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y, string, colorWhite, qfalse, qtrue, GIANTCHAR_WIDTH, GIANTCHAR_HEIGHT, 0 );
+		// strcpy( string, va( "^1%i ^4%i", cg.teamScores[ 0 ], cg.teamScores[ 1 ] ) );
+		// CG_DrawStringExt( SCREEN_WIDTH/2 - GIANTCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y, string, colorWhite, qfalse, qtrue, GIANTCHAR_WIDTH, GIANTCHAR_HEIGHT, 0 );
+		strcpy( string, va( "%2i", cg.teamScores[ 0 ]) );
+		CG_DrawStringExt( SCREEN_WIDTH/2 - 77, SB_TEAM_Y, string, colorRedAlt, qfalse, qtrue, GIANTCHAR_WIDTH, GIANTCHAR_HEIGHT, 0 );
+
+		strcpy( string, va( "%2i", cg.teamScores[ 1 ] ) );
+		CG_DrawStringExt( SCREEN_WIDTH/2 + 7, SB_TEAM_Y, string, colorBlueAlt, qfalse, qtrue, GIANTCHAR_WIDTH, GIANTCHAR_HEIGHT, 0 );
+
 		strcpy( string, "to" );
 		CG_DrawStringExt( SCREEN_WIDTH/2 - SMALLCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y + 25, string, colorWhite, qtrue, qtrue, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0 );
 		
 		// team red
 		strcpy( string, "Team red" );
 		//CG_DrawStringExt( SB_TEAM_RED_X + SB_TEAM_WIDTH/2 - BIGCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y + 15, string, colorRed, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
-		CG_DrawStringExt( 320-170, SB_TEAM_Y + 20, string, colorRed, qtrue, qtrue, 12, BIGCHAR_HEIGHT, 0 );
-		color[ 0 ] = 1;
+		CG_DrawStringExt( 320-170, SB_TEAM_Y + 20, string, colorRedAlt, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
+		color[ 0 ] = .79;
 		color[ 1 ] = 0;
-		color[ 2 ] = 0;
-		color[ 3 ] = 0.25;
+		color[ 2 ] = .1;
+		color[ 3 ] = 0.3;
 		CG_TeamScoreboard( SB_TEAM_RED_X, SB_TEAM_Y + 65, SB_TEAM_WIDTH, SB_TEAM_HEIGHT, TEAM_RED, color, SB_MAXDISPLAY );
 		if( cgs.redLocked )
 		  CG_DrawPic( 0, SB_TEAM_Y, 32, 32, cgs.media.sbLocked );
@@ -584,11 +590,11 @@ qboolean CG_DrawOldScoreboard( void ){
 		// team blue
 		strcpy( string, "Team blue" );
 		//CG_DrawStringExt( SB_TEAM_BLUE_X + SB_TEAM_WIDTH/2 - BIGCHAR_WIDTH*CG_DrawStrlen( string )/2, SB_TEAM_Y + 15, string, colorBlue, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
-		CG_DrawStringExt( 320 + 80, SB_TEAM_Y + 20, string, colorBlue, qtrue, qtrue, 12, BIGCHAR_HEIGHT, 0 );
+		CG_DrawStringExt( 320 + 80, SB_TEAM_Y + 20, string, colorBlueAlt, qtrue, qtrue, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0 );
 		color[ 0 ] = 0;
-		color[ 1 ] = 0;
-		color[ 2 ] = 1;
-		color[ 3 ] = 0.25;
+		color[ 1 ] = 0.3;
+		color[ 2 ] = .9;
+		color[ 3 ] = 0.3;
 		CG_TeamScoreboard( SB_TEAM_BLUE_X, SB_TEAM_Y + 65, SB_TEAM_WIDTH, SB_TEAM_HEIGHT, TEAM_BLUE, color, SB_MAXDISPLAY );
 		if( cgs.blueLocked )
 		  CG_DrawPic( 640-32, SB_TEAM_Y, 32, 32, cgs.media.sbLocked );

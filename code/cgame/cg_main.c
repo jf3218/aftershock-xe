@@ -392,7 +392,6 @@ vmCvar_t 	cg_chatBeep;
 vmCvar_t 	cg_teamChatBeep;
 
 vmCvar_t 	cg_fovbase;
-vmCvar_t 	cg_fovbasevertical;
 vmCvar_t 	cg_zoomSensitivityASmode;
 vmCvar_t 	cg_zoomSensitivityAScorrection;
 vmCvar_t 	cg_zoomScaling;
@@ -694,7 +693,6 @@ static cvarTable_t cvarTable[] = { // bk001129
 	{&cg_chatBeep, "cg_chatBeep", "1", CVAR_ARCHIVE },
 	{&cg_teamChatBeep, "cg_teamChatBeep", "1", CVAR_ARCHIVE },
 	{&cg_fovbase, "cg_fovbase", "115", CVAR_ARCHIVE },
-	//{&cg_fovbasevertical, "cg_fovbasevertical", "75", CVAR_ARCHIVE }, // removed because confusing people
 	{&cg_zoomSensitivityASmode, "cg_zoomSensitivityASmode", "0", CVAR_ARCHIVE },
 	{&cg_zoomSensitivityAScorrection, "cg_zoomSensitivityAScorrection", "1.0", CVAR_ARCHIVE },
 	{&cg_zoomScaling, "cg_zoomScaling", "1", CVAR_ARCHIVE },

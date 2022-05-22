@@ -1,4 +1,31 @@
 # AfterShock XE Changelog
+
+## 2022-05-21 [Revision 330]
+- Increased vote screen choices to six
+- Removed several cvars from SERVER_INFO to avoid exceeding info string length
+- Locping:
+  - Spatialised sound
+  - Limit use to once every 450 ms
+  - Additional locping (locping_danger) with different icon and sound
+  - Variable transparency dependent on view angle
+- Backport from OA/ioq3: "fix hit acc. stats for LG and SG kills"
+- HUD scores always in RED/BLUE - left/right order
+- New team overlay, with coloured bars representing player health
+- BUGFIX: implemented movement prediction for non-vq3 rulesets
+- New cvars to control item respawn times: 
+  - g_respawn_[armor/health/ammo/holdable/megahealth/powerup]
+- BUGFIX: incorrect crosshair position when changing viewsize
+- Tweaks to default hud configuration file
+- Auto projectile nudge, according to average player ping:
+  - cg_projectileNudge > 0 : auto proj. nudge up to 350 ms
+  - cg_projectileNudge = 0 : no proj. nudge, except for the snap delay
+  - cg_projectileNudge < 0 : sets max. proj. nudge value allowed
+- Option to draw player's bounding boxes: cg_drawBBox=1 (cheat protected)
+- Countdown timer replaced with new field HUD font (Bebas Neue, oss)
+- Fade-out/fade-in transition during elimination countdown
+- Override sound option for all weapons: cg_soundOptionForce
+- Tweaked font settings in HUD config files included in AS
+
 ## 2021-03-04 [Revision 329]
 - Added sha256 implementation from Linux kernel.
 - Implemented minigames, simple action-based games to be optionally 
