@@ -4424,6 +4424,11 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
     CG_DrawWarmup();
     CG_DrawTimeout();
 
+
+        if ( cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS ) {
+            CG_DrawFadeTransition();
+        }
+
     // don't draw center string if scoreboard is up
     cg.scoreBoardShowing = CG_DrawScoreboard();
     if ( !cg.scoreBoardShowing ) {
@@ -4441,7 +4446,6 @@ void CG_Draw2D ( stereoFrame_t stereoFrame ) {
 	    CG_DrawFollow();
 
         if ( cgs.gametype==GT_ELIMINATION || cgs.gametype == GT_CTF_ELIMINATION || cgs.gametype==GT_LMS ) {
-            CG_DrawFadeTransition();
             CG_DrawEliminationTimer();
         }
 
